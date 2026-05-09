@@ -1,0 +1,317 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-09",
+  "_description": "Historical biotech strategic-process case library. Each case = one observable process signal event on one ticker. Same ticker may have multiple cases across time.",
+
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "format": "TICKER-YYYY-NNN",
+      "example": "HARP-2023-001",
+      "description": "Unique case identifier. NNN = sequential per ticker per year.",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Stock ticker symbol at time of signal.",
+      "required": true
+    },
+    "company": {
+      "type": "string",
+      "description": "Company full name.",
+      "required": true
+    },
+    "observation_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date the process signal FIRST appeared in a public SEC filing. NOT the deal announcement date. NOT the research date. This is the t=0 for all relative price fields. See labeling rules.",
+      "required": true
+    },
+    "signal_type": {
+      "type": "enum",
+      "values": [
+        "SA_AFFIRM",
+        "SA_BOILERPLATE",
+        "ACTIVIST_13D",
+        "ACTIVIST_13D_PASSIVE",
+        "BANKER_RETAINED",
+        "ROFR_ROFN",
+        "MERGER_AGREEMENT",
+        "SCORE_ONLY"
+      ],
+      "description": "Primary signal that triggered this case entry. Reflects what a scanner would detect on observation_date.",
+      "required": true
+    },
+    "event_type": {
+      "type": "enum",
+      "values": [
+        "COMPLETED_DEAL",
+        "FAILED_REVIEW",
+        "ACTIVIST_NO_DEAL",
+        "ROFR_TRIGGERED",
+        "ROFR_NO_TRIGGER",
+        "CAPITAL_RAISE",
+        "MERGER_EQUALS",
+        "ASSET_SALE",
+        "BANKRUPTCY",
+        "ONGOING"
+      ],
+      "description": "Outcome classification. Labeled after resolution. ONGOING if unresolved.",
+      "required": true
+    },
+    "process_state_at_signal": {
+      "type": "enum",
+      "values": ["LIVE", "PATHWAY", "SCREENING", "AGING", "SIGNED"],
+      "description": "Process state the scanner would assign on observation_date.",
+      "required": true
+    },
+    "sequence_type": {
+      "type": "enum",
+      "values": [
+        "ESCALATING_ACTIVIST",
+        "ADVISOR_THEN_SA",
+        "ACTIVIST_THEN_SA",
+        "SA_THEN_ACTIVIST",
+        "ROFR_THEN_ACTIVIST",
+        "ACTIVIST_THEN_ROFR",
+        "STALENESS_RESET",
+        "MERGER_PRECEDED_BY_SA",
+        "MERGER_PRECEDED_BY_ACTIVIST",
+        "RAPID_ESCALATION",
+        "COMPOUND_LIVE",
+        "PROCESS_COLLAPSE",
+        "SINGLE_SIGNAL",
+        "UNKNOWN"
+      ],
+      "description": "Compound sequence pattern present at or before observation_date. SINGLE_SIGNAL if no multi-event pattern. Must be derived from actual filing history, not outcome.",
+      "required": false,
+      "default": "UNKNOWN"
+    },
+    "item4_intent": {
+      "type": "enum",
+      "values": [
+        "SALE_PROCESS",
+        "STRATEGIC_REVIEW",
+        "ACTIVIST_ESCALATION",
+        "BOARD_CHANGE",
+        "CAPITAL_ALLOCATION",
+        "GOVERNANCE_ONLY",
+        "GENERIC_SHAREHOLDER_PRESSURE",
+        "PASSIVE_ACCUMULATION",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ],
+      "description": "Item 4 intent classification from SC 13D. NOT_APPLICABLE for non-13D signals. Must come from actual filing text, not inferred from outcome.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "signal_quality": {
+      "type": "enum",
+      "values": ["AFFIRM", "PROCESS", "ROFR", "BOILERPLATE", "SCORE_ONLY", "MERGER"],
+      "description": "signal_quality field value the scanner would assign on observation_date.",
+      "required": true
+    },
+    "mcap_at_signal_M": {
+      "type": "float",
+      "unit": "USD millions",
+      "description": "Market cap in USD millions on observation_date.",
+      "required": true
+    },
+    "in_target_range": {
+      "type": "boolean",
+      "description": "True if mcap_at_signal_M is between 150 and 1500 (scanner target universe).",
+      "required": true
+    },
+    "analyst_coverage_count": {
+      "type": "integer",
+      "description": "Number of sell-side analyst ratings/coverage on observation_date. 0 = uncovered. VERIFY_REQUIRED if unknown.",
+      "required": false,
+      "default": null
+    },
+    "price_at_signal": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price on observation_date.",
+      "required": true
+    },
+    "price_30d_after": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price 30 calendar days after observation_date. Record as-traded. Do not adjust for acquisition price.",
+      "required": false,
+      "default": null
+    },
+    "price_90d_after": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price 90 calendar days after observation_date.",
+      "required": false,
+      "default": null
+    },
+    "price_180d_after": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price 180 calendar days after observation_date.",
+      "required": false,
+      "default": null
+    },
+    "deal_announced": {
+      "type": "boolean",
+      "description": "True if an acquisition/merger was announced after observation_date.",
+      "required": true
+    },
+    "deal_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date of deal announcement 8-K filing. Null if no deal.",
+      "required": false,
+      "default": null
+    },
+    "days_signal_to_deal": {
+      "type": "integer",
+      "description": "Calendar days from observation_date to deal_date. Null if no deal.",
+      "required": false,
+      "default": null
+    },
+    "deal_type": {
+      "type": "enum",
+      "values": ["ACQUISITION", "MERGER", "ASSET_SALE", "LICENSING", "NONE"],
+      "description": "Type of transaction. NONE for false positives.",
+      "required": true
+    },
+    "deal_premium_pct": {
+      "type": "float",
+      "unit": "percent",
+      "description": "Premium to 30-day pre-announcement average price. NOT to price_at_signal unless deal announced within 30 days. Null if no deal or unverified.",
+      "required": false,
+      "default": null
+    },
+    "deal_value_M": {
+      "type": "float",
+      "unit": "USD millions",
+      "description": "Total deal value in USD millions (equity value, not EV). Null if no deal.",
+      "required": false,
+      "default": null
+    },
+    "deal_price_per_share": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Per-share consideration in USD. Null if no deal or non-cash consideration.",
+      "required": false,
+      "default": null
+    },
+    "acquirer": {
+      "type": "string",
+      "description": "Acquirer company name. Null if no deal.",
+      "required": false,
+      "default": null
+    },
+    "outcome": {
+      "type": "enum",
+      "values": [
+        "ACQUIRED",
+        "DEAL_FAILED",
+        "REVIEW_ABANDONED",
+        "WIND_DOWN",
+        "BANKRUPT",
+        "CAPITAL_RAISE",
+        "ASSET_SOLD",
+        "MERGED_EQUALS",
+        "ONGOING"
+      ],
+      "description": "Final resolution of the case.",
+      "required": true
+    },
+    "days_signal_to_outcome": {
+      "type": "integer",
+      "description": "Calendar days from observation_date to final outcome resolution. Null if ONGOING.",
+      "required": false,
+      "default": null
+    },
+    "failure_reason": {
+      "type": "string",
+      "description": "For non-deal outcomes: what observable factor drove the failure. Must be grounded in contemporaneous evidence, not hindsight. Max 300 chars.",
+      "required": false,
+      "default": null
+    },
+    "rofr_scope": {
+      "type": "enum",
+      "values": ["WHOLE_COMPANY", "ASSET_SPECIFIC", "PROGRAM_SPECIFIC", "TERRITORY_SPECIFIC", "UNKNOWN", "NOT_APPLICABLE"],
+      "description": "For ROFR/ROFN cases: scope of the rights. Whole-company ROFR is structurally different from program-level ROFR. Critical for false-positive suppression calibration.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "source_filing_type": {
+      "type": "string",
+      "description": "SEC form type (8-K, SC 13D, SC 13D/A, DEF 14A, 10-K, etc.).",
+      "required": true
+    },
+    "source_filing_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date the triggering filing was submitted to SEC EDGAR. Often same as observation_date.",
+      "required": true
+    },
+    "source_filing_url": {
+      "type": "string",
+      "description": "Direct URL to the triggering filing on SEC EDGAR. Must be EDGAR link, not press release.",
+      "required": false,
+      "default": "VERIFY_REQUIRED"
+    },
+    "excerpt_text": {
+      "type": "string",
+      "description": "Key excerpt from the triggering filing text (max 300 chars). The exact language that triggered signal classification.",
+      "required": false,
+      "default": null
+    },
+    "hotspot_area": {
+      "type": "string",
+      "description": "Therapeutic area (oncology, immunology, neurology, cardiology, rare disease, etc.).",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text annotations. Flag anything unusual, ambiguous, or requiring follow-up.",
+      "required": false,
+      "default": null
+    },
+    "data_quality": {
+      "type": "enum",
+      "values": ["VERIFIED", "PARTIAL", "VERIFY_REQUIRED"],
+      "description": "VERIFIED = all fields confirmed against primary sources. PARTIAL = some fields confirmed, some approximate. VERIFY_REQUIRED = structural placeholder only.",
+      "required": true
+    },
+    "added_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date this case was added to the library.",
+      "required": true
+    }
+  },
+
+  "calibration_rules": {
+    "minimum_verified_for_p_deal_table": 100,
+    "minimum_verified_for_sequence_calibration": 150,
+    "minimum_verified_for_mcap_segmentation": 200,
+    "do_not_use_for_calibration": ["VERIFY_REQUIRED"],
+    "use_for_structural_testing_only": ["PARTIAL"],
+    "usable_for_calibration": ["VERIFIED"]
+  },
+
+  "collection_targets": {
+    "phase_1_target": 25,
+    "phase_1_min_verified_pct": 0.60,
+    "phase_2_target": 100,
+    "phase_2_min_verified_pct": 0.70,
+    "phase_3_target": 500,
+    "phase_3_min_verified_pct": 0.80,
+    "target_outcome_mix": {
+      "completed_deal_pct": 0.45,
+      "failed_review_pct": 0.20,
+      "activist_no_deal_pct": 0.15,
+      "rofr_cases_pct": 0.10,
+      "capital_raise_bankrupt_pct": 0.10
+    }
+  }
+}
