@@ -30,26 +30,14 @@ The score is not the moat. The moat, if it develops, will come from running infr
 - Added lightweight Recent Change text when scan fields support it.
 - Cleaned dashboard language to avoid "acquisition likelihood," "proprietary AI," and signal dumping.
 - Confirmed deploy workflow: Cloudflare Pages, not Netlify.
+- **Built Item 4 parser for SC 13Ds** (`src/item4_parser.py`). Classifies activist intent into 9 buckets (SALE_PROCESS, STRATEGIC_REVIEW, ACTIVIST_ESCALATION, BOARD_CHANGE, CAPITAL_ALLOCATION, GOVERNANCE_ONLY, GENERIC_SHAREHOLDER_PRESSURE, PASSIVE_ACCUMULATION, UNKNOWN). Integrated into Layer 7 scoring with intent-adjusted point weights and a gate that now blocks GOVERNANCE_ONLY, CAPITAL_ALLOCATION, and PASSIVE_ACCUMULATION 13Ds from clearing the process-evidence cap.
+- **Built process-state transition tracking** (`src/process_history.py`). Persistent per-ticker state snapshots + transition events across scans. Detects: state upgrades/downgrades, SA/advisor/activist/ROFR introductions, activist intent escalation, intensity upgrades, staleness thresholds (45d/90d), signal withdrawals, score jumps. Stores to `data/tracking/state_history.json`. Adds `process_state` field to scanner output. Enables trajectory intelligence — system now remembers HOW situations change over time.
 
 ## Highest ROI Next Task
 
-**Item 4 parsing for 13Ds** in `src/PRODUCTION_SCANNER_V12.py`.
-
-Goal: distinguish sale-pressure 13Ds from governance, ownership, or passive-control filings.
-
-Why it matters: current PROCESS classification can overstate activist relevance because it treats 13D presence as pressure without enough intent context.
-
-Initial classification targets:
-
-- Sale pressure: "maximize shareholder value," "sale of the company," "business combination," "strategic alternatives," "formal process"
-- Governance pressure: board representation, management change, capital allocation
-- Non-sale context: ownership restructuring, financing, passive strategic holder
-
-## Secondary Priority
-
 **ROFR/ROFN scope context.**
 
-Distinguish whole-company rights from single-asset, program-specific, or territory-specific rights. Current PATHWAY interpretation can overstate strategic relevance when scope is narrow.
+Distinguish whole-company rights from single-asset, program-specific, or territory-specific rights. Current PATHWAY interpretation can overstate strategic relevance when scope is narrow. (Item 4 parser is now complete and deployed — this is the next false-positive reduction target.)
 
 ## What Not To Work On Now
 
@@ -84,7 +72,10 @@ Distinguish whole-company rights from single-asset, program-specific, or territo
 - Dashboard: process-state and interpretation layer deployed.
 - Outcome tracker: early-stage data, not yet enough for calibration.
 - Process-state transition history: not fully persisted yet.
-- Item 4 parsing: not built, biggest gap.
+- Item 4 parsing: **built** (`src/item4_parser.py`). 9-bucket classification, intensity scoring, false-positive suppression.
+- Process-state history: **built** (`src/process_history.py`). Transition tracking, escalation detection, state memory. Next scan will begin accumulating history.
+- ROFR/ROFN scope context: not built. Next gap.
+- Historical analog matching: groundwork laid (state_sequence + escalation_events preserved in summarize_ticker_evolution). Not yet built.
 
 ## Biggest Remaining Uncertainty
 

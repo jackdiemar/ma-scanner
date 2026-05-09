@@ -76,7 +76,7 @@ This system is Strategic Process Intelligence, not M&A prediction. It detects, c
 
 **Target universe:** $150M-$1.5B mcap. Outside this range, edge degrades.
 
-**Biggest open gap:** Item 4 parsing for SC 13Ds (sale-pressure vs. governance). See `CURRENT_PRIORITY.md`.
+**Item 4 parsing:** Built 2026-05-09. `src/item4_parser.py` classifies 13D activist intent into 9 buckets. Integrated into Layer 7 — governance/passive 13Ds no longer clear the process-evidence gate. Next gap: ROFR/ROFN scope context. See `CURRENT_PRIORITY.md`.
 
 ---
 
@@ -85,11 +85,13 @@ This system is Strategic Process Intelligence, not M&A prediction. It detects, c
 1. `CURRENT_PRIORITY.md` — what to focus on
 2. `strategy_audit/EDGE_HYPOTHESIS.md` — strategic framing
 3. `src/PRODUCTION_SCANNER_V12.py`
-4. `src/trade_logic.py`
-5. `src/scanner_cache.py`
-6. `src/outcome_tracker.py`
-7. `src/send_alert_v12.py` — only if task touches email/reporting
-8. `dashboards/dashboard_v12.html` and `src/secure_dashboard_server.py` — only if task touches the dashboard
+4. `src/item4_parser.py` — SC 13D Item 4 classification (read if touching activist/13D logic)
+5. `src/process_history.py` — process-state transition tracking (read if touching history, escalation, or state fields)
+5. `src/trade_logic.py`
+6. `src/scanner_cache.py`
+7. `src/outcome_tracker.py`
+8. `src/send_alert_v12.py` — only if task touches email/reporting
+9. `dashboards/dashboard_v12.html` and `src/secure_dashboard_server.py` — only if task touches the dashboard
 
 ---
 
