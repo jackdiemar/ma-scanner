@@ -3607,6 +3607,29 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     save_state_history(state_history, STATE_HISTORY_FILE)
     print(f'  State history updated — {len(state_history)} tickers tracked')
 
+    # ── Sequence detection: derive compound patterns from state history ────────
+    try:
+        from sequence_detector import detect_all_sequences, attach_sequences_to_result
+        all_sequences = detect_all_sequences(state_history)
+        n_with_seqs = 0
+        for r in results:
+            tkr = r.get('ticker')
+            if not tkr:
+                continue
+            seqs = all_sequences.get(tkr, [])
+            attach_sequences_to_result(r, seqs)
+            if seqs:
+                n_with_seqs += 1
+        print(f'  Sequence detection complete — {n_with_seqs} tickers with compound patterns')
+    except Exception as _seq_err:
+        print(f'  [sequence_detector] Error: {_seq_err}')
+        for r in results:
+            r.setdefault('detected_sequences', [])
+            r.setdefault('sequence_type', None)
+            r.setdefault('sequence_label', None)
+            r.setdefault('sequence_window_days', None)
+            r.setdefault('compound_signal_quality', None)
+
     # ── Update tracking (single-threaded, after all results collected) ─────────
     new_picks   = 0
     high_conv   = []
