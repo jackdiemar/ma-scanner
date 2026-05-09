@@ -76,7 +76,11 @@ This system is Strategic Process Intelligence, not M&A prediction. It detects, c
 
 **Target universe:** $150M-$1.5B mcap. Outside this range, edge degrades.
 
-**Item 4 parsing:** Built 2026-05-09. `src/item4_parser.py` classifies 13D activist intent into 9 buckets. Integrated into Layer 7 — governance/passive 13Ds no longer clear the process-evidence gate. Next gap: ROFR/ROFN scope context. See `CURRENT_PRIORITY.md`.
+**Item 4 parsing:** Built 2026-05-09. `src/item4_parser.py` classifies 13D activist intent into 9 buckets. Integrated into Layer 7 — governance/passive 13Ds no longer clear the process-evidence gate.
+
+**Process Sequence Detector:** Built 2026-05-09. `src/sequence_detector.py` reads transition events from state_history and detects 12 named compound patterns (ESCALATING_ACTIVIST, ADVISOR_THEN_SA, COMPOUND_LIVE, RAPID_ESCALATION, MERGER_PRECEDED_BY_SA, etc.). Integrated into V12 main() after state_history save. New output fields: `sequence_type`, `sequence_label`, `sequence_window_days`, `compound_signal_quality`. MVP label-only — no P(deal) adjustments until outcomes validate.
+
+Next gap: ROFR/ROFN scope context. See `CURRENT_PRIORITY.md`.
 
 ---
 
@@ -87,6 +91,7 @@ This system is Strategic Process Intelligence, not M&A prediction. It detects, c
 3. `src/PRODUCTION_SCANNER_V12.py`
 4. `src/item4_parser.py` — SC 13D Item 4 classification (read if touching activist/13D logic)
 5. `src/process_history.py` — process-state transition tracking (read if touching history, escalation, or state fields)
+5. `src/sequence_detector.py` — compound sequence pattern detection (read if touching sequence_type, compound_signal_quality, or multi-event logic)
 5. `src/trade_logic.py`
 6. `src/scanner_cache.py`
 7. `src/outcome_tracker.py`
