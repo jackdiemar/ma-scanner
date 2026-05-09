@@ -1,0 +1,140 @@
+{
+  "watchlist": {
+    "default_tickers": [
+      "FOLD",
+      "RARE",
+      "IONS",
+      "SRPT",
+      "ALNY",
+      "VRTX",
+      "BMRN"
+    ],
+    "auto_add_similar": true,
+    "market_cap_range": {
+      "min": 500000000,
+      "max": 10000000000
+    }
+  },
+  
+  "signal_weights": {
+    "unusual_options": 1.2,
+    "cash_runway": 1.5,
+    "institutional_accumulation": 1.0,
+    "volume_anomaly": 1.1,
+    "valuation_opportunity": 0.8,
+    "orphan_drug_candidate": 1.3,
+    "pipeline_complementarity": 1.4,
+    "partnership_indicator": 1.2,
+    "clinical_stage_asset": 1.3,
+    "acquisition_precedent": 0.9,
+    "insider_selling": 1.6,
+    "insider_cluster_buying": 1.4,
+    "form_4_acceleration": 1.1,
+    "option_exercise_sales": 1.3,
+    "unusual_quietness": 1.2,
+    "mysterious_price_support": 1.3,
+    "resilient_despite_downgrades": 1.4,
+    "social_chatter_spike": 0.9,
+    "short_interest_decline": 1.1,
+    "after_hours_activity": 1.2,
+    "unusual_otm_calls": 1.5,
+    "supply_chain_connections": 1.0
+  },
+  
+  "signal_thresholds": {
+    "high_probability": 70,
+    "moderate": 50,
+    "emerging": 30
+  },
+  
+  "detection_parameters": {
+    "options_activity": {
+      "volume_ratio_threshold": 2.0,
+      "iv_threshold": 0.5,
+      "lookback_days": 5
+    },
+    "cash_runway": {
+      "critical_months": 12,
+      "warning_months": 18,
+      "moderate_months": 24
+    },
+    "volume_anomaly": {
+      "spike_threshold": 3.0,
+      "moderate_threshold": 2.0,
+      "lookback_days": 20
+    },
+    "valuation": {
+      "max_market_cap": 2000000000,
+      "pe_ratio_max": 15,
+      "pb_ratio_max": 2
+    }
+  },
+  
+  "biotech_parameters": {
+    "therapeutic_areas": [
+      "rare_disease",
+      "oncology",
+      "gene_therapy",
+      "obesity",
+      "neurology",
+      "immunology"
+    ],
+    "active_acquirers": [
+      "PFE",
+      "JNJ",
+      "ABBV",
+      "AMGN",
+      "GILD",
+      "BMRN",
+      "VRTX",
+      "REGN",
+      "LLY",
+      "NVO"
+    ],
+    "target_market_cap_range": {
+      "min": 500000000,
+      "max": 10000000000
+    },
+    "clinical_phase_preferences": [
+      "phase_2",
+      "phase_3",
+      "pivotal_trial"
+    ]
+  },
+  
+  "scanning": {
+    "refresh_interval_seconds": 3600,
+    "auto_refresh_enabled": true,
+    "parallel_processing": true,
+    "max_workers": 4
+  },
+  
+  "alerts": {
+    "enabled": true,
+    "high_score_threshold": 75,
+    "new_signal_threshold": 50,
+    "email_notifications": false,
+    "desktop_notifications": true
+  },
+  
+  "data_sources": {
+    "primary": "yfinance",
+    "sec_filings": true,
+    "news_sentiment": false,
+    "social_sentiment": false
+  },
+  
+  "export": {
+    "auto_export": true,
+    "export_format": "json",
+    "export_path": "./data/exports/",
+    "include_historical": true,
+    "retention_days": 30
+  },
+  
+  "backtesting": {
+    "enabled": true,
+    "lookback_months": 12,
+    "validate_against_actual_deals": true
+  }
+}

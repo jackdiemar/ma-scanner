@@ -1,0 +1,316 @@
+{
+  "analysis_date": "2026-01-05T23:58:34.212246",
+  "total_analyzed": 50,
+  "statistics": {
+    "mean_pct": 17.95319904307128,
+    "median_pct": 0.2753165417706154,
+    "std_dev_pct": 111.51267919249634,
+    "p10": 0.03501065316381391,
+    "p25": 0.07667416835528923,
+    "p50": 0.27991604477312865,
+    "p75": 1.1367129525544017,
+    "p90": 4.663081911514878
+  },
+  "deals": [
+    {
+      "ticker": "KRTX",
+      "market_cap": 12599.275119,
+      "insider_sales": 251.99005573000002,
+      "insider_pct": 2.000036139777543
+    },
+    {
+      "ticker": "ORIC",
+      "market_cap": 793.722624,
+      "insider_sales": 6.1409715076,
+      "insider_pct": 0.7736923859688294
+    },
+    {
+      "ticker": "IMUX",
+      "market_cap": 62.882332,
+      "insider_sales": 18.53588278,
+      "insider_pct": 29.477091880116664
+    },
+    {
+      "ticker": "RDNT",
+      "market_cap": 5721.962209,
+      "insider_sales": 54.661596849999995,
+      "insider_pct": 0.9552946149141545
+    },
+    {
+      "ticker": "ACST",
+      "market_cap": 34.171463,
+      "insider_sales": 0.08925,
+      "insider_pct": 0.261182847219623
+    },
+    {
+      "ticker": "EGBN",
+      "market_cap": 655.107561,
+      "insider_sales": 1.4366749799999998,
+      "insider_pct": 0.219303678590881
+    },
+    {
+      "ticker": "WSBCP",
+      "market_cap": 2922.95415,
+      "insider_sales": 2.5052966734000006,
+      "insider_pct": 0.085711117753934
+    },
+    {
+      "ticker": "ATLN",
+      "market_cap": 100.920814,
+      "insider_sales": 4e-05,
+      "insider_pct": 3.963503504836971e-05
+    },
+    {
+      "ticker": "GABC",
+      "market_cap": 1484.300243,
+      "insider_sales": 0.4907005638113999,
+      "insider_pct": 0.03305938715064941
+    },
+    {
+      "ticker": "XNCR",
+      "market_cap": 1019.027393,
+      "insider_sales": 17.088184503299995,
+      "insider_pct": 1.676911201865993
+    },
+    {
+      "ticker": "ADMA",
+      "market_cap": 4291.099703,
+      "insider_sales": 53.516480367700005,
+      "insider_pct": 1.247150708949631
+    },
+    {
+      "ticker": "DKS",
+      "market_cap": 16772.427551,
+      "insider_sales": 190.65435643002004,
+      "insider_pct": 1.1367129525544017
+    },
+    {
+      "ticker": "SOLV",
+      "market_cap": 14014.323438,
+      "insider_sales": 9.427441040000001,
+      "insider_pct": 0.0672700404104945
+    },
+    {
+      "ticker": "FITBP",
+      "market_cap": 16221.309425,
+      "insider_sales": 27.123961413600004,
+      "insider_pct": 0.1672119105982716
+    },
+    {
+      "ticker": "AMCCF",
+      "market_cap": 18882.384317,
+      "insider_sales": 16.458798608,
+      "insider_pct": 0.08716483221444643
+    },
+    {
+      "ticker": "APO-PA",
+      "market_cap": 45586.249082,
+      "insider_sales": 270.00267018200003,
+      "insider_pct": 0.5922897268786526
+    },
+    {
+      "ticker": "FSUN",
+      "market_cap": 1057.754035,
+      "insider_sales": 53.60195954000001,
+      "insider_pct": 5.067525886582888
+    },
+    {
+      "ticker": "ALRS",
+      "market_cap": 593.280998,
+      "insider_sales": 0.21345129999999998,
+      "insider_pct": 0.03597811167382105
+    },
+    {
+      "ticker": "MBC",
+      "market_cap": 1432.40875,
+      "insider_sales": 11.429772478799999,
+      "insider_pct": 0.7979407050396752
+    },
+    {
+      "ticker": "RAIN",
+      "market_cap": 30.240984,
+      "insider_sales": 14.324986059999999,
+      "insider_pct": 47.369444261469795
+    },
+    {
+      "ticker": "RNST",
+      "market_cap": 3434.048568,
+      "insider_sales": 3.927352659999999,
+      "insider_pct": 0.114365087803266
+    },
+    {
+      "ticker": "WAT",
+      "market_cap": 23513.724127,
+      "insider_sales": 8.2323084,
+      "insider_pct": 0.03501065316381391
+    },
+    {
+      "ticker": "APO",
+      "market_cap": 86923.81796,
+      "insider_sales": 270.00267018200003,
+      "insider_pct": 0.31061989281953534
+    },
+    {
+      "ticker": "RAINW",
+      "market_cap": 1.815986,
+      "insider_sales": 14.324986059999999,
+      "insider_pct": 788.8268995465822
+    },
+    {
+      "ticker": "GLT",
+      "market_cap": 73.672474,
+      "insider_sales": 0.1994439399999999,
+      "insider_pct": 0.27071703876810205
+    },
+    {
+      "ticker": "NWFL",
+      "market_cap": 261.621008,
+      "insider_sales": 0.02418877,
+      "insider_pct": 0.009245729226759954
+    },
+    {
+      "ticker": "MDXG",
+      "market_cap": 937.486666,
+      "insider_sales": 3.818884916,
+      "insider_pct": 0.4073535181352649
+    },
+    {
+      "ticker": "QTRX",
+      "market_cap": 300.350425,
+      "insider_sales": 0.7929882900000002,
+      "insider_pct": 0.26402103143353306
+    },
+    {
+      "ticker": "CDMO",
+      "market_cap": 798.901617,
+      "insider_sales": 12.203953436,
+      "insider_pct": 1.5275915302096579
+    },
+    {
+      "ticker": "NE",
+      "market_cap": 4611.090683,
+      "insider_sales": 19.355767219999997,
+      "insider_pct": 0.4197654860998533
+    },
+    {
+      "ticker": "NWBI",
+      "market_cap": 1772.315088,
+      "insider_sales": 1.1251735029999999,
+      "insider_pct": 0.06348608724364704
+    },
+    {
+      "ticker": "IMGN",
+      "market_cap": 8725.62169,
+      "insider_sales": 65.26254064000003,
+      "insider_pct": 0.7479414414080566
+    },
+    {
+      "ticker": "IEP",
+      "market_cap": 4663.620177,
+      "insider_sales": 0.8884203100000001,
+      "insider_pct": 0.019050014286787407
+    },
+    {
+      "ticker": "ALVR",
+      "market_cap": 49.475362,
+      "insider_sales": 0.20111657210000003,
+      "insider_pct": 0.4064984347158492
+    },
+    {
+      "ticker": "FCCO",
+      "market_cap": 227.691839,
+      "insider_sales": 0.6373459899999999,
+      "insider_pct": 0.27991604477312865
+    },
+    {
+      "ticker": "CGEM",
+      "market_cap": 590.165903,
+      "insider_sales": 11.56050687,
+      "insider_pct": 1.9588571300433126
+    },
+    {
+      "ticker": "AMCR",
+      "market_cap": 19528.725101,
+      "insider_sales": 16.458798608,
+      "insider_pct": 0.08427994414831104
+    },
+    {
+      "ticker": "CNOB",
+      "market_cap": 1330.241821,
+      "insider_sales": 2.38837299,
+      "insider_pct": 0.1795442717478659
+    },
+    {
+      "ticker": "HBAN",
+      "market_cap": 26093.570234,
+      "insider_sales": 12.769691212169995,
+      "insider_pct": 0.04893807592312933
+    },
+    {
+      "ticker": "UBSI",
+      "market_cap": 5483.267957,
+      "insider_sales": 16.192825669999998,
+      "insider_pct": 0.29531341158201213
+    },
+    {
+      "ticker": "HRI",
+      "market_cap": 5228.335555,
+      "insider_sales": 37.582176059999995,
+      "insider_pct": 0.7188172156253272
+    },
+    {
+      "ticker": "WSBC",
+      "market_cap": 3267.458555,
+      "insider_sales": 2.5052966734000006,
+      "insider_pct": 0.07667416835528923
+    },
+    {
+      "ticker": "MCBS",
+      "market_cap": 678.309677,
+      "insider_sales": 14.511928131,
+      "insider_pct": 2.1394251951678998
+    },
+    {
+      "ticker": "PRK",
+      "market_cap": 2492.452175,
+      "insider_sales": 4.44861918985,
+      "insider_pct": 0.1784836328845507
+    },
+    {
+      "ticker": "HBANL",
+      "market_cap": 37057.6992,
+      "insider_sales": 12.769691212169995,
+      "insider_pct": 0.03445894237322212
+    },
+    {
+      "ticker": "RC-PC",
+      "market_cap": 2257.85298,
+      "insider_sales": 1.5212615099999998,
+      "insider_pct": 0.0673764644321527
+    },
+    {
+      "ticker": "CEIX",
+      "market_cap": 2473.84112,
+      "insider_sales": 5.15678188,
+      "insider_pct": 0.20845242802011468
+    },
+    {
+      "ticker": "CRCQW",
+      "market_cap": 1168.681084,
+      "insider_sales": 54.4965562313,
+      "insider_pct": 4.663081911514878
+    },
+    {
+      "ticker": "TBPH",
+      "market_cap": 933.400786,
+      "insider_sales": 11.015994532699999,
+      "insider_pct": 1.1801998346185234
+    },
+    {
+      "ticker": "CBAN",
+      "market_cap": 312.320624,
+      "insider_sales": 0.2266072448,
+      "insider_pct": 0.07255596569248657
+    }
+  ]
+}

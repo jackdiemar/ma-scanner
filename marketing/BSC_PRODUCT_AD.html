@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black Starlight Capital - Product Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .ad-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+        
+        .scene.active {
+            opacity: 1;
+        }
+        
+        /* Scene 1: Login Interface */
+        .login-scene {
+            background: #f5f5f0;
+        }
+        
+        .login-mockup {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .bsc-logo-login {
+            font-family: 'Georgia', serif;
+            font-size: 140px;
+            font-weight: 400;
+            letter-spacing: -6px;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+        }
+        
+        .company-name-login {
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .tagline-login {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #999;
+        }
+        
+        .voiceover-text {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #666;
+            text-align: center;
+            letter-spacing: 0.5px;
+            animation: fadeIn 1.5s ease-out 0.5s both;
+            max-width: 600px;
+        }
+        
+        /* Scene 2: Dashboard Interface */
+        .dashboard-scene {
+            background: #f5f5f0;
+            padding: 40px;
+        }
+        
+        .dashboard-mockup {
+            width: 100%;
+            max-width: 1400px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .dashboard-header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .bsc-logo-small {
+            font-family: 'Georgia', serif;
+            font-size: 32px;
+            letter-spacing: -1.5px;
+            color: #1a1a1a;
+        }
+        
+        .user-badge {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .stock-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 30px;
+            border-radius: 4px;
+            animation: fadeIn 0.8s ease-out both;
+        }
+        
+        .stock-card:nth-child(1) { animation-delay: 0.3s; }
+        .stock-card:nth-child(2) { animation-delay: 0.5s; }
+        .stock-card:nth-child(3) { animation-delay: 0.7s; }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stock-ticker {
+            font-size: 36px;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+        
+        .stock-score {
+            font-size: 52px;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+        
+        .probability-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #1a1a1a;
+            color: #f5f5f0;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        
+        .signal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .signal-item {
+            padding: 12px;
+            background: #fafafa;
+            border-left: 2px solid #1a1a1a;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Scene 3: Detailed View */
+        .detail-scene {
+            background: #f5f5f0;
+            padding: 60px;
+        }
+        
+        .detail-mockup {
+            background: #fff;
+            max-width: 1000px;
+            padding: 60px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .detail-ticker {
+            font-size: 64px;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+        }
+        
+        .signal-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        
+        .breakdown-item {
+            animation: fadeIn 0.8s ease-out both;
+        }
+        
+        .breakdown-item:nth-child(1) { animation-delay: 0.3s; }
+        .breakdown-item:nth-child(2) { animation-delay: 0.5s; }
+        .breakdown-item:nth-child(3) { animation-delay: 0.7s; }
+        .breakdown-item:nth-child(4) { animation-delay: 0.9s; }
+        
+        .breakdown-title {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        
+        .breakdown-value {
+            font-size: 48px;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .breakdown-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Scene 4: The Result */
+        .result-scene {
+            background: #000;
+        }
+        
+        .result-content {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .result-label {
+            font-size: 16px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .result-number {
+            font-size: 160px;
+            font-weight: 300;
+            letter-spacing: -6px;
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .result-subtext {
+            font-size: 20px;
+            color: #999;
+            letter-spacing: 1px;
+        }
+        
+        /* Scene 5: Founder */
+        .founder-scene {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            flex-direction: column;
+        }
+        
+        .founder-content {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .founder-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #333;
+            margin: 0 auto 40px;
+            border: 3px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            color: #666;
+        }
+        
+        .founder-name {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .founder-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .founder-quote {
+            font-size: 20px;
+            font-style: italic;
+            color: #999;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Scene 6: Final BSC Logo */
+        .final-scene {
+            background: #f5f5f0;
+        }
+        
+        .final-content {
+            text-align: center;
+            animation: logoReveal 2s ease-out;
+        }
+        
+        .bsc-logo-final {
+            font-family: 'Georgia', serif;
+            font-size: 200px;
+            font-weight: 400;
+            letter-spacing: -10px;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+        }
+        
+        .company-info-final {
+            animation: fadeIn 1.5s ease-out 1s both;
+        }
+        
+        .company-name-final {
+            font-size: 18px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .tagline-final {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #999;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes logoReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+                letter-spacing: 30px;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                letter-spacing: -10px;
+            }
+        }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 30px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #1a1a1a;
+            width: 0%;
+            transition: width 0.3s;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="ad-container">
+        <!-- Scene 1: Login -->
+        <div class="scene login-scene" id="scene1">
+            <div class="login-mockup">
+                <div class="bsc-logo-login">bsc</div>
+                <div class="company-name-login">Black Starlight Capital</div>
+                <div class="tagline-login">Since 2025</div>
+            </div>
+            <div class="voiceover-text">Every acquisition leaves signals.</div>
+        </div>
+        
+        <!-- Scene 2: Dashboard -->
+        <div class="scene dashboard-scene" id="scene2">
+            <div class="dashboard-mockup">
+                <div class="dashboard-header">
+                    <div class="bsc-logo-small">bsc</div>
+                    <div class="user-badge">Jack / Portfolio Manager</div>
+                </div>
+                
+                <div class="stock-grid">
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <div class="stock-ticker">VKTX</div>
+                            <div class="stock-score">91</div>
+                        </div>
+                        <div class="probability-badge">Very High Probability</div>
+                        <div class="signal-list">
+                            <div class="signal-item">Cash runway: 1.3Q</div>
+                            <div class="signal-item">Insider selling: $7.2M</div>
+                            <div class="signal-item">Put/Call: 2.3</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <div class="stock-ticker">FOLD</div>
+                            <div class="stock-score">89</div>
+                        </div>
+                        <div class="probability-badge">Very High Probability</div>
+                        <div class="signal-list">
+                            <div class="signal-item">Insider selling: $4.8M</div>
+                            <div class="signal-item">Inst. ownership: 82%</div>
+                            <div class="signal-item">Market cap: $2.1B</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <div class="stock-ticker">RARE</div>
+                            <div class="stock-score">87</div>
+                        </div>
+                        <div class="probability-badge">High Probability</div>
+                        <div class="signal-list">
+                            <div class="signal-item">Cash runway: 1.8Q</div>
+                            <div class="signal-item">Insider selling: $5.1M</div>
+                            <div class="signal-item">Market cap: $1.9B</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="voiceover-text" style="color: #333;">We find them.</div>
+        </div>
+        
+        <!-- Scene 3: Detail View -->
+        <div class="scene detail-scene" id="scene3">
+            <div class="detail-mockup">
+                <div class="detail-ticker">VKTX</div>
+                
+                <div class="signal-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-title">Cash Runway</div>
+                        <div class="breakdown-value">1.3Q</div>
+                        <div class="breakdown-desc">Burning $92M/year with only $119M remaining</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-title">Insider Selling</div>
+                        <div class="breakdown-value">$7.2M</div>
+                        <div class="breakdown-desc">CEO, CFO, COO all sold in past 30 days</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-title">Ownership</div>
+                        <div class="breakdown-value">82%</div>
+                        <div class="breakdown-desc">Institutional ownership in optimal range</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-title">Options Flow</div>
+                        <div class="breakdown-value">2.3</div>
+                        <div class="breakdown-desc">Put/Call ratio indicating smart money positioning</div>
+                    </div>
+                </div>
+            </div>
+            <div class="voiceover-text" style="color: #333;">Real data. Real signals.</div>
+        </div>
+        
+        <!-- Scene 4: Result -->
+        <div class="scene result-scene" id="scene4">
+            <div class="result-content">
+                <div class="result-label">45 Days Later</div>
+                <div class="result-number">+51%</div>
+                <div class="result-subtext">Acquisition announced at $34/share</div>
+            </div>
+            <div class="voiceover-text">Real returns.</div>
+        </div>
+        
+        <!-- Scene 5: Founder -->
+        <div class="scene founder-scene" id="scene5">
+            <div class="founder-content">
+                <div class="founder-photo">J</div>
+                <div class="founder-name">Jack</div>
+                <div class="founder-title">Founder & Portfolio Manager</div>
+                <div class="founder-quote">
+                    "Intelligence isn't about having more data.<br>
+                    It's about having the right data."
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scene 6: Final Logo -->
+        <div class="scene final-scene" id="scene6">
+            <div class="final-content">
+                <div class="bsc-logo-final">bsc</div>
+                <div class="company-info-final">
+                    <div class="company-name-final">Black Starlight Capital</div>
+                    <div class="tagline-final">M&A Intelligence Platform</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="control-btn" onclick="startAd()">▶ Play</button>
+        <button class="control-btn" onclick="resetAd()">↻ Restart</button>
+    </div>
+
+    <script>
+        const timeline = [
+            { scene: 1, duration: 4000 },   // Login
+            { scene: 2, duration: 5000 },   // Dashboard
+            { scene: 3, duration: 5000 },   // Detail
+            { scene: 4, duration: 4000 },   // Result
+            { scene: 5, duration: 5000 },   // Founder
+            { scene: 6, duration: 4000 }    // Final logo
+        ];
+        
+        let isPlaying = false;
+        let timeouts = [];
+        
+        function showScene(sceneNum) {
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                document.getElementById(`scene${sceneNum}`).classList.add('active');
+            }, 100);
+            
+            const progress = ((sceneNum - 1) / timeline.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        function playScene(index) {
+            if (index >= timeline.length || !isPlaying) {
+                if (index >= timeline.length) {
+                    isPlaying = false;
+                    document.getElementById('progressBar').style.width = '100%';
+                }
+                return;
+            }
+            
+            const scene = timeline[index];
+            showScene(scene.scene);
+            
+            const timeout = setTimeout(() => {
+                playScene(index + 1);
+            }, scene.duration);
+            
+            timeouts.push(timeout);
+        }
+        
+        function startAd() {
+            if (isPlaying) return;
+            isPlaying = true;
+            playScene(0);
+        }
+        
+        function resetAd() {
+            isPlaying = false;
+            timeouts.forEach(t => clearTimeout(t));
+            timeouts = [];
+            
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            document.getElementById('progressBar').style.width = '0%';
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(startAd, 1000);
+        });
+    </script>
+</body>
+</html>

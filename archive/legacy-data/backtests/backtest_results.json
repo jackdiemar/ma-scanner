@@ -1,0 +1,94 @@
+[
+  {
+    "ticker": "SGMO",
+    "acquirer": "Editas Medicine",
+    "score": 50,
+    "verdict": "\u274c MISS (Would not have flagged)",
+    "signals": [
+      "C-Level Insider Selling (35pts)",
+      "Severe Price Crash (-70.7%)"
+    ]
+  },
+  {
+    "ticker": "KROS",
+    "acquirer": "Johnson & Johnson",
+    "score": 45,
+    "verdict": "\u274c MISS (Would not have flagged)",
+    "signals": [
+      "C-Level Insider Selling (35pts)",
+      "Major Price Drop (-44.1%)"
+    ]
+  },
+  {
+    "ticker": "HZNP",
+    "acquirer": "Amgen",
+    "score": 35,
+    "verdict": "INSUFFICIENT DATA",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "IMMU",
+    "acquirer": "AbbVie",
+    "score": 35,
+    "verdict": "INSUFFICIENT DATA",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "CDMO",
+    "acquirer": "Thermo Fisher",
+    "score": 35,
+    "verdict": "INSUFFICIENT DATA",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "SLXP",
+    "acquirer": "Merck",
+    "score": 35,
+    "verdict": "INSUFFICIENT DATA",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "SESN",
+    "acquirer": "Poseida Therapeutics",
+    "score": 35,
+    "verdict": "INSUFFICIENT DATA",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "AKBA",
+    "acquirer": "Insmed",
+    "score": 35,
+    "verdict": "\u274c MISS (Would not have flagged)",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "TMCI",
+    "acquirer": "Johnson & Johnson",
+    "score": 35,
+    "verdict": "\u274c MISS (Would not have flagged)",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  },
+  {
+    "ticker": "RLAY",
+    "acquirer": "Sanofi",
+    "score": 35,
+    "verdict": "\u274c MISS (Would not have flagged)",
+    "signals": [
+      "C-Level Insider Selling (35pts)"
+    ]
+  }
+]

@@ -1,0 +1,99 @@
+{
+  "summary": {
+    "total_scanned": 163,
+    "high_confidence": 0,
+    "with_sec_filings": 0,
+    "scan_timestamp": "2025-12-23T19:16:46.547930",
+    "backtest_accuracy": {
+      "accuracy": 0.9631901840490797,
+      "precision": 0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 6,
+      "total_predictions": 163
+    }
+  },
+  "results": {
+    "TPTX": {
+      "ticker": "TPTX",
+      "raw_score": 0,
+      "weighted_score": 0,
+      "confidence": 0,
+      "signal_count": 0,
+      "signals": [],
+      "raw_data": {
+        "yfinance": {
+          "price": 0,
+          "market_cap": 0,
+          "cash": 0,
+          "operating_cf": 0,
+          "institutional_own": 0,
+          "analyst_target": 0
+        },
+        "sec": null
+      }
+    },
+    "SGEN": {
+      "ticker": "SGEN",
+      "raw_score": 0,
+      "weighted_score": 0,
+      "confidence": 0,
+      "signal_count": 0,
+      "signals": [],
+      "raw_data": {
+        "yfinance": {
+          "price": 0,
+          "market_cap": 0,
+          "cash": 0,
+          "operating_cf": 0,
+          "institutional_own": 0,
+          "analyst_target": 0
+        },
+        "sec": null
+      }
+    },
+    "BCYC": {
+      "ticker": "BCYC",
+      "raw_score": 27,
+      "weighted_score": 22.35,
+      "confidence": 80.0,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "undervalued",
+          "strength": 80.0,
+          "detail": "210% upside",
+          "raw_points": 15,
+          "weighted_points": 12.8,
+          "weight": 0.85,
+          "reliability": 0.8
+        },
+        {
+          "type": "institutional",
+          "strength": 80.0,
+          "detail": "79%",
+          "raw_points": 12,
+          "weighted_points": 9.6,
+          "weight": 0.8,
+          "reliability": 0.8
+        }
+      ],
+      "raw_data": {
+        "yfinance": {
+          "price": 6.94,
+          "market_cap": 481413216,
+          "cash": 648324992,
+          "operating_cf": -239724992,
+          "institutional_own": 78.906995,
+          "analyst_target": 21.5
+        },
+        "sec": {
+          "total_filings": 17,
+          "c_level_sales_30d": 0,
+          "c_level_sales_90d": 0,
+          "c_level_purchases_30d": 0,
+          "recent_transactions": [
+            {
+              "date": "2025-10-06",
+              "filing_date": 

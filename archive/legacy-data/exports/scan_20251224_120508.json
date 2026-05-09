@@ -1,0 +1,792 @@
+{
+  "summary": {
+    "total": 34,
+    "with_sec": 0,
+    "with_catalysts": 0,
+    "high_score": 2,
+    "timestamp": "2025-12-24T12:05:08.152999"
+  },
+  "results": {
+    "FOLD": {
+      "score": 33,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$4.4B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "6 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "RARE": {
+      "score": 70,
+      "signal_count": 5,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.8Q",
+          "pts": 18
+        },
+        {
+          "type": "Good Size",
+          "detail": "$3.3B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "137% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "20 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "SGMO": {
+      "score": 48,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Critical Cash",
+          "detail": "1.6Q",
+          "pts": 25
+        },
+        {
+          "type": "Undervalued",
+          "detail": "640% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "5 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "EDIT": {
+      "score": 41,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.7Q",
+          "pts": 18
+        },
+        {
+          "type": "Undervalued",
+          "detail": "132% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "8 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "CRSP": {
+      "score": 36,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "44% upside",
+          "pts": 12
+        },
+        {
+          "type": "Institutional",
+          "detail": "78%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "NTLA": {
+      "score": 57,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$1.1B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "135% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "87%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BEAM": {
+      "score": 57,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$2.8B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "64% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "102%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "14 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "FATE": {
+      "score": 35,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "389% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "80%",
+          "pts": 12
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "ALLO": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "438% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "10 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "ARVN": {
+      "score": 37,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.9B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "16 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "RGNX": {
+      "score": 49,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.7B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "109% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "84%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "11 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "KPTI": {
+      "score": 41,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "2.1Q",
+          "pts": 18
+        },
+        {
+          "type": "Undervalued",
+          "detail": "96% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "6 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "IONS": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "SRPT": {
+      "score": 39,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$2.3B",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "85%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "23 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "ALNY": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "100%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BMRN": {
+      "score": 39,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "49% upside",
+          "pts": 12
+        },
+        {
+          "type": "High Institutional",
+          "detail": "98%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "23 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "UTHR": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "99%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "12 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "LGND": {
+      "score": 33,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$3.9B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "INCY": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "106%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "21 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "VRTX": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "97%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "NBIX": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "101%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "27 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "JAZZ": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "16 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BIIB": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "29 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "SAVA": {
+      "score": 15,
+      "signal_count": 1,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "263% upside",
+          "pts": 15
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "PRAX": {
+      "score": 42,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "53% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "15 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "AXSM": {
+      "score": 24,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Institutional",
+          "detail": "77%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "20 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "EYPT": {
+      "score": 75,
+      "signal_count": 5,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.9Q",
+          "pts": 18
+        },
+        {
+          "type": "Perfect Size",
+          "detail": "$1.5B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "98% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "87%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "12 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "AKRO": {
+      "score": 25,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$4.5B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "112%",
+          "pts": 15
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "CTMX": {
+      "score": 48,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.8B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "59% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "89%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "7 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "HUMA": {
+      "score": 48,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Critical Cash",
+          "detail": "0.7Q",
+          "pts": 25
+        },
+        {
+          "type": "Undervalued",
+          "detail": "631% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "7 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "KYMR": {
+      "score": 39,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "39% upside",
+          "pts": 12
+        },
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "NKTX": {
+      "score": 30,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "523% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "86%",
+          "pts": 15
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "MLNK": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$1.5B",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "81%",
+          "pts": 12
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "AUTL": {
+      "score": 35,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "472% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "73%",
+          "pts": 12
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    }
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "scan_date": "2026-01-21T11:20:14.006049",
+  "next_fed_meeting": {
+    "date": "2026-01-28",
+    "meeting_type": "FOMC",
+    "days_until": 6
+  },
+  "cut_probability": 5.0,
+  "signal_triggered": false,
+  "screened_mreits": [
+    {
+      "ticker": "PMT",
+      "price": 13.115,
+      "book_value": 21.59703276371284,
+      "price_to_book": 0.6072593463874222,
+      "book_discount_pct": 39.27406536125779,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 3.0,
+      "composite_score": 56.0,
+      "market_cap": 1141222761
+    },
+    {
+      "ticker": "MITT",
+      "price": 8.805,
+      "book_value": 18.030951077329384,
+      "price_to_book": 0.48832698631580634,
+      "book_discount_pct": 51.16730136841936,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 279509873
+    },
+    {
+      "ticker": "MFA",
+      "price": 9.825,
+      "book_value": 17.568077698369066,
+      "price_to_book": 0.5592529910607182,
+      "book_discount_pct": 44.074700893928174,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 1004075700
+    },
+    {
+      "ticker": "NRZ",
+      "price": 10.89,
+      "book_value": 16.44313695188686,
+      "price_to_book": 0.6622823875921295,
+      "book_discount_pct": 33.77176124078704,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 5158919526
+    },
+    {
+      "ticker": "NYMT",
+      "price": 7.11,
+      "book_value": 15.53854832643851,
+      "price_to_book": 0.45757170172084133,
+      "book_discount_pct": 54.24282982791586,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 642132540
+    },
+    {
+      "ticker": "RWT",
+      "price": 5.635,
+      "book_value": 7.74321412516083,
+      "price_to_book": 0.7277339757000402,
+      "book_discount_pct": 27.226602429995978,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 728174270
+    },
+    {
+      "ticker": "CIM",
+      "price": 12.88,
+      "book_value": 31.546032602745278,
+      "price_to_book": 0.40829223003082565,
+      "book_discount_pct": 59.17077699691743,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 50.0,
+      "market_cap": 1070990032
+    },
+    {
+      "ticker": "IVR",
+      "price": 8.935,
+      "book_value": 11.606264817072622,
+      "price_to_book": 0.7698428513242921,
+      "book_discount_pct": 23.015714867570793,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 46.031429735141586,
+      "market_cap": 633898677
+    },
+    {
+      "ticker": "TWO",
+      "price": 13.245,
+      "book_value": 17.02199185273433,
+      "price_to_book": 0.7781110527245603,
+      "book_discount_pct": 22.188894727543968,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 44.377789455087935,
+      "market_cap": 1379625558
+    },
+    {
+      "ticker": "EFC",
+      "price": 13.83,
+      "book_value": 17.677307582513855,
+      "price_to_book": 0.7823589613658385,
+      "book_discount_pct": 21.764103863416153,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 43.528207726832306,
+      "market_cap": 1313372174
+    },
+    {
+      "ticker": "ARR",
+      "price": 18.195,
+      "book_value": 20.406794608792346,
+      "price_to_book": 0.8916147954054781,
+      "book_discount_pct": 10.838520459452194,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 21.67704091890439,
+      "market_cap": 2035988404
+    },
+    {
+      "ticker": "NLY",
+      "price": 23.585,
+      "book_value": 24.130238995205954,
+      "price_to_book": 0.977404326773793,
+      "book_discount_pct": 2.259567322620706,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 4.519134645241412,
+      "market_cap": 16109286135
+    },
+    {
+      "ticker": "DX",
+      "price": 14.1269,
+      "book_value": 14.398781325858616,
+      "price_to_book": 0.9811177543636732,
+      "book_discount_pct": 1.8882245636326753,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 3.7764491272653506,
+      "market_cap": 2074136109
+    },
+    {
+      "ticker": "AGNC",
+      "price": 11.545,
+      "book_value": 10.867996201329534,
+      "price_to_book": 1.06229334148899,
+      "book_discount_pct": -6.229334148898991,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 0.0,
+      "market_cap": 12384552400
+    },
+    {
+      "ticker": "ORC",
+      "price": 7.975,
+      "book_value": 7.964341855570972,
+      "price_to_book": 1.0013382329164553,
+      "book_discount_pct": -0.13382329164552348,
+      "dividend_yield": 0.0,
+      "debt_to_equity": 0,
+      "insider_score": 0.0,
+      "composite_score": 0.0,
+      "market_cap": 1209986802
+    }
+  ],
+  "backtest_stats": {
+    "win_rate": 100.0,
+    "avg_return": 6.81,
+    "trades": 4,
+    "period": "2024 rate cuts"
+  }
+}

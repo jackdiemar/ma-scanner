@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black Starlight Capital - M&A Intelligence</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Black Starlight Capital - M&A Intelligence Platform">
+    <meta property="og:description" content="Find biotech acquisitions before they're announced. Real intelligence. Real returns.">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/1a1a1a/ffffff?text=BSC">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        /* Audio control */
+        .audio-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .audio-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+        
+        .scene.active {
+            opacity: 1;
+        }
+        
+        /* Opening - Dark */
+        .opening-scene {
+            background: #000;
+            flex-direction: column;
+        }
+        
+        .opening-text {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-align: center;
+            animation: fadeInUp 2s ease-out;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+        
+        /* Interface Showcase */
+        .interface-scene {
+            background: #f5f5f0;
+            padding: 60px;
+        }
+        
+        .interface-mockup {
+            width: 100%;
+            max-width: 1400px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .dashboard-header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .bsc-logo-small {
+            font-family: 'Georgia', serif;
+            font-size: 32px;
+            letter-spacing: -1.5px;
+            color: #1a1a1a;
+        }
+        
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .stock-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 30px;
+            border-radius: 4px;
+            animation: fadeIn 0.8s ease-out both;
+        }
+        
+        .stock-card:nth-child(1) { animation-delay: 0.3s; }
+        .stock-card:nth-child(2) { animation-delay: 0.5s; }
+        .stock-card:nth-child(3) { animation-delay: 0.7s; }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stock-ticker {
+            font-size: 40px;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+        
+        .stock-score {
+            font-size: 56px;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+        
+        .probability-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #1a1a1a;
+            color: #f5f5f0;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        
+        .signal-item {
+            padding: 12px;
+            background: #fafafa;
+            border-left: 2px solid #1a1a1a;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .voiceover {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            color: #333;
+            letter-spacing: 1px;
+            animation: fadeIn 1.5s ease-out 1s both;
+        }
+        
+        /* Results */
+        .results-scene {
+            background: #000;
+        }
+        
+        .results-content {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+        
+        .result-number {
+            font-size: 180px;
+            font-weight: 300;
+            letter-spacing: -8px;
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        
+        .result-label {
+            font-size: 24px;
+            color: #999;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        
+        .result-detail {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        /* Final BSC */
+        .final-scene {
+            background: #f5f5f0;
+        }
+        
+        .final-content {
+            text-align: center;
+            animation: logoReveal 2s ease-out;
+        }
+        
+        .bsc-logo-final {
+            font-family: 'Georgia', serif;
+            font-size: 220px;
+            font-weight: 400;
+            letter-spacing: -12px;
+            color: #1a1a1a;
+            margin-bottom: 50px;
+        }
+        
+        .company-name-final {
+            font-size: 20px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .tagline-final {
+            font-size: 16px;
+            letter-spacing: 3px;
+            color: #999;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes logoReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+                letter-spacing: 40px;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                letter-spacing: -12px;
+            }
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 2000;
+        }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 30px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .share-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            color: #000;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+            width: 0%;
+            transition: width 0.3s;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music (royalty-free electronic/ambient) -->
+    <audio id="bgMusic" loop>
+        <!-- Using YouTube Audio Library style ambient track -->
+        <!-- In production, use actual MP3 file -->
+        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=" type="audio/wav">
+    </audio>
+    
+    <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">
+        🔊 Sound On
+    </button>
+    
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Scene 1: Opening -->
+    <div class="scene opening-scene" id="scene1">
+        <div class="opening-text">
+            Most investors miss<br>
+            biotech acquisitions.
+        </div>
+    </div>
+    
+    <!-- Scene 2: Interface -->
+    <div class="scene interface-scene" id="scene2">
+        <div class="interface-mockup">
+            <div class="dashboard-header">
+                <div class="bsc-logo-small">bsc</div>
+            </div>
+            
+            <div class="stock-grid">
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <div class="stock-ticker">VKTX</div>
+                        <div class="stock-score">91</div>
+                    </div>
+                    <div class="probability-badge">VERY HIGH PROBABILITY</div>
+                    <div class="signal-item">Cash runway: 1.3 quarters</div>
+                    <div class="signal-item">Insider selling: $7.2M</div>
+                    <div class="signal-item">Put/Call ratio: 2.3</div>
+                </div>
+                
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <div class="stock-ticker">FOLD</div>
+                        <div class="stock-score">89</div>
+                    </div>
+                    <div class="probability-badge">VERY HIGH PROBABILITY</div>
+                    <div class="signal-item">Insider selling: $4.8M</div>
+                    <div class="signal-item">Inst. ownership: 82%</div>
+                    <div class="signal-item">Market cap: $2.1B</div>
+                </div>
+                
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <div class="stock-ticker">RARE</div>
+                        <div class="stock-score">87</div>
+                    </div>
+                    <div class="probability-badge">HIGH PROBABILITY</div>
+                    <div class="signal-item">Cash runway: 1.8 quarters</div>
+                    <div class="signal-item">Insider selling: $5.1M</div>
+                    <div class="signal-item">Perfect size: $1.9B</div>
+                </div>
+            </div>
+        </div>
+        <div class="voiceover">Our platform finds them.</div>
+    </div>
+    
+    <!-- Scene 3: Results -->
+    <div class="scene results-scene" id="scene3">
+        <div class="results-content">
+            <div class="result-label">REAL RETURNS</div>
+            <div class="result-number">+51%</div>
+            <div class="result-detail">In 45 days. Before announcement.</div>
+        </div>
+    </div>
+    
+    <!-- Scene 4: Final -->
+    <div class="scene final-scene" id="scene4">
+        <div class="final-content">
+            <div class="bsc-logo-final">bsc</div>
+            <div class="company-name-final">Black Starlight Capital</div>
+            <div class="tagline-final">M&A Intelligence Platform</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="control-btn" onclick="startAd()">▶ Play</button>
+        <button class="control-btn" onclick="resetAd()">↻ Restart</button>
+        <button class="control-btn share-btn" onclick="shareAd()">📤 Share</button>
+    </div>
+
+    <script>
+        const timeline = [
+            { scene: 1, duration: 4000 },
+            { scene: 2, duration: 6000 },
+            { scene: 3, duration: 4000 },
+            { scene: 4, duration: 4000 }
+        ];
+        
+        let isPlaying = false;
+        let timeouts = [];
+        let audioEnabled = false;
+        const bgMusic = document.getElementById('bgMusic');
+        
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audioToggle');
+            
+            if (audioEnabled) {
+                bgMusic.play().catch(e => console.log('Audio play failed:', e));
+                btn.textContent = '🔊 Sound On';
+            } else {
+                bgMusic.pause();
+                btn.textContent = '🔇 Sound Off';
+            }
+        }
+        
+        function showScene(sceneNum) {
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                document.getElementById(`scene${sceneNum}`).classList.add('active');
+            }, 100);
+            
+            const progress = ((sceneNum - 1) / timeline.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        function playScene(index) {
+            if (index >= timeline.length || !isPlaying) {
+                if (index >= timeline.length) {
+                    isPlaying = false;
+                    document.getElementById('progressBar').style.width = '100%';
+                }
+                return;
+            }
+            
+            const scene = timeline[index];
+            showScene(scene.scene);
+            
+            const timeout = setTimeout(() => {
+                playScene(index + 1);
+            }, scene.duration);
+            
+            timeouts.push(timeout);
+        }
+        
+        function startAd() {
+            if (isPlaying) return;
+            
+            // Auto-enable audio on first play
+            if (!audioEnabled) {
+                toggleAudio();
+            }
+            
+            isPlaying = true;
+            playScene(0);
+        }
+        
+        function resetAd() {
+            isPlaying = false;
+            timeouts.forEach(t => clearTimeout(t));
+            timeouts = [];
+            
+            document.querySelectorAll('.scene').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            document.getElementById('progressBar').style.width = '0%';
+        }
+        
+        function shareAd() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Black Starlight Capital - M&A Intelligence',
+                    text: 'Find biotech acquisitions before they\'re announced. Real intelligence. Real returns.',
+                    url: window.location.href
+                }).catch(err => console.log('Share failed:', err));
+            } else {
+                // Fallback: copy URL
+                navigator.clipboard.writeText(window.location.href);
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Link Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }
+        }
+        
+        // Auto-start
+        window.addEventListener('load', () => {
+            setTimeout(startAd, 1000);
+        });
+    </script>
+</body>
+</html>

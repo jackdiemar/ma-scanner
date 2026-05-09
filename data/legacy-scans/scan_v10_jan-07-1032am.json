@@ -1,0 +1,115 @@
+{
+  "scan_date": "2026-01-07T10:32:12.822768",
+  "version": "10.4-fmp-quote-integration",
+  "mode": "PRODUCTION",
+  "fmp_enabled": true,
+  "stocks_scanned": 4,
+  "results": {
+    "ARWR": {
+      "score": 36.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.39% of company ($35.6M)",
+          "pts": 20
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$27.8M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 35646092.49000001,
+      "runway": 0,
+      "market_cap": 9034.439735
+    },
+    "REPL": {
+      "score": 41,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.045% of company ($0.3M)",
+          "pts": 5
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$699M",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+53% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Below 50-SMA",
+          "detail": "-12% below SMA",
+          "pts": 3
+        }
+      ],
+      "c_level_sale_value": 312309.93,
+      "runway": 8.017682085146316,
+      "market_cap": 699.293804
+    },
+    "IMVT": {
+      "score": 39,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.7 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.036% of company ($1.7M)",
+          "pts": 5
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "48%",
+          "pts": 10
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+33% to consensus",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 1693140.5000000002,
+      "runway": 7.7372177791820915,
+      "market_cap": 4717.340303
+    },
+    "IMMP": {
+      "score": 32,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$443M",
+          "pts": 15
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+41% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$1.9M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 11.251383899570811,
+      "market_cap": 443.048016
+    }
+  }
+}

@@ -1,0 +1,4762 @@
+{
+  "ABCL": {
+    "first_seen": "2026-04-28T21:48:43.537982",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 85.0,
+    "first_price": 4.16,
+    "last_seen": "2026-05-05T09:56:02.767177",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:48:43.537982",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 85.0,
+        "price": 4.16
+      },
+      {
+        "date": "2026-04-29T15:01:17.994785",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.82
+      },
+      {
+        "date": "2026-04-30T15:10:47.014950",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.15
+      },
+      {
+        "date": "2026-05-01T18:07:31.371665",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.43
+      },
+      {
+        "date": "2026-05-05T09:56:02.767177",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.855
+      }
+    ]
+  },
+  "ABUS": {
+    "first_seen": "2026-04-28T21:48:50.778549",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 94.6,
+    "first_price": 4.15,
+    "last_seen": "2026-05-05T09:56:02.767168",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:48:50.778549",
+        "tier": "HIGH_CONVICTION",
+        "score": 94.6,
+        "price": 4.15
+      },
+      {
+        "date": "2026-04-29T15:01:25.730221",
+        "tier": "HIGH_CONVICTION",
+        "score": 94.6,
+        "price": 4.13
+      },
+      {
+        "date": "2026-04-30T15:10:55.755527",
+        "tier": "HIGH_CONVICTION",
+        "score": 94.3,
+        "price": 4.2
+      },
+      {
+        "date": "2026-05-01T18:07:31.371672",
+        "tier": "HIGH_CONVICTION",
+        "score": 96.2,
+        "price": 4.32
+      },
+      {
+        "date": "2026-05-05T09:56:02.767168",
+        "tier": "HIGH_CONVICTION",
+        "score": 81.7,
+        "price": 4.435
+      }
+    ]
+  },
+  "ACAD": {
+    "first_seen": "2026-04-28T21:48:58.726188",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 22.67,
+    "last_seen": "2026-05-05T09:56:02.767184",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:48:58.726188",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 22.67
+      },
+      {
+        "date": "2026-04-29T15:01:32.763370",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 22.2
+      },
+      {
+        "date": "2026-04-30T15:11:03.199367",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 22.45
+      },
+      {
+        "date": "2026-05-01T18:07:31.371676",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.95
+      },
+      {
+        "date": "2026-05-05T09:56:02.767184",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 22.525
+      }
+    ]
+  },
+  "ACCD": {
+    "first_seen": "2026-04-28T21:49:04.712541",
+    "first_tier": "WATCH",
+    "first_score": 76.3,
+    "first_price": 7.02,
+    "last_seen": "2026-04-30T15:11:08.790750",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:04.712541",
+        "tier": "WATCH",
+        "score": 76.3,
+        "price": 7.02
+      },
+      {
+        "date": "2026-04-29T15:01:38.203945",
+        "tier": "WATCH",
+        "score": 76.3,
+        "price": 7.02
+      },
+      {
+        "date": "2026-04-30T15:11:08.790750",
+        "tier": "WATCH",
+        "score": 76.3,
+        "price": 7.02
+      }
+    ]
+  },
+  "ACLX": {
+    "first_seen": "2026-04-28T21:49:18.287164",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 71.4,
+    "first_price": 115.05,
+    "last_seen": "2026-05-05T09:56:02.767189",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:18.287164",
+        "tier": "HIGH_CONVICTION",
+        "score": 71.4,
+        "price": 115.05
+      },
+      {
+        "date": "2026-04-29T15:01:50.427671",
+        "tier": "HIGH_CONVICTION",
+        "score": 71.4,
+        "price": 115.07
+      },
+      {
+        "date": "2026-04-30T15:11:23.639315",
+        "tier": "HIGH_CONVICTION",
+        "score": 71.4,
+        "price": 115.07
+      },
+      {
+        "date": "2026-05-01T18:07:31.371680",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 48.3,
+        "price": 115.07
+      },
+      {
+        "date": "2026-05-05T09:56:02.767189",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 47.7,
+        "price": 115.07
+      }
+    ]
+  },
+  "ACRS": {
+    "first_seen": "2026-04-28T21:49:26.764713",
+    "first_tier": "WATCH",
+    "first_score": 81.0,
+    "first_price": 4.22,
+    "last_seen": "2026-05-05T09:56:02.767192",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:26.764713",
+        "tier": "WATCH",
+        "score": 81.0,
+        "price": 4.22
+      },
+      {
+        "date": "2026-04-29T15:01:58.312319",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 4.47
+      },
+      {
+        "date": "2026-04-30T15:11:31.324507",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 4.34
+      },
+      {
+        "date": "2026-05-01T18:07:31.371683",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.41
+      },
+      {
+        "date": "2026-05-05T09:56:02.767192",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.64
+      }
+    ]
+  },
+  "ADCT": {
+    "first_seen": "2026-04-28T21:49:39.240829",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 3.77,
+    "last_seen": "2026-05-05T09:56:02.767195",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:39.240829",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 3.77
+      },
+      {
+        "date": "2026-04-29T15:02:11.218962",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 3.78
+      },
+      {
+        "date": "2026-04-30T15:11:43.407841",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.775
+      },
+      {
+        "date": "2026-05-01T18:07:31.371685",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.83
+      },
+      {
+        "date": "2026-05-05T09:56:02.767195",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.705
+      }
+    ]
+  },
+  "ADMA": {
+    "first_seen": "2026-04-28T21:49:48.994264",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 94.3,
+    "first_price": 10.9,
+    "last_seen": "2026-05-05T09:56:02.767197",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:48.994264",
+        "tier": "HIGH_CONVICTION",
+        "score": 94.3,
+        "price": 10.9
+      },
+      {
+        "date": "2026-04-29T15:02:25.271636",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 10.6
+      },
+      {
+        "date": "2026-04-30T15:11:50.030177",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 10.25
+      },
+      {
+        "date": "2026-05-01T18:07:31.371688",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 10.52
+      },
+      {
+        "date": "2026-05-05T09:56:02.767197",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 10.2398
+      }
+    ]
+  },
+  "ADPT": {
+    "first_seen": "2026-04-28T21:49:55.776137",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 90.0,
+    "first_price": 14.04,
+    "last_seen": "2026-05-05T09:56:02.767200",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:49:55.776137",
+        "tier": "HIGH_CONVICTION",
+        "score": 90.0,
+        "price": 14.04
+      },
+      {
+        "date": "2026-04-29T15:02:31.247604",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 13.53
+      },
+      {
+        "date": "2026-04-30T15:11:57.744770",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 14.1
+      },
+      {
+        "date": "2026-05-01T18:07:31.371690",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 14.27
+      },
+      {
+        "date": "2026-05-05T09:56:02.767200",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 13.98
+      }
+    ]
+  },
+  "ADUS": {
+    "first_seen": "2026-04-28T21:50:06.236682",
+    "first_tier": "WATCH",
+    "first_score": 75.5,
+    "first_price": 98.84,
+    "last_seen": "2026-05-05T09:56:02.767202",
+    "scan_count": 4,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:50:06.236682",
+        "tier": "WATCH",
+        "score": 75.5,
+        "price": 98.84
+      },
+      {
+        "date": "2026-04-29T15:02:38.831590",
+        "tier": "WATCH",
+        "score": 77.5,
+        "price": 96.96
+      },
+      {
+        "date": "2026-04-30T15:12:06.971672",
+        "tier": "WATCH",
+        "score": 71.5,
+        "price": 96.89
+      },
+      {
+        "date": "2026-05-05T09:56:02.767202",
+        "tier": "WATCH",
+        "score": 75.5,
+        "price": 94.2459
+      }
+    ]
+  },
+  "AGIO": {
+    "first_seen": "2026-04-28T21:50:30.485512",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 24.8,
+    "last_seen": "2026-05-05T09:56:02.767205",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:50:30.485512",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 24.8
+      },
+      {
+        "date": "2026-04-29T15:02:56.199532",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28.05
+      },
+      {
+        "date": "2026-04-30T15:12:26.566258",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28
+      },
+      {
+        "date": "2026-05-01T18:07:31.371693",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28.16
+      },
+      {
+        "date": "2026-05-05T09:56:02.767205",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 27.7421
+      }
+    ]
+  },
+  "AHCO": {
+    "first_seen": "2026-04-28T21:50:40.089692",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 79.4,
+    "first_price": 13.38,
+    "last_seen": "2026-05-05T09:56:02.767208",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:50:40.089692",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.4,
+        "price": 13.38
+      },
+      {
+        "date": "2026-04-29T15:03:05.352146",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.4,
+        "price": 13.08
+      },
+      {
+        "date": "2026-04-30T15:12:34.536735",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.4,
+        "price": 13.11
+      },
+      {
+        "date": "2026-05-01T18:07:31.371696",
+        "tier": "WATCH",
+        "score": 71.4,
+        "price": 13.17
+      },
+      {
+        "date": "2026-05-05T09:56:02.767208",
+        "tier": "WATCH",
+        "score": 76.4,
+        "price": 11.52
+      }
+    ]
+  },
+  "AKRO": {
+    "first_seen": "2026-04-28T21:50:55.469137",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 91.0,
+    "first_price": 54.65,
+    "last_seen": "2026-04-30T15:12:48.448219",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:50:55.469137",
+        "tier": "HIGH_CONVICTION",
+        "score": 91.0,
+        "price": 54.65
+      },
+      {
+        "date": "2026-04-29T15:03:18.932157",
+        "tier": "HIGH_CONVICTION",
+        "score": 91.0,
+        "price": 54.65
+      },
+      {
+        "date": "2026-04-30T15:12:48.448219",
+        "tier": "HIGH_CONVICTION",
+        "score": 91.0,
+        "price": 54.65
+      }
+    ]
+  },
+  "ALKS": {
+    "first_seen": "2026-04-28T21:51:20.499121",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 34.14,
+    "last_seen": "2026-05-05T09:56:02.767211",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:51:20.499121",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 34.14
+      },
+      {
+        "date": "2026-04-29T15:03:48.966229",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.71
+      },
+      {
+        "date": "2026-04-30T15:13:10.207009",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.71
+      },
+      {
+        "date": "2026-05-01T18:07:31.371699",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.38
+      },
+      {
+        "date": "2026-05-05T09:56:02.767211",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 35.0475
+      }
+    ]
+  },
+  "ALLO": {
+    "first_seen": "2026-04-28T21:51:31.755711",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 92.4,
+    "first_price": 2.19,
+    "last_seen": "2026-05-05T09:56:02.767214",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:51:31.755711",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 92.4,
+        "price": 2.19
+      },
+      {
+        "date": "2026-04-29T15:03:58.498478",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.11
+      },
+      {
+        "date": "2026-04-30T15:13:19.883186",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.13
+      },
+      {
+        "date": "2026-05-01T18:07:31.371702",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.15
+      },
+      {
+        "date": "2026-05-05T09:56:02.767214",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.245
+      }
+    ]
+  },
+  "ALPN": {
+    "first_seen": "2026-04-28T21:51:40.287281",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 87.0,
+    "first_price": 64.97,
+    "last_seen": "2026-05-05T09:56:02.767216",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:51:40.287281",
+        "tier": "HIGH_CONVICTION",
+        "score": 87.0,
+        "price": 64.97
+      },
+      {
+        "date": "2026-04-29T15:04:07.014101",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 64.97
+      },
+      {
+        "date": "2026-04-30T15:13:29.684120",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 64.97
+      },
+      {
+        "date": "2026-05-01T18:07:31.371704",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 64.97
+      },
+      {
+        "date": "2026-05-05T09:56:02.767216",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 64.97
+      }
+    ]
+  },
+  "ALVO": {
+    "first_seen": "2026-04-28T21:51:45.986076",
+    "first_tier": "WATCH",
+    "first_score": 81.5,
+    "first_price": 3.52,
+    "last_seen": "2026-05-05T09:56:02.767219",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:51:45.986076",
+        "tier": "WATCH",
+        "score": 81.5,
+        "price": 3.52
+      },
+      {
+        "date": "2026-04-29T15:04:12.374059",
+        "tier": "WATCH",
+        "score": 79.5,
+        "price": 3.3
+      },
+      {
+        "date": "2026-04-30T15:13:35.103529",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 3.34
+      },
+      {
+        "date": "2026-05-01T18:07:31.371706",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 3.46
+      },
+      {
+        "date": "2026-05-05T09:56:02.767219",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 3.5552
+      }
+    ]
+  },
+  "AMPH": {
+    "first_seen": "2026-04-28T21:52:12.896867",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 85.5,
+    "first_price": 21.82,
+    "last_seen": "2026-05-05T09:56:02.767221",
+    "scan_count": 5,
+    "tier_history": [
+      {
+        "date": "2026-04-28T21:52:12.896867",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 85.5,
+        "price": 21.82
+      },
+      {
+        "date": "2026-04-29T15:04:33.264608",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.63
+      },
+      {
+        "date": "2026-04-30T15:13:55.979409",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.96
+      },
+      {
+        "date": "2026-05-01T18:07:31.371709",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.88
+      },
+      {
+        "date": "2026-05-05T09:56:02.767221",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 23.0029
+      }
+    ]
+  },
+  "AMRN": {
+    "first_seen": "2026-04-30T15:14:05.119753",
+    "first_tier": "WATCH",
+    "first_score": 75.5,
+    "first_price": 13.93,
+    "last_seen": "2026-05-05T09:56:02.767229",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:14:05.119753",
+        "tier": "WATCH",
+        "score": 75.5,
+        "price": 13.93
+      },
+      {
+        "date": "2026-05-01T18:07:31.371711",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 78.5,
+        "price": 14.07
+      },
+      {
+        "date": "2026-05-05T09:56:02.767229",
+        "tier": "WATCH",
+        "score": 71.5,
+        "price": 14.48
+      }
+    ]
+  },
+  "ANAB": {
+    "first_seen": "2026-04-30T15:14:21.170913",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 65.73,
+    "last_seen": "2026-05-05T09:56:02.767231",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:14:21.170913",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 65.73
+      },
+      {
+        "date": "2026-05-01T18:07:31.371713",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 66.76
+      },
+      {
+        "date": "2026-05-05T09:56:02.767231",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 70.27
+      }
+    ]
+  },
+  "ANIK": {
+    "first_seen": "2026-04-30T15:14:39.516873",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 12.45,
+    "last_seen": "2026-04-30T15:14:39.516873",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:14:39.516873",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 12.45
+      }
+    ]
+  },
+  "ANIP": {
+    "first_seen": "2026-04-30T15:14:45.932568",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 79.45,
+    "last_seen": "2026-05-05T09:56:02.767234",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:14:45.932568",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 79.45
+      },
+      {
+        "date": "2026-05-01T18:07:31.371716",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 80.39
+      },
+      {
+        "date": "2026-05-05T09:56:02.767234",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 83.52
+      }
+    ]
+  },
+  "ANNX": {
+    "first_seen": "2026-04-30T15:14:53.180548",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 5.87,
+    "last_seen": "2026-05-05T09:56:02.767236",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:14:53.180548",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 5.87
+      },
+      {
+        "date": "2026-05-01T18:07:31.371718",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 5.75
+      },
+      {
+        "date": "2026-05-05T09:56:02.767236",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 5.78
+      }
+    ]
+  },
+  "APLS": {
+    "first_seen": "2026-04-30T15:15:02.713960",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 40.95,
+    "last_seen": "2026-05-05T09:56:02.767239",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:15:02.713960",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 40.95
+      },
+      {
+        "date": "2026-05-01T18:07:31.371721",
+        "tier": "HIGH_CONVICTION",
+        "score": 98.7,
+        "price": 40.96
+      },
+      {
+        "date": "2026-05-05T09:56:02.767239",
+        "tier": "HIGH_CONVICTION",
+        "score": 97.7,
+        "price": 40.9429
+      }
+    ]
+  },
+  "ARCT": {
+    "first_seen": "2026-04-30T15:15:23.342719",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 8.62,
+    "last_seen": "2026-05-05T09:56:02.767241",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:15:23.342719",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.62
+      },
+      {
+        "date": "2026-05-01T18:07:31.371724",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.63
+      },
+      {
+        "date": "2026-05-05T09:56:02.767241",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.6934
+      }
+    ]
+  },
+  "ARDX": {
+    "first_seen": "2026-04-30T15:15:31.534374",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 6.33,
+    "last_seen": "2026-05-05T09:56:02.767243",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:15:31.534374",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 6.33
+      },
+      {
+        "date": "2026-05-01T18:07:31.371726",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 6.88
+      },
+      {
+        "date": "2026-05-05T09:56:02.767243",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.355
+      }
+    ]
+  },
+  "ARQT": {
+    "first_seen": "2026-04-30T15:15:44.229014",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 23.22,
+    "last_seen": "2026-05-05T09:56:02.767246",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:15:44.229014",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 23.22
+      },
+      {
+        "date": "2026-05-01T18:07:31.371728",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 23.35
+      },
+      {
+        "date": "2026-05-05T09:56:02.767246",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 23.671
+      }
+    ]
+  },
+  "ARVN": {
+    "first_seen": "2026-04-30T15:15:51.878112",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 9.9,
+    "last_seen": "2026-05-05T09:56:02.767248",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:15:51.878112",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.9
+      },
+      {
+        "date": "2026-05-01T18:07:31.371730",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 10.51
+      },
+      {
+        "date": "2026-05-05T09:56:02.767248",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 10.5333
+      }
+    ]
+  },
+  "ARWR": {
+    "first_seen": "2026-04-30T15:16:00.617749",
+    "first_tier": "WATCH",
+    "first_score": 75.4,
+    "first_price": 73.48,
+    "last_seen": "2026-04-30T15:16:00.617749",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:16:00.617749",
+        "tier": "WATCH",
+        "score": 75.4,
+        "price": 73.48
+      }
+    ]
+  },
+  "ASMB": {
+    "first_seen": "2026-04-30T15:16:09.177253",
+    "first_tier": "WATCH",
+    "first_score": 70.5,
+    "first_price": 26.95,
+    "last_seen": "2026-04-30T15:16:09.177253",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:16:09.177253",
+        "tier": "WATCH",
+        "score": 70.5,
+        "price": 26.95
+      }
+    ]
+  },
+  "ATRC": {
+    "first_seen": "2026-04-30T15:16:34.213321",
+    "first_tier": "WATCH",
+    "first_score": 73.5,
+    "first_price": 28.11,
+    "last_seen": "2026-05-05T09:56:02.767252",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:16:34.213321",
+        "tier": "WATCH",
+        "score": 73.5,
+        "price": 28.11
+      },
+      {
+        "date": "2026-05-01T18:07:31.371734",
+        "tier": "WATCH",
+        "score": 75.5,
+        "price": 29.02
+      },
+      {
+        "date": "2026-05-05T09:56:02.767252",
+        "tier": "WATCH",
+        "score": 73.5,
+        "price": 28.5381
+      }
+    ]
+  },
+  "AUPH": {
+    "first_seen": "2026-04-30T15:16:48.403600",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 15.385,
+    "last_seen": "2026-05-05T09:56:02.767254",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:16:48.403600",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 15.385
+      },
+      {
+        "date": "2026-05-01T18:07:31.371736",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 15.35
+      },
+      {
+        "date": "2026-05-05T09:56:02.767254",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 15.8887
+      }
+    ]
+  },
+  "AURA": {
+    "first_seen": "2026-04-30T15:16:57.688835",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 7.05,
+    "last_seen": "2026-05-05T09:56:02.767258",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:16:57.688835",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 7.05
+      },
+      {
+        "date": "2026-05-01T18:07:31.371738",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.01
+      },
+      {
+        "date": "2026-05-05T09:56:02.767258",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.12
+      }
+    ]
+  },
+  "AXSM": {
+    "first_seen": "2026-04-30T15:17:33.241887",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 207.75,
+    "last_seen": "2026-05-05T09:56:02.767264",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:17:33.241887",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 207.75
+      },
+      {
+        "date": "2026-05-01T18:07:31.371741",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 206.53
+      },
+      {
+        "date": "2026-05-05T09:56:02.767264",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 228.96
+      }
+    ]
+  },
+  "BBIO": {
+    "first_seen": "2026-04-30T15:17:42.000702",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 71.11,
+    "last_seen": "2026-05-05T09:56:02.767267",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:17:42.000702",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 71.11
+      },
+      {
+        "date": "2026-05-01T18:07:31.371743",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 68.56
+      },
+      {
+        "date": "2026-05-05T09:56:02.767267",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 68.51
+      }
+    ]
+  },
+  "BCYC": {
+    "first_seen": "2026-04-30T15:18:03.433398",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.72,
+    "last_seen": "2026-05-05T09:56:02.767269",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:18:03.433398",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.72
+      },
+      {
+        "date": "2026-05-01T18:07:31.371745",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.8
+      },
+      {
+        "date": "2026-05-05T09:56:02.767269",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.975
+      }
+    ]
+  },
+  "BEAM": {
+    "first_seen": "2026-04-30T15:18:11.870673",
+    "first_tier": "WATCH",
+    "first_score": 72.9,
+    "first_price": 30.33,
+    "last_seen": "2026-04-30T15:18:11.870673",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:18:11.870673",
+        "tier": "WATCH",
+        "score": 72.9,
+        "price": 30.33
+      }
+    ]
+  },
+  "BHVN": {
+    "first_seen": "2026-04-30T15:18:20.265771",
+    "first_tier": "WATCH",
+    "first_score": 79.3,
+    "first_price": 9.59,
+    "last_seen": "2026-05-05T09:56:02.767271",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:18:20.265771",
+        "tier": "WATCH",
+        "score": 79.3,
+        "price": 9.59
+      },
+      {
+        "date": "2026-05-01T18:07:31.371748",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 9.63
+      },
+      {
+        "date": "2026-05-05T09:56:02.767271",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 9.76
+      }
+    ]
+  },
+  "BMRN": {
+    "first_seen": "2026-04-30T15:18:38.931403",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 53.91,
+    "last_seen": "2026-05-05T09:56:02.767274",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:18:38.931403",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 53.91
+      },
+      {
+        "date": "2026-05-01T18:07:31.371750",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 54.06
+      },
+      {
+        "date": "2026-05-05T09:56:02.767274",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 54.73
+      }
+    ]
+  },
+  "BPMC": {
+    "first_seen": "2026-04-30T15:18:52.293500",
+    "first_tier": "WATCH",
+    "first_score": 76.8,
+    "first_price": 129.46,
+    "last_seen": "2026-05-05T09:56:02.767276",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:18:52.293500",
+        "tier": "WATCH",
+        "score": 76.8,
+        "price": 129.46
+      },
+      {
+        "date": "2026-05-01T18:07:31.371753",
+        "tier": "WATCH",
+        "score": 76.8,
+        "price": 129.46
+      },
+      {
+        "date": "2026-05-05T09:56:02.767276",
+        "tier": "WATCH",
+        "score": 76.8,
+        "price": 129.46
+      }
+    ]
+  },
+  "CABA": {
+    "first_seen": "2026-04-30T15:19:15.294312",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 2.99,
+    "last_seen": "2026-05-05T09:56:02.767279",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:19:15.294312",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.99
+      },
+      {
+        "date": "2026-05-01T18:07:31.371756",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.94
+      },
+      {
+        "date": "2026-05-05T09:56:02.767279",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.99
+      }
+    ]
+  },
+  "CAPR": {
+    "first_seen": "2026-04-30T15:19:34.857573",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 33.58,
+    "last_seen": "2026-05-05T09:56:02.767282",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:19:34.857573",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.58
+      },
+      {
+        "date": "2026-05-01T18:07:31.371758",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 30.91
+      },
+      {
+        "date": "2026-05-05T09:56:02.767282",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 33.6056
+      }
+    ]
+  },
+  "CCCC": {
+    "first_seen": "2026-04-30T15:19:53.237693",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 2.83,
+    "last_seen": "2026-05-05T09:56:02.767284",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:19:53.237693",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.83
+      },
+      {
+        "date": "2026-05-01T18:07:31.371760",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.92
+      },
+      {
+        "date": "2026-05-05T09:56:02.767284",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.975
+      }
+    ]
+  },
+  "CELC": {
+    "first_seen": "2026-04-30T15:20:03.697315",
+    "first_tier": "WATCH",
+    "first_score": 76.4,
+    "first_price": 121.35,
+    "last_seen": "2026-04-30T15:20:03.697315",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:03.697315",
+        "tier": "WATCH",
+        "score": 76.4,
+        "price": 121.35
+      }
+    ]
+  },
+  "CGEM": {
+    "first_seen": "2026-04-30T15:20:17.350974",
+    "first_tier": "WATCH",
+    "first_score": 76.6,
+    "first_price": 13.05,
+    "last_seen": "2026-04-30T15:20:17.350974",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:17.350974",
+        "tier": "WATCH",
+        "score": 76.6,
+        "price": 13.05
+      }
+    ]
+  },
+  "CGEN": {
+    "first_seen": "2026-04-30T15:20:22.590315",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 2.66,
+    "last_seen": "2026-05-05T09:56:02.767287",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:22.590315",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.66
+      },
+      {
+        "date": "2026-05-01T18:07:31.371763",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.71
+      },
+      {
+        "date": "2026-05-05T09:56:02.767287",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.79
+      }
+    ]
+  },
+  "CGON": {
+    "first_seen": "2026-04-30T15:20:40.355144",
+    "first_tier": "WATCH",
+    "first_score": 77.2,
+    "first_price": 66.74,
+    "last_seen": "2026-05-05T09:56:02.767289",
+    "scan_count": 2,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:40.355144",
+        "tier": "WATCH",
+        "score": 77.2,
+        "price": 66.74
+      },
+      {
+        "date": "2026-05-05T09:56:02.767289",
+        "tier": "WATCH",
+        "score": 71.2,
+        "price": 68.745
+      }
+    ]
+  },
+  "CHRS": {
+    "first_seen": "2026-04-30T15:20:48.850970",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 1.775,
+    "last_seen": "2026-05-05T09:56:02.767291",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:48.850970",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.775
+      },
+      {
+        "date": "2026-05-01T18:07:31.371766",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 1.8
+      },
+      {
+        "date": "2026-05-05T09:56:02.767291",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 1.7752
+      }
+    ]
+  },
+  "CLDX": {
+    "first_seen": "2026-04-30T15:20:56.850948",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 32.88,
+    "last_seen": "2026-05-05T09:56:02.767294",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:20:56.850948",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 32.88
+      },
+      {
+        "date": "2026-05-01T18:07:31.371768",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 32.31
+      },
+      {
+        "date": "2026-05-05T09:56:02.767294",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 33.14
+      }
+    ]
+  },
+  "CLLS": {
+    "first_seen": "2026-04-30T15:21:04.526763",
+    "first_tier": "WATCH",
+    "first_score": 77.0,
+    "first_price": 3.9,
+    "last_seen": "2026-05-05T09:56:02.767296",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:04.526763",
+        "tier": "WATCH",
+        "score": 77.0,
+        "price": 3.9
+      },
+      {
+        "date": "2026-05-01T18:07:31.371777",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.95
+      },
+      {
+        "date": "2026-05-05T09:56:02.767296",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.7699
+      }
+    ]
+  },
+  "CMPS": {
+    "first_seen": "2026-04-30T15:21:21.175590",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 9.06,
+    "last_seen": "2026-05-05T09:56:02.767298",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:21.175590",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.06
+      },
+      {
+        "date": "2026-05-01T18:07:31.371780",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.01
+      },
+      {
+        "date": "2026-05-05T09:56:02.767298",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.42
+      }
+    ]
+  },
+  "CNMD": {
+    "first_seen": "2026-04-30T15:21:29.087481",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 36.66,
+    "last_seen": "2026-05-05T09:56:02.767300",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:29.087481",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 36.66
+      },
+      {
+        "date": "2026-05-01T18:07:31.371782",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 36.8
+      },
+      {
+        "date": "2026-05-05T09:56:02.767300",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 36.05
+      }
+    ]
+  },
+  "CNTA": {
+    "first_seen": "2026-04-30T15:21:37.302266",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 95.8,
+    "first_price": 39.42,
+    "last_seen": "2026-04-30T15:21:37.302266",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:37.302266",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 95.8,
+        "price": 39.42
+      }
+    ]
+  },
+  "COLL": {
+    "first_seen": "2026-04-30T15:21:52.714880",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 33.73,
+    "last_seen": "2026-05-05T09:56:02.767303",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:52.714880",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.73
+      },
+      {
+        "date": "2026-05-01T18:07:31.371784",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 34.32
+      },
+      {
+        "date": "2026-05-05T09:56:02.767303",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 35.015
+      }
+    ]
+  },
+  "CORT": {
+    "first_seen": "2026-04-30T15:21:59.858549",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 46.52,
+    "last_seen": "2026-05-05T09:56:02.767305",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:21:59.858549",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 46.52
+      },
+      {
+        "date": "2026-05-01T18:07:31.371786",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 51.42
+      },
+      {
+        "date": "2026-05-05T09:56:02.767305",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 51.99
+      }
+    ]
+  },
+  "CRBU": {
+    "first_seen": "2026-04-30T15:22:18.374319",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 1.88,
+    "last_seen": "2026-05-05T09:56:02.767308",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:18.374319",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.88
+      },
+      {
+        "date": "2026-05-01T18:07:31.371789",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 1.87
+      },
+      {
+        "date": "2026-05-05T09:56:02.767308",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 1.9241
+      }
+    ]
+  },
+  "CRNX": {
+    "first_seen": "2026-04-30T15:22:27.070154",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 38.78,
+    "last_seen": "2026-05-05T09:56:02.767310",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:27.070154",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 38.78
+      },
+      {
+        "date": "2026-05-01T18:07:31.371791",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 39.02
+      },
+      {
+        "date": "2026-05-05T09:56:02.767310",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 41.93
+      }
+    ]
+  },
+  "CRSP": {
+    "first_seen": "2026-04-30T15:22:35.379016",
+    "first_tier": "WATCH",
+    "first_score": 71.9,
+    "first_price": 52.34,
+    "last_seen": "2026-05-05T09:56:02.767312",
+    "scan_count": 2,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:35.379016",
+        "tier": "WATCH",
+        "score": 71.9,
+        "price": 52.34
+      },
+      {
+        "date": "2026-05-05T09:56:02.767312",
+        "tier": "WATCH",
+        "score": 73.4,
+        "price": 50.9973
+      }
+    ]
+  },
+  "CRVS": {
+    "first_seen": "2026-04-30T15:22:42.333100",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 15.19,
+    "last_seen": "2026-05-05T09:56:02.767314",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:42.333100",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 15.19
+      },
+      {
+        "date": "2026-05-01T18:07:31.371794",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 15.46
+      },
+      {
+        "date": "2026-05-05T09:56:02.767314",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 15.89
+      }
+    ]
+  },
+  "CTMX": {
+    "first_seen": "2026-04-30T15:22:53.054381",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.22,
+    "last_seen": "2026-05-05T09:56:02.767316",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:53.054381",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.22
+      },
+      {
+        "date": "2026-05-01T18:07:31.371796",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.18
+      },
+      {
+        "date": "2026-05-05T09:56:02.767316",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.205
+      }
+    ]
+  },
+  "CVAC": {
+    "first_seen": "2026-04-30T15:22:59.812863",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.66,
+    "last_seen": "2026-05-05T09:56:02.767318",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:22:59.812863",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.66
+      },
+      {
+        "date": "2026-05-01T18:07:31.371798",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.66
+      },
+      {
+        "date": "2026-05-05T09:56:02.767318",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.66
+      }
+    ]
+  },
+  "CYTK": {
+    "first_seen": "2026-04-30T15:23:15.860208",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 63.97,
+    "last_seen": "2026-05-05T09:56:02.767321",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:23:15.860208",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 63.97
+      },
+      {
+        "date": "2026-05-01T18:07:31.371801",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 63.35
+      },
+      {
+        "date": "2026-05-05T09:56:02.767321",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 78.93
+      }
+    ]
+  },
+  "DAWN": {
+    "first_seen": "2026-04-30T15:23:27.962065",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 21.53,
+    "last_seen": "2026-05-05T09:56:02.767324",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:23:27.962065",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 21.53
+      },
+      {
+        "date": "2026-05-01T18:07:31.371803",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 21.53
+      },
+      {
+        "date": "2026-05-05T09:56:02.767324",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 21.53
+      }
+    ]
+  },
+  "DCPH": {
+    "first_seen": "2026-04-30T15:23:34.071528",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 78.0,
+    "first_price": 25.59,
+    "last_seen": "2026-05-05T09:56:02.767326",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:23:34.071528",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 78.0,
+        "price": 25.59
+      },
+      {
+        "date": "2026-05-01T18:07:31.371805",
+        "tier": "WATCH",
+        "score": 70.0,
+        "price": 25.59
+      },
+      {
+        "date": "2026-05-05T09:56:02.767326",
+        "tier": "WATCH",
+        "score": 70.0,
+        "price": 25.59
+      }
+    ]
+  },
+  "DMAC": {
+    "first_seen": "2026-04-30T15:23:53.327184",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 6.05,
+    "last_seen": "2026-05-05T09:56:02.767329",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:23:53.327184",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 6.05
+      },
+      {
+        "date": "2026-05-01T18:07:31.371808",
+        "tier": "WATCH",
+        "score": 70.0,
+        "price": 6.18
+      },
+      {
+        "date": "2026-05-05T09:56:02.767329",
+        "tier": "WATCH",
+        "score": 72.0,
+        "price": 6.29
+      }
+    ]
+  },
+  "DNLI": {
+    "first_seen": "2026-04-30T15:24:02.751426",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 18.72,
+    "last_seen": "2026-05-05T09:56:02.767331",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:24:02.751426",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 18.72
+      },
+      {
+        "date": "2026-05-01T18:07:31.371810",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 18.3
+      },
+      {
+        "date": "2026-05-05T09:56:02.767331",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 18.886
+      }
+    ]
+  },
+  "EDIT": {
+    "first_seen": "2026-04-30T15:24:24.421359",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3,
+    "last_seen": "2026-05-05T09:56:02.767334",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:24:24.421359",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3
+      },
+      {
+        "date": "2026-05-01T18:07:31.371813",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.9
+      },
+      {
+        "date": "2026-05-05T09:56:02.767334",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.015
+      }
+    ]
+  },
+  "EOLS": {
+    "first_seen": "2026-04-30T15:24:39.506237",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 5.39,
+    "last_seen": "2026-05-05T09:56:02.767337",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:24:39.506237",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 5.39
+      },
+      {
+        "date": "2026-05-01T18:07:31.371815",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 5.33
+      },
+      {
+        "date": "2026-05-05T09:56:02.767337",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 6.5
+      }
+    ]
+  },
+  "ESPR": {
+    "first_seen": "2026-04-30T15:24:51.135788",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 2,
+    "last_seen": "2026-05-05T09:56:02.767339",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:24:51.135788",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 2
+      },
+      {
+        "date": "2026-05-01T18:07:31.371818",
+        "tier": "HIGH_CONVICTION",
+        "score": 96.3,
+        "price": 3.11
+      },
+      {
+        "date": "2026-05-05T09:56:02.767339",
+        "tier": "HIGH_CONVICTION",
+        "score": 96.3,
+        "price": 3.1101
+      }
+    ]
+  },
+  "ETNB": {
+    "first_seen": "2026-04-30T15:25:00.600139",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 14.84,
+    "last_seen": "2026-04-30T15:25:00.600139",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:00.600139",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 14.84
+      }
+    ]
+  },
+  "EXEL": {
+    "first_seen": "2026-04-30T15:25:13.827799",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 44.46,
+    "last_seen": "2026-05-05T09:56:02.767341",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:13.827799",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 44.46
+      },
+      {
+        "date": "2026-05-01T18:07:31.371820",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 43.68
+      },
+      {
+        "date": "2026-05-05T09:56:02.767341",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 45.192
+      }
+    ]
+  },
+  "EYPT": {
+    "first_seen": "2026-04-30T15:25:21.558133",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 13.2,
+    "last_seen": "2026-05-05T09:56:02.767344",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:21.558133",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 13.2
+      },
+      {
+        "date": "2026-05-01T18:07:31.371826",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 13.34
+      },
+      {
+        "date": "2026-05-05T09:56:02.767344",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 13.7166
+      }
+    ]
+  },
+  "FDMT": {
+    "first_seen": "2026-04-30T15:25:35.520612",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 8.87,
+    "last_seen": "2026-05-05T09:56:02.767346",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:35.520612",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.87
+      },
+      {
+        "date": "2026-05-01T18:07:31.371828",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.09
+      },
+      {
+        "date": "2026-05-05T09:56:02.767346",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.7114
+      }
+    ]
+  },
+  "FHTX": {
+    "first_seen": "2026-04-30T15:25:42.928104",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.75,
+    "last_seen": "2026-05-05T09:56:02.767349",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:42.928104",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.75
+      },
+      {
+        "date": "2026-05-01T18:07:31.371830",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.76
+      },
+      {
+        "date": "2026-05-05T09:56:02.767349",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.82
+      }
+    ]
+  },
+  "FLGT": {
+    "first_seen": "2026-04-30T15:25:54.340093",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 15.19,
+    "last_seen": "2026-05-05T09:56:02.767351",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:25:54.340093",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 15.19
+      },
+      {
+        "date": "2026-05-01T18:07:31.371832",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 14.13
+      },
+      {
+        "date": "2026-05-05T09:56:02.767351",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 14.63
+      }
+    ]
+  },
+  "FOLD": {
+    "first_seen": "2026-04-30T15:26:02.717592",
+    "first_tier": "WATCH",
+    "first_score": 76.0,
+    "first_price": 14.49,
+    "last_seen": "2026-05-05T09:56:02.767353",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:26:02.717592",
+        "tier": "WATCH",
+        "score": 76.0,
+        "price": 14.49
+      },
+      {
+        "date": "2026-05-01T18:07:31.371834",
+        "tier": "WATCH",
+        "score": 76.0,
+        "price": 14.49
+      },
+      {
+        "date": "2026-05-05T09:56:02.767353",
+        "tier": "WATCH",
+        "score": 73.0,
+        "price": 14.49
+      }
+    ]
+  },
+  "FULC": {
+    "first_seen": "2026-04-30T15:26:12.362590",
+    "first_tier": "WATCH",
+    "first_score": 80,
+    "first_price": 7.13,
+    "last_seen": "2026-05-05T09:56:02.767355",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:26:12.362590",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 7.13
+      },
+      {
+        "date": "2026-05-01T18:07:31.371837",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.36
+      },
+      {
+        "date": "2026-05-05T09:56:02.767355",
+        "tier": "WATCH",
+        "score": 78.4,
+        "price": 7.21
+      }
+    ]
+  },
+  "GERN": {
+    "first_seen": "2026-04-30T15:26:27.138902",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 1.54,
+    "last_seen": "2026-05-05T09:56:02.767358",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:26:27.138902",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.54
+      },
+      {
+        "date": "2026-05-01T18:07:31.371842",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.58
+      },
+      {
+        "date": "2026-05-05T09:56:02.767358",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.6047
+      }
+    ]
+  },
+  "GLPG": {
+    "first_seen": "2026-04-30T15:26:33.157642",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 27.83,
+    "last_seen": "2026-05-05T09:56:02.767360",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:26:33.157642",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 27.83
+      },
+      {
+        "date": "2026-05-01T18:07:31.371844",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28
+      },
+      {
+        "date": "2026-05-05T09:56:02.767360",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28.38
+      }
+    ]
+  },
+  "GPCR": {
+    "first_seen": "2026-04-30T15:26:55.101999",
+    "first_tier": "WATCH",
+    "first_score": 76.7,
+    "first_price": 41.45,
+    "last_seen": "2026-04-30T15:26:55.101999",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:26:55.101999",
+        "tier": "WATCH",
+        "score": 76.7,
+        "price": 41.45
+      }
+    ]
+  },
+  "GTHX": {
+    "first_seen": "2026-04-30T15:27:16.507785",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 7.16,
+    "last_seen": "2026-05-05T09:56:02.767363",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:27:16.507785",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 7.16
+      },
+      {
+        "date": "2026-05-01T18:07:31.371847",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.16
+      },
+      {
+        "date": "2026-05-05T09:56:02.767363",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.16
+      }
+    ]
+  },
+  "HALO": {
+    "first_seen": "2026-04-30T15:27:24.968900",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 63.66,
+    "last_seen": "2026-05-05T09:56:02.767366",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:27:24.968900",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 63.66
+      },
+      {
+        "date": "2026-05-01T18:07:31.371850",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 63.96
+      },
+      {
+        "date": "2026-05-05T09:56:02.767366",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 65.6582
+      }
+    ]
+  },
+  "HRMY": {
+    "first_seen": "2026-04-30T15:27:59.423488",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 31.26,
+    "last_seen": "2026-05-05T09:56:02.767368",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:27:59.423488",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 31.26
+      },
+      {
+        "date": "2026-05-01T18:07:31.371852",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 31.83
+      },
+      {
+        "date": "2026-05-05T09:56:02.767368",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 32.835
+      }
+    ]
+  },
+  "IDYA": {
+    "first_seen": "2026-04-30T15:28:11.984431",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 29.1,
+    "last_seen": "2026-05-05T09:56:02.767371",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:28:11.984431",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 29.1
+      },
+      {
+        "date": "2026-05-01T18:07:31.371855",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 28.19
+      },
+      {
+        "date": "2026-05-05T09:56:02.767371",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 28.9088
+      }
+    ]
+  },
+  "IMCR": {
+    "first_seen": "2026-04-30T15:28:23.130512",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 27.91,
+    "last_seen": "2026-05-05T09:56:02.767373",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:28:23.130512",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 27.91
+      },
+      {
+        "date": "2026-05-01T18:07:31.371857",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28.16
+      },
+      {
+        "date": "2026-05-05T09:56:02.767373",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 28.6
+      }
+    ]
+  },
+  "IMNM": {
+    "first_seen": "2026-04-30T15:28:34.666116",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 22.94,
+    "last_seen": "2026-05-05T09:56:02.767375",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:28:34.666116",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 22.94
+      },
+      {
+        "date": "2026-05-01T18:07:31.371859",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 22.73
+      },
+      {
+        "date": "2026-05-05T09:56:02.767375",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 23.165
+      }
+    ]
+  },
+  "IMVT": {
+    "first_seen": "2026-04-30T15:28:46.625875",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 27.145,
+    "last_seen": "2026-05-05T09:56:02.767378",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:28:46.625875",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 27.145
+      },
+      {
+        "date": "2026-05-01T18:07:31.371862",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 27.12
+      },
+      {
+        "date": "2026-05-05T09:56:02.767378",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 27.765
+      }
+    ]
+  },
+  "INBX": {
+    "first_seen": "2026-04-30T15:28:57.531489",
+    "first_tier": "WATCH",
+    "first_score": 77.0,
+    "first_price": 129.21,
+    "last_seen": "2026-04-30T15:28:57.531489",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:28:57.531489",
+        "tier": "WATCH",
+        "score": 77.0,
+        "price": 129.21
+      }
+    ]
+  },
+  "INZY": {
+    "first_seen": "2026-04-30T15:29:29.449725",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 81.3,
+    "first_price": 4,
+    "last_seen": "2026-05-05T09:56:02.767383",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:29:29.449725",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 81.3,
+        "price": 4
+      },
+      {
+        "date": "2026-05-01T18:07:31.371865",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 81.3,
+        "price": 4
+      },
+      {
+        "date": "2026-05-05T09:56:02.767383",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 81.3,
+        "price": 4
+      }
+    ]
+  },
+  "IONS": {
+    "first_seen": "2026-04-30T15:29:36.892796",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 74.76,
+    "last_seen": "2026-05-05T09:56:02.767386",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:29:36.892796",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 74.76
+      },
+      {
+        "date": "2026-05-01T18:07:31.371867",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 75.28
+      },
+      {
+        "date": "2026-05-05T09:56:02.767386",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 75.3423
+      }
+    ]
+  },
+  "IOVA": {
+    "first_seen": "2026-04-30T15:29:44.896576",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.36,
+    "last_seen": "2026-05-05T09:56:02.767388",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:29:44.896576",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.36
+      },
+      {
+        "date": "2026-05-01T18:07:31.371869",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.4
+      },
+      {
+        "date": "2026-05-05T09:56:02.767388",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.945
+      }
+    ]
+  },
+  "ITCI": {
+    "first_seen": "2026-04-30T15:29:50.500913",
+    "first_tier": "WATCH",
+    "first_score": 73.6,
+    "first_price": 131.87,
+    "last_seen": "2026-04-30T15:29:50.500913",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:29:50.500913",
+        "tier": "WATCH",
+        "score": 73.6,
+        "price": 131.87
+      }
+    ]
+  },
+  "JANX": {
+    "first_seen": "2026-04-30T15:29:57.627418",
+    "first_tier": "WATCH",
+    "first_score": 80,
+    "first_price": 14.37,
+    "last_seen": "2026-05-05T09:56:02.767391",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:29:57.627418",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 14.37
+      },
+      {
+        "date": "2026-05-01T18:07:31.371872",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 14.34
+      },
+      {
+        "date": "2026-05-05T09:56:02.767391",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 14.4669
+      }
+    ]
+  },
+  "JAZZ": {
+    "first_seen": "2026-04-30T15:30:07.242456",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 203.02,
+    "last_seen": "2026-05-05T09:56:02.767393",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:30:07.242456",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 203.02
+      },
+      {
+        "date": "2026-05-01T18:07:31.371874",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 202.72
+      },
+      {
+        "date": "2026-05-05T09:56:02.767393",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 209.8013
+      }
+    ]
+  },
+  "KMPH": {
+    "first_seen": "2026-04-30T15:30:27.642546",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 79.2,
+    "first_price": 5.81,
+    "last_seen": "2026-05-05T09:56:02.767396",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:30:27.642546",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.2,
+        "price": 5.81
+      },
+      {
+        "date": "2026-05-01T18:07:31.371876",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.2,
+        "price": 5.81
+      },
+      {
+        "date": "2026-05-05T09:56:02.767396",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.2,
+        "price": 5.81
+      }
+    ]
+  },
+  "KNSA": {
+    "first_seen": "2026-04-30T15:30:37.757029",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 53.78,
+    "last_seen": "2026-05-05T09:56:02.767398",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:30:37.757029",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 53.78
+      },
+      {
+        "date": "2026-05-01T18:07:31.371879",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 55.27
+      },
+      {
+        "date": "2026-05-05T09:56:02.767398",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 57.5565
+      }
+    ]
+  },
+  "KROS": {
+    "first_seen": "2026-04-30T15:30:48.802315",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 11.12,
+    "last_seen": "2026-05-05T09:56:02.767400",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:30:48.802315",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 11.12
+      },
+      {
+        "date": "2026-05-01T18:07:31.371881",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 11.49
+      },
+      {
+        "date": "2026-05-05T09:56:02.767400",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 11.6459
+      }
+    ]
+  },
+  "KRYS": {
+    "first_seen": "2026-04-30T15:30:56.974304",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 262.26,
+    "last_seen": "2026-05-05T09:56:02.767403",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:30:56.974304",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 262.26
+      },
+      {
+        "date": "2026-05-01T18:07:31.371883",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 266.04
+      },
+      {
+        "date": "2026-05-05T09:56:02.767403",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 295.09
+      }
+    ]
+  },
+  "KURA": {
+    "first_seen": "2026-04-30T15:31:04.546575",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 8.83,
+    "last_seen": "2026-05-05T09:56:02.767405",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:04.546575",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.83
+      },
+      {
+        "date": "2026-05-01T18:07:31.371888",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 8.77
+      },
+      {
+        "date": "2026-05-05T09:56:02.767405",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.2624
+      }
+    ]
+  },
+  "KYMR": {
+    "first_seen": "2026-04-30T15:31:11.949480",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 79.1,
+    "first_price": 81.07,
+    "last_seen": "2026-05-05T09:56:02.767407",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:11.949480",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.1,
+        "price": 81.07
+      },
+      {
+        "date": "2026-05-01T18:07:31.371885",
+        "tier": "WATCH",
+        "score": 71.1,
+        "price": 80.71
+      },
+      {
+        "date": "2026-05-05T09:56:02.767407",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 84.4911
+      }
+    ]
+  },
+  "LEGN": {
+    "first_seen": "2026-04-30T15:31:17.614157",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 23.52,
+    "last_seen": "2026-05-05T09:56:02.767410",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:17.614157",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 23.52
+      },
+      {
+        "date": "2026-05-01T18:07:31.371890",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 23.59
+      },
+      {
+        "date": "2026-05-05T09:56:02.767410",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 29.69
+      }
+    ]
+  },
+  "LENZ": {
+    "first_seen": "2026-04-30T15:31:27.254780",
+    "first_tier": "WATCH",
+    "first_score": 74.4,
+    "first_price": 8.98,
+    "last_seen": "2026-05-05T09:56:02.767412",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:27.254780",
+        "tier": "WATCH",
+        "score": 74.4,
+        "price": 8.98
+      },
+      {
+        "date": "2026-05-01T18:07:31.371892",
+        "tier": "WATCH",
+        "score": 74.4,
+        "price": 8.88
+      },
+      {
+        "date": "2026-05-05T09:56:02.767412",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 78.4,
+        "price": 9.23
+      }
+    ]
+  },
+  "LGND": {
+    "first_seen": "2026-04-30T15:31:35.513158",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 78.0,
+    "first_price": 229.45,
+    "last_seen": "2026-05-05T09:56:02.767414",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:35.513158",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 78.0,
+        "price": 229.45
+      },
+      {
+        "date": "2026-05-01T18:07:31.371894",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 78.0,
+        "price": 227.44
+      },
+      {
+        "date": "2026-05-05T09:56:02.767414",
+        "tier": "HIGH_CONVICTION",
+        "score": 90.5,
+        "price": 231.5288
+      }
+    ]
+  },
+  "LNTH": {
+    "first_seen": "2026-04-30T15:31:45.400307",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 84.62,
+    "last_seen": "2026-05-05T09:56:02.767416",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:31:45.400307",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 84.62
+      },
+      {
+        "date": "2026-05-01T18:07:31.371897",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 85.5
+      },
+      {
+        "date": "2026-05-05T09:56:02.767416",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 86.59
+      }
+    ]
+  },
+  "LYEL": {
+    "first_seen": "2026-04-30T15:32:02.704904",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 19.73,
+    "last_seen": "2026-05-05T09:56:02.767419",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:02.704904",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 19.73
+      },
+      {
+        "date": "2026-05-01T18:07:31.371899",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 20.83
+      },
+      {
+        "date": "2026-05-05T09:56:02.767419",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 20.86
+      }
+    ]
+  },
+  "MDGL": {
+    "first_seen": "2026-04-30T15:32:13.290207",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 517.39,
+    "last_seen": "2026-05-05T09:56:02.767421",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:13.290207",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 517.39
+      },
+      {
+        "date": "2026-05-01T18:07:31.371902",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 513.72
+      },
+      {
+        "date": "2026-05-05T09:56:02.767421",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 510.54
+      }
+    ]
+  },
+  "MGNX": {
+    "first_seen": "2026-04-30T15:32:21.098512",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.08,
+    "last_seen": "2026-05-05T09:56:02.767424",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:21.098512",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.08
+      },
+      {
+        "date": "2026-05-01T18:07:31.371904",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.13
+      },
+      {
+        "date": "2026-05-05T09:56:02.767424",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.1975
+      }
+    ]
+  },
+  "MGTX": {
+    "first_seen": "2026-04-30T15:32:28.433745",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 9.22,
+    "last_seen": "2026-05-05T09:56:02.767426",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:28.433745",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 9.22
+      },
+      {
+        "date": "2026-05-01T18:07:31.371906",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 9.41
+      },
+      {
+        "date": "2026-05-05T09:56:02.767426",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 9.89
+      }
+    ]
+  },
+  "MIRM": {
+    "first_seen": "2026-04-30T15:32:38.159010",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80.9,
+    "first_price": 97.31,
+    "last_seen": "2026-05-05T09:56:02.767428",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:38.159010",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80.9,
+        "price": 97.31
+      },
+      {
+        "date": "2026-05-01T18:07:31.371908",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80.9,
+        "price": 96.53
+      },
+      {
+        "date": "2026-05-05T09:56:02.767428",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.4,
+        "price": 108.8152
+      }
+    ]
+  },
+  "MNKD": {
+    "first_seen": "2026-04-30T15:32:47.095903",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 2.83,
+    "last_seen": "2026-05-05T09:56:02.767431",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:32:47.095903",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 2.83
+      },
+      {
+        "date": "2026-05-01T18:07:31.371910",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 2.84
+      },
+      {
+        "date": "2026-05-05T09:56:02.767431",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 2.8552
+      }
+    ]
+  },
+  "MRTX": {
+    "first_seen": "2026-04-30T15:33:13.383632",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 79.0,
+    "first_price": 58.7,
+    "last_seen": "2026-05-05T09:56:02.767434",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:33:13.383632",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.0,
+        "price": 58.7
+      },
+      {
+        "date": "2026-05-01T18:07:31.371914",
+        "tier": "WATCH",
+        "score": 71.0,
+        "price": 58.7
+      },
+      {
+        "date": "2026-05-05T09:56:02.767434",
+        "tier": "WATCH",
+        "score": 71.0,
+        "price": 58.7
+      }
+    ]
+  },
+  "NBIX": {
+    "first_seen": "2026-04-30T15:33:43.415058",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 131.67,
+    "last_seen": "2026-05-05T09:56:02.767438",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:33:43.415058",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 131.67
+      },
+      {
+        "date": "2026-05-01T18:07:31.371917",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 131.78
+      },
+      {
+        "date": "2026-05-05T09:56:02.767438",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 135.1942
+      }
+    ]
+  },
+  "NKTR": {
+    "first_seen": "2026-04-30T15:34:03.801190",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 85.04,
+    "last_seen": "2026-05-05T09:56:02.767442",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:34:03.801190",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 85.04
+      },
+      {
+        "date": "2026-05-01T18:07:31.371920",
+        "tier": "WATCH",
+        "score": 72.0,
+        "price": 86.46
+      },
+      {
+        "date": "2026-05-05T09:56:02.767442",
+        "tier": "WATCH",
+        "score": 72.0,
+        "price": 85.9113
+      }
+    ]
+  },
+  "NMRA": {
+    "first_seen": "2026-04-30T15:34:11.540446",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 2.47,
+    "last_seen": "2026-05-05T09:56:02.767440",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:34:11.540446",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.47
+      },
+      {
+        "date": "2026-05-01T18:07:31.371922",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.44
+      },
+      {
+        "date": "2026-05-05T09:56:02.767440",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.35
+      }
+    ]
+  },
+  "NRIX": {
+    "first_seen": "2026-04-30T15:34:19.204632",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 16.7,
+    "last_seen": "2026-05-05T09:56:02.767445",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:34:19.204632",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 16.7
+      },
+      {
+        "date": "2026-05-01T18:07:31.371925",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 16.81
+      },
+      {
+        "date": "2026-05-05T09:56:02.767445",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 17.1131
+      }
+    ]
+  },
+  "NTLA": {
+    "first_seen": "2026-04-30T15:34:30.904770",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 13.48,
+    "last_seen": "2026-05-05T09:56:02.767447",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:34:30.904770",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 13.48
+      },
+      {
+        "date": "2026-05-01T18:07:31.371927",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 13.26
+      },
+      {
+        "date": "2026-05-05T09:56:02.767447",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 13.61
+      }
+    ]
+  },
+  "NVAX": {
+    "first_seen": "2026-04-30T15:34:49.378904",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 7.925,
+    "last_seen": "2026-05-05T09:56:02.767452",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:34:49.378904",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 7.925
+      },
+      {
+        "date": "2026-05-01T18:07:31.371932",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.04
+      },
+      {
+        "date": "2026-05-05T09:56:02.767452",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.045
+      }
+    ]
+  },
+  "OBIO": {
+    "first_seen": "2026-04-30T15:35:02.163895",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 3.99,
+    "last_seen": "2026-05-05T09:56:02.767455",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:35:02.163895",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 3.99
+      },
+      {
+        "date": "2026-05-01T18:07:31.371935",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 3.97
+      },
+      {
+        "date": "2026-05-05T09:56:02.767455",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 4.05
+      }
+    ]
+  },
+  "OCUL": {
+    "first_seen": "2026-04-30T15:35:18.276545",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 9.37,
+    "last_seen": "2026-05-05T09:56:02.767457",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:35:18.276545",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.37
+      },
+      {
+        "date": "2026-05-01T18:07:31.371937",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.43
+      },
+      {
+        "date": "2026-05-05T09:56:02.767457",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.37
+      }
+    ]
+  },
+  "OMER": {
+    "first_seen": "2026-04-30T15:35:25.854293",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 14.6,
+    "last_seen": "2026-05-05T09:56:02.767459",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:35:25.854293",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 14.6
+      },
+      {
+        "date": "2026-05-01T18:07:31.371939",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 15.06
+      },
+      {
+        "date": "2026-05-05T09:56:02.767459",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 14.8199
+      }
+    ]
+  },
+  "ORIC": {
+    "first_seen": "2026-04-30T15:35:45.072484",
+    "first_tier": "WATCH",
+    "first_score": 80,
+    "first_price": 9.88,
+    "last_seen": "2026-05-05T09:56:02.767462",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:35:45.072484",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 9.88
+      },
+      {
+        "date": "2026-05-01T18:07:31.371942",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 9.77
+      },
+      {
+        "date": "2026-05-05T09:56:02.767462",
+        "tier": "WATCH",
+        "score": 71.8,
+        "price": 9.29
+      }
+    ]
+  },
+  "PAHC": {
+    "first_seen": "2026-04-30T15:36:04.014500",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 76.5,
+    "first_price": 53.18,
+    "last_seen": "2026-05-05T09:56:02.767464",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:04.014500",
+        "tier": "HIGH_CONVICTION",
+        "score": 76.5,
+        "price": 53.18
+      },
+      {
+        "date": "2026-05-01T18:07:31.371944",
+        "tier": "HIGH_CONVICTION",
+        "score": 78.3,
+        "price": 54.89
+      },
+      {
+        "date": "2026-05-05T09:56:02.767464",
+        "tier": "HIGH_CONVICTION",
+        "score": 77.8,
+        "price": 55.939
+      }
+    ]
+  },
+  "PBYI": {
+    "first_seen": "2026-04-30T15:36:14.231195",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 7.51,
+    "last_seen": "2026-05-05T09:56:02.767467",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:14.231195",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 7.51
+      },
+      {
+        "date": "2026-05-01T18:07:31.371947",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.49
+      },
+      {
+        "date": "2026-05-05T09:56:02.767467",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.555
+      }
+    ]
+  },
+  "PCRX": {
+    "first_seen": "2026-04-30T15:36:22.237555",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 25.49,
+    "last_seen": "2026-05-05T09:56:02.767469",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:22.237555",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 25.49
+      },
+      {
+        "date": "2026-05-01T18:07:31.371949",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 24.44
+      },
+      {
+        "date": "2026-05-05T09:56:02.767469",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 25.3338
+      }
+    ]
+  },
+  "PGEN": {
+    "first_seen": "2026-04-30T15:36:29.164565",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.16,
+    "last_seen": "2026-05-05T09:56:02.767471",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:29.164565",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.16
+      },
+      {
+        "date": "2026-05-01T18:07:31.371951",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.08
+      },
+      {
+        "date": "2026-05-05T09:56:02.767471",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.31
+      }
+    ]
+  },
+  "PHAT": {
+    "first_seen": "2026-04-30T15:36:36.192985",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 79.0,
+    "first_price": 11.2,
+    "last_seen": "2026-05-05T09:56:02.767473",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:36.192985",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 79.0,
+        "price": 11.2
+      },
+      {
+        "date": "2026-05-01T18:07:31.371953",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.01
+      },
+      {
+        "date": "2026-05-05T09:56:02.767473",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.29
+      }
+    ]
+  },
+  "PRAX": {
+    "first_seen": "2026-04-30T15:36:55.619445",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 318.83,
+    "last_seen": "2026-05-05T09:56:02.767476",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:36:55.619445",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 318.83
+      },
+      {
+        "date": "2026-05-01T18:07:31.371956",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 324.2
+      },
+      {
+        "date": "2026-05-05T09:56:02.767476",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 332
+      }
+    ]
+  },
+  "PRLD": {
+    "first_seen": "2026-04-30T15:37:02.886837",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 95.5,
+    "first_price": 5.23,
+    "last_seen": "2026-05-05T09:56:02.767479",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:02.886837",
+        "tier": "HIGH_CONVICTION",
+        "score": 95.5,
+        "price": 5.23
+      },
+      {
+        "date": "2026-05-01T18:07:31.371959",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 4.7
+      },
+      {
+        "date": "2026-05-05T09:56:02.767479",
+        "tier": "HIGH_CONVICTION",
+        "score": 94.8,
+        "price": 5.0047
+      }
+    ]
+  },
+  "PRME": {
+    "first_seen": "2026-04-30T15:37:11.478562",
+    "first_tier": "WATCH",
+    "first_score": 76.1,
+    "first_price": 3.545,
+    "last_seen": "2026-04-30T15:37:11.478562",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:11.478562",
+        "tier": "WATCH",
+        "score": 76.1,
+        "price": 3.545
+      }
+    ]
+  },
+  "PRTA": {
+    "first_seen": "2026-04-30T15:37:21.128345",
+    "first_tier": "WATCH",
+    "first_score": 80,
+    "first_price": 11.06,
+    "last_seen": "2026-05-05T09:56:02.767481",
+    "scan_count": 2,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:21.128345",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 11.06
+      },
+      {
+        "date": "2026-05-05T09:56:02.767481",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 11.21
+      }
+    ]
+  },
+  "PTCT": {
+    "first_seen": "2026-04-30T15:37:32.103946",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 65.06,
+    "last_seen": "2026-05-05T09:56:02.767483",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:32.103946",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 65.06
+      },
+      {
+        "date": "2026-05-01T18:07:31.371962",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 65.15
+      },
+      {
+        "date": "2026-05-05T09:56:02.767483",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 65.5
+      }
+    ]
+  },
+  "PTGX": {
+    "first_seen": "2026-04-30T15:37:39.218082",
+    "first_tier": "WATCH",
+    "first_score": 75.2,
+    "first_price": 98.97,
+    "last_seen": "2026-04-30T15:37:39.218082",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:39.218082",
+        "tier": "WATCH",
+        "score": 75.2,
+        "price": 98.97
+      }
+    ]
+  },
+  "QURE": {
+    "first_seen": "2026-04-30T15:37:54.313932",
+    "first_tier": "WATCH",
+    "first_score": 77.1,
+    "first_price": 19.95,
+    "last_seen": "2026-04-30T15:37:54.313932",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:37:54.313932",
+        "tier": "WATCH",
+        "score": 77.1,
+        "price": 19.95
+      }
+    ]
+  },
+  "RAPT": {
+    "first_seen": "2026-04-30T15:38:01.627252",
+    "first_tier": "WATCH",
+    "first_score": 81.5,
+    "first_price": 58.005,
+    "last_seen": "2026-04-30T15:38:01.627252",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:01.627252",
+        "tier": "WATCH",
+        "score": 81.5,
+        "price": 58.005
+      }
+    ]
+  },
+  "RARE": {
+    "first_seen": "2026-04-30T15:38:09.836105",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 24.69,
+    "last_seen": "2026-05-05T09:56:02.767487",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:09.836105",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 24.69
+      },
+      {
+        "date": "2026-05-01T18:07:31.371965",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 24.77
+      },
+      {
+        "date": "2026-05-05T09:56:02.767487",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 24.8934
+      }
+    ]
+  },
+  "RCKT": {
+    "first_seen": "2026-04-30T15:38:20.223583",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.48,
+    "last_seen": "2026-05-05T09:56:02.767489",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:20.223583",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.48
+      },
+      {
+        "date": "2026-05-01T18:07:31.371967",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.56
+      },
+      {
+        "date": "2026-05-05T09:56:02.767489",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.5852
+      }
+    ]
+  },
+  "RCUS": {
+    "first_seen": "2026-04-30T15:38:28.400859",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 25.5,
+    "last_seen": "2026-05-05T09:56:02.767491",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:28.400859",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 25.5
+      },
+      {
+        "date": "2026-05-01T18:07:31.371969",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 25.68
+      },
+      {
+        "date": "2026-05-05T09:56:02.767491",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 26.45
+      }
+    ]
+  },
+  "REPL": {
+    "first_seen": "2026-04-30T15:38:36.925866",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 2.57,
+    "last_seen": "2026-05-05T09:56:02.767494",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:36.925866",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 2.57
+      },
+      {
+        "date": "2026-05-01T18:07:31.371971",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.5
+      },
+      {
+        "date": "2026-05-05T09:56:02.767494",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 2.9188
+      }
+    ]
+  },
+  "RGNX": {
+    "first_seen": "2026-04-30T15:38:51.392814",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 8.97,
+    "last_seen": "2026-05-05T09:56:02.767496",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:38:51.392814",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 8.97
+      },
+      {
+        "date": "2026-05-01T18:07:31.371973",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.12
+      },
+      {
+        "date": "2026-05-05T09:56:02.767496",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 9.3
+      }
+    ]
+  },
+  "RLAY": {
+    "first_seen": "2026-04-30T15:39:00.233482",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 12.96,
+    "last_seen": "2026-05-05T09:56:02.767498",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:00.233482",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 12.96
+      },
+      {
+        "date": "2026-05-01T18:07:31.371975",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.72
+      },
+      {
+        "date": "2026-05-05T09:56:02.767498",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.86
+      }
+    ]
+  },
+  "RVNC": {
+    "first_seen": "2026-04-30T15:39:12.531797",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.65,
+    "last_seen": "2026-05-05T09:56:02.767501",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:12.531797",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.65
+      },
+      {
+        "date": "2026-05-01T18:07:31.371978",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.65
+      },
+      {
+        "date": "2026-05-05T09:56:02.767501",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.65
+      }
+    ]
+  },
+  "RXRX": {
+    "first_seen": "2026-04-30T15:39:23.384286",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.46,
+    "last_seen": "2026-05-05T09:56:02.767503",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:23.384286",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.46
+      },
+      {
+        "date": "2026-05-01T18:07:31.371982",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.39
+      },
+      {
+        "date": "2026-05-05T09:56:02.767503",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.3986
+      }
+    ]
+  },
+  "RYTM": {
+    "first_seen": "2026-04-30T15:39:33.684861",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 81.36,
+    "last_seen": "2026-05-05T09:56:02.767505",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:33.684861",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 81.36
+      },
+      {
+        "date": "2026-05-01T18:07:31.371980",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 81.81
+      },
+      {
+        "date": "2026-05-05T09:56:02.767505",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 93.17
+      }
+    ]
+  },
+  "RZLT": {
+    "first_seen": "2026-04-30T15:39:41.344539",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 3.2,
+    "last_seen": "2026-05-05T09:56:02.767508",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:41.344539",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 3.2
+      },
+      {
+        "date": "2026-05-01T18:07:31.371984",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.3
+      },
+      {
+        "date": "2026-05-05T09:56:02.767508",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.345
+      }
+    ]
+  },
+  "SANA": {
+    "first_seen": "2026-04-30T15:39:59.303461",
+    "first_tier": "WATCH",
+    "first_score": 80,
+    "first_price": 3.29,
+    "last_seen": "2026-05-05T09:56:02.767510",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:39:59.303461",
+        "tier": "WATCH",
+        "score": 80,
+        "price": 3.29
+      },
+      {
+        "date": "2026-05-01T18:07:31.371987",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.27
+      },
+      {
+        "date": "2026-05-05T09:56:02.767510",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 3.4659
+      }
+    ]
+  },
+  "SDGR": {
+    "first_seen": "2026-04-30T15:40:19.978908",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 11.96,
+    "last_seen": "2026-05-05T09:56:02.767513",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:40:19.978908",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 11.96
+      },
+      {
+        "date": "2026-05-01T18:07:31.371990",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 12.39
+      },
+      {
+        "date": "2026-05-05T09:56:02.767513",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 12.93
+      }
+    ]
+  },
+  "SIGA": {
+    "first_seen": "2026-04-30T15:40:31.528299",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 4.6,
+    "last_seen": "2026-05-05T09:56:02.767515",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:40:31.528299",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.6
+      },
+      {
+        "date": "2026-05-01T18:07:31.371992",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.6
+      },
+      {
+        "date": "2026-05-05T09:56:02.767515",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 4.68
+      }
+    ]
+  },
+  "SMMT": {
+    "first_seen": "2026-04-30T15:40:43.502108",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 21.46,
+    "last_seen": "2026-05-05T09:56:02.767518",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:40:43.502108",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.46
+      },
+      {
+        "date": "2026-05-01T18:07:31.371996",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 16.115
+      },
+      {
+        "date": "2026-05-05T09:56:02.767518",
+        "tier": "WATCH",
+        "score": 76.5,
+        "price": 17.034
+      }
+    ]
+  },
+  "SNDX": {
+    "first_seen": "2026-04-30T15:40:51.759711",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 21.43,
+    "last_seen": "2026-05-05T09:56:02.767520",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:40:51.759711",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 21.43
+      },
+      {
+        "date": "2026-05-01T18:07:31.371994",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 19.11
+      },
+      {
+        "date": "2026-05-05T09:56:02.767520",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 19.53
+      }
+    ]
+  },
+  "SRPT": {
+    "first_seen": "2026-04-30T15:41:07.150750",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 20.88,
+    "last_seen": "2026-05-05T09:56:02.767522",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:41:07.150750",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 20.88
+      },
+      {
+        "date": "2026-05-01T18:07:31.371999",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 21.49
+      },
+      {
+        "date": "2026-05-05T09:56:02.767522",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 21.59
+      }
+    ]
+  },
+  "STRO": {
+    "first_seen": "2026-04-30T15:41:22.281084",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 36.62,
+    "last_seen": "2026-05-05T09:56:02.767524",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:41:22.281084",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 36.62
+      },
+      {
+        "date": "2026-05-01T18:07:31.372001",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 35.59
+      },
+      {
+        "date": "2026-05-05T09:56:02.767524",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 37.7628
+      }
+    ]
+  },
+  "SUPN": {
+    "first_seen": "2026-04-30T15:41:30.539447",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 48,
+    "last_seen": "2026-05-05T09:56:02.767527",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:41:30.539447",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 48
+      },
+      {
+        "date": "2026-05-01T18:07:31.372004",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 47.85
+      },
+      {
+        "date": "2026-05-05T09:56:02.767527",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 48.8169
+      }
+    ]
+  },
+  "TARA": {
+    "first_seen": "2026-04-30T15:41:45.874617",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 5.33,
+    "last_seen": "2026-05-05T09:56:02.767529",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:41:45.874617",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 5.33
+      },
+      {
+        "date": "2026-05-01T18:07:31.372006",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 5.32
+      },
+      {
+        "date": "2026-05-05T09:56:02.767529",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 5.515
+      }
+    ]
+  },
+  "TARS": {
+    "first_seen": "2026-04-30T15:41:54.809859",
+    "first_tier": "WATCH",
+    "first_score": 75.0,
+    "first_price": 63.61,
+    "last_seen": "2026-04-30T15:41:54.809859",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:41:54.809859",
+        "tier": "WATCH",
+        "score": 75.0,
+        "price": 63.61
+      }
+    ]
+  },
+  "TBPH": {
+    "first_seen": "2026-04-30T15:42:08.377954",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 16.74,
+    "last_seen": "2026-05-05T09:56:02.767532",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:42:08.377954",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 16.74
+      },
+      {
+        "date": "2026-05-01T18:07:31.372009",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 16.79
+      },
+      {
+        "date": "2026-05-05T09:56:02.767532",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 16.7931
+      }
+    ]
+  },
+  "TCMD": {
+    "first_seen": "2026-04-30T15:42:17.204903",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 23.02,
+    "last_seen": "2026-05-05T09:56:02.767534",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:42:17.204903",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 23.02
+      },
+      {
+        "date": "2026-05-01T18:07:31.372011",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 22.89
+      },
+      {
+        "date": "2026-05-05T09:56:02.767534",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 23.2266
+      }
+    ]
+  },
+  "TERN": {
+    "first_seen": "2026-04-30T15:42:29.026257",
+    "first_tier": "WATCH",
+    "first_score": 84.3,
+    "first_price": 52.93,
+    "last_seen": "2026-04-30T15:42:29.026257",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:42:29.026257",
+        "tier": "WATCH",
+        "score": 84.3,
+        "price": 52.93
+      }
+    ]
+  },
+  "TGTX": {
+    "first_seen": "2026-04-30T15:42:37.395084",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 33.78,
+    "last_seen": "2026-05-05T09:56:02.767536",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:42:37.395084",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.78
+      },
+      {
+        "date": "2026-05-01T18:07:31.372013",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 33.85
+      },
+      {
+        "date": "2026-05-05T09:56:02.767536",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 35.135
+      }
+    ]
+  },
+  "TVTX": {
+    "first_seen": "2026-04-30T15:42:51.275822",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 42.12,
+    "last_seen": "2026-05-05T09:56:02.767539",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:42:51.275822",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 42.12
+      },
+      {
+        "date": "2026-05-01T18:07:31.372016",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 44.12
+      },
+      {
+        "date": "2026-05-05T09:56:02.767539",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 45.06
+      }
+    ]
+  },
+  "VERA": {
+    "first_seen": "2026-04-30T15:43:08.270553",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 35.61,
+    "last_seen": "2026-05-05T09:56:02.767541",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:43:08.270553",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 35.61
+      },
+      {
+        "date": "2026-05-01T18:07:31.372018",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 35.2
+      },
+      {
+        "date": "2026-05-05T09:56:02.767541",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 35.115
+      }
+    ]
+  },
+  "VERV": {
+    "first_seen": "2026-04-30T15:43:19.895822",
+    "first_tier": "WATCH",
+    "first_score": 72.1,
+    "first_price": 11.13,
+    "last_seen": "2026-05-05T09:56:02.767544",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:43:19.895822",
+        "tier": "WATCH",
+        "score": 72.1,
+        "price": 11.13
+      },
+      {
+        "date": "2026-05-01T18:07:31.372021",
+        "tier": "WATCH",
+        "score": 72.1,
+        "price": 11.13
+      },
+      {
+        "date": "2026-05-05T09:56:02.767544",
+        "tier": "WATCH",
+        "score": 72.1,
+        "price": 11.13
+      }
+    ]
+  },
+  "VIR": {
+    "first_seen": "2026-04-30T15:43:37.070923",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 10.215,
+    "last_seen": "2026-05-05T09:56:02.767546",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:43:37.070923",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 10.215
+      },
+      {
+        "date": "2026-05-01T18:07:31.372023",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 10
+      },
+      {
+        "date": "2026-05-05T09:56:02.767546",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 10.2249
+      }
+    ]
+  },
+  "VNDA": {
+    "first_seen": "2026-04-30T15:43:49.332188",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 7.1,
+    "last_seen": "2026-05-05T09:56:02.767551",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:43:49.332188",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 7.1
+      },
+      {
+        "date": "2026-05-01T18:07:31.372029",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7
+      },
+      {
+        "date": "2026-05-05T09:56:02.767551",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 7.44
+      }
+    ]
+  },
+  "XENE": {
+    "first_seen": "2026-04-30T15:44:05.017332",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 56.04,
+    "last_seen": "2026-05-05T09:56:02.767554",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:44:05.017332",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 56.04
+      },
+      {
+        "date": "2026-05-01T18:07:31.372032",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 56.13
+      },
+      {
+        "date": "2026-05-05T09:56:02.767554",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 57.685
+      }
+    ]
+  },
+  "XNCR": {
+    "first_seen": "2026-04-30T15:44:12.624472",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 11.93,
+    "last_seen": "2026-05-05T09:56:02.767556",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:44:12.624472",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 11.93
+      },
+      {
+        "date": "2026-05-01T18:07:31.372034",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.69
+      },
+      {
+        "date": "2026-05-05T09:56:02.767556",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 12.9099
+      }
+    ]
+  },
+  "YMAB": {
+    "first_seen": "2026-04-30T15:44:20.433418",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 8.61,
+    "last_seen": "2026-05-05T09:56:02.767559",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:44:20.433418",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 8.61
+      },
+      {
+        "date": "2026-05-01T18:07:31.372036",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 8.61
+      },
+      {
+        "date": "2026-05-05T09:56:02.767559",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 8.61
+      }
+    ]
+  },
+  "ZBIO": {
+    "first_seen": "2026-04-30T15:44:27.767845",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 19.32,
+    "last_seen": "2026-05-05T09:56:02.767561",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:44:27.767845",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 19.32
+      },
+      {
+        "date": "2026-05-01T18:07:31.372038",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 19.36
+      },
+      {
+        "date": "2026-05-05T09:56:02.767561",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 21.03
+      }
+    ]
+  },
+  "ZYME": {
+    "first_seen": "2026-04-30T15:44:40.211670",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 27.54,
+    "last_seen": "2026-05-05T09:56:02.767564",
+    "scan_count": 3,
+    "tier_history": [
+      {
+        "date": "2026-04-30T15:44:40.211670",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 27.54
+      },
+      {
+        "date": "2026-05-01T18:07:31.372041",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 26.61
+      },
+      {
+        "date": "2026-05-05T09:56:02.767564",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 27.1274
+      }
+    ]
+  },
+  "FATE": {
+    "first_seen": "2026-05-01T18:07:31.371823",
+    "first_tier": "HIGH_CONVICTION",
+    "first_score": 100,
+    "first_price": 1.53,
+    "last_seen": "2026-05-01T18:07:31.371823",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-05-01T18:07:31.371823",
+        "tier": "HIGH_CONVICTION",
+        "score": 100,
+        "price": 1.53
+      }
+    ]
+  },
+  "NUVB": {
+    "first_seen": "2026-05-01T18:07:31.371929",
+    "first_tier": "WATCH",
+    "first_score": 72,
+    "first_price": 4.49,
+    "last_seen": "2026-05-05T09:56:02.767450",
+    "scan_count": 2,
+    "tier_history": [
+      {
+        "date": "2026-05-01T18:07:31.371929",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.49
+      },
+      {
+        "date": "2026-05-05T09:56:02.767450",
+        "tier": "WATCH",
+        "score": 72,
+        "price": 4.72
+      }
+    ]
+  },
+  "VKTX": {
+    "first_seen": "2026-05-01T18:07:31.372025",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 30,
+    "last_seen": "2026-05-05T09:56:02.767549",
+    "scan_count": 2,
+    "tier_history": [
+      {
+        "date": "2026-05-01T18:07:31.372025",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 30
+      },
+      {
+        "date": "2026-05-05T09:56:02.767549",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 31.006
+      }
+    ]
+  },
+  "AUTL": {
+    "first_seen": "2026-05-05T09:56:02.767260",
+    "first_tier": "MEDIUM_CONVICTION",
+    "first_score": 80,
+    "first_price": 1.6583,
+    "last_seen": "2026-05-05T09:56:02.767260",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-05-05T09:56:02.767260",
+        "tier": "MEDIUM_CONVICTION",
+        "score": 80,
+        "price": 1.6583
+      }
+    ]
+  },
+  "INVA": {
+    "first_seen": "2026-05-05T09:56:02.767380",
+    "first_tier": "WATCH",
+    "first_score": 71.4,
+    "first_price": 22.99,
+    "last_seen": "2026-05-05T09:56:02.767380",
+    "scan_count": 1,
+    "tier_history": [
+      {
+        "date": "2026-05-05T09:56:02.767380",
+        "tier": "WATCH",
+        "score": 71.4,
+        "price": 22.99
+      }
+    ]
+  }
+}

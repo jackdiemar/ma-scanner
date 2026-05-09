@@ -1,0 +1,5375 @@
+{
+  "scan_date": "2026-01-20T08:50:47.409650",
+  "version": "10.6-buy-timing-system",
+  "mode": "PRODUCTION",
+  "fmp_enabled": true,
+  "stocks_scanned": 98,
+  "results": {
+    "IONS": {
+      "score": 63.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "9.9% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 9.37,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.29% of company ($35.1M)",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+16% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-39% Q/Q decline",
+          "pts": 12
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-63% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 35074505.0664,
+      "insider_pct": 0.288,
+      "runway": 46.249911599702344,
+      "market_cap": 12182.87441,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "FATE": {
+      "score": 43,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 9.17,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.012% of company ($0.0M)",
+          "pts": 5
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$136M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "79%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+3248% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 16832.6192,
+      "insider_pct": 0.012,
+      "runway": 14.053699753440668,
+      "market_cap": 136.103825,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ARWR": {
+      "score": 43.2,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 7.65,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.40% of company ($33.9M)",
+          "pts": 20
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "84%",
+          "pts": 5
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+23% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 33921092.49000001,
+      "insider_pct": 0.4,
+      "runway": 0,
+      "market_cap": 8472.118,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "PBYI": {
+      "score": 61,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 33,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 9.01,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.13% of company ($0.4M)",
+          "pts": 15
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$322M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "71%",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-18% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 418988.493,
+      "insider_pct": 0.13,
+      "runway": 0,
+      "market_cap": 322.251129,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "BNTX": {
+      "score": 53,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Stabilized",
+          "detail": "4.4% range (tight)",
+          "pts": 15
+        }
+      ],
+      "short_float": 2.08,
+      "signals": [
+        {
+          "type": "High Price Target Upside",
+          "detail": "+35% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+482% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-16% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-96% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 90.2317893963794,
+      "market_cap": 25693.86711,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "ORIC": {
+      "score": 48.5,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 39.63,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.052% of company ($0.6M)",
+          "pts": 10
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1138M",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "1.8x average",
+          "pts": 2.5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+88% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-31% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 596376.988,
+      "insider_pct": 0.052,
+      "runway": 16.246377324914082,
+      "market_cap": 1138.480672,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "IMMP": {
+      "score": 67,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.7% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 3.35,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$425M",
+          "pts": 15
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+47% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-58% Q/Q decline",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-78% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 11.251383899570811,
+      "market_cap": 424.649012,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "SUPN": {
+      "score": 28.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 33,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.3% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 8.06,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.069% of company ($2.0M)",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+21% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Growing",
+          "detail": "+16% Q/Q",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 2005602.4,
+      "insider_pct": 0.069,
+      "runway": 0,
+      "market_cap": 2889.04315,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "MDGL": {
+      "score": 74.4,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 18.01,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.45% of company ($50.7M)",
+          "pts": 20
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+37% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+35% Q/Q",
+          "pts": 15
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-41% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 50696979.258600004,
+      "insider_pct": 0.453,
+      "runway": 62.57670859803348,
+      "market_cap": 11194.047068,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "PGEN": {
+      "score": 90.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "MODERATE_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 23.44,
+      "signals": [
+        {
+          "type": "Massive C-Level Selling",
+          "detail": "1.63% of company ($21.1M)",
+          "pts": 30
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1296M",
+          "pts": 10
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "67%",
+          "pts": 10
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+39% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+241% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 82pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need \u22646Q runway (have 10.1Q), need 2+ Phase 3 (have 0))",
+          "pts": -7
+        }
+      ],
+      "c_level_sale_value": 21089797.5883,
+      "insider_pct": 1.627,
+      "runway": 10.129243917812769,
+      "market_cap": 1296.349284,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "KURA": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 13.44,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.14% of company ($1.0M)",
+          "pts": 15
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$730M",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+276% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+36% Q/Q",
+          "pts": 15
+        },
+        {
+          "type": "Phase 3 Trial",
+          "detail": "1 active trial",
+          "pts": 20
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 83pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need \u22646Q runway (have 21.0Q), need 2+ Phase 3 (have 1))",
+          "pts": -8
+        }
+      ],
+      "c_level_sale_value": 1008374.8877,
+      "insider_pct": 0.138,
+      "runway": 20.9656029331284,
+      "market_cap": 729.641888,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ARVN": {
+      "score": 55,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "9.0% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 9.0,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$877M",
+          "pts": 15
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+87% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-68% Q/Q decline",
+          "pts": 20
+        }
+      ],
+      "c_level_sale_value": 2274.7000000000003,
+      "insider_pct": 0.0,
+      "runway": 23.409993035259564,
+      "market_cap": 876.606013,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "DMAC": {
+      "score": 37,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.4% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 17.68,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$379M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "45%",
+          "pts": 10
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-33% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 26400.000000000004,
+      "insider_pct": 0.007,
+      "runway": 12.918823092834161,
+      "market_cap": 379.118548,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ANIK": {
+      "score": 26,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 45,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Close to 52-Week Low",
+          "detail": "17.3% above low",
+          "pts": 20
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Stabilized",
+          "detail": "4.7% range (tight)",
+          "pts": 15
+        }
+      ],
+      "short_float": 4.21,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$133M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "75%",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-19% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 133.129483,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "SMMT": {
+      "score": 46,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 40,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "7.3% above low",
+          "pts": 30
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 35.94,
+      "signals": [
+        {
+          "type": "Major Price Drop",
+          "detail": "-43% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+71% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Below 50-SMA",
+          "detail": "-13% below SMA",
+          "pts": 3
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-85% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 12417.301534,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "QURE": {
+      "score": 82.5,
+      "conviction_tier": "WATCH",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 21.12,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.27% of company ($3.7M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1370M",
+          "pts": 10
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-68% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+150% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-34% Q/Q decline",
+          "pts": 12
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-25% OCF decline",
+          "pts": 8
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 83pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need \u22646Q runway (have 36.9Q), need 2+ Phase 3 (have 0))",
+          "pts": -8
+        }
+      ],
+      "c_level_sale_value": 3669791.1699999995,
+      "insider_pct": 0.268,
+      "runway": 36.89701404408541,
+      "market_cap": 1370.068512,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CLDX": {
+      "score": 50.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 12.77,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.13% of company ($2.2M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1691M",
+          "pts": 10
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-19% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-47% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 2153014.1875,
+      "insider_pct": 0.127,
+      "runway": 22.020125571690844,
+      "market_cap": 1691.139012,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RVPH": {
+      "score": 25,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "AVOID",
+      "distress_tier": "EXTREME_DISTRESS",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 19.49,
+      "signals": [
+        {
+          "type": "Major Price Drop",
+          "detail": "-58% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Below 50-SMA",
+          "detail": "-8% below SMA",
+          "pts": 3
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-42% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 2.8038832477701026,
+      "market_cap": 24.204726,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "ALNY": {
+      "score": 77.05,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        }
+      ],
+      "short_float": 4.26,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.013% of company ($5.9M)",
+          "pts": 5
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+38% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+61% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-108% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 5939368.51,
+      "insider_pct": 0.013,
+      "runway": 0,
+      "market_cap": 46337.600525,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "GLPG": {
+      "score": 30,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Stabilized",
+          "detail": "4.4% range (tight)",
+          "pts": 15
+        }
+      ],
+      "short_float": 2.01,
+      "signals": [
+        {
+          "type": "Oversold (RSI)",
+          "detail": "RSI 39.8",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-61% Q/Q decline",
+          "pts": 20
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 405.5210555278497,
+      "market_cap": 2158.129075,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "RCUS": {
+      "score": 56.4,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 11.78,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.49% of company ($10.5M)",
+          "pts": 20
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "59%",
+          "pts": 10
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+38% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 10452159.6599,
+      "insider_pct": 0.493,
+      "runway": 23.849325985330168,
+      "market_cap": 2120.134208,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CYTK": {
+      "score": 45.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "9.1% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 11.54,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.22% of company ($17.0M)",
+          "pts": 15
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+46% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-16% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 16959157.799999997,
+      "insider_pct": 0.224,
+      "runway": 11.995629537174208,
+      "market_cap": 7586.233182,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CMPS": {
+      "score": 57,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 5.27,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$697M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "62%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+106% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-25% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-22% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 697.416449,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "DNLI": {
+      "score": 23,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        }
+      ],
+      "short_float": 10.41,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.032% of company ($0.9M)",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+88% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 864864.0,
+      "insider_pct": 0.032,
+      "runway": 13.592911386497935,
+      "market_cap": 2734.32658,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "KRYS": {
+      "score": 42.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.0% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 10.75,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.27% of company ($22.0M)",
+          "pts": 15
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 22014779.584000003,
+      "insider_pct": 0.272,
+      "runway": 0,
+      "market_cap": 8096.102,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "IMCR": {
+      "score": 60.95,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        }
+      ],
+      "short_float": 19.01,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.43% of company ($7.2M)",
+          "pts": 20
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1686M",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+51% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 7197681.39,
+      "insider_pct": 0.427,
+      "runway": 55.10839361568629,
+      "market_cap": 1685.629664,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "UTHR": {
+      "score": 55.2,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.3% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 4.4,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.31% of company ($64.7M)",
+          "pts": 20
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+20% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 64668035.591999985,
+      "insider_pct": 0.311,
+      "runway": 0,
+      "market_cap": 20816.292992,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "GMAB": {
+      "score": 44,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.1% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 1.81,
+      "signals": [
+        {
+          "type": "High Price Target Upside",
+          "detail": "+31% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-34% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 19281.815077,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "BEAM": {
+      "score": 43,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 22.18,
+      "signals": [
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+16% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Growing",
+          "detail": "+15% Q/Q",
+          "pts": 10
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-35% Q/Q decline",
+          "pts": 12
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-133% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 204550.80000000002,
+      "insider_pct": 0.007,
+      "runway": 25.78420183985851,
+      "market_cap": 3040.189322,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "SDGR": {
+      "score": 15,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 48,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "3.4% above low",
+          "pts": 30
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.4% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 15.19,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1218M",
+          "pts": 10
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 44.02445852063062,
+      "market_cap": 1218.41427,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "VERA": {
+      "score": 69.3,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 15.44,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.074% of company ($2.4M)",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+68% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-46% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "Phase 3 Trial",
+          "detail": "1 active trial",
+          "pts": 20
+        }
+      ],
+      "c_level_sale_value": 2402488.5256000003,
+      "insider_pct": 0.074,
+      "runway": 15.61153865758637,
+      "market_cap": 3237.759102,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "JANX": {
+      "score": 68,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 48,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "0.6% above low",
+          "pts": 30
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 17.28,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.15% of company ($1.2M)",
+          "pts": 15
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$775M",
+          "pts": 15
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-63% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+251% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 1155510.4181000001,
+      "insider_pct": 0.149,
+      "runway": 92.28909590575061,
+      "market_cap": 774.703664,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ARQT": {
+      "score": 65.55,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 8,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Price Consolidating",
+          "detail": "6.3% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 13.95,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.27% of company ($8.6M)",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+25% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+22% Q/Q",
+          "pts": 15
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-19% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 8616455.1315,
+      "insider_pct": 0.274,
+      "runway": 18.057916740857344,
+      "market_cap": 3147.309448,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RVMD": {
+      "score": 43.2,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 0,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [],
+      "short_float": 9.26,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.12% of company ($26.8M)",
+          "pts": 15
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-22% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-59% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 26762550.606100004,
+      "insider_pct": 0.116,
+      "runway": 17.62933965649152,
+      "market_cap": 22995.390805,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "MRNA": {
+      "score": 54.05,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 19.12,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.059% of company ($9.7M)",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "71%",
+          "pts": 5
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+615% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-34% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 9726731.785,
+      "insider_pct": 0.059,
+      "runway": 9.078928950849937,
+      "market_cap": 16613.994203,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "OCUL": {
+      "score": 48,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 33,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.2% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 6.63,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.025% of company ($0.6M)",
+          "pts": 5
+        },
+        {
+          "type": "Major Volume Spike",
+          "detail": "3.0x average",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+130% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-92% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 613453.32,
+      "insider_pct": 0.025,
+      "runway": 11.17781456756111,
+      "market_cap": 2432.99674,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CRSP": {
+      "score": 35.2,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 22.99,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.074% of company ($3.7M)",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "78%",
+          "pts": 5
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+28% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-23% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 3681814.8565,
+      "insider_pct": 0.074,
+      "runway": 37.050455429870084,
+      "market_cap": 4954.657398,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "TGTX": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 38,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Close to 52-Week Low",
+          "detail": "19.7% above low",
+          "pts": 20
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.9% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 17.37,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "5.6 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "65%",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "1.8x average",
+          "pts": 2.5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+64% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Growing",
+          "detail": "+15% Q/Q",
+          "pts": 10
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-29% OCF decline",
+          "pts": 8
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 84pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $163K), need 2+ Phase 3 (have 0))",
+          "pts": -8.5
+        }
+      ],
+      "c_level_sale_value": 162850.0,
+      "insider_pct": 0.003,
+      "runway": 5.559930303754007,
+      "market_cap": 4804.060987,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "SANA": {
+      "score": 45,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 22.08,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "6.5 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1215M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "80%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+75% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 32178.989999999998,
+      "insider_pct": 0.003,
+      "runway": 6.5453582541674304,
+      "market_cap": 1214.62896,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "VKTX": {
+      "score": 81.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.7% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 22.19,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.43% of company ($16.3M)",
+          "pts": 20
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "66%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+214% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-52% Q/Q decline",
+          "pts": 20
+        }
+      ],
+      "c_level_sale_value": 16344283.014600001,
+      "insider_pct": 0.434,
+      "runway": 18.941518137649812,
+      "market_cap": 3764.810927,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "AKRO": {
+      "score": 66.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "HEAVY_DISTRESS",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 0,
+      "signals": [
+        {
+          "type": "Extreme C-Level Selling",
+          "detail": "2.52% of company ($113.5M)",
+          "pts": 35
+        },
+        {
+          "type": "Major Volume Spike",
+          "detail": "2.6x average",
+          "pts": 5
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-58% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 113473625.30900002,
+      "insider_pct": 2.522,
+      "runway": 18.812583395351307,
+      "market_cap": 4498.738105,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "TBPH": {
+      "score": 60.95,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "HIGH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.6% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 10.14,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.50% of company ($5.0M)",
+          "pts": 20
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1005M",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+69% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 5028275.1123,
+      "insider_pct": 0.5,
+      "runway": 0,
+      "market_cap": 1004.834346,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ABBV": {
+      "score": 51,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 28,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "28.8% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.0% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 1.12,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "75%",
+          "pts": 5
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+23% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-57% Q/Q decline",
+          "pts": 20
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 374118.9984,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "PLRX": {
+      "score": 31,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "SPECULATIVE",
+      "distress_tier": "NORMAL",
+      "timing_score": 38,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Close to 52-Week Low",
+          "detail": "14.5% above low",
+          "pts": 20
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 5.44,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+2371% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-34% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 8.723847956086678,
+      "market_cap": 77.426225,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "NVAX": {
+      "score": 55,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.5% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 35.34,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "6.7 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1309M",
+          "pts": 10
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "62%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+80% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 129805.17000000001,
+      "insider_pct": 0.01,
+      "runway": 6.70335533464038,
+      "market_cap": 1308.929405,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "MRUS": {
+      "score": 63.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 0,
+      "signals": [
+        {
+          "type": "Massive C-Level Selling",
+          "detail": "1.82% of company ($124.5M)",
+          "pts": 30
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+38% Q/Q",
+          "pts": 15
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-31% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 124483024.83,
+      "insider_pct": 1.824,
+      "runway": 14.583047037829898,
+      "market_cap": 6825.74625,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "NRIX": {
+      "score": 63,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 14.67,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.072% of company ($1.0M)",
+          "pts": 10
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1404M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "84%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+64% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-112% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 1003856.9535,
+      "insider_pct": 0.072,
+      "runway": 13.501587336770296,
+      "market_cap": 1403.803747,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "EDIT": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        }
+      ],
+      "short_float": 11.66,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$192M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-53% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "47%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+554% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+111% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-59% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 83pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $15K), need \u22646Q runway (have 10.0Q), need 2+ Phase 3 (have 0))",
+          "pts": -8
+        }
+      ],
+      "c_level_sale_value": 14591.558699999998,
+      "insider_pct": 0.008,
+      "runway": 10.044218744078524,
+      "market_cap": 191.820659,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ALLO": {
+      "score": 48,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        }
+      ],
+      "short_float": 11.28,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.013% of company ($0.0M)",
+          "pts": 5
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$349M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "64%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+1765% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 47127.755999999994,
+      "insider_pct": 0.013,
+      "runway": 12.02100837972876,
+      "market_cap": 349.455374,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "HUMA": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 30,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Close to 52-Week Low",
+          "detail": "19.2% above low",
+          "pts": 20
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 22.17,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$155M",
+          "pts": 10
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-60% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+284% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+150% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-44% Q/Q decline",
+          "pts": 12
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-34% OCF decline",
+          "pts": 8
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 83pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $0K), need 2+ Phase 3 (have 0))",
+          "pts": -8
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 1.0511575192553093,
+      "market_cap": 154.957726,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "KALA": {
+      "score": 105,
+      "conviction_tier": "HIGH_CONVICTION",
+      "investment_tier": "AVOID",
+      "distress_tier": "DEATH_SPIRAL",
+      "timing_score": 35,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 7-14 days for multiple timing signals to align",
+      "timing_rationale": [
+        "Multiple timing signals missing"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "24.4% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Oversold",
+          "detail": "RSI 26.3",
+          "pts": 15
+        }
+      ],
+      "short_float": 2.15,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "3.8 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Extreme C-Level Selling",
+          "detail": "4.48% of company ($0.6M)",
+          "pts": 35
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-97% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+2777% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Deeply Oversold (RSI)",
+          "detail": "RSI 26.3",
+          "pts": 9
+        },
+        {
+          "type": "Severe Discount to 50-SMA",
+          "detail": "-91% below SMA",
+          "pts": 8
+        },
+        {
+          "type": "\ud83d\udd34 HIGH CONVICTION",
+          "detail": "Distressed + insider ($0.6M, 3.8Q)",
+          "pts": 0
+        }
+      ],
+      "c_level_sale_value": 623605.6779999998,
+      "insider_pct": 4.482,
+      "runway": 3.8310652062879518,
+      "market_cap": 13.912392,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "BIIB": {
+      "score": 20,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.1% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 3.05,
+      "signals": [
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 657152.11,
+      "insider_pct": 0.003,
+      "runway": 0,
+      "market_cap": 23903.6682,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RGNX": {
+      "score": 63,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 10.9,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.097% of company ($0.7M)",
+          "pts": 10
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$711M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+131% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+39% Q/Q",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 688852.8,
+      "insider_pct": 0.097,
+      "runway": 15.891939560263781,
+      "market_cap": 711.254358,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "PRAX": {
+      "score": 39.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 0,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [],
+      "short_float": 14.88,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.20% of company ($13.5M)",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+60% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 13450924.985000005,
+      "insider_pct": 0.203,
+      "runway": 8.012220843717108,
+      "market_cap": 6635.932562,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "SNGX": {
+      "score": 35,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "AVOID",
+      "distress_tier": "EXTREME_DISTRESS",
+      "timing_score": 28,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "26.6% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 5.16,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.1 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-72% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Severe Discount to 50-SMA",
+          "detail": "-32% below SMA",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 7.071219356855279,
+      "market_cap": 13.918818,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "EYPT": {
+      "score": 100,
+      "conviction_tier": "HIGH_CONVICTION",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.1% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 11.81,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "6.5 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.19% of company ($2.4M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1253M",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+118% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Oversold (RSI)",
+          "detail": "RSI 37.3",
+          "pts": 5
+        },
+        {
+          "type": "Below 50-SMA",
+          "detail": "-10% below SMA",
+          "pts": 3
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-65% Q/Q decline",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-6832% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\ud83d\udd34 HIGH CONVICTION",
+          "detail": "Heavy insider + moderate distress ($2.4M, 6.5Q)",
+          "pts": 0
+        }
+      ],
+      "c_level_sale_value": 2357994.1308,
+      "insider_pct": 0.188,
+      "runway": 6.537032074270107,
+      "market_cap": 1253.398511,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "MGTX": {
+      "score": 100,
+      "conviction_tier": "HIGH_CONVICTION",
+      "investment_tier": "AVOID",
+      "distress_tier": "EXTREME_DISTRESS",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 9.05,
+      "signals": [
+        {
+          "type": "Extreme C-Level Selling",
+          "detail": "3.25% of company ($18.9M)",
+          "pts": 35
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$582M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "62%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+149% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-20% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "\ud83d\udd34 HIGH CONVICTION",
+          "detail": "Distressed + insider ($18.9M, 1.0Q)",
+          "pts": 0
+        }
+      ],
+      "c_level_sale_value": 18901176.22,
+      "insider_pct": 3.248,
+      "runway": 0.9756614509330251,
+      "market_cap": 581.949127,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "TVTX": {
+      "score": 87.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 33,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "9.5% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 16.31,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.68% of company ($16.7M)",
+          "pts": 20
+        },
+        {
+          "type": "Major Volume Spike",
+          "detail": "2.7x average",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+53% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Strong Revenue Growth",
+          "detail": "+44% Q/Q",
+          "pts": 15
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 16722151.675600002,
+      "insider_pct": 0.68,
+      "runway": 14.751220005234472,
+      "market_cap": 2459.414582,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "MNOV": {
+      "score": 26,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "SPECULATIVE",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 0.6,
+      "signals": [
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-21% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-43% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 21.55786939799381,
+      "market_cap": 81.09123,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "REPL": {
+      "score": 48,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 18.73,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.048% of company ($0.3M)",
+          "pts": 5
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$544M",
+          "pts": 15
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-44% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+97% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 263152.95,
+      "insider_pct": 0.048,
+      "runway": 8.017682085146316,
+      "market_cap": 543.612069,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "KNSA": {
+      "score": 65.55,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "MODERATE_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.2% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 8.24,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.35% of company ($10.0M)",
+          "pts": 20
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+37% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Growing",
+          "detail": "+15% Q/Q",
+          "pts": 10
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 9996794.35,
+      "insider_pct": 0.352,
+      "runway": 0,
+      "market_cap": 2837.421769,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "AVDL": {
+      "score": 25,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 25,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Stabilized",
+          "detail": "0.6% range (tight)",
+          "pts": 15
+        }
+      ],
+      "short_float": 3.0,
+      "signals": [
+        {
+          "type": "Revenue Growing",
+          "detail": "+14% Q/Q",
+          "pts": 10
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 0,
+      "market_cap": 2103.0784,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "CRBU": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 7.85,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.7 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$134M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-50% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "39%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+389% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-68% Q/Q decline",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-48% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 95pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $0K), need \u22646Q runway (have 7.7Q), need 2+ Phase 3 (have 0))",
+          "pts": -20
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 7.7400860949777925,
+      "market_cap": 133.855523,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "ACLX": {
+      "score": 63,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.9% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 21.29,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.033% of company ($1.3M)",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+60% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-73% Q/Q decline",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-140% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 1314095.6093,
+      "insider_pct": 0.033,
+      "runway": 23.696250338585358,
+      "market_cap": 3951.32589,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ACRV": {
+      "score": 58,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "SPECULATIVE",
+      "distress_tier": "NORMAL",
+      "timing_score": 0,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [],
+      "short_float": 23.91,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.28% of company ($0.2M)",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "56%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+952% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-54% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 183660.16,
+      "insider_pct": 0.28,
+      "runway": 12.64530646186959,
+      "market_cap": 65.476886,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RARE": {
+      "score": 29,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 20,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "23.3% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 8.93,
+      "signals": [
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+127% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-19% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 186955.08000000002,
+      "insider_pct": 0.009,
+      "runway": 8.715125602509541,
+      "market_cap": 2190.040748,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "AGIO": {
+      "score": 61,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 28,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "20.9% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.3% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 12.91,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.084% of company ($1.3M)",
+          "pts": 10
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1568M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-41% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+53% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-32% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 1324544.7500000002,
+      "insider_pct": 0.084,
+      "runway": 12.139218999014757,
+      "market_cap": 1567.580231,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "VNDA": {
+      "score": 64,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 4.24,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$430M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "75%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+86% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-25% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-223% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 22.5297478848258,
+      "market_cap": 429.927765,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "ALKS": {
+      "score": 49,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 28,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "26.2% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 13.53,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.020% of company ($1.0M)",
+          "pts": 5
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+47% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-36% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 1030980.0412,
+      "insider_pct": 0.02,
+      "runway": 0,
+      "market_cap": 5244.92465,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "VIR": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 12.49,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.054% of company ($0.4M)",
+          "pts": 10
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$820M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "78%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+154% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Dual Phase 3 Pipeline",
+          "detail": "2 active trials",
+          "pts": 25
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 78pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $445K), need \u22646Q runway (have 9.8Q))",
+          "pts": -3
+        }
+      ],
+      "c_level_sale_value": 444592.038,
+      "insider_pct": 0.054,
+      "runway": 9.833181338704087,
+      "market_cap": 820.00275,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "APLS": {
+      "score": 63,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 20,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "21.4% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 15.51,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.053% of company ($1.3M)",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+70% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+157% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 1300985.938,
+      "insider_pct": 0.053,
+      "runway": 0,
+      "market_cap": 2472.30276,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "NTLA": {
+      "score": 70.4,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 37.82,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.14% of company ($2.0M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1440M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-56% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+50% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-17% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 2008187.4500000002,
+      "insider_pct": 0.139,
+      "runway": 9.130499008309505,
+      "market_cap": 1439.76598,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "BMRN": {
+      "score": 23,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 48,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "7.1% above low",
+          "pts": 30
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.2% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 4.24,
+      "signals": [
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+52% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 911847.1,
+      "insider_pct": 0.009,
+      "runway": 0,
+      "market_cap": 10448.138598,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "KYMR": {
+      "score": 75.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 11.87,
+      "signals": [
+        {
+          "type": "Heavy C-Level Selling",
+          "detail": "0.82% of company ($43.8M)",
+          "pts": 25
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+73% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-89% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 43781825.18270001,
+      "insider_pct": 0.822,
+      "runway": 14.453760552592927,
+      "market_cap": 5324.715305,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RXRX": {
+      "score": 72.6,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 30,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Close to 52-Week Low",
+          "detail": "18.5% above low",
+          "pts": 20
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 37.91,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.24% of company ($4.4M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1800M",
+          "pts": 10
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "60%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+145% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-25% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 4367593.7094,
+      "insider_pct": 0.243,
+      "runway": 11.62366167838341,
+      "market_cap": 1799.666143,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "JAZZ": {
+      "score": 90.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 9.25,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.33% of company ($33.7M)",
+          "pts": 20
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+23% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Multiple Phase 3 Programs",
+          "detail": "4 active trials",
+          "pts": 30
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 76pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate ()",
+          "pts": -1
+        }
+      ],
+      "c_level_sale_value": 33729583.5484,
+      "insider_pct": 0.332,
+      "runway": 0,
+      "market_cap": 10153.283095,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "VRTX": {
+      "score": 78.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 28,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "20.2% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.1% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 1.98,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.081% of company ($90.9M)",
+          "pts": 10
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        },
+        {
+          "type": "Severe Cash Depletion",
+          "detail": "-56% Q/Q decline",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-114% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 90942247.87,
+      "insider_pct": 0.081,
+      "runway": 0,
+      "market_cap": 111697.86819,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "SRPT": {
+      "score": 10,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 20.74,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.018% of company ($0.4M)",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 386750.56999999995,
+      "insider_pct": 0.018,
+      "runway": 41.27665441194303,
+      "market_cap": 2147.08563,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "XNCR": {
+      "score": 86.25,
+      "conviction_tier": "WATCH",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 15.86,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.61% of company ($5.5M)",
+          "pts": 20
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$905M",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+123% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-24% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-159% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 79pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need \u22646Q runway (have 16.3Q), need 2+ Phase 3 (have 0))",
+          "pts": -4
+        }
+      ],
+      "c_level_sale_value": 5510726.200000001,
+      "insider_pct": 0.609,
+      "runway": 16.346772966059703,
+      "market_cap": 904.770642,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CGEM": {
+      "score": 44,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 20.81,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.050% of company ($0.3M)",
+          "pts": 5
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$619M",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+196% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-16% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 306882.11,
+      "insider_pct": 0.05,
+      "runway": 13.394908230484761,
+      "market_cap": 619.414576,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ABUS": {
+      "score": 50.5,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "8.9% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 8.34,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$778M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "62%",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "2.0x average",
+          "pts": 2.5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+110% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 15.422928154061394,
+      "market_cap": 777.95058,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "PTGX": {
+      "score": 29,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 12.38,
+      "signals": [
+        {
+          "type": "High Price Target Upside",
+          "detail": "+36% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-48% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 290095.02999999997,
+      "insider_pct": 0.006,
+      "runway": 0,
+      "market_cap": 5067.519886,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ARCT": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 30,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 7-14 days for multiple timing signals to align",
+      "timing_rationale": [
+        "Multiple timing signals missing"
+      ],
+      "timing_signals": [
+        {
+          "type": "Moderate Distance from Low",
+          "detail": "22.1% above low",
+          "pts": 10
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Approaching Oversold",
+          "detail": "RSI 31.6",
+          "pts": 10
+        }
+      ],
+      "short_float": 27.52,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$203M",
+          "pts": 15
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-69% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+656% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Oversold (RSI)",
+          "detail": "RSI 31.6",
+          "pts": 5
+        },
+        {
+          "type": "Severe Discount to 50-SMA",
+          "detail": "-39% below SMA",
+          "pts": 8
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-19% Q/Q decline",
+          "pts": 6
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-230% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 87pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $0K), need \u22646Q runway (have 22.4Q), need 2+ Phase 3 (have 0))",
+          "pts": -12
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 22.407142854480664,
+      "market_cap": 202.877952,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "REGN": {
+      "score": 48.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.8% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 2.46,
+      "signals": [
+        {
+          "type": "Substantial C-Level Selling",
+          "detail": "0.69% of company ($513.8M)",
+          "pts": 20
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 513847042.74,
+      "insider_pct": 0.687,
+      "runway": 0,
+      "market_cap": 74839.400446,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CRNX": {
+      "score": 36,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 14.01,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.026% of company ($1.5M)",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+69% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-36% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 1466556.76,
+      "insider_pct": 0.026,
+      "runway": 21.245112474965843,
+      "market_cap": 5666.854515,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "GILD": {
+      "score": 30.0,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.7% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 1.87,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.016% of company ($24.8M)",
+          "pts": 5
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 24806513.4704,
+      "insider_pct": 0.016,
+      "runway": 0,
+      "market_cap": 153354.204801,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "XENE": {
+      "score": 31.9,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.9% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 7.93,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.10% of company ($3.2M)",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+29% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Deteriorating Cash Flow",
+          "detail": "-25% OCF decline",
+          "pts": 8
+        }
+      ],
+      "c_level_sale_value": 3223572.0800000005,
+      "insider_pct": 0.103,
+      "runway": 11.401672597854235,
+      "market_cap": 3143.160828,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "LYEL": {
+      "score": 74,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 3.34,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.018% of company ($0.1M)",
+          "pts": 5
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$495M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "50%",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+93% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+88% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-27% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 88427.33999999998,
+      "insider_pct": 0.018,
+      "runway": 16.045154380846615,
+      "market_cap": 495.409007,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "FULC": {
+      "score": 48,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 5.46,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.068% of company ($0.4M)",
+          "pts": 10
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$570M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "78%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+96% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 388183.83999999997,
+      "insider_pct": 0.068,
+      "runway": 22.23852395913019,
+      "market_cap": 570.333924,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "IMVT": {
+      "score": 54,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "9.6% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 19.29,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.7 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.030% of company ($1.6M)",
+          "pts": 5
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "48%",
+          "pts": 10
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+37% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-75% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 1584286.9800000002,
+      "insider_pct": 0.03,
+      "runway": 7.7372177791820915,
+      "market_cap": 5257.529946,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "TARA": {
+      "score": 40.5,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 4.62,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$193M",
+          "pts": 10
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "52%",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "1.9x average",
+          "pts": 2.5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+140% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 16.761447533618124,
+      "market_cap": 192.560587,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "BCYC": {
+      "score": 75.0,
+      "conviction_tier": "WATCH",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 63,
+      "timing_status": "WATCH",
+      "timing_action": "Wait 3-7 days for: RSI oversold (<30)",
+      "timing_rationale": [
+        "Waiting on 1 timing signal(s)"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "8.7% above low",
+          "pts": 30
+        },
+        {
+          "type": "Volume Exhaustion",
+          "detail": "Massive spike followed by decline",
+          "pts": 25
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "7.5% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 4.5,
+      "signals": [
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.072% of company ($0.3M)",
+          "pts": 10
+        },
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$454M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "79%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+68% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Explosive Revenue Growth",
+          "detail": "+302% Q/Q",
+          "pts": 20
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-172% OCF decline",
+          "pts": 15
+        },
+        {
+          "type": "\u26aa WATCH LIST",
+          "detail": "Score 83pts but no conviction gate passed",
+          "pts": 0
+        },
+        {
+          "type": "Score Capped",
+          "detail": "Max 75 without conviction gate (need $500K+ insider (have $328K), need \u22646Q runway (have 18.5Q), need 2+ Phase 3 (have 0))",
+          "pts": -8
+        }
+      ],
+      "c_level_sale_value": 328256.48,
+      "insider_pct": 0.072,
+      "runway": 18.511522843132383,
+      "market_cap": 454.18617,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "DTIL": {
+      "score": 74,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "SPECULATIVE",
+      "distress_tier": "NORMAL",
+      "timing_score": 40,
+      "timing_status": "WAIT",
+      "timing_action": "Wait 5-10 days for RSI to reach oversold (<30)",
+      "timing_rationale": [
+        "Not technically oversold yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Near 52-Week Low",
+          "detail": "6.7% above low",
+          "pts": 30
+        },
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 5.75,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "4.8 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Notable C-Level Selling",
+          "detail": "0.066% of company ($0.0M)",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-54% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "33%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+288% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-26% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 34896.73,
+      "insider_pct": 0.066,
+      "runway": 4.796621946656689,
+      "market_cap": 53.006249,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "FHTX": {
+      "score": 66,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 4.01,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$346M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "70%",
+          "pts": 5
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+95% to consensus",
+          "pts": 18
+        },
+        {
+          "type": "Oversold (RSI)",
+          "detail": "RSI 36.0",
+          "pts": 5
+        },
+        {
+          "type": "Deep Discount to 50-SMA",
+          "detail": "-18% below SMA",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Accelerating Cash Burn",
+          "detail": "-31% Q/Q decline",
+          "pts": 12
+        }
+      ],
+      "c_level_sale_value": 0,
+      "insider_pct": 0,
+      "runway": 69.38773153716623,
+      "market_cap": 345.924348,
+      "has_sec": false,
+      "has_catalysts": false
+    },
+    "AXSM": {
+      "score": 68.4,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "6.0% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 6.57,
+      "signals": [
+        {
+          "type": "Massive C-Level Selling",
+          "detail": "1.34% of company ($120.1M)",
+          "pts": 30
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "77%",
+          "pts": 5
+        },
+        {
+          "type": "Moderate Price Target Upside",
+          "detail": "+22% to consensus",
+          "pts": 6
+        },
+        {
+          "type": "Revenue Growing",
+          "detail": "+14% Q/Q",
+          "pts": 10
+        },
+        {
+          "type": "High Cash Burn",
+          "detail": "-18% Q/Q decline",
+          "pts": 6
+        }
+      ],
+      "c_level_sale_value": 120074605.44000001,
+      "insider_pct": 1.335,
+      "runway": 73.2506990718002,
+      "market_cap": 8991.346407,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "RLAY": {
+      "score": 43,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "WATCH_INVESTMENT",
+      "distress_tier": "NORMAL",
+      "timing_score": 10,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        }
+      ],
+      "short_float": 17.04,
+      "signals": [
+        {
+          "type": "Moderate C-Level Selling",
+          "detail": "0.11% of company ($1.5M)",
+          "pts": 15
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1298M",
+          "pts": 10
+        },
+        {
+          "type": "Massive Price Target Upside",
+          "detail": "+74% to consensus",
+          "pts": 18
+        }
+      ],
+      "c_level_sale_value": 1455203.6,
+      "insider_pct": 0.112,
+      "runway": 16.266831122951984,
+      "market_cap": 1298.184664,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "CGON": {
+      "score": 37,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 8,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "Price Consolidating",
+          "detail": "8.6% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 25.49,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.018% of company ($0.8M)",
+          "pts": 5
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+42% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Cash Flow Collapse",
+          "detail": "-72% OCF decline",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 761343.2999999999,
+      "insider_pct": 0.018,
+      "runway": 34.98221204519106,
+      "market_cap": 4308.735391,
+      "has_sec": true,
+      "has_catalysts": false
+    },
+    "ACAD": {
+      "score": 40,
+      "conviction_tier": "BELOW_THRESHOLD",
+      "investment_tier": "LOW_PRIORITY",
+      "distress_tier": "NORMAL",
+      "timing_score": 18,
+      "timing_status": "WAIT",
+      "timing_action": "Wait for 15-25% pullback toward 52-week low",
+      "timing_rationale": [
+        "Stock not near bottom yet"
+      ],
+      "timing_signals": [
+        {
+          "type": "High Volume Continues",
+          "detail": "Still elevated selling pressure",
+          "pts": 10
+        },
+        {
+          "type": "Price Consolidating",
+          "detail": "5.3% range",
+          "pts": 8
+        }
+      ],
+      "short_float": 5.03,
+      "signals": [
+        {
+          "type": "Minimal C-Level Selling",
+          "detail": "0.023% of company ($1.0M)",
+          "pts": 5
+        },
+        {
+          "type": "High Price Target Upside",
+          "detail": "+33% to consensus",
+          "pts": 12
+        },
+        {
+          "type": "Below 50-SMA",
+          "detail": "-8% below SMA",
+          "pts": 3
+        },
+        {
+          "type": "Revenue Generating",
+          "detail": "$0.0M quarterly",
+          "pts": 5
+        },
+        {
+          "type": "Profitable Company",
+          "detail": "$0.0M net income",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 1010850.5989999999,
+      "insider_pct": 0.023,
+      "runway": 0,
+      "market_cap": 4407.186333,
+      "has_sec": true,
+      "has_catalysts": false
+    }
+  }
+}

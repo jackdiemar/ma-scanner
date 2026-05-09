@@ -1,0 +1,783 @@
+{
+  "scan_date": "2025-12-29T16:31:43.823028",
+  "version": "10.1-fmp-enhanced-rebalanced",
+  "mode": "PRODUCTION",
+  "fmp_enabled": true,
+  "stocks_scanned": 59,
+  "results": {
+    "HUMA": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$194M",
+          "pts": 10
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-62% from peak",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 1.0511575192553093,
+      "market_cap": 193.601104
+    },
+    "ABBV": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "75%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 408363.040768
+    },
+    "PLRX": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 8.723847956086678,
+      "market_cap": 75.889992
+    },
+    "VRTX": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 117516.65664
+    },
+    "VNDA": {
+      "score": 22.5,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$436M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "78%",
+          "pts": 5
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "1.6x average",
+          "pts": 2.5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 22.5297478848258,
+      "market_cap": 436.133152
+    },
+    "KURA": {
+      "score": 15,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$904M",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 20.9656029331284,
+      "market_cap": 904.112064
+    },
+    "VKTX": {
+      "score": 10,
+      "signals": [
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "66%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 18.941518137649812,
+      "market_cap": 4119.6096
+    },
+    "SRPT": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 41.27665441194303,
+      "market_cap": 2260.259584
+    },
+    "ORIC": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$807M",
+          "pts": 15
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-42% from peak",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 16.246377324914082,
+      "market_cap": 807.35712
+    },
+    "BMRN": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 11580.65152
+    },
+    "RCUS": {
+      "score": 10,
+      "signals": [
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "60%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 23.849325985330168,
+      "market_cap": 2910.095104
+    },
+    "CGON": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 34.98221204519106,
+      "market_cap": 3210.110208
+    },
+    "IMVT": {
+      "score": 22,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.7 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "48%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 7.7372177791820915,
+      "market_cap": 5183.990784
+    },
+    "IMCR": {
+      "score": 10,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1788M",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 55.10839361568629,
+      "market_cap": 1788.271488
+    },
+    "MGTX": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$629M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "65%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 0.9756614509330251,
+      "market_cap": 628.633856
+    },
+    "SANA": {
+      "score": 27,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "6.5 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$1112M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "80%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 6.5453582541674304,
+      "market_cap": 1112.078592
+    },
+    "ALKS": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 4646.406656
+    },
+    "AGIO": {
+      "score": 22.5,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1584M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-40% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "2.1x average",
+          "pts": 2.5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 12.139218999014757,
+      "market_cap": 1583.803136
+    },
+    "ALLO": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$306M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "63%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 12.02100837972876,
+      "market_cap": 305.857728
+    },
+    "LYEL": {
+      "score": 30,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$764M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "50%",
+          "pts": 10
+        },
+        {
+          "type": "Major Volume Spike",
+          "detail": "3.5x average",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 16.045154380846615,
+      "market_cap": 763.932544
+    },
+    "NTLA": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1066M",
+          "pts": 10
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-67% from peak",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 9.130499008309505,
+      "market_cap": 1066.20288
+    },
+    "ARQT": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 18.057916740857344,
+      "market_cap": 3504.50176
+    },
+    "CRNX": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 21.245112474965843,
+      "market_cap": 4523.019776
+    },
+    "CRSP": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "78%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 37.050455429870084,
+      "market_cap": 5150.024704
+    },
+    "UTHR": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 22696.800256
+    },
+    "TBPH": {
+      "score": 15,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$943M",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 942.507264
+    },
+    "BIIB": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 25989.758976
+    },
+    "SNGX": {
+      "score": 27,
+      "signals": [
+        {
+          "type": "Low Cash Runway",
+          "detail": "7.1 quarters",
+          "pts": 12
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-72% from peak",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 7.071219356855279,
+      "market_cap": 14.171012
+    },
+    "KALA": {
+      "score": 40,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "3.8 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-97% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "37%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 3.8310652062879518,
+      "market_cap": 6.459295
+    },
+    "ACLX": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 23.696250338585358,
+      "market_cap": 3785.374208
+    },
+    "TGTX": {
+      "score": 30,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "5.6 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "64%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 5.559930303754007,
+      "market_cap": 4877.884416
+    },
+    "NRIX": {
+      "score": 15,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1970M",
+          "pts": 10
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "83%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 13.501587336770296,
+      "market_cap": 1969.604224
+    },
+    "AVDL": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 2113.469312
+    },
+    "SUPN": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 2943.033856
+    },
+    "RARE": {
+      "score": 22.5,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1844M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-54% from peak",
+          "pts": 10
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "1.9x average",
+          "pts": 2.5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 8.715125602509541,
+      "market_cap": 1843.908352
+    },
+    "GILD": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 154492.878848
+    },
+    "MRNA": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "72%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 9.078928950849937,
+      "market_cap": 12120.947712
+    },
+    "TVTX": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 14.751220005234472,
+      "market_cap": 3492.552192
+    },
+    "ARWR": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "85%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 9596.45696
+    },
+    "FHTX": {
+      "score": 20,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$299M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "73%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 69.38773153716623,
+      "market_cap": 298.590816
+    },
+    "TARA": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$292M",
+          "pts": 15
+        },
+        {
+          "type": "Optimal Institutional Holdings",
+          "detail": "52%",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 16.761447533618124,
+      "market_cap": 291.514688
+    },
+    "GMAB": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 20336.945152
+    },
+    "RVMD": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 17.62933965649152,
+      "market_cap": 15591.242752
+    },
+    "QURE": {
+      "score": 25,
+      "signals": [
+        {
+          "type": "Acquisition Range",
+          "detail": "$1531M",
+          "pts": 10
+        },
+        {
+          "type": "Severe Price Crash",
+          "detail": "-65% from peak",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 36.89701404408541,
+      "market_cap": 1530.817664
+    },
+    "RGNX": {
+      "score": 20,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$717M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "84%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 15.891939560263781,
+      "market_cap": 717.329152
+    },
+    "PBYI": {
+      "score": 20,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$307M",
+          "pts": 15
+        },
+        {
+          "type": "Moderate Institutional Holdings",
+          "detail": "71%",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 307.133792
+    },
+    "ACAD": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 4640.657408
+    },
+    "KNSA": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 3131.880704
+    },
+    "DTIL": {
+      "score": 40,
+      "signals": [
+        {
+          "type": "Critical Cash Runway",
+          "detail": "4.8 quarters",
+          "pts": 20
+        },
+        {
+          "type": "Acquisition Range",
+          "detail": "$104M",
+          "pts": 10
+        },
+        {
+          "type": "Major Price Drop",
+          "detail": "-50% from peak",
+          "pts": 10
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 4.796621946656689,
+      "market_cap": 103.508536
+    },
+    "BNTX": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 90.2317893963794,
+      "market_cap": 22886.549504
+    },
+    "REPL": {
+      "score": 15,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$773M",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 8.017682085146316,
+      "market_cap": 773.059072
+    },
+    "MRUS": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 14.583047037829898,
+      "market_cap": 7133.4272
+    },
+    "BEAM": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 25.78420183985851,
+      "market_cap": 2796.649472
+    },
+    "APLS": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 3177.04832
+    },
+    "RVPH": {
+      "score": 17.5,
+      "signals": [
+        {
+          "type": "Severe Price Crash",
+          "detail": "-64% from peak",
+          "pts": 15
+        },
+        {
+          "type": "Volume Increase",
+          "detail": "2.5x average",
+          "pts": 2.5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 2.8038832477701026,
+      "market_cap": 34.903076
+    },
+    "AKRO": {
+      "score": 5,
+      "signals": [
+        {
+          "type": "Major Volume Spike",
+          "detail": "2.8x average",
+          "pts": 5
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 18.812583395351307,
+      "market_cap": 4499.03104
+    },
+    "KRYS": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 7357.395968
+    },
+    "ALNY": {
+      "score": 0,
+      "signals": [],
+      "c_level_sale_value": 0,
+      "runway": 0,
+      "market_cap": 52574.695424
+    },
+    "CGEM": {
+      "score": 15,
+      "signals": [
+        {
+          "type": "Sweet Spot Market Cap",
+          "detail": "$598M",
+          "pts": 15
+        }
+      ],
+      "c_level_sale_value": 0,
+      "runway": 13.394908230484761,
+      "market_cap": 597.851776
+    }
+  }
+}

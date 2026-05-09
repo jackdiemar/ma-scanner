@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Starlight Capital | Intelligence Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200;300;400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --accent-green: #00cc66;
+            --accent-red: #ff3333;
+            --accent-blue: #0066ff;
+            --accent-gold: #d4af37;
+            --border-light: #222222;
+            --border-medium: #333333;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.6);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', -apple-system, system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        #loginScreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #loginScreen.fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .login-container {
+            text-align: center;
+            max-width: 440px;
+            padding: 80px 50px;
+            animation: fadeUp 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bsc-logo {
+            font-family: 'Crimson Pro', serif;
+            font-size: 140px;
+            font-weight: 200;
+            letter-spacing: -6px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 0.9;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .company-name {
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-weight: 400;
+            margin-bottom: 60px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .input-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 15px;
+            border: 1.5px solid var(--border-light);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.05);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: none;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 40px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .login-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: var(--accent-red);
+            font-size: 13px;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        /* ===== DASHBOARD ===== */
+        #dashboard {
+            display: none;
+            opacity: 0;
+            animation: dashFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes dashFadeIn {
+            to { opacity: 1; }
+        }
+
+        .dashboard-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .bsc-logo-small {
+            font-family: 'Crimson Pro', serif;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: -1.5px;
+            color: var(--text-primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .nav-tab.active {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .username {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background: transparent;
+            border: 1.5px solid var(--border-medium);
+            color: var(--text-secondary);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logout-btn:hover {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .dashboard-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 60px 48px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: sectionFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes sectionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 15px;
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-medium);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-family: 'Crimson Pro', serif;
+            letter-spacing: -1px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: var(--accent-green);
+        }
+
+        .stat-change.negative {
+            color: var(--accent-red);
+        }
+
+        /* ===== TABLE ===== */
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .last-updated {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 20px 32px;
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-tertiary);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-light);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        tbody td {
+            padding: 24px 32px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .ticker-cell {
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .score-high {
+            background: rgba(0, 204, 102, 0.1);
+            color: var(--accent-green);
+        }
+
+        .score-medium {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .score-low {
+            background: rgba(138, 138, 138, 0.1);
+            color: var(--text-tertiary);
+        }
+
+        .view-btn {
+            padding: 8px 20px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .view-btn:hover {
+            background: #1a1a1a;
+            transform: translateY(-1px);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 24px;
+            padding: 60px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: sticky;
+            top: 20px;
+            float: right;
+            font-size: 36px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            transition: all 0.3s;
+            line-height: 1;
+            margin-left: auto;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .chart-info {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
+
+        .chart-ticker {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-price {
+            font-size: 32px;
+            font-weight: 600;
+            font-family: 'Crimson Pro', serif;
+            color: var(--text-primary);
+        }
+
+        .chart-change {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-change.positive {
+            color: var(--accent-green);
+        }
+
+        .chart-change.negative {
+            color: var(--accent-red);
+        }
+
+        .timeframe-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timeframe-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1.5px solid var(--border-light);
+            color: var(--text-tertiary);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timeframe-btn:hover {
+            border-color: var(--border-medium);
+            color: var(--text-secondary);
+        }
+
+        .timeframe-btn.active {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .chart-canvas-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-tooltip {
+            position: absolute;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .chart-tooltip.visible {
+            opacity: 1;
+        }
+
+        .detail-section {
+            margin: 40px 0;
+        }
+
+        .detail-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .signals-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .signal-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .signal-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .signal-detail {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .signal-points {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent-green);
+            font-family: 'Crimson Pro', serif;
+        }
+
+        /* ===== MREIT SCANNER SECTION ===== */
+        .mreit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .fed-meeting-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%);
+            color: var(--bg-primary);
+            padding: 32px;
+            border-radius: 16px;
+            min-width: 350px;
+        }
+
+        .fed-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .fed-date {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .fed-countdown {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .fed-probability {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .probability-value {
+            font-size: 42px;
+            font-weight: 600;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .probability-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .signal-alert {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #00aa55 100%);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 8px 24px rgba(0, 204, 102, 0.2);
+        }
+
+        .signal-icon {
+            font-size: 32px;
+        }
+
+        .signal-text h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .signal-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .mreit-filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .dashboard-content {
+                padding: 40px 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 20px 24px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 20px;
+                width: 100%;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 40px 30px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            thead th, tbody td {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <div class="bsc-logo">BSC</div>
+            <div class="company-name">Black Starlight Capital</div>
+            <div class="tagline">Intelligence Dashboard</div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label class="input-label">Username</label>
+                    <input type="text" id="username" class="input-field" required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <input type="password" id="password" class="input-field" required>
+                </div>
+
+                <button type="submit" class="login-btn">Access Dashboard</button>
+                <div id="errorMessage" class="error-message">Invalid credentials</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="dashboard">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="bsc-logo-small">BSC</div>
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('biotech')">M&A Intelligence</button>
+                    <button class="nav-tab" onclick="switchTab('mreit')">mREIT Scanner</button>
+                </nav>
+            </div>
+            <div class="user-info">
+                <span class="username" id="dashboardUsername"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- ===== BIOTECH M&A SECTION ===== -->
+            <section id="biotechSection" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">Biotech M&A Intelligence</h1>
+                    <p class="section-subtitle">Distressed biotech companies with high M&A probability • 84% historical win rate</p>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <input type="file" id="biotechJsonUpload" accept=".json" style="display: none;">
+                    <button onclick="document.getElementById('biotechJsonUpload').click()" style="padding: 12px 24px; background: var(--text-primary); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">
+                        📁 UPLOAD M&A SCANNER DATA
+                    </button>
+                    <span id="biotechUploadStatus" style="margin-left: 15px; color: var(--accent-green); font-size: 13px;"></span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Targets</div>
+                        <div class="stat-value" id="activeTargets">--</div>
+                        <div class="stat-change positive">+3 this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Score</div>
+                        <div class="stat-value" id="avgScore">--</div>
+                        <div class="stat-change positive">+4.2 pts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">High Confidence</div>
+                        <div class="stat-value" id="highConfidence">--</div>
+                        <div class="stat-change">Score >75</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Last Updated</div>
+                        <div class="stat-value" style="font-size: 24px;" id="lastScan">--</div>
+                        <div class="stat-change">System time</div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Top M&A Candidates</h2>
+                        <span class="last-updated">Updated: January 21, 2026</span>
+                    </div>
+                    <table id="biotechTable">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Score</th>
+                                <th>Market Cap</th>
+                                <th>Cash/Debt</th>
+                                <th>Pipeline</th>
+                                <th>Catalyst</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="biotechTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ===== MREIT SCANNER SECTION ===== -->
+            <section id="mreitSection" class="content-section">
+                <div class="section-header">
+                    <div class="mreit-header">
+                        <div>
+                            <h1 class="section-title">mREIT Fed Rate Scanner</h1>
+                            <p class="section-subtitle">Rate-cut arbitrage opportunities • 100% historical win rate on signal triggers</p>
+                        </div>
+                        <div class="fed-meeting-card">
+                            <div class="fed-label">Next Fed Meeting</div>
+                            <div class="fed-date" id="nextMeetingDate">Jan 29, 2026</div>
+                            <div class="fed-countdown" id="meetingCountdown">8 days away</div>
+                            <div class="fed-probability">
+                                <div class="probability-value" id="cutProbability">73%</div>
+                                <div class="probability-label">Cut Probability<br>(CME FedWatch)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <input type="file" id="mreitJsonUpload" accept=".json" style="display: none;">
+                    <button onclick="document.getElementById('mreitJsonUpload').click()" style="padding: 12px 24px; background: var(--text-primary); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 1px;">
+                        📁 UPLOAD mREIT SCANNER DATA
+                    </button>
+                    <span id="mreitUploadStatus" style="margin-left: 15px; color: var(--accent-green); font-size: 13px;"></span>
+                </div>
+
+                <div class="signal-alert" id="signalAlert" style="display: none;">
+                    <div class="signal-icon">🚨</div>
+                    <div class="signal-text">
+                        <h3>SIGNAL TRIGGERED</h3>
+                        <p>Cut probability >70% and <7 days to meeting • Entry window active</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Backtest Win Rate</div>
+                        <div class="stat-value">100%</div>
+                        <div class="stat-change positive">4/4 trades (2024)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Return</div>
+                        <div class="stat-value">+6.81%</div>
+                        <div class="stat-change positive">Per 4-day hold</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">vs SPY</div>
+                        <div class="stat-value">+4.88%</div>
+                        <div class="stat-change positive">Outperformance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">2026 Meetings</div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-change">Opportunities</div>
+                    </div>
+                </div>
+
+                <div class="mreit-filters">
+                    <button class="filter-btn active" onclick="filterMREITs('all')">All mREITs</button>
+                    <button class="filter-btn" onclick="filterMREITs('high')">High Score (>75)</button>
+                    <button class="filter-btn" onclick="filterMREITs('distressed')">Distressed (P/B <0.9)</button>
+                    <button class="filter-btn" onclick="filterMREITs('insider')">Insider Buying</button>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">Top Distressed mREITs</h2>
+                        <span class="last-updated">Updated: January 21, 2026</span>
+                    </div>
+                    <table id="mreitTable">
+                        <thead>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Score</th>
+                                <th>P/B Ratio</th>
+                                <th>Book Discount</th>
+                                <th>Yield</th>
+                                <th>D/E Ratio</th>
+                                <th>Insider</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mreitTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== AUTHENTICATION =====
+        const AUTH_ENDPOINT = window.BSC_AUTH_ENDPOINT || '/api/auth/login';
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+
+            const authenticated = await authenticateDashboard(username, password);
+
+            if (authenticated) {
+                document.getElementById('loginScreen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('dashboardUsername').textContent = username;
+                    loadDashboardData();
+                }, 800);
+            } else {
+                errorMsg.classList.add('show');
+                setTimeout(() => errorMsg.classList.remove('show'), 3000);
+            }
+        }
+
+        async function authenticateDashboard(username, password) {
+            try {
+                const response = await fetch(AUTH_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+
+                return response.ok;
+            } catch (error) {
+                console.error('Authentication endpoint unavailable:', error);
+                return false;
+            }
+        }
+
+        function logout() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginScreen').classList.remove('fade-out');
+            document.getElementById('loginForm').reset();
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            if (tab === 'biotech') {
+                document.getElementById('biotechSection').classList.add('active');
+            } else if (tab === 'mreit') {
+                document.getElementById('mreitSection').classList.add('active');
+                updateMREITSignal();
+            }
+        }
+
+        // ===== MOCK DATA =====
+        let biotechData = [
+            {
+                ticker: 'APLM',
+                score: 84.2,
+                marketCap: '127M',
+                cashDebt: '2.3',
+                pipeline: 'Phase 2',
+                catalyst: 'Data readout Q1',
+                signals: [
+                    {type: 'Cash Burn', detail: 'Runway <12 months', pts: 25},
+                    {type: 'Insider Activity', detail: '3 Form 4 purchases', pts: 22},
+                    {type: 'Pipeline Value', detail: 'Phase 2 oncology', pts: 18},
+                    {type: 'Market Pressure', detail: 'Down 62% YTD', pts: 19}
+                ]
+            },
+            {
+                ticker: 'NVAX',
+                score: 78.5,
+                marketCap: '892M',
+                cashDebt: '1.8',
+                pipeline: 'Phase 3',
+                catalyst: 'Partnership rumors',
+                signals: [
+                    {type: 'Strategic Interest', detail: 'Multiple analyst upgrades', pts: 24},
+                    {type: 'Asset Value', detail: 'Mature manufacturing', pts: 21},
+                    {type: 'Cash Position', detail: 'Burn rate declining', pts: 17},
+                    {type: 'Market Dislocation', detail: 'Below book value', pts: 16}
+                ]
+            },
+            {
+                ticker: 'MDGL',
+                score: 76.3,
+                marketCap: '1.2B',
+                cashDebt: '3.1',
+                pipeline: 'Commercial',
+                catalyst: 'EU approval pending',
+                signals: [
+                    {type: 'Revenue Inflection', detail: 'Rezvoglar launch', pts: 23},
+                    {type: 'Geographic Expansion', detail: 'EU market access', pts: 20},
+                    {type: 'Insider Buying', detail: 'CEO purchase $2M', pts: 18},
+                    {type: 'Valuation', detail: 'P/S ratio 0.6x', pts: 15}
+                ]
+            }
+        ];
+
+        let mreitData = [
+            {
+                ticker: 'MITT',
+                score: 78.3,
+                pb: 0.85,
+                discount: 15.2,
+                yield: 12.5,
+                de: 4.2,
+                insider: 8.5
+            },
+            {
+                ticker: 'TWO',
+                score: 76.1,
+                pb: 0.88,
+                discount: 12.0,
+                yield: 11.8,
+                de: 3.9,
+                insider: 7.2
+            },
+            {
+                ticker: 'AGNC',
+                score: 74.5,
+                pb: 0.91,
+                discount: 9.5,
+                yield: 13.2,
+                de: 5.1,
+                insider: 6.8
+            },
+            {
+                ticker: 'ARR',
+                score: 72.3,
+                pb: 0.93,
+                discount: 7.2,
+                yield: 12.0,
+                de: 4.5,
+                insider: 5.5
+            },
+            {
+                ticker: 'NLY',
+                score: 70.8,
+                pb: 0.95,
+                discount: 5.5,
+                yield: 10.9,
+                de: 4.8,
+                insider: 4.2
+            }
+        ];
+
+        // ===== DATA LOADING =====
+        function loadDashboardData() {
+            // Update stats
+            document.getElementById('activeTargets').textContent = biotechData.length;
+            document.getElementById('avgScore').textContent = (biotechData.reduce((sum, d) => sum + d.score, 0) / biotechData.length).toFixed(1);
+            document.getElementById('highConfidence').textContent = biotechData.filter(d => d.score > 75).length;
+            document.getElementById('lastScan').textContent = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+
+            // Populate biotech table
+            populateBiotechTable(biotechData);
+
+            // Populate mREIT table
+            populateMREITTable(mreitData);
+        }
+
+        // ===== FILE UPLOAD HANDLERS =====
+        document.getElementById('biotechJsonUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    
+                    // Handle M&A scanner V10.6 format with results object
+                    let stocks = [];
+                    
+                    if (data.results && typeof data.results === 'object') {
+                        // V10.6 format: results is an object with ticker keys
+                        stocks = Object.entries(data.results).map(([ticker, stockData]) => ({
+                            ticker: ticker,
+                            score: stockData.score || 0,
+                            marketCap: stockData.market_cap ? `$${(stockData.market_cap).toFixed(0)}M` : '--',
+                            cashDebt: stockData.runway ? `${stockData.runway.toFixed(1)}mo` : '--',
+                            pipeline: stockData.conviction_tier || '--',
+                            catalyst: stockData.timing_action || stockData.timing_status || '--',
+                            signals: stockData.signals || [],
+                            ...stockData // Include all other fields
+                        }));
+                        
+                        // Filter out low scores if desired (optional)
+                        // stocks = stocks.filter(s => s.score >= 50);
+                        
+                        // Sort by score
+                        stocks.sort((a, b) => b.score - a.score);
+                    } else if (Array.isArray(data)) {
+                        // Direct array format
+                        stocks = data;
+                    } else if (data.screened_stocks) {
+                        // Alternative format with screened_stocks array
+                        stocks = data.screened_stocks;
+                    }
+                    
+                    if (stocks.length > 0) {
+                        biotechData = stocks;
+                        populateBiotechTable(biotechData);
+                        
+                        // Update stats
+                        document.getElementById('activeTargets').textContent = stocks.length;
+                        const avgScore = stocks.reduce((sum, d) => sum + (d.score || 0), 0) / stocks.length;
+                        document.getElementById('avgScore').textContent = avgScore.toFixed(1);
+                        document.getElementById('highConfidence').textContent = stocks.filter(d => (d.score || 0) > 75).length;
+                        document.getElementById('lastScan').textContent = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                        
+                        document.getElementById('biotechUploadStatus').textContent = `✓ Loaded ${stocks.length} stocks`;
+                        setTimeout(() => {
+                            document.getElementById('biotechUploadStatus').textContent = '';
+                        }, 3000);
+                    } else {
+                        alert('No stock data found in JSON file');
+                    }
+                } catch (error) {
+                    alert('Error parsing JSON file: ' + error.message);
+                    console.error('Parse error:', error);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('mreitJsonUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    
+                    // Update Fed meeting info
+                    if (data.next_fed_meeting) {
+                        const meeting = data.next_fed_meeting;
+                        document.getElementById('nextMeetingDate').textContent = meeting.date || 'Jan 28, 2026';
+                        document.getElementById('meetingCountdown').textContent = `${meeting.days_until || 7} days away`;
+                    }
+                    
+                    if (data.cut_probability !== undefined) {
+                        document.getElementById('cutProbability').textContent = data.cut_probability.toFixed(0) + '%';
+                    }
+                    
+                    // Update signal alert
+                    const signalAlert = document.getElementById('signalAlert');
+                    if (data.signal_triggered) {
+                        signalAlert.style.display = 'flex';
+                        signalAlert.innerHTML = `
+                            <div class="signal-icon">🚨</div>
+                            <div class="signal-text">
+                                <h3>SIGNAL TRIGGERED</h3>
+                                <p>Cut probability >70% and <7 days to meeting • Entry window active</p>
+                            </div>
+                        `;
+                    } else {
+                        signalAlert.style.display = 'none';
+                    }
+                    
+                    // Load mREIT data
+                    if (data.screened_mreits && data.screened_mreits.length > 0) {
+                        mreitData = data.screened_mreits;
+                        populateMREITTable(mreitData);
+                        
+                        document.getElementById('mreitUploadStatus').textContent = `✓ Loaded ${mreitData.length} mREITs`;
+                        setTimeout(() => {
+                            document.getElementById('mreitUploadStatus').textContent = '';
+                        }, 3000);
+                    } else {
+                        alert('No mREIT data found in JSON file. Expected "screened_mreits" field.');
+                        console.log('Data structure:', data);
+                    }
+                } catch (error) {
+                    alert('Error parsing JSON file: ' + error.message);
+                    console.error('Parse error:', error);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function populateBiotechTable(data) {
+            const biotechTableBody = document.getElementById('biotechTableBody');
+            if (!data || data.length === 0) {
+                biotechTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No M&A data available. Upload scanner results to view data.</td></tr>';
+                return;
+            }
+            
+            biotechTableBody.innerHTML = data.map(item => {
+                const ticker = item.ticker || item.symbol || '';
+                const score = item.score || item.composite_score || 0;
+                const marketCap = item.marketCap || item.market_cap || '--';
+                const cashDebt = item.cashDebt || item.cash_debt || '--';
+                const pipeline = item.pipeline || '--';
+                const catalyst = item.catalyst || '--';
+                
+                const scoreClass = score > 80 ? 'score-high' : score > 70 ? 'score-medium' : 'score-low';
+                
+                return `
+                    <tr>
+                        <td class="ticker-cell">${ticker}</td>
+                        <td><span class="score-badge ${scoreClass}">${score.toFixed(1)}</span></td>
+                        <td>$${marketCap}</td>
+                        <td>${typeof cashDebt === 'number' ? cashDebt.toFixed(1) : cashDebt}x</td>
+                        <td>${pipeline}</td>
+                        <td>${catalyst}</td>
+                        <td><button class="view-btn" onclick='showBiotechDetails(${JSON.stringify(item).replace(/'/g, "&#39;")})'>Details</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateMREITTable(data) {
+            const mreitTableBody = document.getElementById('mreitTableBody');
+            if (!data || data.length === 0) {
+                mreitTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No mREIT data available. Upload scanner results to view data.</td></tr>';
+                return;
+            }
+            
+            mreitTableBody.innerHTML = data.map(item => {
+                // Handle different field name variations
+                const ticker = item.ticker || '';
+                const score = item.composite_score || item.score || 0;
+                const pb = item.price_to_book || item.pb || 0;
+                const discount = item.book_discount_pct || item.discount || 0;
+                const yieldVal = item.dividend_yield ? (item.dividend_yield * 100) : (item.yield || 0);
+                const de = item.debt_to_equity || item.de || 0;
+                const insider = item.insider_score || item.insider || 0;
+                
+                const scoreClass = score > 75 ? 'score-high' : score > 65 ? 'score-medium' : 'score-low';
+                
+                return `
+                    <tr>
+                        <td class="ticker-cell">${ticker}</td>
+                        <td><span class="score-badge ${scoreClass}">${score.toFixed(1)}</span></td>
+                        <td>${pb.toFixed(2)}</td>
+                        <td>${discount.toFixed(1)}%</td>
+                        <td>${yieldVal.toFixed(1)}%</td>
+                        <td>${de.toFixed(1)}x</td>
+                        <td>${insider.toFixed(1)}</td>
+                        <td><button class="view-btn" onclick='showMREITDetails(${JSON.stringify(item).replace(/'/g, "&#39;")})'>Details</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ===== DATA LOADING =====
+        function loadDashboardData() {
+            populateBiotechTable(biotechData);
+            populateMREITTable(mreitData);
+            
+            // Update stats
+            document.getElementById('activeTargets').textContent = biotechData.length;
+            document.getElementById('avgScore').textContent = (biotechData.reduce((sum, d) => sum + d.score, 0) / biotechData.length).toFixed(1);
+            document.getElementById('highConfidence').textContent = biotechData.filter(d => d.score > 75).length;
+            document.getElementById('lastScan').textContent = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        // ===== MREIT SIGNAL UPDATE =====
+        function updateMREITSignal() {
+            const cutProb = 73;
+            const daysUntil = 8;
+            const signalTriggered = cutProb > 70 && daysUntil < 7;
+
+            if (signalTriggered) {
+                document.getElementById('signalAlert').style.display = 'flex';
+            } else {
+                document.getElementById('signalAlert').style.display = 'none';
+            }
+        }
+
+        // ===== MREIT FILTERS =====
+        function filterMREITs(filter) {
+            document.querySelectorAll('.mreit-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            let filteredData = mreitData;
+            if (filter === 'high') {
+                filteredData = mreitData.filter(d => d.score > 75);
+            } else if (filter === 'distressed') {
+                filteredData = mreitData.filter(d => d.pb < 0.9);
+            } else if (filter === 'insider') {
+                filteredData = mreitData.filter(d => d.insider > 5);
+            }
+
+            const mreitTableBody = document.getElementById('mreitTableBody');
+            mreitTableBody.innerHTML = filteredData.map(data => `
+                <tr>
+                    <td class="ticker-cell">${data.ticker}</td>
+                    <td><span class="score-badge ${data.score > 75 ? 'score-high' : data.score > 65 ? 'score-medium' : 'score-low'}">${data.score.toFixed(1)}</span></td>
+                    <td>${data.pb.toFixed(2)}</td>
+                    <td>${data.discount.toFixed(1)}%</td>
+                    <td>${data.yield.toFixed(1)}%</td>
+                    <td>${data.de.toFixed(1)}x</td>
+                    <td>${data.insider.toFixed(1)}</td>
+                    <td><button class="view-btn" onclick='showMREITDetails(${JSON.stringify(data)})'>Details</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        let chartInstance = null;
+
+        function showBiotechDetails(data) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContent');
+
+            const signalsHtml = data.signals.map(sig => `
+                <div class="signal-item">
+                    <div>
+                        <div class="signal-type">${sig.type}</div>
+                        <div class="signal-detail">${sig.detail}</div>
+                    </div>
+                    <div class="signal-points">+${sig.pts}</div>
+                </div>
+            `).join('');
+
+            content.innerHTML = `
+                <h1 style="font-family: 'Crimson Pro', serif; font-size: 56px; font-weight: 300; margin-bottom: 40px;">${data.ticker}</h1>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-info">
+                            <div class="chart-ticker">${data.ticker}</div>
+                            <div class="chart-price" id="chartPrice">--</div>
+                            <div class="chart-change" id="priceChange">--</div>
+                        </div>
+                        <div class="timeframe-buttons">
+                            <button class="timeframe-btn" onclick="changeTimeframe('1D')">1D</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('1W')">1W</button>
+                            <button class="timeframe-btn active" onclick="changeTimeframe('1M')">1M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('3M')">3M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('6M')">6M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('1Y')">1Y</button>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">Score Breakdown</div>
+                    <div class="signals-list">${signalsHtml}</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">Key Metrics</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Market Cap</div>
+                            <div style="font-size: 24px; font-weight: 600; font-family: 'Crimson Pro', serif;">$${data.marketCap}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Cash/Debt</div>
+                            <div style="font-size: 24px; font-weight: 600; font-family: 'Crimson Pro', serif;">${data.cashDebt}x</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Pipeline</div>
+                            <div style="font-size: 24px; font-weight: 600; font-family: 'Crimson Pro', serif;">${data.pipeline}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Catalyst</div>
+                            <div style="font-size: 18px; font-weight: 500; color: var(--text-secondary);">${data.catalyst}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.dataset.currentTicker = data.ticker;
+            modal.style.display = 'flex';
+            setTimeout(() => fetchChartData(data.ticker, '1M'), 100);
+        }
+
+        function showMREITDetails(data) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContent');
+
+            // Handle different field name variations
+            const ticker = data.ticker || '';
+            const score = data.composite_score || data.score || 0;
+            const price = data.price || 0;
+            const bookValue = data.book_value || data.bookValue || 0;
+            const pb = data.price_to_book || data.pb || 0;
+            const discount = data.book_discount_pct || data.discount || 0;
+            const yieldVal = data.dividend_yield || (data.yield ? data.yield / 100 : 0);
+            const de = data.debt_to_equity || data.de || 0;
+            const insider = data.insider_score || data.insider || 0;
+
+            content.innerHTML = `
+                <h1 style="font-family: 'Crimson Pro', serif; font-size: 56px; font-weight: 300; margin-bottom: 40px;">${ticker}</h1>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-info">
+                            <div class="chart-ticker">${ticker}</div>
+                            <div class="chart-price" id="chartPrice">$${price.toFixed(2)}</div>
+                            <div class="chart-change" id="priceChange">--</div>
+                        </div>
+                        <div class="timeframe-buttons">
+                            <button class="timeframe-btn" onclick="changeTimeframe('1D')">1D</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('1W')">1W</button>
+                            <button class="timeframe-btn active" onclick="changeTimeframe('1M')">1M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('3M')">3M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('6M')">6M</button>
+                            <button class="timeframe-btn" onclick="changeTimeframe('1Y')">1Y</button>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">mREIT Fundamentals</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Score</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif; color: var(--accent-green);">${score.toFixed(1)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Price</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif;">$${price.toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Book Value</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif;">$${bookValue.toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">P/B Ratio</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif;">${pb.toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Book Discount</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif; color: var(--accent-green);">${discount.toFixed(1)}%</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Dividend Yield</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif;">${(yieldVal * 100).toFixed(1)}%</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">D/E Ratio</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif;">${de.toFixed(1)}x</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600;">Insider Score</div>
+                            <div style="font-size: 32px; font-weight: 600; font-family: 'Crimson Pro', serif; color: var(--accent-blue);">${insider.toFixed(1)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">Score Breakdown</div>
+                    <div class="signals-list">
+                        <div class="signal-item">
+                            <div>
+                                <div class="signal-type">Book Value Discount</div>
+                                <div class="signal-detail">${discount.toFixed(1)}% below book value (40% weight)</div>
+                            </div>
+                            <div class="signal-points">+${Math.min(50, discount * 2).toFixed(0)}</div>
+                        </div>
+                        <div class="signal-item">
+                            <div>
+                                <div class="signal-type">Dividend Yield</div>
+                                <div class="signal-detail">${(yieldVal * 100).toFixed(1)}% yield (30% weight)</div>
+                            </div>
+                            <div class="signal-points">+${Math.min(30, yieldVal * 100 * 3).toFixed(0)}</div>
+                        </div>
+                        <div class="signal-item">
+                            <div>
+                                <div class="signal-type">Insider Activity</div>
+                                <div class="signal-detail">90-day net buying (20% weight)</div>
+                            </div>
+                            <div class="signal-points">+${(insider * 2).toFixed(0)}</div>
+                        </div>
+                        <div class="signal-item">
+                            <div>
+                                <div class="signal-type">Leverage Analysis</div>
+                                <div class="signal-detail">${de.toFixed(1)}x debt-to-equity (10% weight)</div>
+                            </div>
+                            <div class="signal-points">${de > 5 ? '-10' : de > 3 ? '-5' : '0'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">Trading Strategy</div>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 12px; padding: 24px;">
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--accent-green);">Entry:</strong> 3 days before Fed meeting (when signal triggered)
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--accent-red);">Exit:</strong> 1 day after Fed decision
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <strong style="color: var(--accent-blue);">Expected Return:</strong> +6-8% per 4-day hold
+                        </div>
+                        <div>
+                            <strong>Historical Performance:</strong> 100% win rate on signal-triggered trades (2024 rate cuts)
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.dataset.currentTicker = ticker;
+            modal.style.display = 'flex';
+            setTimeout(() => fetchChartData(ticker, '1M'), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+            if (chartInstance) {
+                chartInstance.destroy();
+                chartInstance = null;
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // ===== CHART FUNCTIONS =====
+        function generateMockData(timeframe) {
+            const days = {
+                '1D': 1,
+                '1W': 7,
+                '1M': 30,
+                '3M': 90,
+                '6M': 180,
+                '1Y': 365
+            }[timeframe] || 30;
+
+            const data = [];
+            let price = 10 + Math.random() * 5;
+
+            for (let i = 0; i < days; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - (days - i));
+                price += (Math.random() - 0.48) * 0.3;
+                data.push({
+                    date: date.toISOString().split('T')[0],
+                    close: price
+                });
+            }
+
+            return data;
+        }
+
+        function fetchChartData(ticker, timeframe) {
+            const data = generateMockData(timeframe);
+            renderChart(data, ticker);
+        }
+
+        function renderChart(data, ticker) {
+            const labels = data.map(d => d.date);
+            const prices = data.map(d => d.close);
+
+            const currentPrice = prices[prices.length - 1];
+            const firstPrice = prices[0];
+            const priceChange = ((currentPrice - firstPrice) / firstPrice) * 100;
+            const isPositive = priceChange >= 0;
+
+            document.getElementById('chartPrice').textContent = `$${currentPrice.toFixed(2)}`;
+            const changeEl = document.getElementById('priceChange');
+            changeEl.textContent = `${isPositive ? '+' : ''}${priceChange.toFixed(2)}%`;
+            changeEl.className = `chart-change ${isPositive ? 'positive' : 'negative'}`;
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const ctx = document.getElementById('priceChart').getContext('2d');
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: prices,
+                        borderColor: isPositive ? 'rgba(0, 204, 102, 1)' : 'rgba(255, 51, 51, 1)',
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                            gradient.addColorStop(0, isPositive ? 'rgba(0, 204, 102, 0.1)' : 'rgba(255, 51, 51, 0.1)');
+                            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: isPositive ? '#00cc66' : '#ff3333',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(10, 10, 10, 0.95)',
+                            padding: 12,
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            titleFont: { size: 11, weight: '600' },
+                            bodyFont: { size: 13, weight: '600' },
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { display: false },
+                            ticks: {
+                                maxTicksLimit: 6,
+                                font: { size: 11 },
+                                color: '#8a8a8a'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: value => '$' + value.toFixed(2),
+                                font: { size: 11 },
+                                color: '#8a8a8a'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function changeTimeframe(timeframe) {
+            document.querySelectorAll('.timeframe-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const ticker = document.getElementById('detailModal').dataset.currentTicker;
+            fetchChartData(ticker, timeframe);
+        }
+    </script>
+</body>
+</html>

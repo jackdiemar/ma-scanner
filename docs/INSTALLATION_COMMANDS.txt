@@ -1,0 +1,34 @@
+# ============================================================================
+# ULTIMATE M&A SCANNER - INSTALLATION COMMANDS
+# ============================================================================
+# Copy-paste these commands into Terminal (Mac) or Command Prompt (Windows)
+
+# STEP 1: Create folder and navigate
+mkdir -p ~/Downloads/ma-scanner
+cd ~/Downloads/ma-scanner
+
+# STEP 2: Move all downloaded files here
+# (Drag the 6 downloaded files into this folder)
+
+# STEP 3: Make scripts executable (Mac/Linux)
+chmod +x INSTALL.sh RUN.sh
+
+# STEP 4: Run installation
+./INSTALL.sh
+
+# STEP 5: Install ALL power-up libraries
+pip3 install pandas numpy textblob schedule plotly matplotlib seaborn sqlalchemy python-telegram-bot aiohttp scikit-learn --break-system-packages
+
+# STEP 6: Verify installation
+python3 -c "import pandas, numpy, textblob; print('✅ All libraries installed successfully!')"
+
+# STEP 7: Create status file
+echo "Scanner installed with ALL libraries. Ready for upgrade when home." > STATUS.txt
+cat STATUS.txt
+
+# ============================================================================
+# DONE! When you get home, run:
+# ./RUN.sh
+# 
+# Then text Claude: "upgrade the scanner with all features"
+# ============================================================================

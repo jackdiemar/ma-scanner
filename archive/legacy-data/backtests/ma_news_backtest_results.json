@@ -1,0 +1,131 @@
+{
+  "results": [
+    {
+      "ticker": "FOLD",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "CERE",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "ALPN",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "KYMR",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "SRRK",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "IMVT",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "PRAX",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "IMGN",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "TGTX",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "AKCA",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "SGEN",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "REATA",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "CTMX",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "HZNP",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "LGND",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "CORT",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "DNLI",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "MORF",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "ADPT",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "ATRA",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "ALXN",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "PRTI",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "AUPH",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "MYOK",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    },
+    {
+      "ticker": "TROV",
+      "had_prediction": false,
+      "reason": "no_news_data"
+    }
+  ],
+  "source_performance": {},
+  "analysis_date": "2026-01-07T11:20:24.877442"
+}

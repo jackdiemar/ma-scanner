@@ -1,0 +1,976 @@
+{
+  "summary": {
+    "total": 34,
+    "with_sec": 0,
+    "with_catalysts": 21,
+    "high_score": 2,
+    "timestamp": "2025-12-25T00:00:59.881868"
+  },
+  "results": {
+    "FOLD": {
+      "score": 33,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$4.4B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "6 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "RARE": {
+      "score": 70,
+      "signal_count": 5,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.8Q",
+          "pts": 18
+        },
+        {
+          "type": "Good Size",
+          "detail": "$3.3B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "137% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "20 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "SGMO": {
+      "score": 51,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Critical Cash",
+          "detail": "1.6Q",
+          "pts": 25
+        },
+        {
+          "type": "Undervalued",
+          "detail": "630% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "5 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "fda, partnership",
+          "pts": 3,
+          "news": [
+            "Sangamo preps FDA application for Fabry gene therapy on heels of phase",
+            "Sangamo Therapeutics Stock Plummets 56% After Pfizer Ends Hemophilia T"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "EDIT": {
+      "score": 42,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.7Q",
+          "pts": 18
+        },
+        {
+          "type": "Undervalued",
+          "detail": "132% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "8 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "breakthrough",
+          "pts": 1,
+          "news": [
+            "CRISPR: A Biotech Breakthrough - National Science Foundation (.gov)"
+          ]
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "CRSP": {
+      "score": 36,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "43% upside",
+          "pts": 12
+        },
+        {
+          "type": "Institutional",
+          "detail": "78%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "NTLA": {
+      "score": 57,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$1.1B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "134% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "87%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BEAM": {
+      "score": 59,
+      "signal_count": 5,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$2.9B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "63% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "102%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "14 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "approval, fda",
+          "pts": 2,
+          "news": [
+            "Novartis wins approval for newborn malaria treatment - statnews.com",
+            "Beam's Sickle Cell Gene Therapy Gets FDA Speed Boost After Strong Tria"
+          ]
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "FATE": {
+      "score": 36,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "390% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "80%",
+          "pts": 12
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "positive",
+          "pts": 1,
+          "news": [
+            "Fate Therapeutics: Recent Update Met With Selling, But Positives Exist"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "ALLO": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "440% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "10 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "ARVN": {
+      "score": 38,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.9B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "16 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "collaboration",
+          "pts": 1,
+          "news": [
+            "Arvinas amends collaboration with Pfizer - The Pharma Letter"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "RGNX": {
+      "score": 54,
+      "signal_count": 5,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.7B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "110% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "84%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "11 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "approval, fda",
+          "pts": 5,
+          "news": [
+            "Biotech stocks skyrocket as new FDA commissioner pushes for faster dru",
+            "Biotech stocks skyrocket as new FDA commissioner pushes for faster dru",
+            "RegeNXBio shares fall, despite positive new data on RGX-202 - The Phar"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "KPTI": {
+      "score": 44,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "2.1Q",
+          "pts": 18
+        },
+        {
+          "type": "Undervalued",
+          "detail": "96% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "6 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "phase 3, partnership",
+          "pts": 3,
+          "news": [
+            "Karyopharm Announces Strategic Financing Transactions to Support Growt",
+            "Karyopharm Grows Revenue With Strong XPOVIO Sales And Partnerships - F"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "IONS": {
+      "score": 29,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "approval, fda",
+          "pts": 2,
+          "news": [
+            "Will FDA Approval of Tryngolza and Analyst Support Change Ionis Pharma",
+            "Will FDA Approval of Tryngolza and Analyst Support Change Ionis Pharma"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "SRPT": {
+      "score": 41,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$2.3B",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "85%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "23 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "fda",
+          "pts": 2,
+          "news": [
+            "Biotech sector slips amid reported return of ousted FDA official (SRPT"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "ALNY": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "100%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BMRN": {
+      "score": 42,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "49% upside",
+          "pts": 12
+        },
+        {
+          "type": "High Institutional",
+          "detail": "98%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "23 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "fda, phase 3",
+          "pts": 3,
+          "news": [
+            "Biotechnology Stocks Week Ahead (Dec. 22–26, 2025): BioMarin–Amicus De",
+            "BioMarin inks $270M Inozyme buyout, bagging phase 3 prospect in first ",
+            "Biotech Stock Roundup: BMRN to Acquire INZY, NVAX Gains on Vaccine App"
+          ]
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "UTHR": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "99%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "12 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "LGND": {
+      "score": 34,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$3.9B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "fda",
+          "pts": 1,
+          "news": [
+            "US FDA adds label warning to J&J's and Legend Biotech's cancer therapy"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "INCY": {
+      "score": 30,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "106%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "21 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "approval, fda",
+          "pts": 3,
+          "news": [
+            "Incyte (INCY) Valuation Check After Japan Oncology Approvals for Minju",
+            "Incyte Stock Falls Despite FDA Breakthrough Therapy Fast Track For Rar",
+            "Incyte Stock Falls Despite FDA Breakthrough Therapy Fast Track For Rar"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "VRTX": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "97%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "24 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "NBIX": {
+      "score": 28,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "101%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "27 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "phase 2",
+          "pts": 1,
+          "news": [
+            "Neurocrine Biosciences (NBIX): Assessing Valuation After New Phase 2 B"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "JAZZ": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "104%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "16 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "BIIB": {
+      "score": 28,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "29 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "partnership",
+          "pts": 1,
+          "news": [
+            "Dayra Therapeutics secures Biogen partnership and $70M before official"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "SAVA": {
+      "score": 16,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "259% upside",
+          "pts": 15
+        },
+        {
+          "type": "Catalysts",
+          "detail": "approval",
+          "pts": 1,
+          "news": [
+            "Biotech Stock Roundup: BBIO Stock Up on Drug Approval, SAVA, APLT Plun"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "PRAX": {
+      "score": 46,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "53% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "96%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "15 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "phase 3, fda",
+          "pts": 4,
+          "news": [
+            "Praxis erases doubts with phase 3 wins in essential tremor, sending sh",
+            "PRAX Announces Breakthroughs in Neurological Treatments: Key Developme",
+            "PRAX Announces Breakthroughs in Neurological Treatments: Key Developme"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "AXSM": {
+      "score": 24,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Institutional",
+          "detail": "77%",
+          "pts": 12
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "20 analysts",
+          "pts": 12
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "EYPT": {
+      "score": 76,
+      "signal_count": 6,
+      "signals": [
+        {
+          "type": "Low Cash",
+          "detail": "3.9Q",
+          "pts": 18
+        },
+        {
+          "type": "Perfect Size",
+          "detail": "$1.5B",
+          "pts": 15
+        },
+        {
+          "type": "Undervalued",
+          "detail": "98% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "87%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "12 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "partnership",
+          "pts": 1,
+          "news": [
+            "Egypt, in Partnership with Morocco, Selected as Headquarters for the N"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "AKRO": {
+      "score": 26,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$4.5B",
+          "pts": 10
+        },
+        {
+          "type": "High Institutional",
+          "detail": "112%",
+          "pts": 15
+        },
+        {
+          "type": "Catalysts",
+          "detail": "breakthrough",
+          "pts": 1,
+          "news": [
+            "Akero Therapeutics (AKRO) Skyrockets on $5.2 B Novo Nordisk Buyout – P"
+          ]
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "CTMX": {
+      "score": 48,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Good Size",
+          "detail": "$0.7B",
+          "pts": 10
+        },
+        {
+          "type": "Undervalued",
+          "detail": "61% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "89%",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "7 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "HUMA": {
+      "score": 51,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Critical Cash",
+          "detail": "0.7Q",
+          "pts": 25
+        },
+        {
+          "type": "Undervalued",
+          "detail": "628% upside",
+          "pts": 15
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "7 analysts",
+          "pts": 8
+        },
+        {
+          "type": "Catalysts",
+          "detail": "phase 3, fda",
+          "pts": 3,
+          "news": [
+            "Humacyte (HUMA): Reassessing Valuation Following Strong Phase 3 Result",
+            "Can Humacyte (HUMA) recover from FDA controversy? - Investorsobserver",
+            "North Carolina biotech weighs demand as breakthrough treatment hits ma"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "KYMR": {
+      "score": 41,
+      "signal_count": 4,
+      "signals": [
+        {
+          "type": "Upside",
+          "detail": "39% upside",
+          "pts": 12
+        },
+        {
+          "type": "High Institutional",
+          "detail": "107%",
+          "pts": 15
+        },
+        {
+          "type": "High Analyst Coverage",
+          "detail": "22 analysts",
+          "pts": 12
+        },
+        {
+          "type": "Catalysts",
+          "detail": "fda, breakthrough",
+          "pts": 2,
+          "news": [
+            "Kymera Therapeutics (KYMR): Valuation Check After KT-621 Phase 1b Succ",
+            "Therapeutics (KYMR) Stock Rockets on KT‑621 Eczema Breakthrough, Then "
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "NKTX": {
+      "score": 32,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "522% upside",
+          "pts": 15
+        },
+        {
+          "type": "High Institutional",
+          "detail": "86%",
+          "pts": 15
+        },
+        {
+          "type": "Catalysts",
+          "detail": "positive, phase 2",
+          "pts": 2,
+          "news": [
+            "Nkarta leaps on positive data for natural killer cell programs - The P",
+            "Recursion: A Look At Near-Term Phase 1b And Phase 2 Catalysts (NASDAQ:"
+          ]
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": true
+    },
+    "MLNK": {
+      "score": 27,
+      "signal_count": 2,
+      "signals": [
+        {
+          "type": "Perfect Size",
+          "detail": "$1.5B",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "81%",
+          "pts": 12
+        }
+      ],
+      "has_sec": null,
+      "sec_count": 0,
+      "has_catalysts": false
+    },
+    "AUTL": {
+      "score": 35,
+      "signal_count": 3,
+      "signals": [
+        {
+          "type": "Undervalued",
+          "detail": "467% upside",
+          "pts": 15
+        },
+        {
+          "type": "Institutional",
+          "detail": "73%",
+          "pts": 12
+        },
+        {
+          "type": "Analyst Coverage",
+          "detail": "9 analysts",
+          "pts": 8
+        }
+      ],
+      "has_sec": false,
+      "sec_count": 0,
+      "has_catalysts": false
+    }
+  }
+}
