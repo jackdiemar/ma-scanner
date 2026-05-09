@@ -154,7 +154,9 @@ os.makedirs(PREDICTIONS_DIR, exist_ok=True)
 os.makedirs(TRACKING_DIR, exist_ok=True)
 
 # Watchlist tracking file — persists first-seen date / price / tier across scans
-TRACKING_FILE = os.path.join(TRACKING_DIR, 'watchlist_tracking.json')
+TRACKING_FILE      = os.path.join(TRACKING_DIR, 'watchlist_tracking.json')
+# State history file — persists process-state snapshots and transition events across scans
+STATE_HISTORY_FILE = os.path.join(TRACKING_DIR, 'state_history.json')
 
 # ─────────────────────────────────────────────────────────────────────────────
 # UNIVERSE — 500 BIOTECH/PHARMA STOCKS ORGANIZED BY THERAPEUTIC AREA
@@ -3195,6 +3197,15 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
         del out['_activist_signal']
         del out['_proxy_signal']
 
+        # Derive backend process_state (mirrors frontend JS logic)
+        from process_history import derive_process_state
+        out['process_state'] = derive_process_state(out)
+
+        # Placeholder — filled in by main() after state history is updated
+        out['state_transitions']    = []
+        out['state_first_entered_ts'] = None
+        out['state_snapshot_count'] = 0
+
         return out
 
     except Exception as e:
@@ -3571,6 +3582,30 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     # ── Merge: pass2 results override pass1 where available ───────────────────
     final_map = {**pass1_results, **pass2_results}
     results   = list(final_map.values())
+
+    # ── State history: load, update, attach transition events ─────────────────
+    from process_history import (
+        load_state_history, save_state_history, update_ticker_history,
+        get_state_entered_ts,
+    )
+    state_history = load_state_history(STATE_HISTORY_FILE)
+
+    for r in results:
+        tkr = r.get('ticker')
+        if not tkr or r.get('conviction_tier') == 'BANKRUPTCY_RISK':
+            continue
+        try:
+            events = update_ticker_history(tkr, r, state_history)
+            r['state_transitions']     = events[-5:]   # surface last 5 to dashboard
+            r['state_first_entered_ts'] = get_state_entered_ts(tkr, state_history)
+            r['state_snapshot_count']  = len(
+                state_history.get(tkr, {}).get('snapshots', [])
+            )
+        except Exception:
+            pass   # history update must never break the scan
+
+    save_state_history(state_history, STATE_HISTORY_FILE)
+    print(f'  State history updated — {len(state_history)} tickers tracked')
 
     # ── Update tracking (single-threaded, after all results collected) ─────────
     new_picks   = 0
