@@ -7,13 +7,24 @@ _Purpose: Step-by-step process for advancing a case from CANDIDATE → PARTIAL �
 
 ## Status Definitions
 
-| Status | Meaning | Usable for Calibration |
-|--------|---------|----------------------|
-| CANDIDATE | In collection_targets.csv queue only. No data populated yet. | No |
-| PARTIAL | cases.csv row exists. 1+ key fields unconfirmed or missing. | No |
-| VERIFIED | All required fields confirmed against primary sources. | Yes |
+| Status | Meaning | Usable for Calibration | Promoted By |
+|--------|---------|----------------------|-------------|
+| CANDIDATE | In collection_targets.csv queue only. No cases.csv row yet. | No | Manual research decision |
+| STUB | cases.csv row exists. Pre-populated from training knowledge or secondary sources. No primary EDGAR source confirmed. | No | edgar_evidence_finder.py or manual seed |
+| PARTIAL | cases.csv row exists. observation_date + source_filing_url confirmed from EDGAR. 1+ VERIFIED source_evidence row. Price or outcome incomplete. | No (structural tests only) | EDGAR confirmation of primary filing |
+| VERIFIED | All required fields confirmed against primary sources. | Structural tests only | Full verification checklist passed |
+| CALIBRATION_ELIGIBLE | VERIFIED + anti-look-ahead rules confirmed + price window complete. | **YES** | Anti-look-ahead checklist + price completeness |
 
-**Only VERIFIED=TRUE rows count in any calibration query.** This is enforced in all `_calibration_tables` SQL templates.
+**Status progression:** CANDIDATE → STUB → PARTIAL → VERIFIED → CALIBRATION_ELIGIBLE
+
+**Only CALIBRATION_ELIGIBLE rows feed P(deal) tables.** VERIFIED rows can be counted but not used for rate calculations.
+
+**STUB rows:** Created by `edgar_evidence_finder.py` or added to `cases_seed.csv` with pre-populated values from secondary sources. Every row in cases_seed.csv starts as STUB (previously labeled VERIFY_REQUIRED). A STUB row has structural value (defines the case) but zero calibration value until promoted to PARTIAL.
+
+**Promoting STUB → PARTIAL requires:**
+1. EDGAR filing URL confirmed (source_filing_url = real EDGAR index URL, not search page)
+2. observation_date confirmed as EDGAR filing date (not approximation)
+3. At least 1 source_evidence.csv row with verification_status=VERIFIED for this case
 
 ---
 
@@ -62,20 +73,83 @@ https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={CIK}&type={FORM_
 
 ### Step 2. Pull Price on first_observation_date
 
-Using Yahoo Finance or Bloomberg:
+**Delisted Ticker Price Workflow (priority order):**
 
+**Tier 1 — yfinance (free, required attempt for all cases):**
 ```python
-# yfinance minimal pull
-import yfinance as yf
-obs = '2022-03-15'  # observation date
-df = yf.download(ticker, start=obs, end='...', auto_adjust=True)
-price_at_signal = df.iloc[0]['Close']
+import yfinance as yf, pandas as pd
+
+def get_price_window(ticker: str, obs_date: str) -> dict:
+    """Pull price_at_signal and forward prices. Returns dict of field → value."""
+    obs = pd.Timestamp(obs_date)
+    end = obs + pd.Timedelta(days=400)
+    df = yf.download(ticker, start=obs_date, end=end.strftime('%Y-%m-%d'),
+                     auto_adjust=True, progress=False)
+    if df.empty:
+        return {'error': 'No data — ticker may be delisted before obs_date'}
+    
+    def price_on_or_after(dt):
+        sub = df[df.index >= dt]
+        return round(float(sub.iloc[0]['Close']), 2) if not sub.empty else None
+    
+    price_at  = price_on_or_after(obs)
+    price_30d = price_on_or_after(obs + pd.Timedelta(days=30))
+    price_90d = price_on_or_after(obs + pd.Timedelta(days=90))
+    price_180d = price_on_or_after(obs + pd.Timedelta(days=180))
+    
+    # Max drawdown within 365d
+    window = df[(df.index >= obs) & (df.index <= obs + pd.Timedelta(days=365))]
+    if price_at and not window.empty:
+        trough = float(window['Close'].min())
+        drawdown = round((trough - price_at) / price_at, 4)
+    else:
+        drawdown = None
+    
+    return {
+        'price_at_signal':        price_at,
+        'price_30d_after':        price_30d,
+        'price_90d_after':        price_90d,
+        'price_180d_after':       price_180d,
+        'max_drawdown_pct':       drawdown,
+        'last_available_date':    str(df.index[-1].date()) if not df.empty else None,
+        'source':                 'yfinance (auto_adjust=True)',
+    }
+```
+Use **auto_adjust=True** (handles splits and dividends). If the observation date falls on a non-trading day, use the next trading day close (yfinance `.iloc[0]` handles this automatically).
+
+**Tier 2 — Stooq (free, good coverage for delisted US stocks):**
+```
+URL: https://stooq.com/q/d/l/?s={TICKER}.us&i=d
+Returns CSV: Date, Open, High, Low, Close, Volume
+Filter to obs_date window. Use Close column.
 ```
 
-- Use **adjusted closing price** (accounts for splits and dividends)
-- If the observation date falls on a non-trading day, use the **next trading day's open**
-- Record in `cases.csv`: `price_at_signal`
-- Record in `outcomes.csv`: `price_at_signal`
+**Tier 3 — Nasdaq Data Link / Alpha Vantage (API key required):**
+```
+https://data.nasdaq.com/api/v3/datatables/WIKI/PRICES?ticker={TICKER}&api_key={KEY}
+```
+
+**Tier 4 — Bloomberg Terminal (required for VERIFIED status on delisted tickers):**
+```
+{TICKER} US Equity HP <GO>
+Set date range: [obs_date - 5d] to [obs_date + 370d]
+Field: PX_LAST (adjusted)
+Export to Excel
+```
+
+**Data quality rules:**
+- yfinance data → data_quality stays PARTIAL even if other fields confirmed
+- Stooq data → data_quality stays PARTIAL
+- Bloomberg data → acceptable for VERIFIED status
+- If ticker delisted before 180d window closes → record `price_180d_after = null` and note delisting date in `notes`
+- `max_drawdown_pct_after_signal` must use full 365d window or through delisting date, whichever is earlier
+
+Record price evidence in source_evidence.csv:
+```
+evidence_type: PRICE_DATA
+source_name:   "Yahoo Finance / yfinance" or "Bloomberg Terminal"
+supports_field: price_at_signal|price_30d_after|price_90d_after|price_180d_after|max_drawdown_pct_after_signal
+```
 
 ### Step 3. Extract Key Signal Excerpt
 
@@ -167,15 +241,35 @@ max_drawdown = (trough_price - price_at_signal) / price_at_signal
 
 **Anti-look-ahead check for failure_reason:** The failure_reason must reflect what was publicly known at `outcome_date`. Do NOT incorporate knowledge of events that occurred after the outcome was announced (pipeline results, future trials, post-outcome financings).
 
-**For BANKRUPT cases:**
+**For BANKRUPT cases (corporate_outcome = BANKRUPT):**
 - [ ] Locate the Chapter 7 or Chapter 11 petition on EDGAR or PACER
-- [ ] `outcome_date` = petition date (not the wind-down announcement)
-- [ ] `contemporaneous_source_url` = the 8-K announcing the filing (or PACER docket if no 8-K)
+- [ ] `outcome_date` = EDGAR 8-K filing date announcing the bankruptcy (not the internal filing date)
+- [ ] Check PACER for actual petition docket: `https://pacer.gov` → search by company name or CIK
+- [ ] Record whether Chapter 7 (liquidation) or Chapter 11 (reorganization) in `notes`
+- [ ] `contemporaneous_source_url` = the 8-K announcing the filing (preferred) or PACER docket URL
+- [ ] Set `process_event_type = BANKRUPTCY_FILED` and `corporate_outcome = BANKRUPT`
 
-**For WIND_DOWN cases:**
+**For WIND_DOWN cases (corporate_outcome = WIND_DOWN):**
 - [ ] Locate the wind-down announcement 8-K
-- [ ] Confirm company stopped operations (not just paused one program)
-- [ ] `outcome_date` = date of wind-down 8-K
+- [ ] Confirm company stopped operations (not just paused one program or reduced headcount)
+- [ ] **Mandatory PACER check:** Confirm NO Chapter 7 or Chapter 11 petition was filed
+  ```
+  PACER search: https://pacer.gov → Party Search → Company Name
+  If petition found → reclassify corporate_outcome to BANKRUPT
+  ```
+- [ ] `outcome_date` = EDGAR filing date of wind-down 8-K
+- [ ] Set `process_event_type = WIND_DOWN_ANNOUNCED` and `corporate_outcome = WIND_DOWN`
+
+**Distinguishing WIND_DOWN from BANKRUPT (resolves GNCA/MGTA ambiguity):**
+
+| Indicator | corporate_outcome |
+|-----------|-----------------|
+| Company files Chapter 7 or Chapter 11 with the bankruptcy court | BANKRUPT |
+| Company announces dissolution/wind-down but does NOT file bankruptcy | WIND_DOWN |
+| Company completes wind-down and dissolves state charter | WIND_DOWN |
+| Company files Chapter 11 then converts to Chapter 7 | BANKRUPT |
+
+The presence of a PACER docket number = BANKRUPT. The absence = WIND_DOWN (if 8-K says "wind down").
 
 **For ONGOING cases:**
 - [ ] Confirm ticker is still actively traded as of verification date
@@ -193,12 +287,51 @@ If `signal_type = ACTIVIST_13D`:
 ### Check E. ROFR/ROFN Scope (ROFR Cases Only)
 
 If `signal_type = ROFR_ROFN`:
-- [ ] `rofr_scope` confirmed from the collaboration/licensing agreement text
-  - WHOLE_COMPANY: rights apply to an acquisition of the full company
-  - ASSET_SPECIFIC: rights apply to a specific asset or program
-  - PROGRAM_SPECIFIC: rights apply to a named drug/compound
-  - TERRITORY_SPECIFIC: rights apply only to a geographic territory
-- [ ] Source text for the ROFR clause found and excerpted in `filing_events.csv`
+
+**Step 1 — Find the agreement exhibit (NOT the 8-K body):**
+ROFR/ROFN clauses are almost always in Exhibit 10.x of the 8-K (the actual collaboration or license agreement), NOT in the 8-K body text. The 8-K body only announces the collaboration; the exhibit contains the operative legal terms.
+
+```
+Procedure:
+1. Open the 8-K filing index URL.
+2. Look for the exhibit table near the bottom of the index page.
+3. Find entries labeled "EX-10.1", "EX-10.2", etc. — these are the agreement exhibits.
+4. Click the exhibit link to download the collaboration/license agreement text.
+5. Search the exhibit for: "right of first refusal", "right of first negotiation",
+   "option to acquire", "change of control" headings.
+```
+
+**Step 2 — Run exhibit_scope_extractor.py:**
+```bash
+python3 src/historical_case_tools/exhibit_scope_extractor.py \
+    --file /path/to/exhibit.txt --output json
+```
+Or pass the EDGAR exhibit URL directly:
+```bash
+python3 src/historical_case_tools/exhibit_scope_extractor.py \
+    --edgar-url https://www.sec.gov/Archives/edgar/data/{CIK}/{ACCESSION}/exhibit10-1.htm
+```
+
+**Step 3 — Classify scope from actual clause language:**
+- [ ] `rofr_scope = WHOLE_COMPANY`: clause explicitly covers acquisition of the entire company (looks for "merger", "acquisition of the company", "all outstanding shares")
+- [ ] `rofr_scope = PROGRAM_SPECIFIC`: clause names a specific compound (e.g., "rusfertide", "HARP-3521") — use the compound name as `affected_asset`
+- [ ] `rofr_scope = ASSET_SPECIFIC`: clause covers a defined collaboration asset/program bundle but not a single named compound
+- [ ] `rofr_scope = TERRITORY_SPECIFIC`: clause applies only within a named geographic territory
+
+**Step 4 — Anti-look-ahead requirement:**
+- [ ] Scope must be derived from the ORIGINAL agreement text at collaboration signing date
+- [ ] Do NOT use knowledge of whether the ROFR was later exercised to classify original scope
+- [ ] If the agreement was subsequently amended, classify scope from the EARLIEST version
+
+**Step 5 — Record in source_evidence.csv:**
+```
+evidence_type:  EXHIBIT_AGREEMENT
+exhibit_number: 10.1 (or whichever exhibit number)
+supports_field: rofr_scope|excerpt_text
+excerpt:        verbatim ROFR clause text (max 500 chars)
+```
+
+**Calibration note:** exhibit_scope_extractor.py confidence < 0.5 = manual review required before assigning rofr_scope. Do not auto-accept LOW confidence outputs.
 
 ### Check F. Market Cap Confirmation
 

@@ -1,0 +1,138 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-10",
+  "_layer": "source_evidence",
+  "_description": "One row per piece of evidence supporting a field value in cases.csv, filing_events.csv, outcomes.csv, or transitions.csv. Provides auditability: every PARTIAL or VERIFIED field value must trace to at least one row here. Populated by edgar_evidence_finder.py and manually during verification.",
+
+  "_file": "source_evidence.csv",
+  "_foreign_key": "case_id → cases.csv",
+
+  "fields": {
+    "evidence_id": {
+      "type": "string",
+      "format": "TICKER-YYYY-NNN-SRC-NNN",
+      "example": "HARP-2020-001-SRC-001",
+      "description": "Unique evidence row ID. SRC sequence resets per case.",
+      "required": true
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Foreign key to cases.csv. One case may have many evidence rows.",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "required": true
+    },
+    "evidence_type": {
+      "type": "enum",
+      "values": [
+        "8K_SA",
+        "8K_MERGER",
+        "8K_WINDDOWN",
+        "8K_BANKRUPTCY",
+        "8K_ASSET_SALE",
+        "8K_CAPITAL_RAISE",
+        "8K_OTHER",
+        "13D_INITIAL",
+        "13D_AMENDMENT",
+        "EXHIBIT_AGREEMENT",
+        "PROXY_SA_LANGUAGE",
+        "EARNINGS_SA_LANGUAGE",
+        "PRICE_DATA",
+        "PACER_DOCKET",
+        "PRESS_RELEASE",
+        "RESEARCH_TARGET",
+        "OTHER"
+      ],
+      "description": "Classification of the evidence artifact. RESEARCH_TARGET = expected evidence not yet located — placeholder for edgar_evidence_finder.py output.",
+      "required": true
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Human-readable source label. E.g., 'SEC EDGAR', 'Yahoo Finance', 'Bloomberg Terminal', 'CRSP', 'PACER', 'Stooq'.",
+      "required": true
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Direct URL to the evidence. For EDGAR: full index URL (https://www.sec.gov/Archives/edgar/data/{CIK}/{ACCESSION}/). For price data: query URL or note of data source. VERIFY_REQUIRED if not yet located.",
+      "required": false,
+      "default": "VERIFY_REQUIRED"
+    },
+    "filing_type": {
+      "type": "string",
+      "description": "SEC form type if applicable. E.g., '8-K', 'SC 13D', '10-K', 'DEF 14A'. Null for price data or non-SEC sources.",
+      "required": false,
+      "default": null
+    },
+    "filing_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "EDGAR filing date. This is the authoritative date — not press release date, not signing date.",
+      "required": false,
+      "default": null
+    },
+    "accession_number": {
+      "type": "string",
+      "format": "XXXXXXXXXX-YY-ZZZZZZ",
+      "description": "SEC EDGAR accession number. Required for EDGAR sources when verification_status=VERIFIED.",
+      "required": false,
+      "default": null
+    },
+    "exhibit_number": {
+      "type": "string",
+      "description": "Exhibit designator if evidence comes from a filing exhibit. E.g., '10.1', '10.2', '99.1'. Null if evidence is in the 8-K/13D body itself.",
+      "required": false,
+      "default": null
+    },
+    "excerpt": {
+      "type": "string",
+      "max_length": 500,
+      "description": "Verbatim text excerpt from the source document. No paraphrasing. For RESEARCH_TARGET rows: describe what text is expected to be found.",
+      "required": false,
+      "default": null
+    },
+    "supports_field": {
+      "type": "string",
+      "description": "Pipe-separated list of cases.csv field names that this evidence directly supports. E.g., 'observation_date|source_filing_url|signal_type'. Used to verify completeness.",
+      "required": true
+    },
+    "confidence": {
+      "type": "enum",
+      "values": ["HIGH", "MEDIUM", "LOW"],
+      "description": "Confidence that this source correctly supports the listed fields. HIGH = verbatim match in primary document. MEDIUM = derived or calculated. LOW = inferred or secondary source.",
+      "required": true
+    },
+    "verification_status": {
+      "type": "enum",
+      "values": ["VERIFIED", "PARTIAL", "VERIFY_REQUIRED"],
+      "description": "VERIFIED = source URL confirmed, excerpt extracted, field values populated. PARTIAL = source located but excerpt/URL incomplete. VERIFY_REQUIRED = research target (source expected but not yet found).",
+      "required": true
+    },
+    "added_by": {
+      "type": "enum",
+      "values": ["edgar_evidence_finder", "exhibit_scope_extractor", "manual", "seed"],
+      "description": "How this evidence row was created.",
+      "required": false,
+      "default": "manual"
+    },
+    "added_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "required": true
+    },
+    "notes": {
+      "type": "string",
+      "description": "Anything unusual about this evidence — ambiguous filing language, exhibit pagination, discrepancy between sources.",
+      "required": false,
+      "default": null
+    }
+  },
+
+  "_usage_rules": {
+    "minimum_evidence_for_partial": "At least 1 VERIFIED evidence row supporting observation_date AND 1 supporting signal_type before case.data_quality can become PARTIAL.",
+    "minimum_evidence_for_verified": "All required fields in cases.csv must have at least 1 VERIFIED evidence row. price_at_signal requires either Bloomberg or yfinance evidence row.",
+    "research_targets": "RESEARCH_TARGET rows are pre-populated by edgar_evidence_finder.py and represent expected evidence. They do NOT count toward PARTIAL or VERIFIED thresholds until confirmation upgrades verification_status to VERIFIED or PARTIAL.",
+    "anti_lookahead": "Evidence rows must be dated to the contemporaneous source. A 2024 news article describing a 2021 event does NOT count as VERIFIED evidence for that event."
+  }
+}

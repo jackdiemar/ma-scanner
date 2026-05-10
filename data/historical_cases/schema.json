@@ -276,10 +276,64 @@
       "required": false,
       "default": null
     },
+    "process_event_type": {
+      "type": "enum",
+      "values": [
+        "STRATEGIC_REVIEW",
+        "ACTIVIST_CAMPAIGN",
+        "ROFR_DISCLOSED",
+        "MERGER_ANNOUNCED",
+        "ASSET_SALE_ANNOUNCED",
+        "BANKRUPTCY_FILED",
+        "WIND_DOWN_ANNOUNCED",
+        "CAPITAL_RAISE_ANNOUNCED",
+        "SCORE_OBSERVATION",
+        "UNKNOWN"
+      ],
+      "description": "The process episode category — WHAT TYPE OF PROCESS was observed. Separate from event_type (outcome category) and corporate_outcome (company fate). STRATEGIC_REVIEW = board announced strategic alternatives. ACTIVIST_CAMPAIGN = activist filed 13D with process-intent language. ROFR_DISCLOSED = ROFR/ROFN rights disclosed in filing. MERGER_ANNOUNCED = merger agreement signed and announced. SCORE_OBSERVATION = no process signal; added for pipeline/score calibration only.",
+      "required": false,
+      "default": "UNKNOWN"
+    },
+    "process_outcome": {
+      "type": "enum",
+      "values": [
+        "DEAL_COMPLETED",
+        "REVIEW_ABANDONED",
+        "ACTIVIST_WITHDRAWN",
+        "ROFR_EXERCISED",
+        "ROFR_NOT_EXERCISED",
+        "PROCESS_ONGOING",
+        "NOT_APPLICABLE"
+      ],
+      "description": "What happened to the PROCESS (separate from what happened to the company). DEAL_COMPLETED = process led to signed transaction. REVIEW_ABANDONED = SA review formally or informally closed without deal. ACTIVIST_WITHDRAWN = activist exited stake without strategic action. ROFR_EXERCISED = ROFR/ROFN counterparty exercised rights. ROFR_NOT_EXERCISED = ROFR expired without exercise. PROCESS_ONGOING = no resolution yet. NOT_APPLICABLE = SCORE_ONLY or MERGER_AGREEMENT-only cases with no prior observable process.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "corporate_outcome": {
+      "type": "enum",
+      "values": [
+        "ACQUIRED",
+        "WIND_DOWN",
+        "BANKRUPT",
+        "CAPITAL_RAISE",
+        "ASSET_SOLD",
+        "MERGED_EQUALS",
+        "ONGOING"
+      ],
+      "description": "What happened to the COMPANY (separate from what happened to the process). BANKRUPT = formal Chapter 7 or Chapter 11 filed (requires PACER docket). WIND_DOWN = company dissolved without formal bankruptcy filing. Use this instead of 'outcome' field. The 'outcome' field is deprecated — populate corporate_outcome instead.",
+      "required": false,
+      "default": null
+    },
+    "had_prior_process_signal": {
+      "type": "boolean",
+      "description": "True if any observable process signal (SA, banker, activist, ROFR) preceded the merger/deal announcement. False if the merger agreement was the first public signal. Critical for partitioning calibration dataset: 'P(deal) given signal' vs 'deal characteristics without prior signal'. NULL if signal_type is not MERGER_AGREEMENT.",
+      "required": false,
+      "default": null
+    },
     "data_quality": {
       "type": "enum",
-      "values": ["VERIFIED", "PARTIAL", "VERIFY_REQUIRED"],
-      "description": "VERIFIED = all fields confirmed against primary sources. PARTIAL = some fields confirmed, some approximate. VERIFY_REQUIRED = structural placeholder only.",
+      "values": ["CALIBRATION_ELIGIBLE", "VERIFIED", "PARTIAL", "STUB", "VERIFY_REQUIRED"],
+      "description": "Status progression: STUB → CANDIDATE (collection_targets.csv only) → PARTIAL → VERIFIED → CALIBRATION_ELIGIBLE. STUB = pre-populated from training knowledge or secondary sources; not primary-source backed; structural placeholder only. VERIFY_REQUIRED = deprecated legacy value; treat same as STUB. PARTIAL = at least one EDGAR source confirmed (observation_date + source_filing_url), but price/outcome/full evidence incomplete. VERIFIED = all required fields confirmed against primary sources (EDGAR + price data). CALIBRATION_ELIGIBLE = VERIFIED + anti-look-ahead rules confirmed + price window complete.",
       "required": true
     },
     "added_date": {
@@ -290,13 +344,27 @@
     }
   },
 
+  "_status_progression": {
+    "STUB": "Pre-populated row. Training knowledge or secondary sources. No EDGAR primary source confirmed. Use as research starting point only. edgar_evidence_finder.py generates STUB rows.",
+    "CANDIDATE": "In collection_targets.csv with at least one source hint. Not yet in cases.csv.",
+    "PARTIAL": "In cases.csv. observation_date confirmed from EDGAR. source_filing_url confirmed. At least 1 source_evidence.csv row is VERIFIED. price_at_signal or outcome not yet confirmed.",
+    "VERIFIED": "All required fields confirmed against primary sources. observation_date, price_at_signal, source_filing_url, outcome all have VERIFIED evidence rows.",
+    "CALIBRATION_ELIGIBLE": "VERIFIED + anti-look-ahead rules passed + price window (30/90/180d or explanation for null) complete. Rows with this status feed P(deal) tables.",
+    "PROMOTION_RULES": {
+      "STUB_to_PARTIAL": "Must have: (1) EDGAR source URL confirmed via edgar_evidence_finder.py or manual, (2) observation_date confirmed from EDGAR filing date, (3) at least 1 VERIFIED source_evidence row.",
+      "PARTIAL_to_VERIFIED": "Must have: (1) price_at_signal confirmed (yfinance or Bloomberg), (2) outcome confirmed from primary source, (3) all required fields populated, (4) no anti-look-ahead violations.",
+      "VERIFIED_to_CALIBRATION_ELIGIBLE": "Must pass full anti-look-ahead checklist in verification_checklist.md."
+    }
+  },
+
   "calibration_rules": {
     "minimum_verified_for_p_deal_table": 100,
     "minimum_verified_for_sequence_calibration": 150,
     "minimum_verified_for_mcap_segmentation": 200,
-    "do_not_use_for_calibration": ["VERIFY_REQUIRED"],
+    "do_not_use_for_calibration": ["VERIFY_REQUIRED", "STUB"],
     "use_for_structural_testing_only": ["PARTIAL"],
-    "usable_for_calibration": ["VERIFIED"]
+    "usable_for_calibration": ["CALIBRATION_ELIGIBLE"],
+    "note": "VERIFIED rows can be used for structural tests (counts, distributions) but only CALIBRATION_ELIGIBLE rows feed P(deal) calibration tables."
   },
 
   "collection_targets": {
