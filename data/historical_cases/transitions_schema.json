@@ -1,0 +1,169 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-09",
+  "_layer": "transitions",
+  "_description": "One row per process-state transition observed within a case. Transitions are derived from sequential filing events. A single company case generates 2–8 transitions across its lifecycle. This table calibrates sequence quality and state-change probabilities.",
+
+  "_file": "transitions.csv",
+  "_foreign_key": "case_id → cases.csv, event_id → filing_events.csv",
+
+  "fields": {
+    "transition_id": {
+      "type": "string",
+      "format": "TICKER-YYYY-NNN-TRNNN",
+      "example": "HARP-2023-001-TR001",
+      "description": "Unique transition ID.",
+      "required": true
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Foreign key to cases.csv.",
+      "required": true
+    },
+    "triggering_event_id": {
+      "type": "string",
+      "description": "Foreign key to filing_events.csv — the filing that caused this transition.",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "required": true
+    },
+    "transition_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date of the filing that caused the transition. Same as triggering_event filing_date.",
+      "required": true
+    },
+    "from_state": {
+      "type": "enum",
+      "values": ["LIVE", "PATHWAY", "SCREENING", "AGING", "SIGNED", "UNKNOWN"],
+      "required": true
+    },
+    "to_state": {
+      "type": "enum",
+      "values": ["LIVE", "PATHWAY", "SCREENING", "AGING", "SIGNED", "TERMINAL"],
+      "required": true
+    },
+    "transition_type": {
+      "type": "enum",
+      "values": [
+        "FIRST_DETECTION",
+        "STATE_UPGRADE",
+        "STATE_DOWNGRADE",
+        "MERGER_SIGNED",
+        "SA_INTRODUCED",
+        "ADVISOR_INTRODUCED",
+        "ACTIVIST_INTRODUCED",
+        "ACTIVIST_INTENT_ESCALATED",
+        "ROFR_INTRODUCED",
+        "SIGNAL_STALE",
+        "ACTIVIST_GONE",
+        "PROCESS_WEAKENED",
+        "SCORE_JUMP",
+        "SCORE_DROP",
+        "TERMINAL_ANNOUNCED"
+      ],
+      "description": "Matches transition event types from process_history.py for cross-system compatibility.",
+      "required": true
+    },
+    "sequence_type": {
+      "type": "enum",
+      "values": [
+        "ESCALATING_ACTIVIST",
+        "ADVISOR_THEN_SA",
+        "ACTIVIST_THEN_SA",
+        "SA_THEN_ACTIVIST",
+        "ROFR_THEN_ACTIVIST",
+        "ACTIVIST_THEN_ROFR",
+        "STALENESS_RESET",
+        "MERGER_PRECEDED_BY_SA",
+        "MERGER_PRECEDED_BY_ACTIVIST",
+        "RAPID_ESCALATION",
+        "COMPOUND_LIVE",
+        "PROCESS_COLLAPSE",
+        "SINGLE_SIGNAL",
+        "UNKNOWN"
+      ],
+      "description": "Compound sequence pattern active at this transition. Derived from filing history up to transition_date only (no look-ahead).",
+      "required": false,
+      "default": "UNKNOWN"
+    },
+    "sequence_window_days": {
+      "type": "integer",
+      "description": "Days spanned by the compound sequence (time from first signal to this transition). 0 if no compound sequence.",
+      "required": false,
+      "default": null
+    },
+    "compound_signal_quality": {
+      "type": "enum",
+      "values": [
+        "MERGER_PATHWAY",
+        "STRONG_PROCESS",
+        "ESCALATING_PROCESS",
+        "PROCESS_WITH_RIGHTS",
+        "ACTIVIST_PRESSURE",
+        "STALENESS_RESET",
+        "PROCESS_COLLAPSE",
+        "NONE"
+      ],
+      "description": "Compound quality label at this transition. Matches sequence_detector.py CQ labels.",
+      "required": false,
+      "default": "NONE"
+    },
+    "supporting_events": {
+      "type": "string",
+      "description": "Pipe-separated list of event_ids that contributed to this compound sequence.",
+      "required": false,
+      "default": null
+    },
+    "days_since_prior_transition": {
+      "type": "integer",
+      "description": "Calendar days since the previous transition in this case.",
+      "required": false,
+      "default": null
+    },
+    "days_since_case_start": {
+      "type": "integer",
+      "description": "Calendar days from case first_observation_date to this transition.",
+      "required": false,
+      "default": null
+    },
+    "interpretation": {
+      "type": "string",
+      "max_length": 300,
+      "description": "Rule-based interpretation of this transition. What it means strategically, based only on information available at transition_date.",
+      "required": false,
+      "default": null
+    },
+    "eventual_outcome": {
+      "type": "enum",
+      "values": [
+        "ACQUIRED",
+        "DEAL_FAILED",
+        "REVIEW_ABANDONED",
+        "WIND_DOWN",
+        "BANKRUPT",
+        "CAPITAL_RAISE",
+        "ASSET_SOLD",
+        "MERGED_EQUALS",
+        "ONGOING"
+      ],
+      "description": "What ultimately happened to this case. Filled in retrospectively once outcome is known. Do NOT fill during initial labeling — this is outcome data, not signal data.",
+      "required": false,
+      "default": "ONGOING"
+    },
+    "days_transition_to_outcome": {
+      "type": "integer",
+      "description": "Calendar days from this specific transition to final outcome resolution. Useful for calibrating time-to-outcome from different process states.",
+      "required": false,
+      "default": null
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "True if transition dates, filing URLs, and state labels confirmed against primary EDGAR source.",
+      "required": true,
+      "default": false
+    }
+  }
+}

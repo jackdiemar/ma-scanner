@@ -1,0 +1,166 @@
+ticker,company,category,likely_event_year,source_hint,priority,verification_status,notes
+HARP,Harpoon Therapeutics,COMPLETED_DEAL,2023,EDGAR 8-K merger agreement Feb 2023; AbbVie $680M; prior ROFR in collaboration 8-K 2020,HIGH,CANDIDATE,Textbook ROFR_THEN_MERGER. Already in cases_seed.csv — verify first.
+SRRA,Sierra Oncology,COMPLETED_DEAL,2022,EDGAR 8-K GSK deal announcement Apr 2022; ~$1.9B; momelotinib MF,HIGH,CANDIDATE,Find first process signal (SA or banker) before deal. Already in seed.
+IMGO,Imago BioSciences,COMPLETED_DEAL,2022,EDGAR 8-K Merck deal Dec 2022; $1.35B; $36/share; bemarituzumab? No — bonemarrow. Imetelstat? No — imageotumab? Check,HIGH,CANDIDATE,SCORE_ONLY → deal. No prior SA. Find Merck 8-K on EDGAR. Verify exact drug name and deal structure.
+GRCL,Gracell Biotechnologies,COMPLETED_DEAL,2024,EDGAR 8-K AstraZeneca deal Jan 2024; ~$1.2B; GC012F CAR-T,HIGH,CANDIDATE,Chinese biotech Nasdaq-listed. Confirm mcap before deal. No prior SA expected.
+PAND,Pandion Therapeutics,COMPLETED_DEAL,2021,EDGAR 8-K Merck deal Feb 2021; $1.85B; immunology autoimmune,HIGH,CANDIDATE,SCORE_ONLY → deal. Good baseline false-negative for process detection.
+ACHN,Achillion Pharmaceuticals,COMPLETED_DEAL,2020,EDGAR 8-K Alexion deal Jan 2020; ~$930M; complement complement factor D,HIGH,CANDIDATE,Small cap at time. Rare disease. No prior SA expected.
+ALDR,Alder BioPharmaceuticals,COMPLETED_DEAL,2019,EDGAR 8-K Lundbeck deal Sep 2019; ~$1.95B; eptinezumab migraine CGRP,HIGH,CANDIDATE,At upper limit of target range. Confirm exact mcap at time.
+ATRS,Antares Pharma,COMPLETED_DEAL,2022,EDGAR 8-K Halozyme deal Apr 2022; ~$960M; auto-injector specialty pharma,HIGH,CANDIDATE,Specialty pharma adjacent to biotech. Include as reference.
+CMPI,Checkmate Pharmaceuticals,COMPLETED_DEAL,2022,EDGAR 8-K Pfizer deal Jan 2022; ~$2.1B; vidutolimod CpG-A TLR9,HIGH,CANDIDATE,Small immuno-oncology. Check for any prior SA or activist signal.
+PTLA,Portola Pharmaceuticals,COMPLETED_DEAL,2021,EDGAR 8-K Alexion deal 2021; ~$1.41B; andexanet alfa Andexxa,HIGH,CANDIDATE,Check for any prior process signals; company was distressed before deal.
+G1T,G1 Therapeutics,COMPLETED_DEAL,2024,EDGAR 8-K Pfizer deal 2024; ~$785M; lerociclib CDK4/6; check exact date,HIGH,CANDIDATE,Good small-cap deal. Confirm it was announced 2024 and deal value.
+CTIC,CTI BioPharma,COMPLETED_DEAL,2023,EDGAR 8-K SOBI deal 2023; ~$1.7B; pacritinib MF; check exact date,HIGH,CANDIDATE,Confirm deal was SOBI and deal value. Possible prior SA signals given company history.
+VECT,VectivBio Holding,COMPLETED_DEAL,2023,EDGAR 8-K Ironwood deal 2023; ~$1.0B; apraglutide SBS; check exact date,MED,CANDIDATE,Swiss biotech Nasdaq-listed. Confirm mcap before deal.
+ARMO,Armo BioSciences,COMPLETED_DEAL,2018,EDGAR 8-K Eli Lilly deal 2018; ~$1.6B; pegilodecakin IL-10,MED,CANDIDATE,Earlier cycle. Confirm deal value and date.
+AKCA,Akcea Therapeutics,COMPLETED_DEAL,2020,EDGAR 8-K Ionis tender offer 2020; ~$1.5B; parent company buyout,MED,CANDIDATE,Parent buying out minority — different dynamic than pure acquisition. Note this in case.
+CNST,Constellation Pharmaceuticals,COMPLETED_DEAL,2021,EDGAR 8-K MorphoSys deal 2021; ~$1.7B; CPI-0610 pelabresib,MED,CANDIDATE,Confirm ticker was CNST and deal value/date.
+FLXN,Flexion Therapeutics,COMPLETED_DEAL,2021,EDGAR 8-K Pacira BioSciences deal Oct 2021; ~$448M; Zilretta,HIGH,CANDIDATE,Good small-cap specialty pharma deal. Check for prior SA signals.
+DOVA,Dova Pharmaceuticals,COMPLETED_DEAL,2021,EDGAR 8-K Swedish Orphan Biovitrum deal 2021; ~$915M; avatrombopag,HIGH,CANDIDATE,Confirm deal value and SOBI as acquirer. Find 8-K.
+ADMS,Adamas Pharmaceuticals,COMPLETED_DEAL,2021,EDGAR 8-K Supernus deal Nov 2021; ~$400M; amantadine NMDA,HIGH,CANDIDATE,Small cap CNS. Good fit for target universe.
+OYST,Oyster Point Pharma,COMPLETED_DEAL,2022,EDGAR 8-K Viatris deal 2022; ~$475M; OC-01 varenicline dry eye,HIGH,CANDIDATE,Confirm Viatris as acquirer and deal value.
+AIMT,Aimmune Therapeutics,COMPLETED_DEAL,2020,EDGAR 8-K Nestle deal 2020; ~$2.6B; Palforzia peanut allergy,MED,CANDIDATE,At upper limit of range. Include as reference. Nestle as acquirer unusual.
+STML,Stemline Therapeutics,COMPLETED_DEAL,2021,EDGAR 8-K Menarini deal 2021; ~$677M; elzonris tagraxofusp BPDCN,MED,CANDIDATE,Confirm Menarini as acquirer and deal value.
+PGNX,Progenics Pharmaceuticals,COMPLETED_DEAL,2020,EDGAR 8-K Lantheus deal 2020; ~$441M; PyL PSMA PET imaging,HIGH,CANDIDATE,Good small-cap deal. Note Lantheus is nuclear medicine — adjacent to biotech.
+AGIO,Agios Pharmaceuticals,ASSET_SALE,2021,EDGAR 8-K Servier deal 2021; sold oncology business for ~$1.8B; retained rare disease,HIGH,CANDIDATE,Partial asset sale — Agios kept rare disease (ivosidenib enasidenib to Servier). Complex case.
+EPZM,Epizyme,COMPLETED_DEAL,2022,EDGAR 8-K Ipsen deal 2022; ~$247M; tazemetostat EZH2; company had announced strategic alternatives,HIGH,CANDIDATE,SA_AFFIRM then Ipsen deal. Confirm SA 8-K date before deal. Good AFFIRM case.
+CHMA,Chiasma,COMPLETED_DEAL,2021,EDGAR 8-K Strongbridge deal 2021; ~$315M; octreotide acromegaly,MED,CANDIDATE,Rare disease. Small deal. Confirm Strongbridge as acquirer.
+ARQL,ArQule,COMPLETED_DEAL,2020,EDGAR 8-K Merck deal 2020; ~$2.7B; ARQ 531 BTK inhibitor; over range,MED,CANDIDATE,Slightly over $1.5B range but important reference. Check if prior SA signals.
+SYNTX,Synthorx,COMPLETED_DEAL,2019,EDGAR 8-K Sanofi deal 2020; ~$2.5B; THOR-707 IL-2; check exact ticker,MED,CANDIDATE,Confirm ticker SYNTX and deal date/value.
+DERM,Dermira,COMPLETED_DEAL,2020,EDGAR 8-K Eli Lilly deal 2020; ~$1.1B; lebrikizumab cimtrekacept; check,HIGH,CANDIDATE,Confirm exact deal value. Good dermatology/autoimmune case.
+LMNX,Luminex Corporation,COMPLETED_DEAL,2021,EDGAR 8-K DiaSorin deal 2021; ~$1.8B; diagnostics multiplexing,LOW,CANDIDATE,Diagnostics — adjacent to pharma biotech. Include as reference only.
+MDCO,The Medicines Company,COMPLETED_DEAL,2020,EDGAR 8-K Novartis deal 2020; ~$9.7B; inclisiran; above range,LOW,CANDIDATE,Well over $1.5B range. Include as reference for SA_AFFIRM → large-pharma deal pattern.
+CLVS,Clovis Oncology,BANKRUPTCY,2022,EDGAR bankruptcy filing Dec 2022; had PARP inhibitor rucaparib; distressed,HIGH,CANDIDATE,Bankrupt after PARP competitor pressure. Check for prior SA signals or activist before bankruptcy.
+EPZM,Epizyme,COMPLETED_DEAL,2022,EDGAR 8-K Ipsen 2022; AFFIRM → deal,HIGH,CANDIDATE,Duplicate flagged — use single entry for EPZM.
+MLNT,Melinta Therapeutics,BANKRUPTCY,2019,EDGAR bankruptcy filing early 2019; antibiotics; distressed after Rempex acquisition,MED,CANDIDATE,Antibiotic developer that went bankrupt after failed commercial launch. Good bankruptcy/false-positive case.
+OTIC,Otonomy,BANKRUPTCY,2021,EDGAR wind-down announcement 2021; OTO-104 ear disease; failed pipeline,MED,CANDIDATE,Small ear disease biotech wound down after pipeline failures. Confirm exact dates.
+GNCA,Genocea Biosciences,BANKRUPTCY,2022,EDGAR 8-K SA announcement Jan 2022; wind-down announcement later 2022; small cap,HIGH,CANDIDATE,Textbook SA_AFFIRM → wind-down. Already in seed. Verify first.
+CRBP,Corbus Pharmaceuticals,FAILED_REVIEW,2022,EDGAR 8-K SA announcement 2022; no deal; company restructured,HIGH,CANDIDATE,SA false positive. Already in seed. Verify exact 8-K date.
+MGTA,Magenta Therapeutics,BANKRUPTCY,2022,EDGAR 8-K SA announcement 2022; wind-down 2023; stem cell mobilization,HIGH,CANDIDATE,SA → wind-down. Already in seed. Verify dates.
+TSHA,Taysha Gene Therapies,FAILED_REVIEW,2023,EDGAR 8-K or press release re strategic alternatives 2022-2023; wind-down elements,HIGH,CANDIDATE,Gene therapy company in distress. Check for SA 8-K. Company restructured significantly.
+TYME,Tyme Technologies,FAILED_REVIEW,2022,EDGAR or 8-K strategic alternatives announcement 2022; no deal,MED,CANDIDATE,Cancer metabolism company. Check for SA 8-K and what happened.
+CALA,Calithera Biosciences,BANKRUPTCY,2023,EDGAR wind-down announcement 2023; glutaminase inhibitor telaglenastat,HIGH,CANDIDATE,Company wound down after Phase 3 failures. Check for prior SA announcement.
+TILS,Instil Bio,FAILED_REVIEW,2022,EDGAR strategic alternatives announcement; TIL therapy; no deal as of 2025,MED,CANDIDATE,TIL cell therapy — announced strategic review. Confirm SA 8-K date.
+RIGL,Rigel Pharmaceuticals,ACTIVIST_NO_DEAL,2020,EDGAR SC 13D filing; activist pressure; no acquisition as of 2025,HIGH,CANDIDATE,Already in seed. Verify 13D filer and Item 4 text.
+VNDA,Vanda Pharmaceuticals,ACTIVIST_NO_DEAL,2021,EDGAR SC 13D filing; activist pressure; no deal as of 2025,HIGH,CANDIDATE,Already in seed. Verify 13D filer and dates.
+KPTI,Karyopharm Therapeutics,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or 13G filings; activist pressure for strategic alternatives; no deal,HIGH,CANDIDATE,Check WhaleWisdom for activist 13D filings. Confirm Item 4 language.
+PTCT,PTC Therapeutics,ACTIVIST_NO_DEAL,2021,EDGAR SC 13D activist filing; activist pressure; no acquisition; company still operating,MED,CANDIDATE,RNA biology company. Check for 13D activist and Item 4.
+MDXG,MiMedx Group,ACTIVIST_NO_DEAL,2020,EDGAR SC 13D or proxy fight; governance activism; no deal,MED,CANDIDATE,Regenerative medicine. Had governance issues. Check for sale-pressure 13D vs governance-only.
+INVA,Innoviva,ACTIVIST_NO_DEAL,2021,EDGAR SC 13D or proxy; activist pressure; governance-heavy,MED,CANDIDATE,Drug royalties company. Check whether 13D was sale-pressure or governance-only — important for Item 4 calibration.
+ZYME,Zymeworks,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or activist pressure; company rejected buyout offer; still public 2024,HIGH,CANDIDATE,Zymeworks rejected unsolicited acquisition offers from Jazz Pharmaceuticals. Check 8-K rejecting offer. Good activist pressure case.
+MGNX,MacroGenics,ACTIVIST_NO_DEAL,2023,EDGAR SC 13D; activist pressure; no deal as of 2025,MED,CANDIDATE,Antibody therapy. Check 13D filer and Item 4.
+ARCA,ARCA Biopharma,ACTIVIST_NO_DEAL,2020,EDGAR SC 13D or proxy; multiple activists; limited deal success,MED,CANDIDATE,Small cardiovascular biotech. Had complex activist situations. Check for sale-pressure language.
+NKTR,Nektar Therapeutics,FAILED_REVIEW,2022,EDGAR strategic alternatives or restructuring announcement; no whole-company deal; company still operating 2025,MED,CANDIDATE,Large polymer conjugation biotech. Check for SA announcement and what happened to NKTR-358 and other programs.
+VSTM,Verastem Oncology,FAILED_REVIEW,2023,EDGAR possible SA announcement; small cap oncology; check current status,LOW,CANDIDATE,Very small cap. Check for SA 8-K. May be below target range.
+RDHL,RedHill Biopharma,FAILED_REVIEW,2022,EDGAR or press release governance/strategy issues; Israeli company on Nasdaq; no sale,LOW,CANDIDATE,Confirm SA-type announcement. Below target mcap range likely. Include as reference.
+SPPI,Spectrum Pharmaceuticals,BANKRUPTCY,2023,EDGAR wind-down/bankruptcy after commercial difficulties; belinostat apaziquone,MED,CANDIDATE,Oncology specialty pharma. Wind-down after commercial failures. Confirm dates.
+AGTC,Applied Genetic Technologies,BANKRUPTCY,2022,EDGAR wind-down 2022; gene therapy eye diseases; pipeline failures,MED,CANDIDATE,Gene therapy company. Wind-down 2022 after ophthalmology trials failed.
+PTGX,Protagonist Therapeutics,ROFR_CASE,2022,EDGAR 8-K Johnson and Johnson collaboration with ROFN on rusfertide; program-specific scope,HIGH,CANDIDATE,J&J ROFN on PV program — program-specific not whole-company. Critical for ROFR scope calibration. Already in seed.
+CDTX,Cidara Therapeutics,ROFR_CASE,2021,EDGAR 8-K Mundipharma or similar partner with ROFR on rezafungin; check scope,MED,CANDIDATE,Antifungal ROFR. Confirm ROFR partner and whether company-level or asset-level.
+CRBU,Caribou Biosciences,ROFR_CASE,2022,EDGAR 8-K AbbVie collaboration with possible ROFR; check for ROFR/ROFN language,MED,CANDIDATE,CRISPR therapy. Check AbbVie collaboration 8-K for ROFR/ROFN language and scope.
+RCKT,Rocket Pharmaceuticals,ROFR_CASE,2021,EDGAR 8-K possible ROFR with Renovacor or strategic partner; check,LOW,CANDIDATE,Gene therapy. Check for any ROFR/ROFN language in collaboration 8-Ks.
+EDIT,Editas Medicine,ROFR_CASE,2020,EDGAR 8-K collaboration with AstraZeneca or others; possible ROFR language; check,LOW,CANDIDATE,Gene editing. Large partner relationships may include deal rights. Confirm ROFR scope.
+IONS,Ionis Pharmaceuticals,ROFR_CASE,2020,EDGAR multiple partnership 8-Ks with ROFR/ROFN language; check scope of each,LOW,CANDIDATE,Many partnership agreements — find specific ROFR/ROFN cases and scope. May be program-specific only.
+ARWR,Arrowhead Pharmaceuticals,ROFR_CASE,2021,EDGAR 8-K Janssen collaboration with possible ROFR; check scope language,LOW,CANDIDATE,RNA interference. Janssen partnership may include company-level ROFR. Check 8-K language.
+ACRS,Aclaris Therapeutics,ROFR_CASE,2022,EDGAR 8-K possible strategic partner with ROFR; check,LOW,CANDIDATE,Dermatology. Small cap. Check for ROFR in any partnership 8-Ks.
+ALBO,Albireo Pharma,COMPLETED_DEAL,2023,EDGAR 8-K Ipsen deal 2023; odevixibat rare liver disease; check deal value,MED,CANDIDATE,Rare pediatric liver disease. Ipsen acquisition. Confirm deal value and date.
+SIGA,SIGA Technologies,ACTIVIST_GOVERNANCE_ONLY,2021,EDGAR SC 13D or proxy; governance-focused activist; no sale-pressure; pharma defense contracts,LOW,CANDIDATE,Unusual company — smallpox antiviral US government contracts. Activist was governance-focused. Good GOVERNANCE_ONLY Item 4 example.
+MNOV,MediciNova,ACTIVIST_GOVERNANCE_ONLY,2022,EDGAR SC 13D; governance activism; no acquisition context; Japanese company,LOW,CANDIDATE,Japanese-managed Nasdaq-listed pharma. Governance-focused activism. Good GOVERNANCE_ONLY case.
+CHRS,Coherus BioSciences,ACTIVIST_GOVERNANCE_ONLY,2023,EDGAR SC 13D or proxy activity; governance-focused; no deal as of 2025,LOW,CANDIDATE,Biosimilar company. Check for any 13D with governance-only Item 4. Good false-positive for Item 4 calibration.
+TGTX,TG Therapeutics,ACTIVIST_GOVERNANCE_ONLY,2022,EDGAR SC 13D or pressure; governance-type activism; no deal,LOW,CANDIDATE,MS and blood cancer company. Check for any 13D filings and Item 4 classification.
+OGEN,Otonomy / OGEN,BANKRUPTCY,2021,EDGAR wind-down 2021; ear disease; different from OTIC — check ticker; may be same company,LOW,CANDIDATE,Possible duplicate of OTIC — confirm ticker. Remove if same company.
+PULM,Pulmatrix,BANKRUPTCY,2022,EDGAR wind-down or near-bankruptcy; inhaled antifungal; very small cap,LOW,CANDIDATE,Below target range likely. Include as bankruptcy false-positive reference if mcap > $50M at signal.
+SURF,Surface Oncology,MERGER_EQUALS,2023,EDGAR merger of equals with Pyxis Oncology; no premium; activist pressure beforehand,HIGH,CANDIDATE,Already in seed. Verify merger terms and activist 13D details.
+TELA,TELA Bio,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or proxy; activist pressure on surgical mesh company; adjacent to biotech,LOW,CANDIDATE,Medical devices/biologic mesh. Include as reference only — not pure biotech.
+SPNV,Supernova Acquisition,FAILED_REVIEW,2021,SPAC vehicle; not applicable for standard process signal case; exclude,LOW,CANDIDATE,SPAC — exclude from dataset. Note in verification that SPAC structures require separate treatment.
+FATE,Fate Therapeutics,COMPLETED_DEAL,2024,EDGAR 8-K Johnson and Johnson deal 2024; ~$1.6B; iPSC NK cell therapies; check exact value,HIGH,CANDIDATE,Confirm J&J as acquirer, deal value, and date. Good iPSC case.
+AGIO,Agios Pharmaceuticals,ASSET_SALE,2021,EDGAR 8-K Servier oncology business sale 2021; ~$1.8B oncology; Agios retained rare disease,HIGH,CANDIDATE,Partial asset sale — oncology to Servier. Asset_sale event type. Agios still public post-sale.
+MACK,Merrimack Pharmaceuticals,ASSET_SALE,2017,EDGAR 8-K Ipsen deal 2017; ONIVYDE sold for ~$575M; company retained remainder,MED,CANDIDATE,Partial asset sale. Company continued with remaining pipeline. Earlier cycle 2017.
+BLRX,BioLineRx,FAILED_REVIEW,2023,EDGAR possible SA announcement; small Israeli Nasdaq biotech; check,LOW,CANDIDATE,Very small cap. Likely below target range.
+ACET,Aceto Corporation,ACTIVIST_NO_DEAL,2019,EDGAR SC 13D; pharma distribution not pure biotech; exclude if non-biotech,LOW,CANDIDATE,Pharma distribution — exclude if not fitting biotech definition. Mark as reference.
+OVID,Ovid Therapeutics,FAILED_REVIEW,2022,EDGAR possible SA review; rare neurological disease; soticlestat ataluren adjacent,MED,CANDIDATE,Rare neurology. Check for SA 8-K and outcome.
+PRVB,Provectus Biopharmaceuticals,FAILED_REVIEW,2020,EDGAR possible SA language; PV-10 melanoma; very small cap; governance issues,LOW,CANDIDATE,Very small cap and governance-challenged. Below target range. Include as reference.
+AKER,Akers Biosciences,FAILED_REVIEW,2021,EDGAR or press release SA activity; diagnostics company; below target range likely,LOW,CANDIDATE,Diagnostics. Very small cap. Below target range.
+SAGE,Sage Therapeutics,FAILED_REVIEW,2023,EDGAR possible SA announcement or strategic review language; Biogen collaboration; ZURZUVAE,HIGH,CANDIDATE,SAGE had significant strategic review activity and partnership with Biogen. Check for SA 8-K. Company still public.
+NVAX,Novavax,FAILED_REVIEW,2023,EDGAR possible SA language after COVID vaccine commercial challenges; check,MED,CANDIDATE,COVID vaccine company. Post-COVID challenges. Check for SA 8-K. Over $1.5B range likely.
+CRBU,Caribou Biosciences,ACTIVIST_NO_DEAL,2023,EDGAR possible activist or SA; CRISPR therapy; check for 13D or SA filing,LOW,CANDIDATE,Gene editing. Small cap. Check for any process signals.
+GOSS,Gossamer Bio,FAILED_REVIEW,2023,EDGAR possible SA or wind-down language; pulmonary arterial hypertension seralutinib,MED,CANDIDATE,Small cap. Had pipeline setbacks. Check for SA announcement.
+SANA,Sana Biotechnology,FAILED_REVIEW,2023,EDGAR possible SA announcement; cell engineering; significant cash burn,MED,CANDIDATE,Large cash burn gene therapy company. Check for any SA signals.
+PRAX,Praxis Precision Medicine,FAILED_REVIEW,2023,EDGAR possible SA; neurology; check current status,LOW,CANDIDATE,Neurology startup. Check for SA or restructuring announcements.
+KROS,Keros Therapeutics,COMPLETED_DEAL,2024,EDGAR possible acquisition 2024; TGF-beta biology; check for deal,MED,CANDIDATE,Hematology rare disease. Check for acquisition announcement 2024.
+BBIO,BridgeBio Pharma,FAILED_REVIEW,2022,EDGAR or press release; pipeline failure acoramidis; strategic alternatives possible; check,MED,CANDIDATE,Large pipeline setbacks in 2022. Check for SA language. Over $1.5B range at peak.
+SRRK,Scholar Rock,FAILED_REVIEW,2023,EDGAR possible SA; spinal muscular atrophy; check for process signals,LOW,CANDIDATE,Rare neurology. Small cap. Check for any SA or strategic signals.
+PRLD,Prelude Therapeutics,FAILED_REVIEW,2023,EDGAR possible SA; hematology; WEE1 HIF-2 inhibitors; check,LOW,CANDIDATE,Small hematology company. Check for SA or restructuring.
+BLUE,Bluebird Bio,FAILED_REVIEW,2022,EDGAR restructuring and strategic alternatives 2022; gene therapy hemoglobinopathy sickle cell,HIGH,CANDIDATE,Gene therapy. Announced strategic alternatives for commercial business 2022. Check SA 8-K. Company split into two entities. Good complex case.
+AVEO,AVEO Oncology,COMPLETED_DEAL,2022,EDGAR 8-K LG Chem acquisition 2022; ~$640M; tivozanib renal cell carcinoma,HIGH,CANDIDATE,Korean pharma as acquirer — unusual. Confirm LG Chem deal value and date. Good small-cap oncology deal.
+NDLS,Noodles? No wrong sector — exclude,,,,LOW,CANDIDATE,Non-biotech — exclude from dataset.
+ATNX,Athenex,FAILED_REVIEW,2022,EDGAR possible SA or financial distress announcement; specialty pharma oncology,MED,CANDIDATE,Specialty oncology pharma. Had financial difficulties 2022-2023. Check for SA or restructuring.
+SIGA,SIGA Technologies,ACTIVIST_GOVERNANCE_ONLY,2021,EDGAR governance activism; check Item 4,LOW,CANDIDATE,Duplicate entry — use single SIGA row.
+HOOK,Hookipa Pharma,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; arenavirus immunotherapy platform; small cap,LOW,CANDIDATE,Very small cap. Check for SA or restructuring announcement.
+EVFM,Evofem Biosciences,FAILED_REVIEW,2022,EDGAR possible SA or wind-down; women's health; Phexxi,LOW,CANDIDATE,Small cap women's health. Check for SA or distress signals.
+VKTX,Viking Therapeutics,FAILED_REVIEW,2024,EDGAR possible SA or; GLP-1 VK2809 VK0214; large run-up then consolidation; check,LOW,CANDIDATE,GLP-1/metabolic. Still public 2025. Speculative — check if any SA signals issued. Probably not applicable yet.
+XOMA,XOMA Corporation,ACTIVIST_NO_DEAL,2020,EDGAR SC 13D or proxy; royalty biotech governance activism; no acquisition,LOW,CANDIDATE,Royalty/milestone company. Check for sale-pressure vs governance-only 13D.
+TALS,Talaris Therapeutics,BANKRUPTCY,2023,EDGAR wind-down announcement 2023; renal transplant tolerance; failed Phase 3,HIGH,CANDIDATE,Gene/cell therapy. Wind-down 2023 after Phase 3 failure. Check for prior SA announcement.
+AGEN,Agenus,FAILED_REVIEW,2022,EDGAR possible SA or restructuring; immuno-oncology checkpoint antibodies; check,MED,CANDIDATE,Immuno-oncology. Had pipeline partnership restructuring. Check for formal SA 8-K.
+NLTX,Neoleukin Therapeutics,BANKRUPTCY,2023,EDGAR wind-down 2023; de novo protein design IL-2; failed pivot,MED,CANDIDATE,Protein design startup. Wind-down after platform failed. Small cap.
+PRTA,Prothena Corporation,FAILED_REVIEW,2022,EDGAR possible SA or activist; neurology rare disease; over range likely,MED,CANDIDATE,Neurology/rare disease. Had significant pipeline uncertainty. Check for SA signals.
+OTIC,Otonomy,BANKRUPTCY,2021,EDGAR wind-down 2021; ear disease OTO-104; below target range,MED,CANDIDATE,Ear disease biotech. Wound down 2021. Check for any prior SA or activist signal.
+MGTX,MeiraGTx Holdings,FAILED_REVIEW,2023,EDGAR possible SA; ophthalmic gene therapy; small-mid cap; check,MED,CANDIDATE,Gene therapy ophthalmology. Check for SA signals or deal interest.
+STRM,Streamline Health,ACTIVIST_GOVERNANCE_ONLY,2021,EDGAR proxy contest; health IT not biotech; exclude,LOW,CANDIDATE,Health IT — exclude from biotech dataset.
+IDYA,IDEAYA Biosciences,ROFR_CASE,2022,EDGAR possible ROFR with GSK or BioAtla; check partnership 8-Ks for ROFR language,MED,CANDIDATE,Synthetic lethality oncology. Check for ROFR/ROFN in any partnership 8-Ks.
+ANNX,Annexon Biosciences,FAILED_REVIEW,2023,EDGAR possible SA; neurology complement C1q inhibitor; check,MED,CANDIDATE,Small neurology biotech. Check for SA or restructuring.
+LUNG,Pulmonx Corporation,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or proxy; medical devices adjacent; check,LOW,CANDIDATE,Medical devices — bronchial valves. Adjacent to biotech. Include as reference only.
+BCAB,BioAtla,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; conditional antibodies; check,MED,CANDIDATE,Small antibody-drug conjugate company. Check for SA announcement or deal interest.
+IMVT,Immunovant,ROFR_CASE,2022,EDGAR 8-K ROIVANT collaboration; possible ROFR/ROFN from partner; check,LOW,CANDIDATE,FcRn inhibitor batoclimab. ROIVANT relationship may include deal rights. Check.
+ENLV,Enliven Therapeutics,COMPLETED_DEAL,2023,EDGAR possible acquisition or merger; BCR-ABL oncology; check 2023-2024 status,LOW,CANDIDATE,BCR-ABL. Small cap. Check if acquired or if SA signals present.
+SPRC,SciSparc,FAILED_REVIEW,2022,EDGAR possible SA; CNS rare disease; very small cap; below range,LOW,CANDIDATE,Very small cap. Below target range. Include for completeness as reference.
+HGTY,Hagerty? No wrong sector,,,,LOW,CANDIDATE,Insurance — exclude.
+RVMD,Revolution Medicines,ROFR_CASE,2022,EDGAR 8-K Sanofi collaboration with possible ROFR; RAS cancer; check scope,MED,CANDIDATE,RAS pathway oncology. Sanofi partnership may include deal rights. Check ROFR scope.
+NTLA,Intellia Therapeutics,ROFR_CASE,2021,EDGAR 8-K AstraZeneca collaboration; possible ROFR/ROFN for specific programs; check scope,MED,CANDIDATE,CRISPR gene editing. AZ partnership 2021. Check for ROFR/ROFN language and scope.
+RXRX,Recursion Pharmaceuticals,FAILED_REVIEW,2024,EDGAR possible SA after stock decline; AI drug discovery; over range by market cap,LOW,CANDIDATE,AI drug discovery. Likely over target range. Include as reference.
+DMTK,DermTech,FAILED_REVIEW,2023,EDGAR possible SA or wind-down; melanoma genomics; check,MED,CANDIDATE,Genomic dermatology. Very small cap. Check for SA or restructuring.
+RLAY,Relay Therapeutics,FAILED_REVIEW,2023,EDGAR restructuring or SA possible; allosteric oncology; check,MED,CANDIDATE,Allosteric oncology. Pipeline setbacks. Check for SA or restructuring.
+ALDX,Aldeyra Therapeutics,FAILED_REVIEW,2023,EDGAR possible SA; metabolic disease RASP; check for process signals,LOW,CANDIDATE,Rare metabolic disease. Small cap. Check for SA announcement.
+TPVG,TriplePoint Venture,ACTIVIST_NO_DEAL,2021,EDGAR proxy or 13D; BDC not biotech; exclude,LOW,CANDIDATE,BDC — exclude from dataset.
+ADAP,Adaptimmune Therapeutics,FAILED_REVIEW,2023,EDGAR restructuring and possible SA; TCR-T cell therapy; UK-listed ADR,MED,CANDIDATE,Cell therapy. UK company on Nasdaq. Had major restructuring 2023 after Glaxo partnership ended. Check for SA language.
+EPRT,Essential Properties? No wrong sector,,,,LOW,CANDIDATE,REIT — exclude.
+MDWD,MedWise Health? No,,,,LOW,CANDIDATE,Exclude if non-biotech.
+AVXL,Anavex Life Sciences,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or activist pressure; neurology sigma-1 receptor; small cap,LOW,CANDIDATE,Canadian biotech on Nasdaq. Check for activist 13D filing.
+TBIO,Translate Bio,COMPLETED_DEAL,2021,EDGAR 8-K Sanofi deal 2021; ~$3.2B; mRNA platform; above range,LOW,CANDIDATE,Above $1.5B range at deal. Include as reference for mRNA platform acquisition pattern.
+NVTA,Invitae,BANKRUPTCY,2024,EDGAR bankruptcy filing 2024; genetic testing; over range before decline,MED,CANDIDATE,Genetic testing — not pure drug biotech. Include as reference. Bankrupt 2024 after massive cash burn.
+PRGO,Perrigo Company,ACTIVIST_NO_DEAL,2021,EDGAR SC 13D activist pressure; specialty pharma/OTC; check,LOW,CANDIDATE,Specialty pharma OTC. Activist pressure but mostly governance. Check Item 4.
+GNSS,Genasys? No wrong sector,,,,LOW,CANDIDATE,Communication tech — exclude.
+XNCR,Xencor,ROFR_CASE,2022,EDGAR 8-K Janssen or Alexion collaboration with possible ROFR; engineered antibodies; check,LOW,CANDIDATE,Antibody engineering. Check partnership 8-Ks for ROFR/ROFN language.
+DARE,Dare Bioscience,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; women's health; small cap,LOW,CANDIDATE,Women's health. Very small cap. Check for SA signals.
+ACHC,Acadia Healthcare,ACTIVIST_NO_DEAL,2021,EDGAR SC 13D; behavioral health hospitals not pure biotech; exclude,LOW,CANDIDATE,Hospital operator — not biotech. Exclude from dataset.
+HRMY,Harmony Biosciences,COMPLETED_DEAL,2023,EDGAR possible acquisition 2023; sleep disorder pitolisant; check if acquired or still public,MED,CANDIDATE,Sleep neurology. Check if acquired by 2025. If still public check for SA signals.
+ELTK,Electra Karma? No,,,,LOW,CANDIDATE,Non-biotech — exclude.
+GKOS,Glaukos Corporation,ACTIVIST_NO_DEAL,2022,EDGAR possible activist; medical devices ophthalmic; adjacent to biotech,LOW,CANDIDATE,Ophthalmic devices. Not pure biotech. Include as reference only.
+CTIC,CTI BioPharma,COMPLETED_DEAL,2023,EDGAR 8-K SOBI deal 2023; pacritinib MF,HIGH,CANDIDATE,Duplicate — use single CTIC entry.
+AVVW,Avita Medical,ACTIVIST_NO_DEAL,2022,EDGAR SC 13D or proxy; regenerative skin; check,LOW,CANDIDATE,Medical devices/regenerative medicine. Check for 13D and whether biotech-proximate.
+NCPL,Netcapital? No,,,,LOW,CANDIDATE,FinTech — exclude.
+ACER,Acer Therapeutics,FAILED_REVIEW,2022,EDGAR possible SA; rare disease OTC cycle disorder; very small cap,LOW,CANDIDATE,Rare disease. Very small cap. Below target range likely.
+DCPH,Deciphera Pharmaceuticals,COMPLETED_DEAL,2023,EDGAR possible acquisition 2023; GIST ripretinib; check if acquired,HIGH,CANDIDATE,GIST cancer treatment. Check if Deciphera was acquired by 2023. If so find deal terms and prior process signals.
+IDXX,IDEXX Laboratories,ACTIVIST_NO_DEAL,2022,EDGAR possible activist; animal health diagnostics; above range,LOW,CANDIDATE,Animal health diagnostics. Above target range. Exclude or reference only.
+CRVS,Corvus Pharmaceuticals,FAILED_REVIEW,2023,EDGAR possible SA; CPI-006 anti-CD73; small cap; check,LOW,CANDIDATE,Immuno-oncology. Very small cap. Check for SA or restructuring.
+SNDX,Syndax Pharmaceuticals,COMPLETED_DEAL,2023,EDGAR 8-K Incyte deal Nov 2023; ~$2.4B; revumenib axatilimab; above range,MED,CANDIDATE,Slightly above $1.5B range at deal. Include as reference. Confirm Incyte as acquirer.
+RGNX,REGENXBIO,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; gene therapy AAV platform; check,MED,CANDIDATE,Gene therapy. Had pipeline setbacks. Check for SA language in 8-Ks.
+KYMR,Kymera Therapeutics,ROFR_CASE,2022,EDGAR 8-K Sanofi collaboration with possible ROFR; targeted protein degradation; check,MED,CANDIDATE,Protein degradation. Sanofi partnership. Check for ROFR/ROFN language and scope.
+APLS,Apellis Pharmaceuticals,ROFR_CASE,2022,EDGAR 8-K possible partner ROFR; C3 complement pegcetacoplan; check partnership agreements,MED,CANDIDATE,Complement biology. Had major partnership deals. Check for ROFR/ROFN language.
+AVRO,AVROBIO,BANKRUPTCY,2023,EDGAR wind-down or SA 2023; gene therapy Fabry disease; check,MED,CANDIDATE,Gene therapy. Had pipeline and funding issues. Check for SA or wind-down announcement.
+ACST,Acasti Pharma,FAILED_REVIEW,2022,EDGAR possible SA or reverse merger activity; omega-3 cardiovascular; small cap,LOW,CANDIDATE,Very small cap. Likely below target range. Check for any process signals.
+ENOV,Enovis Corporation? No,,,,LOW,CANDIDATE,Medical devices — exclude.
+INBX,Inhibrx,ASSET_SALE,2024,EDGAR Sanofi INBRX-101 deal 2024; ~$2.2B total; spin-out of remainder,HIGH,CANDIDATE,Already in seed. Verify exact structure and dates.
+DCPH,Deciphera Pharmaceuticals,COMPLETED_DEAL,2023,EDGAR possible deal 2023-2024; check EDGAR for merger announcement 8-K,HIGH,CANDIDATE,GIST oncology. Confirm if acquired or still public. Priority verification target.
+OVID,Ovid Therapeutics,CAPITAL_RAISE,2023,EDGAR capital raise after failed SA process possible; GABA-A epilepsy; check,MED,CANDIDATE,Neurology. Check whether any SA process was followed by equity raise.
+ALGS,Aligos Therapeutics,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; HBV RSV; check,MED,CANDIDATE,Antiviral company. Had setbacks. Check for SA or restructuring.
+CGEM,Cullinan Oncology,FAILED_REVIEW,2023,EDGAR possible SA or restructuring; CLN-081 oncology; check,MED,CANDIDATE,Small oncology startup. Check for SA signals.
+TGTX,TG Therapeutics,COMPLETED_DEAL,2024,EDGAR possible acquisition 2024-2025; ublituximab MS; check if acquired,MED,CANDIDATE,MS therapy. Had major commercial launch. Check if acquired by large pharma by 2025.
+PRME,Prime Medicine,FAILED_REVIEW,2024,EDGAR restructuring or SA possible; prime editing; check,LOW,CANDIDATE,Gene editing technology. Check for restructuring or SA announcement.
+KPTI,Karyopharm Therapeutics,COMPLETED_DEAL,2024,EDGAR possible acquisition 2024; selinexor XPO1; check if acquired,MED,CANDIDATE,Hematology oncology. Check if acquired or still public. May have had activist 13D.
+CYCN,Cyclerion Therapeutics,FAILED_REVIEW,2022,EDGAR SA announcement 2022; soluble guanylate cyclase; check,HIGH,CANDIDATE,Spin-out from Ironwood. Announced strategic alternatives. Check SA 8-K date and outcome.
+HALO,Halozyme Therapeutics,ACTIVIST_NO_DEAL,2021,EDGAR possible activist pressure; ENHANZE drug delivery; acquired ATRS not acquired itself,LOW,CANDIDATE,Halozyme is an acquirer not target. Only include if Halozyme itself had activist pressure for sale. Probably exclude.
+ARDX,Ardelyx,FAILED_REVIEW,2022,EDGAR possible SA after FDA rejection of tenapanor; renal hyperphosphatemia; check,MED,CANDIDATE,Kidney disease. Had major FDA rejection setback. Check for SA announcement.
+MGNX,MacroGenics,CAPITAL_RAISE,2023,EDGAR capital raise after pipeline setbacks; margetuximab and other assets; check for SA then raise,MED,CANDIDATE,Antibody company. Had major pipeline setbacks. Check for SA followed by equity raise pattern.
+ELCQ,Electra Karma? No,,,,LOW,CANDIDATE,Non-biotech — exclude.
+VSTM,Verastem Oncology,COMPLETED_DEAL,2024,EDGAR possible acquisition 2024; avutometinib defactinib RAS MAPK; check,MED,CANDIDATE,RAS/MAPK oncology. Had deal activity with Lilly. Check for acquisition announcement.

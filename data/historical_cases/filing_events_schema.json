@@ -1,0 +1,197 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-09",
+  "_layer": "filing_events",
+  "_description": "One row per SEC filing that contains a process signal for a tracked case. A single company case typically generates 2–10 filing events across its lifecycle. Normalized from the company-level case.",
+
+  "_file": "filing_events.csv",
+  "_foreign_key": "case_id → cases.csv",
+
+  "fields": {
+    "event_id": {
+      "type": "string",
+      "format": "TICKER-YYYY-NNN-EVNNN",
+      "example": "HARP-2023-001-EV001",
+      "description": "Unique filing event ID. Extends case_id with sequential EV suffix.",
+      "required": true
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Foreign key to cases.csv. One case has many events.",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Stock ticker. Redundant with case_id for query convenience.",
+      "required": true
+    },
+    "filing_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date the filing was submitted to SEC EDGAR. This is the event's t=0 for transition detection.",
+      "required": true
+    },
+    "filing_type": {
+      "type": "string",
+      "examples": ["8-K", "SC 13D", "SC 13D/A", "DEF 14A", "10-K", "10-Q", "SC TO-T", "SC 13E-3"],
+      "description": "SEC form type. Must match EDGAR classification.",
+      "required": true
+    },
+    "accession_number": {
+      "type": "string",
+      "format": "XXXXXXXXXX-YY-ZZZZZZ",
+      "example": "0001234567-23-000123",
+      "description": "SEC EDGAR accession number. Primary key for retrieving the filing programmatically. Format: CIK-YY-SEQUENCE.",
+      "required": false,
+      "default": null
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Direct EDGAR filing index URL. Format: https://www.sec.gov/Archives/edgar/data/{CIK}/{accession}/",
+      "required": false,
+      "default": "VERIFY_REQUIRED"
+    },
+    "event_type": {
+      "type": "enum",
+      "values": [
+        "SA_AFFIRM",
+        "SA_BOILERPLATE",
+        "ACTIVIST_13D_INITIAL",
+        "ACTIVIST_13D_AMENDMENT",
+        "BANKER_RETAINED",
+        "ROFR_ROFN_DISCLOSED",
+        "MERGER_AGREEMENT",
+        "DEAL_TERMINATION",
+        "CAPITAL_RAISE",
+        "WIND_DOWN_ANNOUNCEMENT",
+        "BANKRUPTCY_FILING",
+        "BOARD_CHANGE",
+        "EARNINGS_SA_LANGUAGE",
+        "PROXY_SA_LANGUAGE",
+        "OTHER_PROCESS_SIGNAL"
+      ],
+      "description": "Classification of what process signal this filing contains.",
+      "required": true
+    },
+    "process_state_before": {
+      "type": "enum",
+      "values": ["LIVE", "PATHWAY", "SCREENING", "AGING", "SIGNED", "UNKNOWN"],
+      "description": "Process state immediately before this filing was detected.",
+      "required": true
+    },
+    "process_state_after": {
+      "type": "enum",
+      "values": ["LIVE", "PATHWAY", "SCREENING", "AGING", "SIGNED", "TERMINAL"],
+      "description": "Process state assigned after this filing is incorporated.",
+      "required": true
+    },
+    "is_escalation": {
+      "type": "boolean",
+      "description": "True if this filing moves process_state to a higher rank (stronger evidence). SCREENING→LIVE = escalation.",
+      "required": true
+    },
+    "is_downgrade": {
+      "type": "boolean",
+      "description": "True if this filing moves process_state to a lower rank.",
+      "required": true
+    },
+    "signal_quality": {
+      "type": "enum",
+      "values": ["AFFIRM", "PROCESS", "ROFR", "BOILERPLATE", "SCORE_ONLY", "MERGER"],
+      "description": "signal_quality value the scanner assigns based on this filing.",
+      "required": true
+    },
+    "item4_intent": {
+      "type": "enum",
+      "values": [
+        "SALE_PROCESS",
+        "STRATEGIC_REVIEW",
+        "ACTIVIST_ESCALATION",
+        "BOARD_CHANGE",
+        "CAPITAL_ALLOCATION",
+        "GOVERNANCE_ONLY",
+        "GENERIC_SHAREHOLDER_PRESSURE",
+        "PASSIVE_ACCUMULATION",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ],
+      "description": "For SC 13D filings: Item 4 intent classification from item4_parser logic. NOT_APPLICABLE for non-13D filings.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "item4_intensity": {
+      "type": "enum",
+      "values": ["STRONG_PROCESS_SIGNAL", "MODERATE_PROCESS_SIGNAL", "WEAK_PROCESS_SIGNAL", "GENERIC_ACTIVISM", "PASSIVE", "NOT_APPLICABLE"],
+      "description": "Item 4 intensity as classified by item4_parser scoring.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "item4_confidence_score": {
+      "type": "float",
+      "description": "Numeric confidence score from item4_parser (0–100). Null for non-13D filings.",
+      "required": false,
+      "default": null
+    },
+    "excerpt": {
+      "type": "string",
+      "max_length": 500,
+      "description": "Key excerpt from the filing text that triggered this event classification. Must be verbatim from filing.",
+      "required": false,
+      "default": null
+    },
+    "triggering_phrases": {
+      "type": "string",
+      "description": "Pipe-separated list of specific phrases from the filing that contributed to classification. E.g., 'explore a sale|maximize shareholder value'.",
+      "required": false,
+      "default": null
+    },
+    "downgrade_phrases": {
+      "type": "string",
+      "description": "Pipe-separated list of hedging phrases detected (e.g., 'no assurance|from time to time|may consider').",
+      "required": false,
+      "default": null
+    },
+    "activist_filer": {
+      "type": "string",
+      "description": "For SC 13D filings: name of the activist filer. Null for non-13D.",
+      "required": false,
+      "default": null
+    },
+    "activist_ownership_pct": {
+      "type": "float",
+      "description": "For SC 13D: percent ownership disclosed at time of filing.",
+      "required": false,
+      "default": null
+    },
+    "price_on_filing_date": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price on filing_date.",
+      "required": false,
+      "default": null
+    },
+    "days_since_prior_event": {
+      "type": "integer",
+      "description": "Calendar days since the previous filing event in this case. Null for first event.",
+      "required": false,
+      "default": null
+    },
+    "days_since_case_start": {
+      "type": "integer",
+      "description": "Calendar days from case first_observation_date to this filing.",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text annotation. Anything unusual, ambiguous, or needing follow-up.",
+      "required": false,
+      "default": null
+    },
+    "data_quality": {
+      "type": "enum",
+      "values": ["VERIFIED", "PARTIAL", "VERIFY_REQUIRED"],
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-09",
+  "_layer": "outcomes",
+  "_description": "One row per case. Records the final resolution of each process episode. Normalized from the company-level case for cleaner calibration queries. This table is the primary input for P(deal) calibration, premium distribution, time-to-resolution, and failure drawdown analysis.",
+
+  "_file": "outcomes.csv",
+  "_foreign_key": "case_id → cases.csv (1:1)",
+
+  "fields": {
+    "case_id": {
+      "type": "string",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "required": true
+    },
+    "outcome_type": {
+      "type": "enum",
+      "values": [
+        "ACQUIRED",
+        "DEAL_FAILED",
+        "REVIEW_ABANDONED",
+        "WIND_DOWN",
+        "BANKRUPT",
+        "CAPITAL_RAISE",
+        "ASSET_SOLD",
+        "MERGED_EQUALS",
+        "ONGOING"
+      ],
+      "required": true
+    },
+    "outcome_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date outcome became publicly known. For deals: deal announcement 8-K date. For wind-down: wind-down announcement date. For bankruptcy: Chapter 7/11 filing date.",
+      "required": false,
+      "default": null
+    },
+    "initial_signal_type": {
+      "type": "enum",
+      "values": ["SA_AFFIRM", "SA_BOILERPLATE", "ACTIVIST_13D", "ACTIVIST_13D_PASSIVE", "BANKER_RETAINED", "ROFR_ROFN", "MERGER_AGREEMENT", "SCORE_ONLY"],
+      "description": "Signal type at first_observation_date. Redundant with cases.csv for direct outcome query without join.",
+      "required": true
+    },
+    "initial_sequence_type": {
+      "type": "enum",
+      "values": ["ESCALATING_ACTIVIST", "ADVISOR_THEN_SA", "ACTIVIST_THEN_SA", "SA_THEN_ACTIVIST", "ROFR_THEN_ACTIVIST", "ACTIVIST_THEN_ROFR", "STALENESS_RESET", "MERGER_PRECEDED_BY_SA", "MERGER_PRECEDED_BY_ACTIVIST", "RAPID_ESCALATION", "COMPOUND_LIVE", "PROCESS_COLLAPSE", "SINGLE_SIGNAL", "UNKNOWN"],
+      "description": "Sequence type at the time of first_observation_date. For outcome analysis: does this sequence type correlate with better P(deal)?",
+      "required": false,
+      "default": "UNKNOWN"
+    },
+    "mcap_band": {
+      "type": "enum",
+      "values": ["NANO_sub100M", "SMALL_100_400M", "MID_400M_1B", "UPPER_1B_2B", "ABOVE_2B"],
+      "description": "Market cap bucket at first_observation_date. Used to segment P(deal) tables.",
+      "required": true
+    },
+    "analyst_coverage_bucket": {
+      "type": "enum",
+      "values": ["UNCOVERED_0", "THIN_1_2", "MODERATE_3_5", "COVERED_6_PLUS"],
+      "description": "Analyst coverage bucket at first_observation_date.",
+      "required": false,
+      "default": null
+    },
+    "deal_value_M": {
+      "type": "float",
+      "unit": "USD millions",
+      "description": "Total deal equity value in USD millions. Null for non-deal outcomes.",
+      "required": false,
+      "default": null
+    },
+    "deal_price_per_share": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Per-share consideration. Null for non-deal or non-cash consideration.",
+      "required": false,
+      "default": null
+    },
+    "acquirer": {
+      "type": "string",
+      "description": "Acquirer name. Null for non-deal outcomes.",
+      "required": false,
+      "default": null
+    },
+    "acquirer_type": {
+      "type": "enum",
+      "values": ["LARGE_PHARMA", "MID_PHARMA", "BIOTECH", "PE_BUYOUT", "STRATEGIC_PARTNER", "MANAGEMENT_BUYOUT", "NONE"],
+      "description": "Category of acquirer. Used to identify acquirer-type patterns in outcomes.",
+      "required": false,
+      "default": "NONE"
+    },
+    "deal_premium_pct": {
+      "type": "float",
+      "unit": "percent",
+      "description": "Premium to 30-day pre-announcement average price. NOT to price_at_signal. See anti-look-ahead rules.",
+      "required": false,
+      "default": null
+    },
+    "price_at_signal": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Stock closing price on first_observation_date.",
+      "required": true
+    },
+    "price_30d_after_signal": {
+      "type": "float",
+      "unit": "USD",
+      "description": "Closing price 30 calendar days after first_observation_date. Not adjusted for deal outcome.",
+      "required": false,
+      "default": null
+    },
+    "price_90d_after_signal": {
+      "type": "float",
+      "unit": "USD",
+      "required": false,
+      "default": null
+    },
+    "price_180d_after_signal": {
+      "type": "float",
+      "unit": "USD",
+      "required": false,
+      "default": null
+    },
+    "max_drawdown_pct_after_signal": {
+      "type": "float",
+      "unit": "percent",
+      "description": "Maximum percentage decline from price_at_signal to trough within 365 days. Critical for failure-case downside assumptions. Negative value (e.g., -0.42 = -42% drawdown).",
+      "required": false,
+      "default": null
+    },
+    "time_to_resolution_days": {
+      "type": "integer",
+      "description": "Calendar days from first_observation_date to outcome_date. For ONGOING cases, null.",
+      "required": false,
+      "default": null
+    },
+    "failure_reason": {
+      "type": "string",
+      "max_length": 400,
+      "description": "For non-deal outcomes: what observable factor drove the failure. Grounded in contemporaneous evidence only. No hindsight. See anti-look-ahead rules.",
+      "required": false,
+      "default": null
+    },
+    "failure_mode": {
+      "type": "enum",
+      "values": [
+        "PIPELINE_FAILURE",
+        "CASH_EXHAUSTION",
+        "ACQUIRER_WALKAWAY",
+        "TERMS_DISAGREEMENT",
+        "REGULATORY_BLOCK",
+        "ACTIVIST_EXIT",
+        "MARKET_ENVIRONMENT",
+        "BOARD_DECISION_HALT",
+        "COMPETITIVE_LOSS",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ],
+      "description": "Standardized failure mode classification for false-positive cases. Enables pattern analysis: which failure modes are most common by signal type?",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "contemporaneous_source_url": {
+      "type": "string",
+      "description": "EDGAR URL of the filing that announced the outcome (deal announcement 8-K, wind-down 8-K, bankruptcy filing). Must be primary source.",
+      "required": false,
+      "default": "VERIFY_REQUIRED"
+    },
+    "rofr_scope": {
+      "type": "enum",
+      "values": ["WHOLE_COMPANY", "ASSET_SPECIFIC", "PROGRAM_SPECIFIC", "TERRITORY_SPECIFIC", "UNKNOWN", "NOT_APPLICABLE"],
+      "description": "For ROFR_ROFN cases: scope of the rights that were present. Used to calibrate ROFR scope detection in scanner.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "hotspot_area": {
+      "type": "string",
+      "description": "Therapeutic area. Used to test whether hotspot exposure correlates with better P(deal) independently of process signals.",
+      "required": false,
+      "default": null
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "True if all outcome fields confirmed against primary sources (EDGAR + press release + Bloomberg).",
+      "required": true,
+      "default": false
+    }
+  },
+
+  "_calibration_tables": {
+    "p_deal_by_signal_type": "GROUP BY initial_signal_type, COUNT(outcome_type = ACQUIRED) / COUNT(*) WHERE verified=TRUE",
+    "p_deal_by_sequence_type": "GROUP BY initial_sequence_type, COUNT(outcome_type = ACQUIRED) / COUNT(*) WHERE verified=TRUE",
+    "p_deal_by_mcap_band": "GROUP BY mcap_band, initial_signal_type, COUNT(outcome_type = ACQUIRED) / COUNT(*) WHERE verified=TRUE",
+    "median_premium": "PERCENTILE_CONT(0.5) of deal_premium_pct WHERE outcome_type=ACQUIRED AND verified=TRUE",
+    "median_time_to_deal": "PERCENTILE_CONT(0.5) of time_to_resolution_days WHERE outcome_type=ACQUIRED AND verified=TRUE",
+    "failure_drawdown": "PERCENTILE_CONT(0.5) of max_drawdown_pct_after_signal WHERE outcome_type IN (DEAL_FAILED, REVIEW_ABANDONED, BANKRUPT) AND verified=TRUE",
+    "failure_mode_frequency": "GROUP BY failure_mode, COUNT(*) WHERE outcome_type != ACQUIRED AND verified=TRUE",
+    "minimum_verified_for_use": 100
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "_schema_version": "1.0",
+  "_created": "2026-05-09",
+  "_layer": "language_observations",
+  "_description": "One row per key phrase or language pattern extracted from a process-signal filing. A single filing event generates 2–15 language observations. This table calibrates item4_parser phrase weights, downgrade marker effectiveness, and boilerplate detection. It is the most granular layer and enables direct language-to-outcome analysis.",
+
+  "_file": "language_observations.csv",
+  "_foreign_key": "case_id → cases.csv, event_id → filing_events.csv",
+
+  "fields": {
+    "observation_id": {
+      "type": "string",
+      "format": "TICKER-YYYY-NNN-EVNNN-LNNN",
+      "example": "HARP-2023-001-EV001-L001",
+      "description": "Unique language observation ID.",
+      "required": true
+    },
+    "case_id": {
+      "type": "string",
+      "required": true
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Foreign key to filing_events.csv.",
+      "required": true
+    },
+    "ticker": {
+      "type": "string",
+      "required": true
+    },
+    "filing_date": {
+      "type": "date",
+      "format": "YYYY-MM-DD",
+      "description": "Date of the source filing. Redundant with event_id for query convenience.",
+      "required": true
+    },
+    "phrase": {
+      "type": "string",
+      "max_length": 200,
+      "description": "The exact phrase as it appears in the filing text. Verbatim. No paraphrasing.",
+      "required": true
+    },
+    "phrase_category": {
+      "type": "enum",
+      "values": [
+        "SALE_PROCESS",
+        "STRATEGIC_REVIEW",
+        "ACTIVIST_ESCALATION",
+        "BOARD_CHANGE",
+        "CAPITAL_ALLOCATION",
+        "GOVERNANCE",
+        "PASSIVE_ACCUMULATION",
+        "DOWNGRADE_HEDGE",
+        "BOILERPLATE",
+        "MERGER_LANGUAGE",
+        "ADVISOR_RETENTION",
+        "ROFR_ROFN",
+        "DEAL_RIGHTS",
+        "OTHER"
+      ],
+      "description": "Semantic category of the phrase. Used to validate and refine item4_parser bucket assignments.",
+      "required": true
+    },
+    "surrounding_context": {
+      "type": "string",
+      "max_length": 500,
+      "description": "50–100 words of surrounding context from the filing. Critical for evaluating whether isolated phrase match is legitimate or misleading.",
+      "required": false,
+      "default": null
+    },
+    "section_source": {
+      "type": "enum",
+      "values": ["ITEM_4", "ITEM_5", "BODY", "SUBJECT_LINE", "EXHIBIT", "RISK_FACTORS", "MD_A", "UNKNOWN"],
+      "description": "Which section of the filing this phrase came from. Item 4 language is structurally different from body or risk-factor language.",
+      "required": false,
+      "default": "UNKNOWN"
+    },
+    "raw_weight_assigned": {
+      "type": "float",
+      "description": "Numeric weight item4_parser would assign to this phrase (0–100). Null if not parseable or not applicable.",
+      "required": false,
+      "default": null
+    },
+    "is_downgrade_marker": {
+      "type": "boolean",
+      "description": "True if this phrase is a hedging or downgrade marker (e.g., 'no assurance', 'from time to time', 'may consider'). Used to calibrate hedge_factor logic in item4_parser.",
+      "required": true
+    },
+    "downgrade_severity": {
+      "type": "enum",
+      "values": ["STRONG", "MODERATE", "WEAK", "NOT_APPLICABLE"],
+      "description": "Subjective strength of the downgrade hedge. STRONG = nearly eliminates signal. WEAK = minor qualification.",
+      "required": false,
+      "default": "NOT_APPLICABLE"
+    },
+    "classification_at_time": {
+      "type": "enum",
+      "values": [
+        "SALE_PROCESS",
+        "STRATEGIC_REVIEW",
+        "ACTIVIST_ESCALATION",
+        "BOARD_CHANGE",
+        "CAPITAL_ALLOCATION",
+        "GOVERNANCE_ONLY",
+        "GENERIC_SHAREHOLDER_PRESSURE",
+        "PASSIVE_ACCUMULATION",
+        "BOILERPLATE",
+        "UNKNOWN"
+      ],
+      "description": "How item4_parser would classify this phrase's contribution. Derived from bucket assignment, not from outcome.",
+      "required": false,
+      "default": null
+    },
+    "is_sale_pressure": {
+      "type": "boolean",
+      "description": "True if this phrase alone contributes to is_sale_pressure=True classification in item4_parser.",
+      "required": false,
+      "default": null
+    },
+    "confidence_score": {
+      "type": "float",
+      "description": "item4_parser confidence_score for the filing this phrase came from (0–100). Same value for all phrases from the same filing.",
+      "required": false,
+      "default": null
+    },
+    "later_outcome": {
+      "type": "enum",
+      "values": [
+        "ACQUIRED",
+        "DEAL_FAILED",
+        "REVIEW_ABANDONED",
+        "WIND_DOWN",
+        "BANKRUPT",
+        "CAPITAL_RAISE",
+        "ASSET_SOLD",
+        "MERGED_EQUALS",
+        "ONGOING"
+      ],
+      "description": "What eventually happened to this case. Filled retrospectively. Never fill during initial labeling.",
+      "required": false,
+      "default": "ONGOING"
+    },
+    "phrase_was_predictive": {
+      "type": "boolean",
+      "description": "Retrospective label: did this phrase type appear in cases that resolved with a deal? Used to validate phrase-weight calibration. Never fill during initial labeling.",
+      "required": false,
+      "default": null
+    },
+    "notes": {
+      "type": "string",
+      "description": "Anything unusual about this phrase or context — ambiguous meaning, possible boilerplate, unusual phrasing.",
+      "required": false,
+      "default": null
+    },
+    "data_quality": {
+      "type": "enum",
+      "values": ["VERIFIED", "PARTIAL", "VERIFY_REQUIRED"],
+      "required": true
+    }
+  },
+
+  "_calibration_notes": {
+    "phrase_weight_validation": "Compare raw_weight_assigned distribution across later_outcome=ACQUIRED vs later_outcome=DEAL_FAILED. If high-weight phrases do not correlate with better outcomes, recalibrate bucket weights in item4_parser.",
+    "downgrade_marker_validation": "Compare cases with many is_downgrade_marker=True observations against outcome. If downgrade-heavy filings have similar P(deal) to low-hedge filings, reduce hedge_factor strength.",
+    "boilerplate_detection": "Phrases labeled BOILERPLATE that appear in later_outcome=ACQUIRED cases flag potential over-suppression. Review if BOILERPLATE classification is too aggressive.",
+    "minimum_for_calibration": "Minimum 500 language observations from minimum 80 VERIFIED cases before any phrase-weight recalibration."
+  }
+}
