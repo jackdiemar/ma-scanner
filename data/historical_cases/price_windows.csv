@@ -1,0 +1,5 @@
+case_id,ticker,observation_date,price_before_signal,price_30d_after,price_90d_after,max_drawdown_after_signal,price_source,adjusted_close_used,data_start_date,data_end_date,missing_data_flag,fallback_needed,notes,created_at
+SRRA-2022-001,SRRA,2021-10-01,,,,,yfinance,FALSE,,,TRUE,manual delisted ticker source; Stooq historical price lookup; Nasdaq historical data,yfinance returned no adjusted close history for requested window,2026-05-11T21:25:10+00:00
+GNCA-2022-001,GNCA,2022-04-28,,,,,yfinance,FALSE,,,TRUE,manual delisted ticker source; Stooq historical price lookup; Nasdaq historical data,yfinance returned no adjusted close history for requested window,2026-05-11T21:25:11+00:00
+IMGO-2022-001,IMGO,2022-01-01,,,,,yfinance,FALSE,,,TRUE,manual delisted ticker source; Stooq historical price lookup; Nasdaq historical data,yfinance returned no adjusted close history for requested window,2026-05-11T21:25:12+00:00
+FLXN-2021-001,FLXN,VERIFY_REQUIRED,,,,,yfinance,FALSE,,,TRUE,EDGAR observation_date confirmation required before price lookup,missing observation_date,2026-05-11T21:25:12+00:00
