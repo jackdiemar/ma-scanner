@@ -91,12 +91,25 @@ Next gap: ROFR/ROFN scope context. See `CURRENT_PRIORITY.md`.
 3. `src/PRODUCTION_SCANNER_V12.py`
 4. `src/item4_parser.py` — SC 13D Item 4 classification (read if touching activist/13D logic)
 5. `src/process_history.py` — process-state transition tracking (read if touching history, escalation, or state fields)
-5. `src/sequence_detector.py` — compound sequence pattern detection (read if touching sequence_type, compound_signal_quality, or multi-event logic)
-5. `src/trade_logic.py`
-6. `src/scanner_cache.py`
-7. `src/outcome_tracker.py`
-8. `src/send_alert_v12.py` — only if task touches email/reporting
-9. `dashboards/dashboard_v12.html` and `src/secure_dashboard_server.py` — only if task touches the dashboard
+6. `src/sequence_detector.py` — compound sequence pattern detection (read if touching sequence_type, compound_signal_quality, or multi-event logic)
+7. `src/trade_logic.py`
+8. `src/scanner_cache.py`
+9. `src/outcome_tracker.py`
+10. `src/send_alert_v12.py` — only if task touches email/reporting
+11. `dashboards/dashboard_v12.html` and `src/secure_dashboard_server.py` — only if task touches the dashboard
+
+## Historical Case Library Tools (read if touching case verification)
+
+All in `src/historical_case_tools/`:
+- `edgar_evidence_finder.py` — EDGAR CIK lookup + submissions API + EFTS full-text search. CLI: `--ticker --company --event --year-from --year-to --output json`
+- `exhibit_scope_extractor.py` — ROFR/ROFN scope classifier from agreement text. CLI: `--file / --text / --edgar-url`
+
+Case data: `data/historical_cases/`
+- `cases_seed.csv` — 17 STUB rows (10 priority cases + 7 others). Status as of 2026-05-11: IMGO/GNCA/SRRA/FLXN = PARTIAL. Others = STUB.
+- `source_evidence.csv` — 31 rows (9 VERIFIED, 1 PARTIAL, 21 RESEARCH_TARGET)
+- `verification_working_queue.csv` — 10 priority cases with research status and next steps
+- `verification_checklist.md` — STUB→PARTIAL→VERIFIED promotion rules with anti-look-ahead checklist
+- `schema.json` — field definitions, status progression, calibration rules
 
 ---
 

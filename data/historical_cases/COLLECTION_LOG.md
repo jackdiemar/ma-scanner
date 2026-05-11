@@ -1,8 +1,9 @@
 # Historical Case Library — Collection Log
 
-**Created:** 2026-05-09  
-**Current count:** 15 seed cases (all VERIFY_REQUIRED)  
-**Verified:** 0  
+**Created:** 2026-05-09
+**Last updated:** 2026-05-11
+**Current count:** 17 seed cases (4 PARTIAL, 13 STUB)
+**Verified:** 0 (CALIBRATION_ELIGIBLE); 4 PARTIAL; 13 STUB
 **Phase 1 target:** 25 cases, 60% verified
 
 ---
@@ -78,7 +79,26 @@ Research needed before adding to cases_seed.csv.
 
 ## Completed Verifications
 
-None yet.
+### Batch 1 — 2026-05-11 (EDGAR API session)
+
+**PARTIAL (primary source confirmed, price data still needed):**
+
+| Ticker | Case ID | Finding | Source |
+|---|---|---|---|
+| IMGO | IMGO-2022-001 | Acquirer=Merck Sharp & Dohme LLC confirmed. $36/share. Period 2022-11-19. | 8-K acc 0001193125-22-289491 |
+| GNCA | GNCA-2022-001 | SA=2022-04-28 (seed was wrong). Wind-down=2022-05-24 (no bankruptcy). | 8-K acc 0001457612-22-000049 + 0001457612-22-000058 |
+| SRRA | SRRA-2022-001 | GSK merger confirmed 2022-04-12. | 8-K acc 0001193125-22-103561 |
+| FLXN | FLXN-2021-001 | Pacira merger confirmed 2021-10-11. | 8-K acc 0001104659-21-124870 |
+
+**Seed errors confirmed:**
+
+| Ticker | Error Type | Detail |
+|---|---|---|
+| MGTA | Observation_date wrong + outcome wrong | SA=2023-02-02 (not 2022-06). Outcome=Dianthus reverse merger (not wind-down). |
+| DOVA | Year wrong | Deal was 2019 (not 2021). case_id should be DOVA-2019-001. Sobi, $27.50/share. |
+| HARP | Signal type likely wrong | No ROFR 8-K found. AbbVie deal = program-level option on HPN217 from Nov 2019. |
+| RIGL | Case validity uncertain | Zero SC 13D filings in EDGAR 2018-2023. Activist case may be wrong. |
+| GNCA | observation_date wrong | Seed said 2022-01-27; actual SA was 2022-04-28. |
 
 ---
 
