@@ -1,10 +1,10 @@
 {
-  "acquisition_evidence_status": "NOT_STARTED",
+  "acquisition_evidence_status": "SOURCE_BACKED",
   "background_section_status": {
-    "background_heading": "",
-    "background_section_available": "FALSE",
-    "proxy_source_url": "",
-    "status": "NOT_REVIEWED"
+    "background_heading": "Background of the Transaction",
+    "background_section_available": "TRUE",
+    "proxy_source_url": "https://www.sec.gov/Archives/edgar/data/1311596/000119312516729446/d264761dsc14d9.htm",
+    "status": "FOUND"
   },
   "candidate_fields": {
     "candidate_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
@@ -14,14 +14,11 @@
   "case_id": "RHC-0008-ACQUIRED-TBRA",
   "company_name": "Tobira Therapeutics, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T21:35:42+00:00",
+  "generated_at": "2026-05-12T23:37:26+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2016",
-  "missing_field_count": 7,
+  "missing_field_count": 4,
   "missing_fields": [
-    "core acquisition evidence",
-    "source evidence rows",
-    "background section extraction",
     "prior process signal review",
     "observation date candidate",
     "premium extraction",
@@ -53,15 +50,42 @@
     "price_window_needed": "TRUE",
     "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=TBRA+%22Tobira+Therapeutics%2C+Inc.%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22prior+outreach%22+OR+%22competing+bids%22+OR+%22Item+4%22+OR+%22right+of+first+refusal%22+OR+%22right+of+first+negotiation%22&forms=8-K%2C10-Q%2C10-K%2CSC+13D%2CSC+13D%2FA%2CDEFM14A%2CDEF+14A&dateRange=custom&startdt=2015-01-01&enddt=2016-12-31",
     "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=TBRA+%22Tobira+Therapeutics%2C+Inc.%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22premium%22&forms=DEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2016-01-01&enddt=2016-12-31",
-    "queue_next_best_action": "Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.",
-    "queue_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
+    "queue_next_best_action": "Run background/prior-process extraction, premium extraction, observation-date review, and price-window verification before PARTIAL or VERIFIED.",
+    "queue_notes": "SECOND5_EVIDENCE_2026-05-12: core acquisition evidence located in EDGAR 8-K (0001193125-16-714192); Schedule 14D-9 background section located (0001193125-16-729446). Not VERIFIED or CALIBRATION_ELIGIBLE; prior process signal review remains open.",
     "queue_recommended_status": "PARTIAL_READY"
   },
-  "recommended_next_action": "Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.",
+  "recommended_next_action": "Review background section and contemporaneous pre-announcement filings for public process signal.",
   "recommended_status": "PARTIAL_READY",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 2,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0008-ACQUIRED-TBRA-SRC-001",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "On September 19, 2016, Tobira Therapeutics, Inc. entered into an Agreement and Plan of Merger with Allergan Holdco US, Inc. and Sapphire Acquisition Corp. Purchaser will commence a tender offer to acquire all outstanding shares at a purchase price of $28.35 per Share in cash plus one contingent value right per Share.",
+      "filing_date": "2016-09-20",
+      "filing_type": "8-K",
+      "notes": "SECOND5_EVIDENCE_2026-05-12: acquirer=Allergan Holdco US, Inc.; consideration=$28.35 per Share in cash plus one non-transferable contingent value right per Share; core acquisition evidence found; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1311596/000119312516714192/d249853d8k.htm",
+      "supports_field": "deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome",
+      "verification_status": "PARTIAL"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0008-ACQUIRED-TBRA-SRC-002",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "Background of the Transaction. The Tobira Board regularly reviews and evaluates with the assistance of senior management potential collaborations and other strategic opportunities to advance the clinical development of CVC and other product candidates and preclinical programs, finance the Company clinical development efforts and enhance value for the Company stockholders.",
+      "filing_date": "2016-10-03",
+      "filing_type": "SC 14D9",
+      "notes": "SECOND5_EVIDENCE_2026-05-12: background section located as Background of the Transaction; prior process signal not yet reviewed; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1311596/000119312516729446/d264761dsc14d9.htm",
+      "supports_field": "proxy_or_tender_background|process_timeline|prior_process_signal_search",
+      "verification_status": "PARTIAL"
+    }
+  ],
   "ticker": "TBRA",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 55,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

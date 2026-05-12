@@ -1,10 +1,10 @@
 {
-  "acquisition_evidence_status": "NOT_STARTED",
+  "acquisition_evidence_status": "SOURCE_BACKED",
   "background_section_status": {
-    "background_heading": "",
-    "background_section_available": "FALSE",
-    "proxy_source_url": "",
-    "status": "NOT_REVIEWED"
+    "background_heading": "Background of Offer and Merger",
+    "background_section_available": "TRUE",
+    "proxy_source_url": "https://www.sec.gov/Archives/edgar/data/884731/000119312517013286/d281553dsc14d9.htm",
+    "status": "FOUND"
   },
   "candidate_fields": {
     "candidate_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
@@ -14,14 +14,11 @@
   "case_id": "RHC-0010-ACQUIRED-ARIA",
   "company_name": "ARIAD Pharmaceuticals, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T21:35:42+00:00",
+  "generated_at": "2026-05-12T23:37:26+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2017",
-  "missing_field_count": 7,
+  "missing_field_count": 4,
   "missing_fields": [
-    "core acquisition evidence",
-    "source evidence rows",
-    "background section extraction",
     "prior process signal review",
     "observation date candidate",
     "premium extraction",
@@ -53,15 +50,42 @@
     "price_window_needed": "TRUE",
     "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=ARIA+%22ARIAD+Pharmaceuticals%2C+Inc.%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22prior+outreach%22+OR+%22competing+bids%22+OR+%22Item+4%22+OR+%22right+of+first+refusal%22+OR+%22right+of+first+negotiation%22&forms=8-K%2C10-Q%2C10-K%2CSC+13D%2CSC+13D%2FA%2CDEFM14A%2CDEF+14A&dateRange=custom&startdt=2015-01-01&enddt=2017-12-31",
     "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=ARIA+%22ARIAD+Pharmaceuticals%2C+Inc.%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22premium%22&forms=DEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2017-01-01&enddt=2017-12-31",
-    "queue_next_best_action": "Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.",
-    "queue_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
+    "queue_next_best_action": "Run background/prior-process extraction, premium extraction, observation-date review, and price-window verification before PARTIAL or VERIFIED.",
+    "queue_notes": "SECOND5_EVIDENCE_2026-05-12: core acquisition evidence located in EDGAR 8-K (0001104659-17-001730); Schedule 14D-9 background section located (0001193125-17-013286). Not VERIFIED or CALIBRATION_ELIGIBLE; prior process signal review remains open.",
     "queue_recommended_status": "PARTIAL_READY"
   },
-  "recommended_next_action": "Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.",
+  "recommended_next_action": "Review background section and contemporaneous pre-announcement filings for public process signal.",
   "recommended_status": "PARTIAL_READY",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 2,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0010-ACQUIRED-ARIA-SRC-001",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "On January 8, 2017, ARIAD Pharmaceuticals, Inc. entered into an Agreement and Plan of Merger with Takeda Pharmaceutical Company Limited and Kiku Merger Co., Inc. Merger Sub will commence a tender offer to acquire all outstanding shares at a purchase price of $24.00 per Share in cash.",
+      "filing_date": "2017-01-09",
+      "filing_type": "8-K",
+      "notes": "SECOND5_EVIDENCE_2026-05-12: acquirer=Takeda Pharmaceutical Company Limited; consideration=$24.00 per Share in cash; core acquisition evidence found; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/884731/000110465917001730/a17-1652_18k.htm",
+      "supports_field": "deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome",
+      "verification_status": "PARTIAL"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0010-ACQUIRED-ARIA-SRC-002",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "Background of Offer and Merger. The Company has regularly evaluated different strategies for improving its competitive position and enhancing stockholder value. As part of these evaluations, the Company has, from time to time, considered various strategic alternatives in pursuing its business plan, including acquisitions, mergers, divestitures, joint ventures, collaborations and business combinations, such as a sale of the Company.",
+      "filing_date": "2017-01-18",
+      "filing_type": "SC 14D9",
+      "notes": "SECOND5_EVIDENCE_2026-05-12: background section located as Background of Offer and Merger; prior process signal not yet reviewed; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/884731/000119312517013286/d281553dsc14d9.htm",
+      "supports_field": "proxy_or_tender_background|process_timeline|prior_process_signal_search",
+      "verification_status": "PARTIAL"
+    }
+  ],
   "ticker": "ARIA",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 55,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

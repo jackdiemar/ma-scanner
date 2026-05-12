@@ -6,17 +6,17 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: PARTIAL_READY
-- Workflow completeness score: 5/100
+- Workflow completeness score: 55/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
-- Acquisition evidence status: NOT_STARTED
-- Background section status: NOT_REVIEWED
-- Background heading: not available
-- Proxy source URL: not available
+- Source evidence rows: 2
+- Acquisition evidence status: SOURCE_BACKED
+- Background section status: FOUND
+- Background heading: Background of the Offer and the Merger
+- Proxy source URL: https://www.sec.gov/Archives/edgar/data/1510580/000119312517276737/d450961dsc14d9.htm
 - Prior process signal status: NOT_REVIEWED
 - Prior process signal: not reviewed
 - Prior process signal type: not available
@@ -30,9 +30,6 @@
 
 ## Missing Fields
 
-- core acquisition evidence
-- source evidence rows
-- background section extraction
 - prior process signal review
 - observation date candidate
 - premium extraction
@@ -40,11 +37,24 @@
 
 ## Recommended Next Action
 
-Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.
+Review background section and contemporaneous pre-announcement filings for public process signal.
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0013-ACQUIRED-KITE-SRC-001`
+  - type: 8K_MERGER
+  - status: PARTIAL
+  - filing: 8-K 2017-08-28
+  - source: https://www.sec.gov/Archives/edgar/data/1510580/000119312517269386/d441582d8k.htm
+  - supports: deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome
+  - excerpt: On August 27, 2017, Kite Pharma, Inc. entered into an Agreement and Plan of Merger with Gilead Sciences, Inc. and Dodgers Merger Sub, Inc. Purchaser will commence a tender offer to purchase all outstanding shares at a price of $180.00 per Share in cash.
+- `RHC-0013-ACQUIRED-KITE-SRC-002`
+  - type: PROXY_SA_LANGUAGE
+  - status: PARTIAL
+  - filing: SC 14D9 2017-09-05
+  - source: https://www.sec.gov/Archives/edgar/data/1510580/000119312517276737/d450961dsc14d9.htm
+  - supports: proxy_or_tender_background|process_timeline|prior_process_signal_search
+  - excerpt: Background of the Offer and the Merger. Since its inception, the Company has regularly met with other biotech and pharmaceutical companies regarding a variety of potential partnerships, joint ventures, collaborations and other strategic transactions and has from time to time been presented with opportunities to sell the entire company.
 
 ## Queue Queries
 

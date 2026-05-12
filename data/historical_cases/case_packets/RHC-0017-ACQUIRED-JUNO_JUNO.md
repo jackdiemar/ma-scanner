@@ -6,17 +6,17 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: PARTIAL_READY
-- Workflow completeness score: 5/100
+- Workflow completeness score: 55/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
-- Acquisition evidence status: NOT_STARTED
-- Background section status: NOT_REVIEWED
-- Background heading: not available
-- Proxy source URL: not available
+- Source evidence rows: 2
+- Acquisition evidence status: SOURCE_BACKED
+- Background section status: FOUND
+- Background heading: Background of the Transaction
+- Proxy source URL: https://www.sec.gov/Archives/edgar/data/1594864/000119312518030824/d514862dsc14d9.htm
 - Prior process signal status: NOT_REVIEWED
 - Prior process signal: not reviewed
 - Prior process signal type: not available
@@ -30,9 +30,6 @@
 
 ## Missing Fields
 
-- core acquisition evidence
-- source evidence rows
-- background section extraction
 - prior process signal review
 - observation date candidate
 - premium extraction
@@ -40,11 +37,24 @@
 
 ## Recommended Next Action
 
-Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.
+Review background section and contemporaneous pre-announcement filings for public process signal.
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0017-ACQUIRED-JUNO-SRC-001`
+  - type: 8K_MERGER
+  - status: PARTIAL
+  - filing: 8-K 2018-01-22
+  - source: https://www.sec.gov/Archives/edgar/data/1594864/000119312518015255/d531432d8k.htm
+  - supports: deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome
+  - excerpt: On January 21, 2018, Celgene Corporation entered into an Agreement and Plan of Merger with Juno Therapeutics, Inc. and Blue Magpie Corporation. Purchaser will commence a tender offer for all outstanding Juno Shares at a purchase price of $87.00 per Juno Share in cash.
+- `RHC-0017-ACQUIRED-JUNO-SRC-002`
+  - type: PROXY_SA_LANGUAGE
+  - status: PARTIAL
+  - filing: SC 14D9 2018-02-02
+  - source: https://www.sec.gov/Archives/edgar/data/1594864/000119312518030824/d514862dsc14d9.htm
+  - supports: proxy_or_tender_background|process_timeline|prior_process_signal_search
+  - excerpt: Background of the Transaction. Juno and Celgene are parties to a number of agreements, including the Collaboration Agreement and the Voting and Standstill Agreement and certain other agreements as described more fully in Arrangements with Celgene and Purchaser and their Affiliates.
 
 ## Queue Queries
 
