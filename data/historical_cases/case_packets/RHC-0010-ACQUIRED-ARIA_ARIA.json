@@ -14,18 +14,16 @@
   "case_id": "RHC-0010-ACQUIRED-ARIA",
   "company_name": "ARIAD Pharmaceuticals, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T23:37:26+00:00",
+  "generated_at": "2026-05-12T23:44:06+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2017",
-  "missing_field_count": 4,
+  "missing_field_count": 2,
   "missing_fields": [
-    "prior process signal review",
-    "observation date candidate",
     "premium extraction",
     "price-window verification"
   ],
-  "observation_date_candidate": "",
-  "observation_date_reasoning": "",
+  "observation_date_candidate": "2017-01-09",
+  "observation_date_reasoning": "No source-backed public pre-announcement process signal was found in the available background excerpt. Private negotiations disclosed after announcement are not used as observation dates, so default to the acquisition announcement date pending manual no-hit confirmation.",
   "premium_evidence_status": {
     "source": "",
     "status": "MISSING"
@@ -38,10 +36,10 @@
     "status": "NOT_STARTED"
   },
   "prior_process_signal_status": {
-    "prior_process_signal": "",
+    "prior_process_signal": "NONE_FOUND",
     "prior_process_signal_date": "",
-    "prior_process_signal_type": "",
-    "status": "NOT_REVIEWED"
+    "prior_process_signal_type": "none found",
+    "status": "REVIEWED"
   },
   "priority": "HIGH",
   "queue_fields": {
@@ -54,7 +52,7 @@
     "queue_notes": "SECOND5_EVIDENCE_2026-05-12: core acquisition evidence located in EDGAR 8-K (0001104659-17-001730); Schedule 14D-9 background section located (0001193125-17-013286). Not VERIFIED or CALIBRATION_ELIGIBLE; prior process signal review remains open.",
     "queue_recommended_status": "PARTIAL_READY"
   },
-  "recommended_next_action": "Review background section and contemporaneous pre-announcement filings for public process signal.",
+  "recommended_next_action": "Promote only after primary-source evidence supports the PARTIAL checklist.",
   "recommended_status": "PARTIAL_READY",
   "source_evidence_count": 2,
   "source_evidence_rows": [
@@ -86,6 +84,6 @@
     }
   ],
   "ticker": "ARIA",
-  "workflow_completeness_score": 55,
+  "workflow_completeness_score": 80,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

@@ -6,7 +6,7 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: PARTIAL_READY
-- Workflow completeness score: 55/100
+- Workflow completeness score: 80/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
@@ -17,12 +17,12 @@
 - Background section status: FOUND
 - Background heading: Background of the Transaction
 - Proxy source URL: https://www.sec.gov/Archives/edgar/data/1311596/000119312516729446/d264761dsc14d9.htm
-- Prior process signal status: NOT_REVIEWED
-- Prior process signal: not reviewed
-- Prior process signal type: not available
+- Prior process signal status: REVIEWED
+- Prior process signal: NONE_FOUND
+- Prior process signal type: none found
 - Prior process signal date: not available
-- Observation date candidate: not available
-- Observation date reasoning: not available
+- Observation date candidate: 2016-09-20
+- Observation date reasoning: No source-backed public pre-announcement process signal was found in the available background excerpt. Private negotiations disclosed after announcement are not used as observation dates, so default to the acquisition announcement date pending manual no-hit confirmation.
 - Premium evidence status: MISSING
 - Premium evidence source: not available
 - Price window status: NOT_STARTED
@@ -30,14 +30,12 @@
 
 ## Missing Fields
 
-- prior process signal review
-- observation date candidate
 - premium extraction
 - price-window verification
 
 ## Recommended Next Action
 
-Review background section and contemporaneous pre-announcement filings for public process signal.
+Promote only after primary-source evidence supports the PARTIAL checklist.
 
 ## Source Evidence Rows
 

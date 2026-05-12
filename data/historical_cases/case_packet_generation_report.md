@@ -18,11 +18,11 @@ Generated: 2026-05-12
 | RHC-0003-ACQUIRED-ZSPH | ZSPH | 80 | PARTIAL | 2 |
 | RHC-0004-ACQUIRED-ANAC | ANAC | 80 | PARTIAL | 2 |
 | RHC-0006-ACQUIRED-MDVN | MDVN | 80 | PARTIAL | 2 |
-| RHC-0008-ACQUIRED-TBRA | TBRA | 55 | PARTIAL_READY | 4 |
-| RHC-0010-ACQUIRED-ARIA | ARIA | 55 | PARTIAL_READY | 4 |
-| RHC-0013-ACQUIRED-KITE | KITE | 55 | PARTIAL_READY | 4 |
-| RHC-0015-ACQUIRED-BIVV | BIVV | 55 | PARTIAL_READY | 4 |
-| RHC-0017-ACQUIRED-JUNO | JUNO | 55 | PARTIAL_READY | 4 |
+| RHC-0008-ACQUIRED-TBRA | TBRA | 80 | PARTIAL_READY | 2 |
+| RHC-0010-ACQUIRED-ARIA | ARIA | 80 | PARTIAL_READY | 2 |
+| RHC-0013-ACQUIRED-KITE | KITE | 80 | PARTIAL_READY | 2 |
+| RHC-0015-ACQUIRED-BIVV | BIVV | 80 | PARTIAL_READY | 2 |
+| RHC-0017-ACQUIRED-JUNO | JUNO | 80 | PARTIAL_READY | 2 |
 
 ## Bottom 10 Lowest-Completeness Packets
 
@@ -43,21 +43,21 @@ Generated: 2026-05-12
 
 - premium extraction: 25
 - price-window verification: 25
-- prior process signal review: 20
-- observation date candidate: 20
 - core acquisition evidence: 15
 - source evidence rows: 15
 - background section extraction: 15
+- prior process signal review: 15
+- observation date candidate: 15
 
 ## Cases Closest To PARTIAL
 
 | case | ticker | score | recommended_status | missing fields | next action |
 | --- | --- | ---: | --- | ---: | --- |
-| RHC-0008-ACQUIRED-TBRA | TBRA | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0010-ACQUIRED-ARIA | ARIA | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0013-ACQUIRED-KITE | KITE | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0015-ACQUIRED-BIVV | BIVV | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0017-ACQUIRED-JUNO | JUNO | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
+| RHC-0008-ACQUIRED-TBRA | TBRA | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0010-ACQUIRED-ARIA | ARIA | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0013-ACQUIRED-KITE | KITE | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0015-ACQUIRED-BIVV | BIVV | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0017-ACQUIRED-JUNO | JUNO | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
 | RHC-0019-ACQUIRED-ALDR | ALDR | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 | RHC-0020-ACQUIRED-ARRY | ARRY | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 | RHC-0022-ACQUIRED-LOXO | LOXO | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
@@ -83,8 +83,8 @@ Generated: 2026-05-12
 | RHC-0003-ACQUIRED-ZSPH | ZSPH | 80 | PARTIAL | 2 | Run price_window_fetcher.py or manual delisted-ticker price workflow after confirming premium extraction status. |
 | RHC-0004-ACQUIRED-ANAC | ANAC | 80 | PARTIAL | 2 | Run price_window_fetcher.py or manual delisted-ticker price workflow after confirming premium extraction status. |
 | RHC-0006-ACQUIRED-MDVN | MDVN | 80 | PARTIAL | 2 | Run price_window_fetcher.py or manual delisted-ticker price workflow after confirming premium extraction status. |
-| RHC-0008-ACQUIRED-TBRA | TBRA | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0010-ACQUIRED-ARIA | ARIA | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0013-ACQUIRED-KITE | KITE | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0015-ACQUIRED-BIVV | BIVV | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
-| RHC-0017-ACQUIRED-JUNO | JUNO | 55 | PARTIAL_READY | 4 | Review background section and contemporaneous pre-announcement filings for public process signal. |
+| RHC-0008-ACQUIRED-TBRA | TBRA | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0010-ACQUIRED-ARIA | ARIA | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0013-ACQUIRED-KITE | KITE | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0015-ACQUIRED-BIVV | BIVV | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0017-ACQUIRED-JUNO | JUNO | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
