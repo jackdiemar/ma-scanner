@@ -1,9 +1,9 @@
 # Historical Case Library — Collection Log
 
 **Created:** 2026-05-09
-**Last updated:** 2026-05-11
-**Current count:** 17 seed cases (4 PARTIAL, 13 STUB)
-**Verified:** 0 (CALIBRATION_ELIGIBLE); 4 PARTIAL; 13 STUB
+**Last updated:** 2026-05-12
+**Current count:** 17 seed cases plus 5 acquisition PARTIAL rows
+**Verified:** 0 (CALIBRATION_ELIGIBLE); 9 PARTIAL; 13 STUB
 **Phase 1 target:** 25 cases, 60% verified
 
 ---
@@ -78,6 +78,20 @@ Research needed before adding to cases_seed.csv.
 ---
 
 ## Completed Verifications
+
+### Batch 2 - 2026-05-12 (First-five acquisition PARTIAL promotion)
+
+**PARTIAL (core acquisition event source-backed, price/background work still needed):**
+
+| Ticker | Case ID | Finding | Source |
+|---|---|---|---|
+| NPSP | RHC-0001-ACQUIRED-NPSP | Shire merger agreement 8-K confirmed. $46.00/share consideration located. | 8-K acc 0001104659-15-001685; SC 14D9 acc 0001047469-15-000380 |
+| PCYC | RHC-0002-ACQUIRED-PCYC | AbbVie merger agreement 8-K confirmed. $261.25/share cash or mixed consideration located. | 8-K acc 0001193125-15-081198; SC 14D9 acc 0001193125-15-101106 |
+| ZSPH | RHC-0003-ACQUIRED-ZSPH | AstraZeneca tender/merger path confirmed. $90.00/share cash consideration located. | 8-K acc 0001193125-15-369081; SC 14D9 acc 0001193125-15-380466 |
+| ANAC | RHC-0004-ACQUIRED-ANAC | Pfizer merger agreement 8-K confirmed. $99.25/share cash consideration located. | 8-K acc 0000950103-16-013361; SC 14D9 acc 0001193125-16-603880 |
+| MDVN | RHC-0006-ACQUIRED-MDVN | Pfizer merger agreement 8-K confirmed. $81.50/share cash consideration located. | 8-K acc 0001193125-16-686961; SC 14D9 acc 0001193125-16-696911 |
+
+**Open gaps for each promoted row:** background section extraction, prior process signal review, premium extraction, observation date selection review, and price-window verification. No case was marked VERIFIED or CALIBRATION_ELIGIBLE.
 
 ### Batch 1 — 2026-05-11 (EDGAR API session)
 
