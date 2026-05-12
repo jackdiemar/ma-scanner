@@ -1,0 +1,102 @@
+{
+  "acquisition_evidence_status": "SOURCE_BACKED",
+  "background_section_status": {
+    "background_heading": "Background of the Proposed Transaction",
+    "background_section_available": "TRUE",
+    "proxy_source_url": "https://www.sec.gov/Archives/edgar/data/1411158/000119312516603880/d319707dsc14d9.htm",
+    "status": "FOUND"
+  },
+  "candidate_fields": {
+    "candidate_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
+    "outcome_source_hint": "Pfizer acquisition; verify with 8-K merger agreement and proxy.",
+    "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
+  },
+  "case_id": "RHC-0004-ACQUIRED-ANAC",
+  "company_name": "Anacor Pharmaceuticals, Inc.",
+  "current_status": "PARTIAL",
+  "generated_at": "2026-05-12T21:35:42+00:00",
+  "likely_outcome_type": "ACQUIRED",
+  "likely_outcome_year": "2016",
+  "missing_field_count": 2,
+  "missing_fields": [
+    "premium extraction",
+    "price-window verification"
+  ],
+  "observation_date_candidate": "2016-05-16",
+  "observation_date_reasoning": "No public pre-announcement process signal was detected in the extracted background section. Private outreach, negotiations, diligence, and bid activity disclosed later are not public t=0 signals, so the acquisition announcement date remains the observation_date_candidate.",
+  "premium_evidence_status": {
+    "source": "",
+    "status": "MISSING"
+  },
+  "price_window_status": {
+    "fallback_needed": "",
+    "missing_data_flag": "",
+    "notes": "",
+    "price_source": "",
+    "status": "NOT_STARTED"
+  },
+  "prior_process_signal_status": {
+    "prior_process_signal": "NONE_FOUND",
+    "prior_process_signal_date": "",
+    "prior_process_signal_type": "none found",
+    "status": "REVIEWED"
+  },
+  "priority": "HIGH",
+  "queue_fields": {
+    "deal_terms_needed": "deal_announcement_date|acquirer|deal_price_or_consideration|premium_if_available|consideration_type",
+    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=ANAC+%22Anacor+Pharmaceuticals%2C+Inc.%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2016-01-01&enddt=2016-12-31",
+    "price_window_needed": "TRUE",
+    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=ANAC+%22Anacor+Pharmaceuticals%2C+Inc.%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22prior+outreach%22+OR+%22competing+bids%22+OR+%22Item+4%22+OR+%22right+of+first+refusal%22+OR+%22right+of+first+negotiation%22&forms=8-K%2C10-Q%2C10-K%2CSC+13D%2CSC+13D%2FA%2CDEFM14A%2CDEF+14A&dateRange=custom&startdt=2015-01-01&enddt=2016-12-31",
+    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=ANAC+%22Anacor+Pharmaceuticals%2C+Inc.%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22premium%22&forms=DEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2016-01-01&enddt=2016-12-31",
+    "queue_next_best_action": "Complete background section extraction, prior process signal review, premium extraction, observation-date review, and price-window verification before VERIFIED.",
+    "queue_notes": "Promoted to structured PARTIAL on 2026-05-12 because verified EDGAR merger 8-K evidence supports the core acquisition event. Missing fields remain documented in cases_partial.csv notes.",
+    "queue_recommended_status": "PARTIAL"
+  },
+  "recommended_next_action": "Run price_window_fetcher.py or manual delisted-ticker price workflow after confirming premium extraction status.",
+  "recommended_status": "PARTIAL",
+  "source_evidence_count": 3,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0004-ACQUIRED-ANAC-SRC-001",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "On May 14, 2016, Anacor Pharmaceuticals, Inc. entered into an Agreement and Plan of Merger with Pfizer Inc. and Quattro Merger Sub Inc.",
+      "filing_date": "2016-05-16",
+      "filing_type": "8-K",
+      "notes": "Merger 8-K located; 8-K states offer price of $99.25 per share net to seller in cash. PARTIAL_PROMOTION_2026-05-12: supports structured PARTIAL merger-agreement observation; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1411158/000095010316013361/dp65732_8k.htm",
+      "supports_field": "deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|observation_date|signal_type|event_type|process_state_at_signal|signal_quality|deal_date|deal_price_per_share|outcome|corporate_outcome",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0004-ACQUIRED-ANAC-SRC-002",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "The Offer is being made pursuant to an Agreement and Plan of Merger, dated as of May 14, 2016, by and among the Company, Pfizer and the Offeror.",
+      "filing_date": "2016-05-26",
+      "filing_type": "SC 14D9",
+      "notes": "Schedule 14D-9 located; Item 3 contains past contacts, transactions, negotiations and agreements.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1411158/000119312516603880/d319707dsc14d9.htm",
+      "supports_field": "proxy_or_tender_background|process_timeline|deal_terms",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0004-ACQUIRED-ANAC-SRC-003",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "August 10, 2015, Mr. Berns met with the Chief Executive Officer of Party A (the \u201c Party A CEO \u201d). At such meeting, the Party A CEO informed Mr. Berns that Party A was interested in conducting due diligence and exploring a potential acquisition of the Company. The Party A CEO further indicated that, subject to Party A\u2019s review of limited, confidential due diligence information regarding the Company, Party A could be in a position to provide an indicative valuation range in the near term. That...",
+      "filing_date": "2016-05-26",
+      "filing_type": "SC 14D9",
+      "notes": "BACKGROUND_EXTRACT_2026-05-12: prior_process_signal=NONE_FOUND; observation_date_candidate=2016-05-16; not VERIFIED/calibration eligible.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1411158/000119312516603880/d319707dsc14d9.htm",
+      "supports_field": "had_prior_process_signal|notes|observation_date",
+      "verification_status": "PARTIAL"
+    }
+  ],
+  "ticker": "ANAC",
+  "workflow_completeness_score": 80,
+  "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
+}

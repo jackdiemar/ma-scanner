@@ -1,0 +1,67 @@
+{
+  "acquisition_evidence_status": "NOT_STARTED",
+  "background_section_status": {
+    "background_heading": "",
+    "background_section_available": "FALSE",
+    "proxy_source_url": "",
+    "status": "NOT_REVIEWED"
+  },
+  "candidate_fields": {
+    "candidate_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
+    "outcome_source_hint": "Biogen acquisition; verify with 8-K/6-K merger agreement and tender offer filings.",
+    "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
+  },
+  "case_id": "RHC-0023-ACQUIRED-NITE",
+  "company_name": "Nightstar Therapeutics plc",
+  "current_status": "CANDIDATE",
+  "generated_at": "2026-05-12T21:35:42+00:00",
+  "likely_outcome_type": "ACQUIRED",
+  "likely_outcome_year": "2019",
+  "missing_field_count": 7,
+  "missing_fields": [
+    "core acquisition evidence",
+    "source evidence rows",
+    "background section extraction",
+    "prior process signal review",
+    "observation date candidate",
+    "premium extraction",
+    "price-window verification"
+  ],
+  "observation_date_candidate": "",
+  "observation_date_reasoning": "",
+  "premium_evidence_status": {
+    "source": "",
+    "status": "MISSING"
+  },
+  "price_window_status": {
+    "fallback_needed": "",
+    "missing_data_flag": "",
+    "notes": "",
+    "price_source": "",
+    "status": "NOT_STARTED"
+  },
+  "prior_process_signal_status": {
+    "prior_process_signal": "",
+    "prior_process_signal_date": "",
+    "prior_process_signal_type": "",
+    "status": "NOT_REVIEWED"
+  },
+  "priority": "HIGH",
+  "queue_fields": {
+    "deal_terms_needed": "deal_announcement_date|acquirer|deal_price_or_consideration|premium_if_available|consideration_type",
+    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=NITE+%22Nightstar+Therapeutics+plc%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2019-01-01&enddt=2019-12-31",
+    "price_window_needed": "TRUE",
+    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=NITE+%22Nightstar+Therapeutics+plc%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22prior+outreach%22+OR+%22competing+bids%22+OR+%22Item+4%22+OR+%22right+of+first+refusal%22+OR+%22right+of+first+negotiation%22&forms=8-K%2C10-Q%2C10-K%2CSC+13D%2CSC+13D%2FA%2CDEFM14A%2CDEF+14A&dateRange=custom&startdt=2016-01-01&enddt=2019-12-31",
+    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=NITE+%22Nightstar+Therapeutics+plc%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22premium%22&forms=DEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2019-01-01&enddt=2019-12-31",
+    "queue_next_best_action": "Check EDGAR manually for tender-offer, 6-K, proxy, or foreign-issuer transaction filings before extracting fields.",
+    "queue_notes": "Foreign issuer or circular/6-K path may not have a standard DEFM14A background section.",
+    "queue_recommended_status": "NEEDS_MANUAL_RESEARCH"
+  },
+  "recommended_next_action": "Check EDGAR manually for tender-offer, 6-K, proxy, or foreign-issuer transaction filings before extracting fields.",
+  "recommended_status": "NEEDS_MANUAL_RESEARCH",
+  "source_evidence_count": 0,
+  "source_evidence_rows": [],
+  "ticker": "NITE",
+  "workflow_completeness_score": 5,
+  "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
+}

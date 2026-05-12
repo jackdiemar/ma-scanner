@@ -1,0 +1,102 @@
+{
+  "acquisition_evidence_status": "SOURCE_BACKED",
+  "background_section_status": {
+    "background_heading": "Background of Offer and Merger",
+    "background_section_available": "TRUE",
+    "proxy_source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516696911/d234696dsc14d9.htm",
+    "status": "FOUND"
+  },
+  "candidate_fields": {
+    "candidate_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
+    "outcome_source_hint": "Pfizer acquisition; verify with 8-K merger agreement and proxy.",
+    "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
+  },
+  "case_id": "RHC-0006-ACQUIRED-MDVN",
+  "company_name": "Medivation, Inc.",
+  "current_status": "PARTIAL",
+  "generated_at": "2026-05-12T21:35:42+00:00",
+  "likely_outcome_type": "ACQUIRED",
+  "likely_outcome_year": "2016",
+  "missing_field_count": 2,
+  "missing_fields": [
+    "premium extraction",
+    "price-window verification"
+  ],
+  "observation_date_candidate": "2016-04-28",
+  "observation_date_reasoning": "A public pre-announcement acquisition signal appears in the background section; use the first public signal date as observation_date_candidate pending contemporaneous source confirmation.",
+  "premium_evidence_status": {
+    "source": "",
+    "status": "MISSING"
+  },
+  "price_window_status": {
+    "fallback_needed": "",
+    "missing_data_flag": "",
+    "notes": "",
+    "price_source": "",
+    "status": "NOT_STARTED"
+  },
+  "prior_process_signal_status": {
+    "prior_process_signal": "FOUND_PUBLIC",
+    "prior_process_signal_date": "2016-04-28",
+    "prior_process_signal_type": "outreach / competing bids",
+    "status": "REVIEWED"
+  },
+  "priority": "HIGH",
+  "queue_fields": {
+    "deal_terms_needed": "deal_announcement_date|acquirer|deal_price_or_consideration|premium_if_available|consideration_type",
+    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=MDVN+%22Medivation%2C+Inc.%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2016-01-01&enddt=2016-12-31",
+    "price_window_needed": "TRUE",
+    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=MDVN+%22Medivation%2C+Inc.%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22prior+outreach%22+OR+%22competing+bids%22+OR+%22Item+4%22+OR+%22right+of+first+refusal%22+OR+%22right+of+first+negotiation%22&forms=8-K%2C10-Q%2C10-K%2CSC+13D%2CSC+13D%2FA%2CDEFM14A%2CDEF+14A&dateRange=custom&startdt=2015-01-01&enddt=2016-12-31",
+    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=MDVN+%22Medivation%2C+Inc.%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22premium%22&forms=DEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2016-01-01&enddt=2016-12-31",
+    "queue_next_best_action": "Complete background section extraction, prior process signal review, premium extraction, observation-date review, and price-window verification before VERIFIED.",
+    "queue_notes": "Promoted to structured PARTIAL on 2026-05-12 because verified EDGAR merger 8-K evidence supports the core acquisition event. Missing fields remain documented in cases_partial.csv notes.",
+    "queue_recommended_status": "PARTIAL"
+  },
+  "recommended_next_action": "Run price_window_fetcher.py or manual delisted-ticker price workflow after confirming premium extraction status.",
+  "recommended_status": "PARTIAL",
+  "source_evidence_count": 3,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0006-ACQUIRED-MDVN-SRC-001",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "On August 20, 2016, Medivation, Inc. entered into an Agreement and Plan of Merger with Pfizer Inc. and Montreal, Inc.",
+      "filing_date": "2016-08-22",
+      "filing_type": "8-K",
+      "notes": "Merger 8-K located; 8-K states purchase price of $81.50 per Share net to seller in cash. PARTIAL_PROMOTION_2026-05-12: supports structured PARTIAL merger-agreement observation; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516686961/d245915d8k.htm",
+      "supports_field": "deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|observation_date|signal_type|event_type|process_state_at_signal|signal_quality|deal_date|deal_price_per_share|outcome|corporate_outcome",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0006-ACQUIRED-MDVN-SRC-002",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "The Offer is being made pursuant to an Agreement and Plan of Merger, dated as of August 20, 2016, by and among Parent, Purchaser, and Medivation.",
+      "filing_date": "2016-08-30",
+      "filing_type": "SC 14D9",
+      "notes": "Schedule 14D-9 located; Item 3 contains past contacts, transactions, negotiations and agreements.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516696911/d234696dsc14d9.htm",
+      "supports_field": "proxy_or_tender_background|process_timeline|deal_terms",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0006-ACQUIRED-MDVN-SRC-003",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "On April 28, 2016, Sanofi issued a press release publicly announcing Sanofi\u2019s $52.50 proposal.",
+      "filing_date": "2016-08-30",
+      "filing_type": "SC 14D9",
+      "notes": "BACKGROUND_EXTRACT_2026-05-12: prior_process_signal=FOUND_PUBLIC; observation_date_candidate=2016-04-28; not VERIFIED/calibration eligible.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516696911/d234696dsc14d9.htm",
+      "supports_field": "had_prior_process_signal|notes|observation_date",
+      "verification_status": "PARTIAL"
+    }
+  ],
+  "ticker": "MDVN",
+  "workflow_completeness_score": 80,
+  "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
+}
