@@ -66,3 +66,36 @@ None confirmed as no-hit yet because live EDGAR hit/no-hit searches require manu
 - Excluded private talks disclosed later in proxy background sections.
 - Did not invent sources or infer hits from generated search targets.
 - Used `DATE_MISSING` when exact announcement date was not available, because no-hit confirmation requires a locked cutoff.
+
+## Pre-Announcement Filing Collector Addendum
+
+Updated by `src/historical_case_tools/pre_announcement_filing_collector.py`.
+
+- Cases checked: 15
+- Filing target rows collected: 411
+- Possible signal hit rows: 16
+- Possible-hit cases: 4
+- Likely no-hit cases: 11
+- Needs manual review cases: 0
+- Date or CIK blocked cases: 0
+
+### Manual Review First
+
+| case_id | ticker | announcement_date | filing_date | filing_type | recommended_status | keyword_hits |
+| --- | --- | --- | --- | --- | --- | --- |
+| RHC-0006-ACQUIRED-MDVN | MDVN | 2016-08-22 | 2016-04-28 | 8-K | POSSIBLE_HIT | proposal from/proposal to acquire |
+| RHC-0005-ACQUIRED-CPXX | CPXX | 2016-05-31 | 2016-03-23 | 8-K | POSSIBLE_HIT | right of first refusal |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-08-25 | 8-K | POSSIBLE_HIT | acquisition proposal/financial advisor/right of first refusal/superior proposal/unsolicited proposal |
+| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-02-06 | 10-Q | POSSIBLE_HIT | right of first refusal |
+
+### Best Possible MDVN-Like Candidates Beyond MDVN
+
+| case_id | ticker | announcement_date | filing_date | filing_type | possible_signal_type | keyword_hits |
+| --- | --- | --- | --- | --- | --- | --- |
+| RHC-0005-ACQUIRED-CPXX | CPXX | 2016-05-31 | 2016-03-23 | 8-K | rofr_rofn | right of first refusal |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-08-25 | 8-K | acquisition_proposal/competing_bid/retained_advisor/rofr_rofn/unsolicited_proposal | acquisition proposal/financial advisor/right of first refusal/superior proposal/unsolicited proposal |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-09-18 | 8-K | acquisition_proposal/retained_advisor/unsolicited_proposal | financial advisor/proposal from/unsolicited proposal |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-09-19 | 8-K | acquisition_proposal/competing_bid/retained_advisor/unsolicited_proposal | financial advisor/proposal from/superior proposal/unsolicited proposal |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-10-02 | 8-K | acquisition_proposal/competing_bid/unsolicited_proposal | proposal to acquire/superior proposal/unsolicited proposal |
+| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-02-06 | 10-Q | rofr_rofn | right of first refusal |
+| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-05-09 | 10-Q | rofr_rofn | right of first refusal |
