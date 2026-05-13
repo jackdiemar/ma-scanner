@@ -61,8 +61,8 @@ Updated by `src/historical_case_tools/prior_signal_confirmation_runner.py`.
 - Cases checked: 15
 - Confirmed hits: 1
 - Confirmed no-hits: 0
-- Needs manual review: 0
-- Date missing: 14
+- Needs manual review: 14
+- Date missing: 0
 
 ### Best 5 True Pre-Deal Signal Candidates
 
@@ -72,4 +72,4 @@ Updated by `src/historical_case_tools/prior_signal_confirmation_runner.py`.
 
 ### Likely Deal-Announcement Baselines
 
-None confirmed as no-hit yet because most targets lack exact acquisition dates or require manual EDGAR review.
+None confirmed as no-hit yet because live EDGAR hit/no-hit searches require manual review.
