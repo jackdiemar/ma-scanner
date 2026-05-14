@@ -1,21 +1,21 @@
 # Acquisition Prior-Signal Mini-Study
 
-Generated: 2026-05-12
+Generated: 2026-05-14
 
 ## Scope
 
-This mini-study summarizes the current acquisition prior-signal batch of 25 acquired historical cases.
+This mini-study summarizes the current acquisition prior-signal batch of 50 acquired historical cases.
 
 The workflow reuses acquisition announcement dates, pre-announcement filing targets, possible signal hits, adjudication rows, confirmation results, source evidence, and packet metadata. It does not mark any case `VERIFIED` or `CALIBRATION_ELIGIBLE`.
 
 ## Results
 
-- Cases reviewed: 25
-- True prior public signal cases: 2
+- Cases reviewed: 50
+- True prior public signal cases: 3
 - Deal-announcement baseline candidates: 15
 - False-positive cases: 7
-- Needs manual review: 1
-- Date/source blockers: 0
+- Needs manual review: 0
+- Date/source blockers: 25
 
 ## True Prior Public Signal Cases
 
@@ -23,6 +23,7 @@ The workflow reuses acquisition announcement dates, pre-announcement filing targ
 | --- | --- | --- | --- | --- |
 | RHC-0006-ACQUIRED-MDVN | MDVN | 2016-08-22 | TRUE_PUBLIC_PRIOR_SIGNAL | HIGH |
 | RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | TRUE_PUBLIC_PRIOR_SIGNAL | HIGH |
+| RHC-0025-ACQUIRED-TSRO | TSRO | 2018-12-03 | TRUE_PUBLIC_PRIOR_SIGNAL | MEDIUM |
 
 ## Deal-Announcement Baseline Candidates
 
@@ -76,6 +77,8 @@ No confirmed activist 13D sale-pressure case has been found in this batch.
 
 The scanner could have caught MDVN and DMTX because public pre-announcement filings contained unsolicited proposal, competing bid, superior proposal, advisor, and process language before the final acquisition announcement.
 
+TSRO is different: the public signal was a pre-announcement media report later cited in Schedule 14D-9 background. An EDGAR-only scanner would not reliably catch it before announcement unless external public-news evidence is part of the workflow.
+
 ## What The Scanner Could Not Have Caught
 
 The scanner should not count private negotiations later disclosed in proxy or Schedule 14D-9 background sections. It also should not count generic rights language, asset-specific ROFR/ROFN language, or final merger announcement language as prior public process evidence.
@@ -92,16 +95,16 @@ The scanner should not count private negotiations later disclosed in proxy or Sc
 
 | case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0025-ACQUIRED-TSRO | TSRO | 2018-12-03 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0019-ACQUIRED-ALDR | ALDR | 2019-09-16 | 36 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0022-ACQUIRED-LOXO | LOXO | 2019-01-07 | 34 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0016-ACQUIRED-CASC | CASC | 2018-01-31 | 33 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0024-ACQUIRED-ONCE | ONCE | 2019-02-25 | 26 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0009-ACQUIRED-VTAE | VTAE | 2016-09-14 | 18 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
-| RHC-0011-ACQUIRED-CLCD | CLCD | 2017-01-18 | 7 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0026-ACQUIRED-ACHN | ACHN |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0027-ACQUIRED-BOLD | BOLD |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0028-ACQUIRED-DERM | DERM |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0029-ACQUIRED-FTSV | FTSV |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0030-ACQUIRED-MNTA | MNTA |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0031-ACQUIRED-MYOK | MYOK |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0032-ACQUIRED-PGNX | PGNX |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0033-ACQUIRED-PRNB | PRNB |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0034-ACQUIRED-PRVL | PRVL |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0035-ACQUIRED-ADMS | ADMS |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
 
 ## Current Packet Fields
 

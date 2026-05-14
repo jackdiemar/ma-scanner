@@ -1,19 +1,19 @@
 # Case Packet Generation Report
 
-Generated: 2026-05-12
+Generated: 2026-05-14
 
 ## Summary
 
-- Packets generated: 25
-- Scope: top acquisition cases from acquisition_verification_queue.csv
+- Packets generated: 50
+- Scope: acquisition queue first, then additional ACQUIRED candidates from resolved_case_candidates.csv as needed.
 - Workflow completeness score is not investment quality and not P(deal).
 - No cases were marked VERIFIED or CALIBRATION_ELIGIBLE.
 
 ## Prior Signal Adjudication Summary
 
+- NOT_ADJUDICATED: 34
 - NEEDS_MANUAL_REVIEW: 11
-- NOT_ADJUDICATED: 10
-- TRUE_PUBLIC_PRIOR_SIGNAL: 2
+- TRUE_PUBLIC_PRIOR_SIGNAL: 3
 - RIGHTS_LANGUAGE_ONLY: 1
 - ASSET_SPECIFIC_RIGHTS_ONLY: 1
 
@@ -23,6 +23,7 @@ Generated: 2026-05-12
 | --- | --- | ---: | --- | ---: |
 | RHC-0006-ACQUIRED-MDVN | MDVN | 80 | PARTIAL | 2 |
 | RHC-0012-ACQUIRED-DMTX | DMTX | 5 | NEEDS_MANUAL_RESEARCH | 7 |
+| RHC-0025-ACQUIRED-TSRO | TSRO | 40 | PARTIAL_READY | 5 |
 
 ## False-Positive Prior Signal Packets
 
@@ -63,13 +64,13 @@ Generated: 2026-05-12
 
 ## Common Missing Fields
 
-- premium extraction: 25
-- price-window verification: 25
-- core acquisition evidence: 15
-- source evidence rows: 15
-- background section extraction: 15
-- prior process signal review: 15
-- observation date candidate: 15
+- premium extraction: 50
+- price-window verification: 50
+- background section extraction: 40
+- prior process signal review: 40
+- observation date candidate: 40
+- core acquisition evidence: 39
+- source evidence rows: 39
 
 ## Cases Closest To PARTIAL
 
@@ -80,11 +81,11 @@ Generated: 2026-05-12
 | RHC-0013-ACQUIRED-KITE | KITE | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
 | RHC-0015-ACQUIRED-BIVV | BIVV | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
 | RHC-0017-ACQUIRED-JUNO | JUNO | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
+| RHC-0025-ACQUIRED-TSRO | TSRO | 40 | PARTIAL_READY | 5 | Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section. |
 | RHC-0019-ACQUIRED-ALDR | ALDR | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 | RHC-0020-ACQUIRED-ARRY | ARRY | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 | RHC-0022-ACQUIRED-LOXO | LOXO | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 | RHC-0024-ACQUIRED-ONCE | ONCE | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
-| RHC-0025-ACQUIRED-TSRO | TSRO | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
 
 ## Cases Closest To Future VERIFIED
 

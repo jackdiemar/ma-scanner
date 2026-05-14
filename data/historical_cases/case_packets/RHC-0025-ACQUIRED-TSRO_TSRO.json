@@ -1,5 +1,5 @@
 {
-  "acquisition_evidence_status": "NOT_STARTED",
+  "acquisition_evidence_status": "SOURCE_BACKED",
   "background_section_status": {
     "background_heading": "",
     "background_section_available": "FALSE",
@@ -14,13 +14,11 @@
   "case_id": "RHC-0025-ACQUIRED-TSRO",
   "company_name": "TESARO, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T01:11:01+00:00",
+  "generated_at": "2026-05-14T01:21:42+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2019",
-  "missing_field_count": 7,
+  "missing_field_count": 5,
   "missing_fields": [
-    "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -49,14 +47,28 @@
   "prior_signal_adjudication_status": {
     "best_source_excerpt": "",
     "best_source_url": "",
-    "case_level_true_signal": "FALSE",
-    "classification_counts": {},
+    "case_level_true_signal": "TRUE",
+    "classification_counts": {
+      "TRUE_PUBLIC_PRIOR_SIGNAL": 1
+    },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
     "false_positive_rows": 0,
-    "source_rows": [],
-    "status": "NOT_ADJUDICATED",
-    "true_prior_signal_rows": 0
+    "source_rows": [
+      {
+        "adjudicated_signal_type": "public_sale_process_report",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "explore potential sale",
+        "collector_signal_type": "public_review_process",
+        "confidence": "MEDIUM",
+        "filing_date": "2018-11-16",
+        "filing_type": "NEWS",
+        "notes": "Public signal was a pre-announcement news report, not private proxy-only negotiations. Further manual review should locate the original Bloomberg article or an archival copy.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1491576/000104746918007661/a2237269zsc14d9.htm"
+      }
+    ],
+    "status": "TRUE_PUBLIC_PRIOR_SIGNAL",
+    "true_prior_signal_rows": 1
   },
   "priority": "HIGH",
   "queue_fields": {
@@ -69,11 +81,51 @@
     "queue_notes": "Candidate only. Outcome and prior process evidence require primary-source verification.",
     "queue_recommended_status": "PARTIAL_READY"
   },
-  "recommended_next_action": "Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.",
+  "recommended_next_action": "Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section.",
   "recommended_status": "PARTIAL_READY",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 3,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0025-ACQUIRED-TSRO-SRC-001",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "On December 3, 2018, TESARO, Inc. entered into an Agreement and Plan of Merger with GlaxoSmithKline plc and Adriatic Acquisition Corporation at $75.00 per Share in cash.",
+      "filing_date": "2018-12-03",
+      "filing_type": "8-K/A",
+      "notes": "TSRO_CLEANUP_2026-05-14: acquirer=GlaxoSmithKline plc; consideration=$75.00 per Share in cash; core acquisition evidence found; not VERIFIED or calibration eligible.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1491576/000110465918071114/a18-41016_18ka.htm",
+      "supports_field": "deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome",
+      "verification_status": "PARTIAL"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0025-ACQUIRED-TSRO-SRC-002",
+      "evidence_type": "PROXY_SA_LANGUAGE",
+      "excerpt": "Background of the Offer. On November 16, 2018, Bloomberg News Wire published an article titled Cancer Drugmaker Tesaro is Said to Explore Potential Sale, before the December 3, 2018 acquisition announcement.",
+      "filing_date": "2018-12-14",
+      "filing_type": "SC 14D9",
+      "notes": "TSRO_CLEANUP_2026-05-14: post-announcement Schedule 14D-9 background cites a public pre-announcement sale-process report; underlying private discussions remain proxy-background-only and should not be counted separately.",
+      "source_name": "SEC EDGAR Schedule 14D-9",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1491576/000104746918007661/a2237269zsc14d9.htm",
+      "supports_field": "proxy_or_tender_background|process_timeline|prior_process_signal_search|had_prior_process_signal",
+      "verification_status": "PARTIAL"
+    },
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0025-ACQUIRED-TSRO-SRC-003",
+      "evidence_type": "PUBLIC_MEDIA_REPORT",
+      "excerpt": "Cancer drug company Tesaro shares rise following report that it will explore sale.",
+      "filing_date": "2018-11-16",
+      "filing_type": "NEWS",
+      "notes": "TSRO_CLEANUP_2026-05-14: public report predates GSK announcement; next manual step is to locate original Bloomberg article or archived wire copy. Not VERIFIED or calibration eligible.",
+      "source_name": "CNBC / Reuters",
+      "source_url": "https://www.cnbc.com/2018/11/16/cancer-drug-company-tesaro-shares-rise-30percent-following-report-that-it-will-explore-sale.html",
+      "supports_field": "prior_process_signal_search|had_prior_process_signal|public_pre_announcement_signal",
+      "verification_status": "PARTIAL"
+    }
+  ],
   "ticker": "TSRO",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 40,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

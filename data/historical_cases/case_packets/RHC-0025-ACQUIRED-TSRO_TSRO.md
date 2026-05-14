@@ -6,14 +6,14 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: PARTIAL_READY
-- Workflow completeness score: 5/100
+- Workflow completeness score: 40/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
-- Acquisition evidence status: NOT_STARTED
+- Source evidence rows: 3
+- Acquisition evidence status: SOURCE_BACKED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
 - Proxy source URL: not available
@@ -30,23 +30,23 @@
 
 ## Prior Signal Adjudication
 
-- Adjudication status: NOT_ADJUDICATED
+- Adjudication status: TRUE_PUBLIC_PRIOR_SIGNAL
 - Confirmation hit status: not available
-- Case-level true signal: FALSE
-- True prior-signal rows: 0
+- Case-level true signal: TRUE
+- True prior-signal rows: 1
 - False-positive rows: 0
-- Classification counts: {}
+- Classification counts: {"TRUE_PUBLIC_PRIOR_SIGNAL": 1}
 - Best source URL: not available
 - Best source excerpt: not available
 
 ### Adjudicated Rows
 
-- none
+- 2018-11-16 NEWS: TRUE_PUBLIC_PRIOR_SIGNAL (public_review_process; explore potential sale)
+  - source: https://www.sec.gov/Archives/edgar/data/1491576/000104746918007661/a2237269zsc14d9.htm
+  - notes: Public signal was a pre-announcement news report, not private proxy-only negotiations. Further manual review should locate the original Bloomberg article or an archival copy.
 
 ## Missing Fields
 
-- core acquisition evidence
-- source evidence rows
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -55,11 +55,31 @@
 
 ## Recommended Next Action
 
-Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section.
+Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section.
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0025-ACQUIRED-TSRO-SRC-001`
+  - type: 8K_MERGER
+  - status: PARTIAL
+  - filing: 8-K/A 2018-12-03
+  - source: https://www.sec.gov/Archives/edgar/data/1491576/000110465918071114/a18-41016_18ka.htm
+  - supports: deal_announcement_date|acquirer|deal_terms|source_filing_url|source_filing_date|deal_price_per_share|outcome|corporate_outcome
+  - excerpt: On December 3, 2018, TESARO, Inc. entered into an Agreement and Plan of Merger with GlaxoSmithKline plc and Adriatic Acquisition Corporation at $75.00 per Share in cash.
+- `RHC-0025-ACQUIRED-TSRO-SRC-002`
+  - type: PROXY_SA_LANGUAGE
+  - status: PARTIAL
+  - filing: SC 14D9 2018-12-14
+  - source: https://www.sec.gov/Archives/edgar/data/1491576/000104746918007661/a2237269zsc14d9.htm
+  - supports: proxy_or_tender_background|process_timeline|prior_process_signal_search|had_prior_process_signal
+  - excerpt: Background of the Offer. On November 16, 2018, Bloomberg News Wire published an article titled Cancer Drugmaker Tesaro is Said to Explore Potential Sale, before the December 3, 2018 acquisition announcement.
+- `RHC-0025-ACQUIRED-TSRO-SRC-003`
+  - type: PUBLIC_MEDIA_REPORT
+  - status: PARTIAL
+  - filing: NEWS 2018-11-16
+  - source: https://www.cnbc.com/2018/11/16/cancer-drug-company-tesaro-shares-rise-30percent-following-report-that-it-will-explore-sale.html
+  - supports: prior_process_signal_search|had_prior_process_signal|public_pre_announcement_signal
+  - excerpt: Cancer drug company Tesaro shares rise following report that it will explore sale.
 
 ## Queue Queries
 

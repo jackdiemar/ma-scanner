@@ -10,7 +10,7 @@ regenerates case packets. It does not mark cases VERIFIED or
 CALIBRATION_ELIGIBLE.
 
 Usage:
-    python3 src/historical_case_tools/acquisition_prior_signal_batch_runner.py --limit 25
+    python3 src/historical_case_tools/acquisition_prior_signal_batch_runner.py --limit 50
     python3 src/historical_case_tools/acquisition_prior_signal_batch_runner.py --tickers RLYP VTAE CLCD AVXS CASC
     python3 src/historical_case_tools/acquisition_prior_signal_batch_runner.py --dry-run
 """
@@ -29,6 +29,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 HISTORICAL_DIR = REPO_ROOT / 'data' / 'historical_cases'
 
 DEFAULT_QUEUE = HISTORICAL_DIR / 'acquisition_verification_queue.csv'
+DEFAULT_CANDIDATES = HISTORICAL_DIR / 'resolved_case_candidates.csv'
 DEFAULT_ACQUISITION_DATES = HISTORICAL_DIR / 'acquisition_announcement_dates.csv'
 DEFAULT_FILING_TARGETS = HISTORICAL_DIR / 'pre_announcement_filing_targets.csv'
 DEFAULT_SIGNAL_HITS = HISTORICAL_DIR / 'pre_announcement_signal_hits.csv'
@@ -41,7 +42,7 @@ DEFAULT_BATCH_REPORT = HISTORICAL_DIR / 'acquisition_prior_signal_batch_report.m
 DEFAULT_MINI_STUDY = HISTORICAL_DIR / 'acquisition_prior_signal_mini_study.md'
 CASE_PACKET_GENERATOR = REPO_ROOT / 'src' / 'historical_case_tools' / 'case_packet_generator.py'
 
-RUN_DATE = '2026-05-12'
+RUN_DATE = '2026-05-14'
 
 BATCH_FIELDS = [
     'case_id',
@@ -101,11 +102,99 @@ def index_by(rows: Iterable[dict[str, str]], key: str) -> dict[str, dict[str, st
     return indexed
 
 
-def selected_queue_rows(rows: list[dict[str, str]], tickers: list[str], limit: int) -> list[dict[str, str]]:
+def queue_row_from_candidate(candidate: dict[str, str]) -> dict[str, str]:
+    return {
+        'candidate_id': candidate.get('candidate_id', '').strip(),
+        'ticker': candidate.get('ticker', '').strip(),
+        'company_name': candidate.get('company_name', '').strip(),
+        'likely_outcome_year': candidate.get('likely_outcome_year', '').strip(),
+        'merger_8k_query': candidate.get('outcome_edgar_query', '').strip(),
+        'proxy_query': candidate.get('proxy_or_s4_query', '').strip(),
+        'background_section_needed': 'TRUE',
+        'prior_process_signal_query': candidate.get('prior_process_signal_query', '').strip(),
+        'deal_terms_needed': 'TRUE',
+        'price_window_needed': 'TRUE',
+        'recommended_status': candidate.get('verification_status', '').strip() or 'CANDIDATE',
+        'next_best_action': 'Open primary acquisition evidence, then run date and pre-announcement signal workflows.',
+        'notes': candidate.get('notes', '').strip(),
+    }
+
+
+def target_priority(
+    row: dict[str, str],
+    *,
+    dates_by_case: dict[str, dict[str, str]],
+    targets_by_case: dict[str, list[dict[str, str]]],
+    evidence_by_case: dict[str, list[dict[str, str]]],
+) -> int:
+    case_id = row.get('candidate_id', '').strip()
+    score = 0
+    if evidence_by_case.get(case_id):
+        score += 4
+    date_confidence = dates_by_case.get(case_id, {}).get('confidence', '').strip().upper()
+    if date_confidence == 'HIGH':
+        score += 4
+    elif date_confidence:
+        score += 2
+    if targets_by_case.get(case_id):
+        score += 3
+    if row.get('merger_8k_query', '').strip():
+        score += 1
+    if row.get('proxy_query', '').strip():
+        score += 1
+    return score
+
+
+def selected_target_rows(
+    *,
+    queue_rows: list[dict[str, str]],
+    candidate_rows: list[dict[str, str]],
+    tickers: list[str],
+    limit: int,
+    dates_by_case: dict[str, dict[str, str]],
+    targets_by_case: dict[str, list[dict[str, str]]],
+    evidence_by_case: dict[str, list[dict[str, str]]],
+) -> list[dict[str, str]]:
     wanted = {ticker.upper() for ticker in tickers}
+    selected = []
+    seen: set[str] = set()
+
+    for row in queue_rows:
+        case_id = row.get('candidate_id', '').strip()
+        ticker = row.get('ticker', '').strip().upper()
+        if not case_id or case_id in seen:
+            continue
+        if wanted and ticker not in wanted:
+            continue
+        selected.append(row)
+        seen.add(case_id)
+
+    fallback_rows = []
+    for index, candidate in enumerate(candidate_rows):
+        if candidate.get('likely_outcome_type', '').strip().upper() != 'ACQUIRED':
+            continue
+        case_id = candidate.get('candidate_id', '').strip()
+        ticker = candidate.get('ticker', '').strip().upper()
+        if not case_id or case_id in seen:
+            continue
+        if wanted and ticker not in wanted:
+            continue
+        row = queue_row_from_candidate(candidate)
+        fallback_rows.append((
+            -target_priority(
+                row,
+                dates_by_case=dates_by_case,
+                targets_by_case=targets_by_case,
+                evidence_by_case=evidence_by_case,
+            ),
+            index,
+            row,
+        ))
+
+    selected.extend(row for _, _, row in sorted(fallback_rows))
     if wanted:
-        return [row for row in rows if row.get('ticker', '').strip().upper() in wanted]
-    return rows[:limit]
+        return selected
+    return selected[:limit]
 
 
 def source_date(case_id: str, evidence_by_case: dict[str, list[dict[str, str]]]) -> tuple[str, str]:
@@ -163,6 +252,22 @@ def status_from_adjudication(rows: list[dict[str, str]]) -> str:
     return 'FALSE_POSITIVE'
 
 
+def adjudication_confidence(rows: list[dict[str, str]], status: str, default: str = 'MEDIUM') -> str:
+    if status == 'TRUE_PUBLIC_PRIOR_SIGNAL':
+        relevant = [
+            row.get('confidence', '').strip().upper()
+            for row in rows
+            if row.get('adjudication_classification', '').strip() == status
+        ]
+    else:
+        relevant = [row.get('confidence', '').strip().upper() for row in rows]
+    ranks = {'HIGH': 3, 'MEDIUM': 2, 'LOW': 1}
+    ranked = [confidence for confidence in relevant if confidence in ranks]
+    if not ranked:
+        return default
+    return sorted(ranked, key=lambda confidence: ranks[confidence], reverse=True)[0]
+
+
 def status_from_case(
     *,
     case_id: str,
@@ -176,10 +281,11 @@ def status_from_case(
 ) -> tuple[str, str, str]:
     adjudicated_status = status_from_adjudication(adjudication_rows)
     if adjudicated_status and (not force or adjudicated_status in FINAL_STATUSES):
+        adjudicated_confidence = adjudication_confidence(adjudication_rows, adjudicated_status)
         if adjudicated_status == 'TRUE_PUBLIC_PRIOR_SIGNAL':
-            return adjudicated_status, 'HIGH', 'Reused adjudicated true prior public signal; do not mark VERIFIED without independent review.'
+            return adjudicated_status, adjudicated_confidence, 'Reused adjudicated true prior public signal; do not mark VERIFIED without independent review.'
         if adjudicated_status in {'RIGHTS_LANGUAGE_ONLY', 'ASSET_SPECIFIC_RIGHTS_ONLY', 'PRIVATE_BACKGROUND_ONLY', 'FALSE_POSITIVE'}:
-            return adjudicated_status, 'MEDIUM', 'Keep out of true prior-signal counts unless separate public whole-company process evidence is found.'
+            return adjudicated_status, adjudicated_confidence, 'Keep out of true prior-signal counts unless separate public whole-company process evidence is found.'
         return adjudicated_status, 'LOW', 'Review possible-hit source filings manually before case-level confirmation.'
 
     if not announcement_date:
@@ -206,7 +312,8 @@ def status_from_case(
 
 
 def build_batch_rows(args: argparse.Namespace) -> list[dict[str, str]]:
-    queue_rows = selected_queue_rows(read_csv(args.queue), args.tickers, args.limit)
+    queue_rows = read_csv(args.queue)
+    candidate_rows = read_csv(args.candidates)
     dates_by_case = index_by(read_csv(args.acquisition_dates), 'case_id')
     targets_by_case = group_by(read_csv(args.filing_targets), 'case_id')
     hits_by_case = group_by(read_csv(args.signal_hits), 'case_id')
@@ -214,9 +321,18 @@ def build_batch_rows(args: argparse.Namespace) -> list[dict[str, str]]:
     confirmation_by_case = index_by(read_csv(args.confirmation_results), 'case_id')
     evidence_by_case = group_by(read_csv(args.source_evidence), 'case_id')
     packet_by_case = index_by(read_csv(args.packet_index), 'case_id')
+    target_rows = selected_target_rows(
+        queue_rows=queue_rows,
+        candidate_rows=candidate_rows,
+        tickers=args.tickers,
+        limit=args.limit,
+        dates_by_case=dates_by_case,
+        targets_by_case=targets_by_case,
+        evidence_by_case=evidence_by_case,
+    )
 
     rows = []
-    for queue_row in queue_rows:
+    for queue_row in target_rows:
         case_id = queue_row.get('candidate_id', '').strip()
         date_row = dates_by_case.get(case_id, {})
         confirmation = confirmation_by_case.get(case_id, {})
@@ -411,6 +527,8 @@ def write_mini_study(path: Path, rows: list[dict[str, str]]) -> None:
         '',
         'The scanner could have caught MDVN and DMTX because public pre-announcement filings contained unsolicited proposal, competing bid, superior proposal, advisor, and process language before the final acquisition announcement.',
         '',
+        'TSRO is different: the public signal was a pre-announcement media report later cited in Schedule 14D-9 background. An EDGAR-only scanner would not reliably catch it before announcement unless external public-news evidence is part of the workflow.',
+        '',
         '## What The Scanner Could Not Have Caught',
         '',
         'The scanner should not count private negotiations later disclosed in proxy or Schedule 14D-9 background sections. It also should not count generic rights language, asset-specific ROFR/ROFN language, or final merger announcement language as prior public process evidence.',
@@ -438,30 +556,31 @@ def write_mini_study(path: Path, rows: list[dict[str, str]]) -> None:
     path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
-def run_packet_generator(dry_run: bool) -> None:
+def run_packet_generator(dry_run: bool, limit: int) -> None:
     if dry_run:
         return
-    subprocess.run(['python3', str(CASE_PACKET_GENERATOR)], cwd=REPO_ROOT, check=True)
+    subprocess.run(['python3', str(CASE_PACKET_GENERATOR), '--limit', str(limit)], cwd=REPO_ROOT, check=True)
 
 
 def run(args: argparse.Namespace) -> list[dict[str, str]]:
+    run_packet_generator(args.dry_run, args.limit)
     rows = build_batch_rows(args)
     if args.dry_run:
         return rows
     write_csv(args.output, rows, BATCH_FIELDS)
     write_report(args.report, rows)
     write_mini_study(args.mini_study, rows)
-    run_packet_generator(args.dry_run)
     return rows
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Batch acquired prior-public-signal workflow.')
-    parser.add_argument('--limit', type=int, default=25)
+    parser.add_argument('--limit', type=int, default=50)
     parser.add_argument('--tickers', nargs='*', default=[])
     parser.add_argument('--force', action='store_true', help='Reconsider already adjudicated cases in batch aggregation.')
     parser.add_argument('--dry-run', action='store_true', help='Build in memory and print summary without writing files.')
     parser.add_argument('--queue', type=Path, default=DEFAULT_QUEUE)
+    parser.add_argument('--candidates', type=Path, default=DEFAULT_CANDIDATES)
     parser.add_argument('--acquisition-dates', type=Path, default=DEFAULT_ACQUISITION_DATES)
     parser.add_argument('--filing-targets', type=Path, default=DEFAULT_FILING_TARGETS)
     parser.add_argument('--signal-hits', type=Path, default=DEFAULT_SIGNAL_HITS)

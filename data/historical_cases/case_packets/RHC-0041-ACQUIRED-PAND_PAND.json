@@ -1,0 +1,79 @@
+{
+  "acquisition_evidence_status": "NOT_STARTED",
+  "background_section_status": {
+    "background_heading": "",
+    "background_section_available": "FALSE",
+    "proxy_source_url": "",
+    "status": "NOT_REVIEWED"
+  },
+  "candidate_fields": {
+    "candidate_notes": "SCORE_ONLY \u2192 deal. Good baseline false-negative for process detection.",
+    "outcome_source_hint": "EDGAR 8-K Merck deal Feb 2021; $1.85B; immunology autoimmune",
+    "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
+  },
+  "case_id": "RHC-0041-ACQUIRED-PAND",
+  "company_name": "Pandion Therapeutics",
+  "current_status": "CANDIDATE",
+  "generated_at": "2026-05-14T01:21:42+00:00",
+  "likely_outcome_type": "ACQUIRED",
+  "likely_outcome_year": "2021",
+  "missing_field_count": 7,
+  "missing_fields": [
+    "core acquisition evidence",
+    "source evidence rows",
+    "background section extraction",
+    "prior process signal review",
+    "observation date candidate",
+    "premium extraction",
+    "price-window verification"
+  ],
+  "observation_date_candidate": "",
+  "observation_date_reasoning": "",
+  "premium_evidence_status": {
+    "source": "",
+    "status": "MISSING"
+  },
+  "price_window_status": {
+    "fallback_needed": "",
+    "missing_data_flag": "",
+    "notes": "",
+    "price_source": "",
+    "status": "NOT_STARTED"
+  },
+  "prior_process_signal_status": {
+    "prior_process_signal": "",
+    "prior_process_signal_date": "",
+    "prior_process_signal_type": "",
+    "status": "NOT_REVIEWED"
+  },
+  "prior_signal_adjudication_status": {
+    "best_source_excerpt": "",
+    "best_source_url": "",
+    "case_level_true_signal": "FALSE",
+    "classification_counts": {},
+    "confirmation_confidence": "",
+    "confirmation_hit_status": "",
+    "false_positive_rows": 0,
+    "source_rows": [],
+    "status": "NOT_ADJUDICATED",
+    "true_prior_signal_rows": 0
+  },
+  "priority": "HIGH",
+  "queue_fields": {
+    "deal_terms_needed": "TRUE",
+    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=PAND+%22Pandion+Therapeutics%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CDEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2021-01-01&enddt=2021-12-31",
+    "price_window_needed": "TRUE",
+    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=PAND+%22Pandion+Therapeutics%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22review+of+strategic+alternatives%22&forms=8-K%2C10-Q%2C10-K&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31",
+    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=PAND+%22Pandion+Therapeutics%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22S-4%22&forms=DEFM14A%2CDEF+14A%2CS-4%2C424B3&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31",
+    "queue_next_best_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
+    "queue_notes": "SCORE_ONLY \u2192 deal. Good baseline false-negative for process detection.",
+    "queue_recommended_status": "CANDIDATE"
+  },
+  "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
+  "recommended_status": "KEEP_CANDIDATE",
+  "source_evidence_count": 0,
+  "source_evidence_rows": [],
+  "ticker": "PAND",
+  "workflow_completeness_score": 5,
+  "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
+}

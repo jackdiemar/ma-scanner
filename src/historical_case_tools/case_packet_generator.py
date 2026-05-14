@@ -11,7 +11,7 @@ scoring, or touches dashboard files.
 
 Usage:
     python3 src/historical_case_tools/case_packet_generator.py
-    python3 src/historical_case_tools/case_packet_generator.py --limit 25
+    python3 src/historical_case_tools/case_packet_generator.py --limit 50
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ DEFAULT_PACKET_DIR = HISTORICAL_DIR / 'case_packets'
 DEFAULT_INDEX = HISTORICAL_DIR / 'case_packet_index.csv'
 DEFAULT_REPORT = HISTORICAL_DIR / 'case_packet_generation_report.md'
 
-RUN_DATE = '2026-05-12'
+RUN_DATE = '2026-05-14'
 
 INDEX_FIELDS = [
     'case_id',
@@ -132,6 +132,50 @@ def index_by(rows: Iterable[dict[str, str]], field: str) -> dict[str, dict[str, 
         if key and key not in indexed:
             indexed[key] = row
     return indexed
+
+
+def queue_row_from_candidate(candidate: dict[str, str]) -> dict[str, str]:
+    return {
+        'candidate_id': candidate.get('candidate_id', '').strip(),
+        'ticker': candidate.get('ticker', '').strip(),
+        'company_name': candidate.get('company_name', '').strip(),
+        'likely_outcome_year': candidate.get('likely_outcome_year', '').strip(),
+        'merger_8k_query': candidate.get('outcome_edgar_query', '').strip(),
+        'proxy_query': candidate.get('proxy_or_s4_query', '').strip(),
+        'background_section_needed': 'TRUE',
+        'prior_process_signal_query': candidate.get('prior_process_signal_query', '').strip(),
+        'deal_terms_needed': 'TRUE',
+        'price_window_needed': 'TRUE',
+        'recommended_status': candidate.get('verification_status', '').strip() or 'CANDIDATE',
+        'next_best_action': 'Open primary acquisition evidence, then run date and pre-announcement signal workflows.',
+        'notes': candidate.get('notes', '').strip(),
+    }
+
+
+def selected_queue_rows(
+    queue_rows: list[dict[str, str]],
+    candidate_rows: list[dict[str, str]],
+    limit: int,
+) -> list[dict[str, str]]:
+    selected = []
+    seen: set[str] = set()
+    for row in queue_rows:
+        case_id = row.get('candidate_id', '').strip()
+        if not case_id or case_id in seen:
+            continue
+        selected.append(row)
+        seen.add(case_id)
+    for candidate in candidate_rows:
+        if len(selected) >= limit:
+            break
+        if candidate.get('likely_outcome_type', '').strip().upper() != 'ACQUIRED':
+            continue
+        case_id = candidate.get('candidate_id', '').strip()
+        if not case_id or case_id in seen:
+            continue
+        selected.append(queue_row_from_candidate(candidate))
+        seen.add(case_id)
+    return selected[:limit]
 
 
 def source_evidence_summary(rows: list[dict[str, str]]) -> list[dict[str, str]]:
@@ -821,7 +865,7 @@ def write_report(packets: list[Packet], path: Path) -> None:
         '## Summary',
         '',
         f'- Packets generated: {len(packets)}',
-        '- Scope: top acquisition cases from acquisition_verification_queue.csv',
+        '- Scope: acquisition queue first, then additional ACQUIRED candidates from resolved_case_candidates.csv as needed.',
         '- Workflow completeness score is not investment quality and not P(deal).',
         '- No cases were marked VERIFIED or CALIBRATION_ELIGIBLE.',
         '',
@@ -887,6 +931,7 @@ def load_context(args: argparse.Namespace) -> dict[str, Any]:
     if args.checklist.exists():
         args.checklist.read_text(encoding='utf-8')
     return {
+        'candidate_rows': candidate_rows,
         'candidate_by_id': index_by(candidate_rows, 'candidate_id'),
         'queue_rows': queue_rows,
         'background_by_id': index_by(background_rows, 'case_id'),
@@ -900,7 +945,7 @@ def load_context(args: argparse.Namespace) -> dict[str, Any]:
 
 def generate(args: argparse.Namespace) -> list[Packet]:
     context = load_context(args)
-    queue_rows = context['queue_rows'][:args.limit]
+    queue_rows = selected_queue_rows(context['queue_rows'], context['candidate_rows'], args.limit)
     packets = []
     for queue_row in queue_rows:
         case_id = queue_row.get('candidate_id', '').strip()
@@ -927,7 +972,7 @@ def generate(args: argparse.Namespace) -> list[Packet]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Generate historical case research packets.')
-    parser.add_argument('--limit', type=int, default=25, help='Number of queue rows to packetize.')
+    parser.add_argument('--limit', type=int, default=50, help='Number of acquisition rows to packetize.')
     parser.add_argument('--candidates', type=Path, default=DEFAULT_CANDIDATES)
     parser.add_argument('--queue', type=Path, default=DEFAULT_QUEUE)
     parser.add_argument('--background-findings', type=Path, default=DEFAULT_BACKGROUND_FINDINGS)
