@@ -63,9 +63,9 @@ No source evidence rows found.
 
 ## Queue Queries
 
-- Merger 8-K query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CDEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2021-01-01&enddt=2021-12-31
-- Proxy query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22S-4%22&forms=DEFM14A%2CDEF+14A%2CS-4%2C424B3&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31
-- Prior process signal query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22review+of+strategic+alternatives%22&forms=8-K%2C10-Q%2C10-K&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31
+- Merger 8-K query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CDEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2019-01-01&enddt=2019-12-31
+- Proxy query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22S-4%22&forms=DEFM14A%2CDEF+14A%2CS-4%2C424B3&dateRange=custom&startdt=2018-01-01&enddt=2019-09-30
+- Prior process signal query: https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22review+of+strategic+alternatives%22&forms=8-K%2C10-Q%2C10-K&dateRange=custom&startdt=2018-01-01&enddt=2019-09-30
 
 ## Guardrails
 

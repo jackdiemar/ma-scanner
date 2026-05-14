@@ -8,13 +8,13 @@
   },
   "candidate_fields": {
     "candidate_notes": "Small immuno-oncology. Check for any prior SA or activist signal.",
-    "outcome_source_hint": "EDGAR 8-K Pfizer deal Jan 2022; ~$2.1B; vidutolimod CpG-A TLR9",
+    "outcome_source_hint": "EDGAR 8-K Pfizer deal Apr 2022; ~$2.1B; vidutolimod CpG-A TLR9. EDGAR acc 0001193125-22-108777; period 2022-04-18. Seed hint corrected from Jan 2022.",
     "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
   },
   "case_id": "RHC-0050-ACQUIRED-CMPI",
   "company_name": "Checkmate Pharmaceuticals",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T02:15:27+00:00",
+  "generated_at": "2026-05-14T02:32:04+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2022",
   "missing_field_count": 7,

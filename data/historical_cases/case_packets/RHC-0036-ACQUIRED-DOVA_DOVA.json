@@ -7,16 +7,16 @@
     "status": "NOT_REVIEWED"
   },
   "candidate_fields": {
-    "candidate_notes": "Confirm deal value and SOBI as acquirer. Find 8-K.",
-    "outcome_source_hint": "EDGAR 8-K Swedish Orphan Biovitrum deal 2021; ~$915M; avatrombopag",
+    "candidate_notes": "Seed year error corrected: deal was 2019 not 2021. Sobi acquired Dova; andexanet alfa (Andexxa). EDGAR 8-K acc 0001104659-19-051883 period 2019-09-30.",
+    "outcome_source_hint": "EDGAR 8-K Swedish Orphan Biovitrum (Sobi) deal 2019-09-30; ~$915M; avatrombopag. EDGAR acc 0001104659-19-051883; period 2019-09-30. Seed error: year was 2021.",
     "reason_for_inclusion": "Likely resolved historical ACQUIRED outcome; mine backward for pre-outcome process signals."
   },
   "case_id": "RHC-0036-ACQUIRED-DOVA",
   "company_name": "Dova Pharmaceuticals",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T02:15:27+00:00",
+  "generated_at": "2026-05-14T02:32:04+00:00",
   "likely_outcome_type": "ACQUIRED",
-  "likely_outcome_year": "2021",
+  "likely_outcome_year": "2019",
   "missing_field_count": 7,
   "missing_fields": [
     "core acquisition evidence",
@@ -61,12 +61,12 @@
   "priority": "HIGH",
   "queue_fields": {
     "deal_terms_needed": "TRUE",
-    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CDEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2021-01-01&enddt=2021-12-31",
+    "merger_8k_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22agreement+and+plan+of+merger%22+%22per+share%22&forms=8-K%2CDEFM14A%2CDEF+14A%2CSC+TO-T%2CSC+TO-I&dateRange=custom&startdt=2019-01-01&enddt=2019-12-31",
     "price_window_needed": "TRUE",
-    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22review+of+strategic+alternatives%22&forms=8-K%2C10-Q%2C10-K&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31",
-    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22S-4%22&forms=DEFM14A%2CDEF+14A%2CS-4%2C424B3&dateRange=custom&startdt=2018-01-01&enddt=2021-12-31",
+    "prior_process_signal_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22strategic+alternatives%22+OR+%22financial+advisor%22+OR+%22review+of+strategic+alternatives%22&forms=8-K%2C10-Q%2C10-K&dateRange=custom&startdt=2018-01-01&enddt=2019-09-30",
+    "proxy_query": "https://efts.sec.gov/LATEST/search-index?q=DOVA+%22Dova+Pharmaceuticals%22+%22background+of+the+merger%22+OR+%22reasons+for+the+merger%22+OR+%22S-4%22&forms=DEFM14A%2CDEF+14A%2CS-4%2C424B3&dateRange=custom&startdt=2018-01-01&enddt=2019-09-30",
     "queue_next_best_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
-    "queue_notes": "Confirm deal value and SOBI as acquirer. Find 8-K.",
+    "queue_notes": "Seed year error corrected: deal was 2019 not 2021. Sobi acquired Dova; andexanet alfa (Andexxa). EDGAR 8-K acc 0001104659-19-051883 period 2019-09-30.",
     "queue_recommended_status": "CANDIDATE"
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
