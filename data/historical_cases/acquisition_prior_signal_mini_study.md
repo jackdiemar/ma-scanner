@@ -4,62 +4,54 @@ Generated: 2026-05-12
 
 ## Scope
 
-This mini-study summarizes the first 15 acquired historical cases reviewed through the prior-public-signal workflow:
+This mini-study summarizes the current acquisition prior-signal batch of 25 acquired historical cases.
 
-MDVN, CPXX, RLYP, VTAE, CLCD, DMTX, AVXS, CASC, RXDX, ALDR, ARRY, CMTA, LOXO, NITE, ONCE.
-
-The workflow used acquisition announcement dates, pre-announcement filing collection, collector audit, and source-text adjudication for possible hits. It does not mark any case `VERIFIED` or `CALIBRATION_ELIGIBLE`.
+The workflow reuses acquisition announcement dates, pre-announcement filing targets, possible signal hits, adjudication rows, confirmation results, source evidence, and packet metadata. It does not mark any case `VERIFIED` or `CALIBRATION_ELIGIBLE`.
 
 ## Results
 
-- Cases reviewed: 15
-- Confirmed true prior public signal cases: 2
-- Confirmed no-hit / false-positive cases: 2
-- Still requiring manual EDGAR hit/no-hit confirmation: 11
-- Adjudicated possible-hit rows: 16
-- True prior public signal rows: 13
-- False-positive rows: 3
+- Cases reviewed: 25
+- True prior public signal cases: 2
+- Deal-announcement baseline candidates: 15
+- False-positive cases: 2
+- Needs manual review: 5
+- Date/source blockers: 1
 
 ## True Prior Public Signal Cases
 
-| case_id | ticker | signal pattern | conservative read |
-| --- | --- | --- | --- |
-| RHC-0006-ACQUIRED-MDVN | MDVN | Public unsolicited proposal, competing bid pressure, board response, public process language | Strong MDVN-like case. The public signal existed before the Pfizer acquisition announcement. |
-| RHC-0012-ACQUIRED-DMTX | DMTX | Public unsolicited proposal, superior proposal language, advisor/legal consultation, matching-right waiver context | Strong MDVN-like case beyond MDVN. The public signal existed before the Ultragenyx acquisition announcement. |
+| case_id | ticker | announcement_date | adjudication_status | confidence |
+| --- | --- | --- | --- | --- |
+| RHC-0006-ACQUIRED-MDVN | MDVN | 2016-08-22 | TRUE_PUBLIC_PRIOR_SIGNAL | HIGH |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | TRUE_PUBLIC_PRIOR_SIGNAL | HIGH |
 
-## Deal-Announcement Baseline Cases
+## Deal-Announcement Baseline Candidates
 
-Confirmed no-hit / false-positive baselines:
-
-- CPXX: collector hit was generic rights language, not a whole-company process signal.
-- ARRY: collector hits were asset/subsidiary-specific rights, not whole-company process evidence.
-
-Likely no-hit candidates pending manual confirmation:
-
-- RLYP
-- VTAE
-- CLCD
-- AVXS
-- CASC
-- RXDX
-- ALDR
-- CMTA
-- LOXO
-- NITE
-- ONCE
-
-These 11 should remain `NEEDS_MANUAL_REVIEW` until EDGAR hit/no-hit work is source-backed.
+| case_id | ticker | announcement_date | filings_checked_count | confidence |
+| --- | --- | --- | --- | --- |
+| RHC-0001-ACQUIRED-NPSP | NPSP | 2015-01-12 | 0 | MEDIUM |
+| RHC-0002-ACQUIRED-PCYC | PCYC | 2015-03-06 | 0 | MEDIUM |
+| RHC-0003-ACQUIRED-ZSPH | ZSPH | 2015-11-06 | 0 | MEDIUM |
+| RHC-0004-ACQUIRED-ANAC | ANAC | 2016-05-16 | 0 | MEDIUM |
+| RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | MEDIUM |
+| RHC-0009-ACQUIRED-VTAE | VTAE | 2016-09-14 | 18 | MEDIUM |
+| RHC-0011-ACQUIRED-CLCD | CLCD | 2017-01-18 | 7 | MEDIUM |
+| RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | MEDIUM |
+| RHC-0016-ACQUIRED-CASC | CASC | 2018-01-31 | 33 | MEDIUM |
+| RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | MEDIUM |
+| RHC-0019-ACQUIRED-ALDR | ALDR | 2019-09-16 | 36 | MEDIUM |
+| RHC-0021-ACQUIRED-CMTA | CMTA | 2019-02-25 | 3 | MEDIUM |
+| RHC-0022-ACQUIRED-LOXO | LOXO | 2019-01-07 | 34 | MEDIUM |
+| RHC-0023-ACQUIRED-NITE | NITE | 2019-03-04 | 2 | MEDIUM |
+| RHC-0024-ACQUIRED-ONCE | ONCE | 2019-02-25 | 26 | MEDIUM |
 
 ## False-Positive Cases
 
-| case_id | ticker | adjudication | rule learned |
+| case_id | ticker | adjudication_status | next_action |
 | --- | --- | --- | --- |
-| RHC-0005-ACQUIRED-CPXX | CPXX | RIGHTS_LANGUAGE_ONLY | Generic securities representations using "right of first refusal" are not process evidence. |
-| RHC-0020-ACQUIRED-ARRY | ARRY | ASSET_SPECIFIC_RIGHTS_ONLY | Product, asset, subsidiary, or note-conversion rights are not whole-company sale process evidence unless the source clearly connects them to a company sale pathway. |
+| RHC-0005-ACQUIRED-CPXX | CPXX | RIGHTS_LANGUAGE_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
+| RHC-0020-ACQUIRED-ARRY | ARRY | ASSET_SPECIFIC_RIGHTS_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 
 ## Signal Types Found
-
-The first true cases were not subtle ROFR cases. They were public contest/process cases:
 
 - Public unsolicited acquisition proposal.
 - Public rejected proposal.
@@ -67,52 +59,46 @@ The first true cases were not subtle ROFR cases. They were public contest/proces
 - Board response after consultation with financial or legal advisors.
 - Public process pressure through consent solicitation or matching-right waiver context.
 
-No confirmed activist 13D sale-pressure case was found in this first 15-case batch.
+No confirmed activist 13D sale-pressure case has been found in this batch.
+
+## False-Positive Patterns
+
+- Generic securities-rights language is not process evidence.
+- Asset, subsidiary, product, license, noteholder, or collaboration rights are not whole-company sale process evidence unless clearly connected to a company-sale pathway.
+- Later proxy background language does not become a prior public signal unless the process was publicly disclosed before the acquisition announcement.
 
 ## What The Scanner Could Have Caught
 
-The scanner could plausibly have caught MDVN and DMTX if it had been running at the time with strong pre-announcement filing detection:
-
-- MDVN: multiple 8-K and 10-Q filings before the final acquisition announcement contained public proposal and process language.
-- DMTX: several 8-K filings before the final acquisition announcement contained unsolicited proposal, superior proposal, advisor, and matching-right context.
-
-The scanner should have routed these as high-quality public process signals, not as score-only acquisition candidates.
+The scanner could have caught MDVN and DMTX because public pre-announcement filings contained unsolicited proposal, competing bid, superior proposal, advisor, and process language before the final acquisition announcement.
 
 ## What The Scanner Could Not Have Caught
 
-The scanner should not treat later proxy-only background negotiations as prior public signals. If a process only appears later in a merger proxy or Schedule 14D-9 background section, that is not a pre-announcement public signal.
-
-The scanner also should not count:
-
-- Generic securities-rights language.
-- Routine collaboration, license, or asset rights.
-- Product-specific ROFR/ROFN language unless tied to a company-level sale pathway.
-- Final merger announcement language as if it were a prior signal.
-- Private talks later disclosed after the deal announcement.
+The scanner should not count private negotiations later disclosed in proxy or Schedule 14D-9 background sections. It also should not count generic rights language, asset-specific ROFR/ROFN language, or final merger announcement language as prior public process evidence.
 
 ## Implications For Future Case Verification
 
-1. Adjudication needs source filing text, not short collector excerpts alone.
-2. Public competing-bid language is a high-confidence true signal when dated before the final acquisition announcement.
-3. ROFR/ROFN hits require scope classification before they can affect a case-level prior-signal label.
-4. `LIKELY_NO_HIT` is a workflow label only. It should not become `CONFIRMED_NO_HIT` without enough searched filings or manual EDGAR confirmation.
-5. Case packets should show adjudication status directly so false positives are not re-promoted in later verification work.
+1. Run batch-level status aggregation before opening individual case packets.
+2. Adjudicate possible hits only from source filing text or sufficiently specific excerpts.
+3. Treat no-hit rows as baseline candidates until the searched filing set is complete enough.
+4. Keep ROFR/ROFN hits out of true-signal counts until scope is classified.
+5. Use packet fields to prevent false positives from being re-promoted.
 
-## Next Verification Batch
+## Next 10 Manual Reviews
 
-Prioritize these pending cases for manual EDGAR hit/no-hit confirmation:
+| case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
+| --- | --- | --- | --- | --- | --- | --- |
+| RHC-0008-ACQUIRED-TBRA | TBRA | 2016-09-20 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0010-ACQUIRED-ARIA | ARIA | 2017-01-09 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0013-ACQUIRED-KITE | KITE | 2017-08-28 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0015-ACQUIRED-BIVV | BIVV | 2018-01-22 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0017-ACQUIRED-JUNO | JUNO | 2018-01-22 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0025-ACQUIRED-TSRO | TSRO |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0019-ACQUIRED-ALDR | ALDR | 2019-09-16 | 36 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 
-1. RLYP
-2. VTAE
-3. CLCD
-4. AVXS
-5. CASC
-
-Rationale: they are inside the first 15 MDVN-like target set, still require manual confirmation, and have acquisition dates available. The next pass should record source-backed no-hit evidence or promote only public pre-announcement filing hits.
-
-## Current Packet Fields Added
-
-Case packets and `case_packet_index.csv` now include:
+## Current Packet Fields
 
 - `prior_signal_hit_status`
 - `prior_signal_adjudication_status`
