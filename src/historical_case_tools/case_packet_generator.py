@@ -629,7 +629,7 @@ def evidence_markdown(rows: list[dict[str, str]]) -> list[str]:
             f"  - type: {row.get('evidence_type', '')}",
             f"  - status: {row.get('verification_status', '')}",
             f"  - filing: {row.get('filing_type', '')} {row.get('filing_date', '')}".rstrip(),
-            f"  - source: {row.get('source_url', '')}",
+            f"  - source: {row.get('source_url', '')}".rstrip(),
             f"  - supports: {row.get('supports_field', '')}",
             f"  - excerpt: {row.get('excerpt', '') or 'No excerpt.'}",
         ])

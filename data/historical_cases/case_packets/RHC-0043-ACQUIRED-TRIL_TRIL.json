@@ -14,7 +14,7 @@
   "case_id": "RHC-0043-ACQUIRED-TRIL",
   "company_name": "Trillium Therapeutics Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T02:32:04+00:00",
+  "generated_at": "2026-05-14T14:22:44+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2021",
   "missing_field_count": 7,
@@ -50,12 +50,26 @@
     "best_source_excerpt": "",
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
-    "classification_counts": {},
+    "classification_counts": {
+      "NEEDS_MORE_REVIEW": 1
+    },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
-    "false_positive_rows": 0,
-    "source_rows": [],
-    "status": "NOT_ADJUDICATED",
+    "false_positive_rows": 1,
+    "source_rows": [
+      {
+        "adjudicated_signal_type": "",
+        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "collector_keyword_hits": "",
+        "collector_signal_type": "",
+        "confidence": "MEDIUM",
+        "filing_date": "",
+        "filing_type": "",
+        "notes": "Pfizer equity investments in Trillium publicly disclosed; investment agreements may include company-level ROFR or option.",
+        "source_url": ""
+      }
+    ],
+    "status": "NEEDS_MORE_REVIEW",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",

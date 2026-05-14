@@ -12,9 +12,9 @@ The workflow reuses acquisition announcement dates, pre-announcement filing targ
 
 - Cases reviewed: 50
 - True prior public signal cases: 3
-- Deal-announcement baseline candidates: 15
+- Deal-announcement baseline candidates: 33
 - False-positive cases: 7
-- Needs manual review: 24
+- Needs manual review: 6
 - Date/source blockers: 1
 
 ## True Prior Public Signal Cases
@@ -44,6 +44,24 @@ The workflow reuses acquisition announcement dates, pre-announcement filing targ
 | RHC-0022-ACQUIRED-LOXO | LOXO | 2019-01-07 | 34 | MEDIUM |
 | RHC-0023-ACQUIRED-NITE | NITE | 2019-03-04 | 2 | MEDIUM |
 | RHC-0024-ACQUIRED-ONCE | ONCE | 2019-02-25 | 26 | MEDIUM |
+| RHC-0026-ACQUIRED-ACHN | ACHN | 2020-01-15 | 0 | MEDIUM |
+| RHC-0027-ACQUIRED-BOLD | BOLD | 2019-12-02 | 0 | MEDIUM |
+| RHC-0028-ACQUIRED-DERM | DERM | 2020-01-10 | 0 | MEDIUM |
+| RHC-0030-ACQUIRED-MNTA | MNTA | 2020-08-19 | 0 | MEDIUM |
+| RHC-0032-ACQUIRED-PGNX | PGNX | 2019-10-01 | 0 | MEDIUM |
+| RHC-0034-ACQUIRED-PRVL | PRVL | 2020-12-14 | 0 | MEDIUM |
+| RHC-0036-ACQUIRED-DOVA | DOVA | 2019-09-30 | 0 | MEDIUM |
+| RHC-0037-ACQUIRED-DRNA | DRNA | 2021-11-17 | 0 | MEDIUM |
+| RHC-0038-ACQUIRED-FLXN | FLXN | 2021-10-11 | 0 | MEDIUM |
+| RHC-0039-ACQUIRED-FPRX | FPRX | 2021-03-04 | 0 | MEDIUM |
+| RHC-0040-ACQUIRED-GWPH | GWPH | 2021-02-03 | 0 | MEDIUM |
+| RHC-0041-ACQUIRED-PAND | PAND | 2021-02-24 | 0 | MEDIUM |
+| RHC-0044-ACQUIRED-VIE | VIE | 2021-01-31 | 0 | MEDIUM |
+| RHC-0046-ACQUIRED-ATRS | ATRS | 2022-04-12 | 0 | MEDIUM |
+| RHC-0047-ACQUIRED-AVEO | AVEO | 2022-10-18 | 0 | MEDIUM |
+| RHC-0048-ACQUIRED-BHVN | BHVN | 2022-05-09 | 0 | MEDIUM |
+| RHC-0049-ACQUIRED-CCXI | CCXI | 2022-08-03 | 0 | MEDIUM |
+| RHC-0050-ACQUIRED-CMPI | CMPI | 2022-04-18 | 0 | MEDIUM |
 
 ## False-Positive Cases
 
@@ -95,16 +113,16 @@ The scanner should not count private negotiations later disclosed in proxy or Sc
 
 | case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0026-ACQUIRED-ACHN | ACHN | 2020-01-15 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0027-ACQUIRED-BOLD | BOLD | 2019-12-02 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0028-ACQUIRED-DERM | DERM | 2020-01-10 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0029-ACQUIRED-FTSV | FTSV | 2020-03-02 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0030-ACQUIRED-MNTA | MNTA | 2020-08-19 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0031-ACQUIRED-MYOK | MYOK | 2020-10-05 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0032-ACQUIRED-PGNX | PGNX | 2019-10-01 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0033-ACQUIRED-PRNB | PRNB | 2020-08-16 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0034-ACQUIRED-PRVL | PRVL | 2020-12-14 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0035-ACQUIRED-ADMS | ADMS | 2021-10-11 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0029-ACQUIRED-FTSV | FTSV | 2020-03-02 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0031-ACQUIRED-MYOK | MYOK | 2020-10-05 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0033-ACQUIRED-PRNB | PRNB | 2020-08-16 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0035-ACQUIRED-ADMS | ADMS | 2021-10-11 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0043-ACQUIRED-TRIL | TRIL | 2021-08-23 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0045-ACQUIRED-XLRN | XLRN | 2021-09-29 | 0 | 0 | POSSIBLE_SIGNAL_NEEDS_REVIEW | Review possible-hit source filings manually before case-level confirmation. |
+| RHC-0042-ACQUIRED-PTLA | PTLA |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+| RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 
 ## Current Packet Fields
 

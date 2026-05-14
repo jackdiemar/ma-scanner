@@ -11,8 +11,9 @@ Generated: 2026-05-14
 
 ## Prior Signal Adjudication Summary
 
-- NOT_ADJUDICATED: 34
+- NOT_ADJUDICATED: 28
 - NEEDS_MANUAL_REVIEW: 11
+- NEEDS_MORE_REVIEW: 6
 - TRUE_PUBLIC_PRIOR_SIGNAL: 3
 - RIGHTS_LANGUAGE_ONLY: 1
 - ASSET_SPECIFIC_RIGHTS_ONLY: 1
@@ -31,6 +32,12 @@ Generated: 2026-05-14
 | --- | --- | ---: | --- | ---: |
 | RHC-0005-ACQUIRED-CPXX | CPXX | 5 | NEEDS_MANUAL_RESEARCH | 7 |
 | RHC-0020-ACQUIRED-ARRY | ARRY | 5 | PARTIAL_READY | 7 |
+| RHC-0029-ACQUIRED-FTSV | FTSV | 5 | KEEP_CANDIDATE | 7 |
+| RHC-0031-ACQUIRED-MYOK | MYOK | 5 | KEEP_CANDIDATE | 7 |
+| RHC-0033-ACQUIRED-PRNB | PRNB | 5 | KEEP_CANDIDATE | 7 |
+| RHC-0035-ACQUIRED-ADMS | ADMS | 5 | KEEP_CANDIDATE | 7 |
+| RHC-0043-ACQUIRED-TRIL | TRIL | 5 | KEEP_CANDIDATE | 7 |
+| RHC-0045-ACQUIRED-XLRN | XLRN | 5 | KEEP_CANDIDATE | 7 |
 
 ## Top 10 Highest-Completeness Packets
 
@@ -70,7 +77,7 @@ Generated: 2026-05-14
 - prior process signal review: 40
 - observation date candidate: 40
 - core acquisition evidence: 39
-- source evidence rows: 39
+- source evidence rows: 21
 
 ## Cases Closest To PARTIAL
 
@@ -82,10 +89,10 @@ Generated: 2026-05-14
 | RHC-0015-ACQUIRED-BIVV | BIVV | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
 | RHC-0017-ACQUIRED-JUNO | JUNO | 80 | PARTIAL_READY | 2 | Promote only after primary-source evidence supports the PARTIAL checklist. |
 | RHC-0025-ACQUIRED-TSRO | TSRO | 40 | PARTIAL_READY | 5 | Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section. |
-| RHC-0019-ACQUIRED-ALDR | ALDR | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
-| RHC-0020-ACQUIRED-ARRY | ARRY | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
-| RHC-0022-ACQUIRED-LOXO | LOXO | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
-| RHC-0024-ACQUIRED-ONCE | ONCE | 5 | PARTIAL_READY | 7 | Open merger 8-K first, extract acquirer and consideration, then confirm proxy background section. |
+| RHC-0026-ACQUIRED-ACHN | ACHN | 20 | KEEP_CANDIDATE | 6 | Open primary acquisition evidence, then run date and pre-announcement signal workflows. |
+| RHC-0027-ACQUIRED-BOLD | BOLD | 20 | KEEP_CANDIDATE | 6 | Open primary acquisition evidence, then run date and pre-announcement signal workflows. |
+| RHC-0028-ACQUIRED-DERM | DERM | 20 | KEEP_CANDIDATE | 6 | Open primary acquisition evidence, then run date and pre-announcement signal workflows. |
+| RHC-0030-ACQUIRED-MNTA | MNTA | 20 | KEEP_CANDIDATE | 6 | Open primary acquisition evidence, then run date and pre-announcement signal workflows. |
 
 ## Cases Closest To Future VERIFIED
 

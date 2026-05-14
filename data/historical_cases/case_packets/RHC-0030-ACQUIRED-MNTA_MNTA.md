@@ -6,13 +6,13 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: KEEP_CANDIDATE
-- Workflow completeness score: 5/100
+- Workflow completeness score: 20/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
+- Source evidence rows: 1
 - Acquisition evidence status: NOT_STARTED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
@@ -46,7 +46,6 @@
 ## Missing Fields
 
 - core acquisition evidence
-- source evidence rows
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -59,7 +58,13 @@ Open primary acquisition evidence, then run date and pre-announcement signal wor
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0030-ACQUIRED-MNTA-ADJ-001`
+  - type: ADJUDICATION_NOTE
+  - status: ADJUDICATED
+  - filing:
+  - source:
+  - supports: had_prior_process_signal
+  - excerpt: No excerpt.
 
 ## Queue Queries
 

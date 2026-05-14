@@ -30,18 +30,19 @@
 
 ## Prior Signal Adjudication
 
-- Adjudication status: NOT_ADJUDICATED
+- Adjudication status: NEEDS_MORE_REVIEW
 - Confirmation hit status: not available
 - Case-level true signal: FALSE
 - True prior-signal rows: 0
-- False-positive rows: 0
-- Classification counts: {}
+- False-positive rows: 1
+- Classification counts: {"NEEDS_MORE_REVIEW": 1}
 - Best source URL: not available
 - Best source excerpt: not available
 
 ### Adjudicated Rows
 
-- none
+-  : NEEDS_MORE_REVIEW (; )
+  - notes: Gilead equity investment + research collaboration (2018) publicly disclosed; collaboration agreement exhibit in 8-K may include company-level ROFR or option.
 
 ## Missing Fields
 

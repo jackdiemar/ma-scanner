@@ -14,13 +14,12 @@
   "case_id": "RHC-0037-ACQUIRED-DRNA",
   "company_name": "Dicerna Pharmaceuticals, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T02:32:04+00:00",
+  "generated_at": "2026-05-14T14:22:44+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2021",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -71,9 +70,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "MEDIUM",
+      "evidence_id": "RHC-0037-ACQUIRED-DRNA-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "",
+      "filing_date": "",
+      "filing_type": "",
+      "notes": "Novo Nordisk collaboration (Oct 2020) was publicly disclosed as a drug collaboration; no confirmed company-level acquisition option or SA announcement before Nov 17, 2021. NONE_FOUND.",
+      "source_name": "domain_knowledge_adjudication",
+      "source_url": "",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "DRNA",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }
