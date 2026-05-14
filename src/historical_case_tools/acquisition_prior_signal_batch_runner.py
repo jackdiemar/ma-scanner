@@ -128,6 +128,20 @@ def source_prior_none(case_id: str, evidence_by_case: dict[str, list[dict[str, s
     return False
 
 
+def source_proxy_background_only(case_id: str, evidence_by_case: dict[str, list[dict[str, str]]]) -> bool:
+    for row in evidence_by_case.get(case_id, []):
+        evidence_type = row.get('evidence_type', '').upper()
+        supports = row.get('supports_field', '').upper()
+        notes = row.get('notes', '').upper()
+        if evidence_type != 'PROXY_SA_LANGUAGE':
+            continue
+        if 'FOUND_PUBLIC' in notes or 'HAD_PRIOR_PROCESS_SIGNAL' in supports:
+            continue
+        if 'PROXY_OR_TENDER_BACKGROUND' in supports or 'PROCESS_TIMELINE' in supports:
+            return True
+    return False
+
+
 def status_from_adjudication(rows: list[dict[str, str]]) -> str:
     classes = Counter(
         row.get('adjudication_classification', '').strip()
@@ -186,6 +200,8 @@ def status_from_case(
         return 'DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE', 'MEDIUM', 'Use as baseline candidate unless later manual review finds public pre-deal process evidence.'
     if source_prior_none(case_id, evidence_by_case):
         return 'DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE', 'MEDIUM', 'Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation.'
+    if source_proxy_background_only(case_id, evidence_by_case):
+        return 'PRIVATE_BACKGROUND_ONLY', 'MEDIUM', 'Existing evidence is post-announcement proxy or tender background only; keep out of prior-public-signal counts unless pre-announcement public evidence is found.'
     return 'NEEDS_MANUAL_REVIEW', 'LOW', 'Run or manually complete pre-announcement filing collection and hit/no-hit confirmation.'
 
 
