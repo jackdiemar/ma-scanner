@@ -9,6 +9,28 @@ Generated: 2026-05-12
 - Workflow completeness score is not investment quality and not P(deal).
 - No cases were marked VERIFIED or CALIBRATION_ELIGIBLE.
 
+## Prior Signal Adjudication Summary
+
+- NEEDS_MANUAL_REVIEW: 11
+- NOT_ADJUDICATED: 10
+- TRUE_PUBLIC_PRIOR_SIGNAL: 2
+- RIGHTS_LANGUAGE_ONLY: 1
+- ASSET_SPECIFIC_RIGHTS_ONLY: 1
+
+## True Prior Public Signal Packets
+
+| case | ticker | score | recommended_status | missing fields |
+| --- | --- | ---: | --- | ---: |
+| RHC-0006-ACQUIRED-MDVN | MDVN | 80 | PARTIAL | 2 |
+| RHC-0012-ACQUIRED-DMTX | DMTX | 5 | NEEDS_MANUAL_RESEARCH | 7 |
+
+## False-Positive Prior Signal Packets
+
+| case | ticker | score | recommended_status | missing fields |
+| --- | --- | ---: | --- | ---: |
+| RHC-0005-ACQUIRED-CPXX | CPXX | 5 | NEEDS_MANUAL_RESEARCH | 7 |
+| RHC-0020-ACQUIRED-ARRY | ARRY | 5 | PARTIAL_READY | 7 |
+
 ## Top 10 Highest-Completeness Packets
 
 | case | ticker | score | recommended_status | missing fields |

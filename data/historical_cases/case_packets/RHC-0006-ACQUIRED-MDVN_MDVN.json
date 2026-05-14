@@ -14,7 +14,7 @@
   "case_id": "RHC-0006-ACQUIRED-MDVN",
   "company_name": "Medivation, Inc.",
   "current_status": "PARTIAL",
-  "generated_at": "2026-05-12T23:44:06+00:00",
+  "generated_at": "2026-05-14T00:58:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2016",
   "missing_field_count": 2,
@@ -40,6 +40,120 @@
     "prior_process_signal_date": "2016-04-28",
     "prior_process_signal_type": "outreach / competing bids",
     "status": "REVIEWED"
+  },
+  "prior_signal_adjudication_status": {
+    "best_source_excerpt": "rminate its consent solicitation. Before entering into the confidentiality agreement with Sanofi, Medivation received from Sanofi, and Medivation\u2019s Board of Directors unanimously rejected as not in the best interests of the company and its stockholders, a new unsolicited proposal to acquire Medivation. The proposal, which was conditional upon the execution of a confidentiality agreement and the receipt of...",
+    "best_source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516641659/0001193125-16-641659-index.htm",
+    "case_level_true_signal": "TRUE",
+    "classification_counts": {
+      "TRUE_PUBLIC_PRIOR_SIGNAL": 9
+    },
+    "confirmation_confidence": "HIGH",
+    "confirmation_hit_status": "CONFIRMED_HIT",
+    "false_positive_rows": 0,
+    "source_rows": [
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal from|proposal to acquire",
+        "collector_signal_type": "acquisition_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-04-28",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516563708/0001193125-16-563708-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_proposal",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal from|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-04-29",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516569536/0001193125-16-569536-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_proposal",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal from|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-05-05",
+        "filing_type": "10-Q",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000156459016018012/0001564590-16-018012-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire",
+        "collector_signal_type": "acquisition_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-05-05",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516579914/0001193125-16-579914-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_proposal",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-05-06",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516580827/0001193125-16-580827-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire",
+        "collector_signal_type": "acquisition_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-05-25",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516602270/0001193125-16-602270-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "strategic_alternatives",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "strategic alternatives",
+        "collector_signal_type": "strategic_alternatives",
+        "confidence": "HIGH",
+        "filing_date": "2016-05-27",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516606426/0001193125-16-606426-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_proposal",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire",
+        "collector_signal_type": "acquisition_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-06-13",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516620311/0001193125-16-620311-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2016-07-05",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1011835/000119312516641659/0001193125-16-641659-index.htm"
+      }
+    ],
+    "status": "TRUE_PUBLIC_PRIOR_SIGNAL",
+    "true_prior_signal_rows": 9
   },
   "priority": "HIGH",
   "queue_fields": {

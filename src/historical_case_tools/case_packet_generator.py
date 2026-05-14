@@ -37,6 +37,8 @@ DEFAULT_SOURCE_EVIDENCE = HISTORICAL_DIR / 'source_evidence.csv'
 DEFAULT_CASES_PARTIAL = HISTORICAL_DIR / 'cases_partial.csv'
 DEFAULT_PRICE_WINDOWS = HISTORICAL_DIR / 'price_windows.csv'
 DEFAULT_CHECKLIST = HISTORICAL_DIR / 'verification_checklist.md'
+DEFAULT_PRIOR_SIGNAL_CONFIRMATION = HISTORICAL_DIR / 'prior_signal_confirmation_results.csv'
+DEFAULT_PRIOR_SIGNAL_ADJUDICATION = HISTORICAL_DIR / 'prior_signal_adjudication_queue.csv'
 DEFAULT_PACKET_DIR = HISTORICAL_DIR / 'case_packets'
 DEFAULT_INDEX = HISTORICAL_DIR / 'case_packet_index.csv'
 DEFAULT_REPORT = HISTORICAL_DIR / 'case_packet_generation_report.md'
@@ -54,6 +56,10 @@ INDEX_FIELDS = [
     'missing_field_count',
     'recommended_status',
     'recommended_next_action',
+    'prior_signal_hit_status',
+    'prior_signal_adjudication_status',
+    'true_prior_signal_rows',
+    'false_positive_rows',
     'priority',
 ]
 
@@ -269,6 +275,66 @@ def price_window_status(price_row: dict[str, str] | None) -> dict[str, str]:
     }
 
 
+def prior_signal_adjudication_status(
+    adjudication_rows: list[dict[str, str]],
+    confirmation_row: dict[str, str] | None,
+) -> dict[str, Any]:
+    classifications = Counter(
+        row.get('adjudication_classification', '').strip()
+        for row in adjudication_rows
+        if row.get('adjudication_classification', '').strip()
+    )
+    true_rows = classifications.get('TRUE_PUBLIC_PRIOR_SIGNAL', 0)
+    false_positive_rows = sum(
+        count for classification, count in classifications.items()
+        if classification != 'TRUE_PUBLIC_PRIOR_SIGNAL'
+    )
+    hit_status = confirmation_row.get('hit_status', '') if confirmation_row else ''
+    confidence = confirmation_row.get('confidence', '') if confirmation_row else ''
+    best_source_url = confirmation_row.get('best_source_url', '') if confirmation_row else ''
+    best_source_excerpt = confirmation_row.get('best_source_excerpt', '') if confirmation_row else ''
+
+    if true_rows:
+        status = 'TRUE_PUBLIC_PRIOR_SIGNAL'
+    elif false_positive_rows:
+        status = '|'.join(sorted(classifications)) or 'FALSE_POSITIVE'
+    elif hit_status == 'CONFIRMED_NO_HIT':
+        status = 'DEAL_ANNOUNCEMENT_BASELINE'
+    elif hit_status == 'NEEDS_MANUAL_REVIEW':
+        status = 'NEEDS_MANUAL_REVIEW'
+    elif hit_status:
+        status = hit_status
+    else:
+        status = 'NOT_ADJUDICATED'
+
+    source_rows = []
+    for row in adjudication_rows:
+        source_rows.append({
+            'filing_date': row.get('filing_date', ''),
+            'filing_type': row.get('filing_type', ''),
+            'source_url': row.get('source_url', ''),
+            'collector_signal_type': row.get('collector_signal_type', ''),
+            'collector_keyword_hits': row.get('collector_keyword_hits', ''),
+            'adjudication_classification': row.get('adjudication_classification', ''),
+            'adjudicated_signal_type': row.get('adjudicated_signal_type', ''),
+            'confidence': row.get('confidence', ''),
+            'notes': row.get('notes', ''),
+        })
+
+    return {
+        'status': status,
+        'confirmation_hit_status': hit_status,
+        'confirmation_confidence': confidence,
+        'best_source_url': best_source_url,
+        'best_source_excerpt': best_source_excerpt,
+        'true_prior_signal_rows': true_rows,
+        'false_positive_rows': false_positive_rows,
+        'classification_counts': dict(sorted(classifications.items())),
+        'case_level_true_signal': 'TRUE' if true_rows else 'FALSE',
+        'source_rows': source_rows,
+    }
+
+
 def current_status(
     candidate: dict[str, str],
     queue_row: dict[str, str],
@@ -410,6 +476,8 @@ def build_packet(
     background_finding: dict[str, str] | None,
     partial_row: dict[str, str] | None,
     price_row: dict[str, str] | None,
+    adjudication_rows: list[dict[str, str]],
+    confirmation_row: dict[str, str] | None,
     packet_dir: Path,
 ) -> Packet:
     case_id = queue_row.get('candidate_id', '').strip()
@@ -420,6 +488,7 @@ def build_packet(
     observation_date_candidate, observation_date_reasoning = observation_candidate(background_finding, partial_row)
     premium = premium_status(evidence_rows, partial_row)
     price = price_window_status(price_row)
+    adjudication = prior_signal_adjudication_status(adjudication_rows, confirmation_row)
     source_rows_exist = has_source_rows(evidence_rows)
     core_exists = has_core_acquisition_evidence(evidence_rows, partial_row)
     current = current_status(candidate, queue_row, partial_row)
@@ -473,6 +542,7 @@ def build_packet(
         'observation_date_reasoning': observation_date_reasoning,
         'premium_evidence_status': premium,
         'price_window_status': price,
+        'prior_signal_adjudication_status': adjudication,
         'missing_fields': missing_fields,
         'missing_field_count': len(missing_fields),
         'recommended_next_action': next_action,
@@ -522,11 +592,29 @@ def evidence_markdown(rows: list[dict[str, str]]) -> list[str]:
     return lines
 
 
+def adjudication_rows_markdown(rows: list[dict[str, str]]) -> list[str]:
+    if not rows:
+        return ['- none']
+    lines = []
+    for row in rows:
+        lines.append(
+            f"- {row.get('filing_date', '')} {row.get('filing_type', '')}: "
+            f"{row.get('adjudication_classification', '')} "
+            f"({row.get('collector_signal_type', '')}; {row.get('collector_keyword_hits', '')})"
+        )
+        if row.get('source_url'):
+            lines.append(f"  - source: {row.get('source_url')}")
+        if row.get('notes'):
+            lines.append(f"  - notes: {row.get('notes')}")
+    return lines
+
+
 def packet_to_markdown(packet: dict[str, Any]) -> str:
     background = packet['background_section_status']
     prior = packet['prior_process_signal_status']
     premium = packet['premium_evidence_status']
     price = packet['price_window_status']
+    adjudication = packet['prior_signal_adjudication_status']
     lines = [
         f"# Case Packet: {packet['ticker']} - {packet['case_id']}",
         '',
@@ -557,6 +645,21 @@ def packet_to_markdown(packet: dict[str, Any]) -> str:
         f"- Premium evidence source: {premium['source'] or 'not available'}",
         f"- Price window status: {price['status']}",
         f"- Price window notes: {price['notes'] or 'not available'}",
+        '',
+        '## Prior Signal Adjudication',
+        '',
+        f"- Adjudication status: {adjudication['status']}",
+        f"- Confirmation hit status: {adjudication['confirmation_hit_status'] or 'not available'}",
+        f"- Case-level true signal: {adjudication['case_level_true_signal']}",
+        f"- True prior-signal rows: {adjudication['true_prior_signal_rows']}",
+        f"- False-positive rows: {adjudication['false_positive_rows']}",
+        f"- Classification counts: {json.dumps(adjudication['classification_counts'], sort_keys=True)}",
+        f"- Best source URL: {adjudication['best_source_url'] or 'not available'}",
+        f"- Best source excerpt: {adjudication['best_source_excerpt'] or 'not available'}",
+        '',
+        '### Adjudicated Rows',
+        '',
+        *adjudication_rows_markdown(adjudication['source_rows']),
         '',
         '## Missing Fields',
         '',
@@ -593,6 +696,7 @@ def write_packet(packet: Packet) -> None:
 
 def index_row(packet: Packet) -> dict[str, Any]:
     data = packet.data
+    adjudication = data['prior_signal_adjudication_status']
     return {
         'case_id': data['case_id'],
         'ticker': data['ticker'],
@@ -604,6 +708,10 @@ def index_row(packet: Packet) -> dict[str, Any]:
         'missing_field_count': data['missing_field_count'],
         'recommended_status': data['recommended_status'],
         'recommended_next_action': data['recommended_next_action'],
+        'prior_signal_hit_status': adjudication['confirmation_hit_status'],
+        'prior_signal_adjudication_status': adjudication['status'],
+        'true_prior_signal_rows': adjudication['true_prior_signal_rows'],
+        'false_positive_rows': adjudication['false_positive_rows'],
         'priority': data['priority'],
     }
 
@@ -692,6 +800,18 @@ def write_report(packets: list[Packet], path: Path) -> None:
     closest_partial = closest_to_partial(packets)
     closest_verified = closest_to_verified(packets)
     next_batch = next_verification_batch(packets)
+    adjudication_counter = Counter(
+        packet.data['prior_signal_adjudication_status']['status']
+        for packet in packets
+    )
+    true_signal_packets = [
+        packet for packet in packets
+        if packet.data['prior_signal_adjudication_status']['status'] == 'TRUE_PUBLIC_PRIOR_SIGNAL'
+    ]
+    false_positive_packets = [
+        packet for packet in packets
+        if packet.data['prior_signal_adjudication_status']['false_positive_rows']
+    ]
 
     lines = [
         '# Case Packet Generation Report',
@@ -705,6 +825,23 @@ def write_report(packets: list[Packet], path: Path) -> None:
         '- Workflow completeness score is not investment quality and not P(deal).',
         '- No cases were marked VERIFIED or CALIBRATION_ELIGIBLE.',
         '',
+        '## Prior Signal Adjudication Summary',
+        '',
+    ]
+    if adjudication_counter:
+        lines.extend(f'- {status}: {count}' for status, count in adjudication_counter.most_common())
+    else:
+        lines.append('- none')
+    lines.extend([
+        '',
+        '## True Prior Public Signal Packets',
+        '',
+        *table_rows(true_signal_packets),
+        '',
+        '## False-Positive Prior Signal Packets',
+        '',
+        *table_rows(false_positive_packets),
+        '',
         '## Top 10 Highest-Completeness Packets',
         '',
         *table_rows(highest),
@@ -715,7 +852,7 @@ def write_report(packets: list[Packet], path: Path) -> None:
         '',
         '## Common Missing Fields',
         '',
-    ]
+    ])
     if missing_counter:
         lines.extend(f'- {field}: {count}' for field, count in missing_counter.most_common())
     else:
@@ -745,6 +882,8 @@ def load_context(args: argparse.Namespace) -> dict[str, Any]:
     _, evidence_rows = read_csv(args.source_evidence)
     _, partial_rows = read_csv(args.cases_partial)
     _, price_rows = read_csv(args.price_windows)
+    _, confirmation_rows = read_csv(args.prior_signal_confirmation)
+    _, adjudication_rows = read_csv(args.prior_signal_adjudication)
     if args.checklist.exists():
         args.checklist.read_text(encoding='utf-8')
     return {
@@ -754,6 +893,8 @@ def load_context(args: argparse.Namespace) -> dict[str, Any]:
         'evidence_by_id': group_by(evidence_rows, 'case_id'),
         'partial_by_id': index_by(partial_rows, 'case_id'),
         'price_by_id': index_by(price_rows, 'case_id'),
+        'confirmation_by_id': index_by(confirmation_rows, 'case_id'),
+        'adjudication_by_id': group_by(adjudication_rows, 'case_id'),
     }
 
 
@@ -773,6 +914,8 @@ def generate(args: argparse.Namespace) -> list[Packet]:
             background_finding=context['background_by_id'].get(case_id),
             partial_row=context['partial_by_id'].get(case_id),
             price_row=context['price_by_id'].get(case_id),
+            adjudication_rows=context['adjudication_by_id'].get(case_id, []),
+            confirmation_row=context['confirmation_by_id'].get(case_id),
             packet_dir=args.packet_dir,
         )
         write_packet(packet)
@@ -792,6 +935,8 @@ def main() -> int:
     parser.add_argument('--cases-partial', type=Path, default=DEFAULT_CASES_PARTIAL)
     parser.add_argument('--price-windows', type=Path, default=DEFAULT_PRICE_WINDOWS)
     parser.add_argument('--checklist', type=Path, default=DEFAULT_CHECKLIST)
+    parser.add_argument('--prior-signal-confirmation', type=Path, default=DEFAULT_PRIOR_SIGNAL_CONFIRMATION)
+    parser.add_argument('--prior-signal-adjudication', type=Path, default=DEFAULT_PRIOR_SIGNAL_ADJUDICATION)
     parser.add_argument('--packet-dir', type=Path, default=DEFAULT_PACKET_DIR)
     parser.add_argument('--index', type=Path, default=DEFAULT_INDEX)
     parser.add_argument('--report', type=Path, default=DEFAULT_REPORT)

@@ -14,7 +14,7 @@
   "case_id": "RHC-0009-ACQUIRED-VTAE",
   "company_name": "Vitae Pharmaceuticals, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T23:44:06+00:00",
+  "generated_at": "2026-05-14T00:58:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2016",
   "missing_field_count": 7,
@@ -45,6 +45,18 @@
     "prior_process_signal_date": "",
     "prior_process_signal_type": "",
     "status": "NOT_REVIEWED"
+  },
+  "prior_signal_adjudication_status": {
+    "best_source_excerpt": "",
+    "best_source_url": "",
+    "case_level_true_signal": "FALSE",
+    "classification_counts": {},
+    "confirmation_confidence": "LOW",
+    "confirmation_hit_status": "NEEDS_MANUAL_REVIEW",
+    "false_positive_rows": 0,
+    "source_rows": [],
+    "status": "NEEDS_MANUAL_REVIEW",
+    "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
   "queue_fields": {

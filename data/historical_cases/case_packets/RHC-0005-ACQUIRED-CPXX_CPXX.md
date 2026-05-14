@@ -28,6 +28,23 @@
 - Price window status: NOT_STARTED
 - Price window notes: not available
 
+## Prior Signal Adjudication
+
+- Adjudication status: RIGHTS_LANGUAGE_ONLY
+- Confirmation hit status: CONFIRMED_NO_HIT
+- Case-level true signal: FALSE
+- True prior-signal rows: 0
+- False-positive rows: 1
+- Classification counts: {"RIGHTS_LANGUAGE_ONLY": 1}
+- Best source URL: not available
+- Best source excerpt: not available
+
+### Adjudicated Rows
+
+- 2016-03-23 8-K: RIGHTS_LANGUAGE_ONLY (rofr_rofn; right of first refusal)
+  - source: https://www.sec.gov/Archives/edgar/data/1327467/000114420416089876/0001144204-16-089876-index.htm
+  - notes: Rights language is generic securities/legal representation text.
+
 ## Missing Fields
 
 - core acquisition evidence

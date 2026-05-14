@@ -14,7 +14,7 @@
   "case_id": "RHC-0012-ACQUIRED-DMTX",
   "company_name": "Dimension Therapeutics, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T23:44:06+00:00",
+  "generated_at": "2026-05-14T00:58:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2017",
   "missing_field_count": 7,
@@ -45,6 +45,65 @@
     "prior_process_signal_date": "",
     "prior_process_signal_type": "",
     "status": "NOT_REVIEWED"
+  },
+  "prior_signal_adjudication_status": {
+    "best_source_excerpt": "ersigned hereunto duly authorized. DIMENSION THERAPEUTICS, INC. By: /s/ Mary Thistle Name: Mary Thistle Title: Chief Operating Officer Dated: October 2, 2017 EX-99.1 2 d468762dex991.htm EX-99.1 EX-99.1 EXHIBIT 99.1 Dimension Board Determines that Ultragenyx\u2019s Unsolicited Proposal to Acquire Dimension for $6.00 Per Share Constitutes a \u201cSuperior Proposal\u201d REGENXBIO Waives Matching Rights CAMBRIDGE, MA \u2013 October 2...",
+    "best_source_url": "https://www.sec.gov/Archives/edgar/data/1592288/000119312517300359/0001193125-17-300359-index.htm",
+    "case_level_true_signal": "TRUE",
+    "classification_counts": {
+      "TRUE_PUBLIC_PRIOR_SIGNAL": 4
+    },
+    "confirmation_confidence": "HIGH",
+    "confirmation_hit_status": "CONFIRMED_HIT",
+    "false_positive_rows": 0,
+    "source_rows": [
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "acquisition proposal|financial advisor|right of first refusal|superior proposal|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|competing_bid|retained_advisor|rofr_rofn|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2017-08-25",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1592288/000119312517267472/0001193125-17-267472-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "financial advisor|proposal from|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|retained_advisor|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2017-09-18",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1592288/000119312517287461/0001193125-17-287461-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_process",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "financial advisor|proposal from|superior proposal|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|competing_bid|retained_advisor|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2017-09-19",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1592288/000119312517287894/0001193125-17-287894-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "public_competing_bid_or_proposal",
+        "adjudication_classification": "TRUE_PUBLIC_PRIOR_SIGNAL",
+        "collector_keyword_hits": "proposal to acquire|superior proposal|unsolicited proposal",
+        "collector_signal_type": "acquisition_proposal|competing_bid|unsolicited_proposal",
+        "confidence": "HIGH",
+        "filing_date": "2017-10-02",
+        "filing_type": "8-K",
+        "notes": "Source text contains public pre-announcement proposal/process language.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1592288/000119312517300359/0001193125-17-300359-index.htm"
+      }
+    ],
+    "status": "TRUE_PUBLIC_PRIOR_SIGNAL",
+    "true_prior_signal_rows": 4
   },
   "priority": "HIGH",
   "queue_fields": {

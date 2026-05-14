@@ -14,7 +14,7 @@
   "case_id": "RHC-0020-ACQUIRED-ARRY",
   "company_name": "Array BioPharma Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-12T23:44:06+00:00",
+  "generated_at": "2026-05-14T00:58:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2019",
   "missing_field_count": 7,
@@ -45,6 +45,43 @@
     "prior_process_signal_date": "",
     "prior_process_signal_type": "",
     "status": "NOT_REVIEWED"
+  },
+  "prior_signal_adjudication_status": {
+    "best_source_excerpt": "",
+    "best_source_url": "",
+    "case_level_true_signal": "FALSE",
+    "classification_counts": {
+      "ASSET_SPECIFIC_RIGHTS_ONLY": 2
+    },
+    "confirmation_confidence": "MEDIUM",
+    "confirmation_hit_status": "CONFIRMED_NO_HIT",
+    "false_positive_rows": 2,
+    "source_rows": [
+      {
+        "adjudicated_signal_type": "",
+        "adjudication_classification": "ASSET_SPECIFIC_RIGHTS_ONLY",
+        "collector_keyword_hits": "right of first refusal",
+        "collector_signal_type": "rofr_rofn",
+        "confidence": "LOW",
+        "filing_date": "2018-02-06",
+        "filing_type": "10-Q",
+        "notes": "Rights language applies to 797 Subsidiary / 797 Assets, not a whole-company sale process.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1100412/000110041218000003/0001100412-18-000003-index.htm"
+      },
+      {
+        "adjudicated_signal_type": "",
+        "adjudication_classification": "ASSET_SPECIFIC_RIGHTS_ONLY",
+        "collector_keyword_hits": "right of first refusal",
+        "collector_signal_type": "rofr_rofn",
+        "confidence": "LOW",
+        "filing_date": "2018-05-09",
+        "filing_type": "10-Q",
+        "notes": "Rights language applies to 797 Subsidiary / 797 Assets, not a whole-company sale process.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1100412/000110041218000007/0001100412-18-000007-index.htm"
+      }
+    ],
+    "status": "ASSET_SPECIFIC_RIGHTS_ONLY",
+    "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
   "queue_fields": {

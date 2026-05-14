@@ -28,6 +28,47 @@
 - Price window status: NOT_STARTED
 - Price window notes: not available
 
+## Prior Signal Adjudication
+
+- Adjudication status: TRUE_PUBLIC_PRIOR_SIGNAL
+- Confirmation hit status: CONFIRMED_HIT
+- Case-level true signal: TRUE
+- True prior-signal rows: 9
+- False-positive rows: 0
+- Classification counts: {"TRUE_PUBLIC_PRIOR_SIGNAL": 9}
+- Best source URL: https://www.sec.gov/Archives/edgar/data/1011835/000119312516641659/0001193125-16-641659-index.htm
+- Best source excerpt: rminate its consent solicitation. Before entering into the confidentiality agreement with Sanofi, Medivation received from Sanofi, and Medivation’s Board of Directors unanimously rejected as not in the best interests of the company and its stockholders, a new unsolicited proposal to acquire Medivation. The proposal, which was conditional upon the execution of a confidentiality agreement and the receipt of...
+
+### Adjudicated Rows
+
+- 2016-04-28 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal; proposal from|proposal to acquire)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516563708/0001193125-16-563708-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-04-29 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal|unsolicited_proposal; proposal from|unsolicited proposal)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516569536/0001193125-16-569536-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-05-05 10-Q: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal|unsolicited_proposal; proposal from|unsolicited proposal)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000156459016018012/0001564590-16-018012-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-05-05 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal; proposal to acquire)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516579914/0001193125-16-579914-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-05-06 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal|unsolicited_proposal; proposal to acquire|unsolicited proposal)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516580827/0001193125-16-580827-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-05-25 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal; proposal to acquire)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516602270/0001193125-16-602270-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-05-27 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (strategic_alternatives; strategic alternatives)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516606426/0001193125-16-606426-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-06-13 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal; proposal to acquire)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516620311/0001193125-16-620311-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+- 2016-07-05 8-K: TRUE_PUBLIC_PRIOR_SIGNAL (acquisition_proposal|unsolicited_proposal; proposal to acquire|unsolicited proposal)
+  - source: https://www.sec.gov/Archives/edgar/data/1011835/000119312516641659/0001193125-16-641659-index.htm
+  - notes: Source text contains public pre-announcement proposal/process language.
+
 ## Missing Fields
 
 - premium extraction

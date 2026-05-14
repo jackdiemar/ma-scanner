@@ -28,6 +28,26 @@
 - Price window status: NOT_STARTED
 - Price window notes: not available
 
+## Prior Signal Adjudication
+
+- Adjudication status: ASSET_SPECIFIC_RIGHTS_ONLY
+- Confirmation hit status: CONFIRMED_NO_HIT
+- Case-level true signal: FALSE
+- True prior-signal rows: 0
+- False-positive rows: 2
+- Classification counts: {"ASSET_SPECIFIC_RIGHTS_ONLY": 2}
+- Best source URL: not available
+- Best source excerpt: not available
+
+### Adjudicated Rows
+
+- 2018-02-06 10-Q: ASSET_SPECIFIC_RIGHTS_ONLY (rofr_rofn; right of first refusal)
+  - source: https://www.sec.gov/Archives/edgar/data/1100412/000110041218000003/0001100412-18-000003-index.htm
+  - notes: Rights language applies to 797 Subsidiary / 797 Assets, not a whole-company sale process.
+- 2018-05-09 10-Q: ASSET_SPECIFIC_RIGHTS_ONLY (rofr_rofn; right of first refusal)
+  - source: https://www.sec.gov/Archives/edgar/data/1100412/000110041218000007/0001100412-18-000007-index.htm
+  - notes: Rights language applies to 797 Subsidiary / 797 Assets, not a whole-company sale process.
+
 ## Missing Fields
 
 - core acquisition evidence

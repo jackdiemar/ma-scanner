@@ -28,6 +28,21 @@
 - Price window status: NOT_STARTED
 - Price window notes: not available
 
+## Prior Signal Adjudication
+
+- Adjudication status: NEEDS_MANUAL_REVIEW
+- Confirmation hit status: NEEDS_MANUAL_REVIEW
+- Case-level true signal: FALSE
+- True prior-signal rows: 0
+- False-positive rows: 0
+- Classification counts: {}
+- Best source URL: not available
+- Best source excerpt: not available
+
+### Adjudicated Rows
+
+- none
+
 ## Missing Fields
 
 - core acquisition evidence
