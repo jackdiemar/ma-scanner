@@ -95,9 +95,9 @@ The scanner should not count private negotiations later disclosed in proxy or Sc
 
 | case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0026-ACQUIRED-ACHN | ACHN | 2020-01-10 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0026-ACQUIRED-ACHN | ACHN | 2020-01-15 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
 | RHC-0027-ACQUIRED-BOLD | BOLD | 2019-12-02 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
-| RHC-0028-ACQUIRED-DERM | DERM | 2020-01-13 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
+| RHC-0028-ACQUIRED-DERM | DERM | 2020-01-10 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
 | RHC-0029-ACQUIRED-FTSV | FTSV | 2020-03-02 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
 | RHC-0030-ACQUIRED-MNTA | MNTA | 2020-08-19 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
 | RHC-0031-ACQUIRED-MYOK | MYOK | 2020-10-05 | 0 | 0 | NEEDS_MANUAL_REVIEW | Run or manually complete pre-announcement filing collection and hit/no-hit confirmation. |
