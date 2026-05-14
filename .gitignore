@@ -13,3 +13,16 @@ logs/
 *.mp4
 *.avi
 assets/media/
+
+# FMP / EDGAR API response cache
+data/cache/
+
+# Timestamped scan outputs (local history only; deploy uses scan_latest.json + scan_partial.json)
+data/scans/scan_v12_*.json
+# Explicitly keep the two deploy-tracked files
+!data/scans/scan_latest.json
+!data/scans/scan_partial.json
+
+# Scanner run artifacts
+data/scans/legacy/
+*.tmp
