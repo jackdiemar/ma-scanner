@@ -1552,6 +1552,90 @@ _SA_AFFIRM_MARKERS = [
     'board has determined', 'has initiated', 'is conducting', 'formally exploring',
 ]
 
+# ── P0-A: Negation detection — phrases that negate acquisition-pressure meaning ──
+# Applied to NEGATION_SENSITIVE_KEYS only; not to SA affirm or merger agreement.
+_NEGATION_PREFIXES = (
+    'no plan or proposal',
+    'no plans or proposals',
+    'no current plan',
+    'no current plans',
+    'does not have any plan',
+    'have no plan',
+    'have not formulated',
+    'has not formulated',
+    'no present intention',
+    'no intention to',
+    'without any plan',
+    'currently have no',
+    'do not have any',
+    'have not adopted',
+)
+
+# Keys where negation detection is applied; SA and merger are excluded — too few
+# false-negative cases to justify negation suppression on those phrases.
+_NEGATION_SENSITIVE_KEYS = frozenset({
+    'acquisition_proposal', 'unsolicited_proposal', 'superior_proposal',
+    'rofn', 'rofr', 'rofo',
+})
+
+# ── P0-C: ROFR/ROFN scope classification context markers ─────────────────────
+_ROFR_SECURITIES_TERMS = (
+    'lock-up', 'lockup', 'lock up',
+    'transfer of shares', 'transfer of stock', 'transfer restriction',
+    'shareholder agreement', 'repurchase right', 'repurchase of shares',
+    'termination of employment', 'termination of service',
+    'forfeiture', 'unvested', 'equity award', 'option agreement',
+    'registration rights', 'preemptive right', 'sale of the company\'s securities',
+    'sale of securities', 'offering', 'underwritten',
+)
+_ROFR_ASSET_TERMS = (
+    'licensed product', 'collaboration agreement', 'license agreement',
+    'co-development', 'co-promotion', 'territory',
+    'geographic', 'product candidate', 'drug candidate',
+    'specific program', 'specific asset', 'specific product',
+    'indication ', 'therapeutic area', 'japan', 'china', 'asia',
+    'north america', 'europe', 'rest of world', 'worldwide license',
+    'royalty', 'milestone', 'right of first negotiation for',
+)
+_ROFR_COMPANY_TERMS = (
+    'sale of the company', 'acquisition of the company',
+    'merger agreement', 'strategic alternatives',
+    'board of directors', 'all outstanding shares', 'all of the outstanding',
+    'business combination', 'change of control', 'change in control',
+    'acquisition proposal', 'whole company', 'entire company',
+)
+
+
+def _classify_rights_scope(text, phrase, idx=None):
+    """
+    P0-C: Classify scope of a ROFR/ROFN phrase match from surrounding 400-char context.
+
+    Returns:
+      company_level_possible      — context suggests whole-company acquisition pathway
+      asset_specific_likely       — context suggests product/program/territory-specific rights
+      securities_or_lockup_likely — context suggests investor share-transfer restrictions
+      unknown_scope               — insufficient context to classify
+    """
+    if idx is None:
+        idx = text.find(phrase)
+    if idx < 0:
+        return 'unknown_scope'
+    ctx = text[max(0, idx - 150): idx + 250]
+
+    # Securities/lock-up context takes priority — clearly not M&A signals.
+    if any(w in ctx for w in _ROFR_SECURITIES_TERMS):
+        return 'securities_or_lockup_likely'
+
+    # Asset-specific context (collaboration/license/geographic).
+    if any(w in ctx for w in _ROFR_ASSET_TERMS):
+        return 'asset_specific_likely'
+
+    # Company-level context.
+    if any(w in ctx for w in _ROFR_COMPANY_TERMS):
+        return 'company_level_possible'
+
+    return 'unknown_scope'
+
 
 def score_strategic_alternatives_quality(text, idx):
     """
@@ -1710,7 +1794,7 @@ def enrich_activist_item4(fmp, ticker, activist_signal):
     return activist_signal
 
 
-def fetch_8k_text_signals(fmp, ticker, n_filings=4):
+def fetch_8k_text_signals(fmp, ticker, n_filings=8):
     """
     Fetch last N 8-K document bodies and parse for deal-process language.
 
@@ -1721,9 +1805,22 @@ def fetch_8k_text_signals(fmp, ticker, n_filings=4):
       named_pharma           — str | None  (which major pharma is named)
       top_phrase             — str   (highest-signal phrase found)
       pts                    — int   (total score contribution)
+      --- P0 additions (backward-compatible new fields) ---
+      negated_phrases        — list  (P0-A: phrases suppressed by negation detection)
+      source_url             — str   (P0-B: URL of 8-K that triggered the first signal)
+      source_accession       — str   (P0-B: accession number of that filing)
+      source_filing_date     — str   (P0-B: filing date of that filing)
+      source_form_type       — str   (P0-B: form type of that filing, typically '8-K')
+      source_matched_phrase  — str   (P0-B: phrase that triggered the source record)
+      rofn_scope_hint        — str|None  (P0-C: scope of ROFN match)
+      rofr_scope_hint        — str|None  (P0-C: scope of ROFR match)
+      rofo_scope_hint        — str|None  (P0-C: scope of ROFO match)
     """
     result = {
         'strategic_alternatives': False,
+        'unsolicited_proposal':   False,
+        'superior_proposal':      False,
+        'acquisition_proposal':   False,
         'banker_retained':        False,  # hired M&A advisor (pre-SA leading indicator)
         'rofn':                   False,
         'rofr':                   False,
@@ -1734,6 +1831,18 @@ def fetch_8k_text_signals(fmp, ticker, n_filings=4):
         'named_pharma':           None,
         'top_phrase':             '',
         'pts':                    0,
+        # P0-A: audit trail for negation-suppressed phrases
+        'negated_phrases':        [],
+        # P0-B: source traceability
+        'source_url':             '',
+        'source_accession':       '',
+        'source_filing_date':     '',
+        'source_form_type':       '',
+        'source_matched_phrase':  '',
+        # P0-C: ROFR/ROFN scope hints
+        'rofn_scope_hint':        None,
+        'rofr_scope_hint':        None,
+        'rofo_scope_hint':        None,
     }
 
     # Pull all SEC filings for this ticker from the last year
@@ -1751,10 +1860,38 @@ def fetch_8k_text_signals(fmp, ticker, n_filings=4):
 
         for phrase, key, pts in _8K_SIGNAL_PHRASES:
             if phrase in text and not result.get(key):
-                result[key]      = True
-                result['pts']   += pts
+                idx = text.find(phrase)
+
+                # P0-A: negation detection — skip if acquisition/rights phrase is negated.
+                # Applied only to NEGATION_SENSITIVE_KEYS; SA and merger phrases are exempt.
+                if key in _NEGATION_SENSITIVE_KEYS:
+                    ctx_before = text[max(0, idx - 55): idx]
+                    if any(neg in ctx_before for neg in _NEGATION_PREFIXES):
+                        result['negated_phrases'].append(phrase)
+                        continue  # negated context — do not score
+
+                # P0-C: classify ROFR/ROFN scope and adjust score contribution.
+                score_pts = pts
+                if key in ('rofn', 'rofr', 'rofo'):
+                    scope = _classify_rights_scope(text, phrase, idx)
+                    result[key + '_scope_hint'] = scope
+                    if scope in ('asset_specific_likely', 'securities_or_lockup_likely'):
+                        score_pts = 0   # no process score for non-company-level rights
+                    elif scope == 'unknown_scope':
+                        score_pts = pts // 2   # reduced score — scope unclear
+
+                result[key]    = True
+                result['pts'] += score_pts
                 if not result['top_phrase']:
                     result['top_phrase'] = phrase
+
+                # P0-B: capture source metadata on first affirmative phrase match.
+                if not result['source_url']:
+                    result['source_url']           = url
+                    result['source_accession']     = filing.get('accessionNumber', '') or ''
+                    result['source_filing_date']   = filing.get('filingDate', '')
+                    result['source_form_type']     = filing.get('formType', '8-K')
+                    result['source_matched_phrase'] = phrase
 
         # Named pharma detection — bonus if paired with a structural clause
         if result['named_pharma'] is None:
@@ -1880,9 +2017,14 @@ def has_real_process_evidence(activist_signal=None, text_signals=None):
     M&A thesis, but they do not prove a live or specific process.
 
     13D gate logic (Item 4-aware):
-      - Item 4 parsed and shows SALE_PROCESS (moderate+) or ACTIVIST_ESCALATION → clears gate
-      - Item 4 parsed and shows GOVERNANCE_ONLY / CAPITAL_ALLOCATION / PASSIVE → does NOT clear gate
-      - Item 4 not parsed (document unavailable) → preserves prior behavior (any 13D clears)
+      - Item 4 parsed → SALE_PROCESS (moderate+) or ACTIVIST_ESCALATION → clears gate
+      - Item 4 parsed → GOVERNANCE_ONLY / CAPITAL_ALLOCATION / PASSIVE → does NOT clear gate
+      - P0-E: Item 4 doc unavailable + known activist → still clears (filing itself is signal)
+      - P0-E: Item 4 doc unavailable + unknown filer  → does NOT clear (reason: item4_unavailable_no_process_gate)
+
+    ROFR/ROFN scope gate (P0-C):
+      - company_level_possible or unknown_scope → clears gate
+      - asset_specific_likely or securities_or_lockup_likely → does NOT clear gate
     """
     ts  = text_signals or {}
     act = activist_signal or {}
@@ -1891,22 +2033,37 @@ def has_real_process_evidence(activist_signal=None, text_signals=None):
     if act:
         item4 = act.get('item4', {})
         if item4:
-            # Item 4 was parsed — require actual process/escalation intent
+            # Item 4 was parsed — require actual process/escalation intent.
             activist_clears = (
                 item4.get('is_sale_pressure', False) or
                 item4.get('classification') == 'ACTIVIST_ESCALATION'
             )
         else:
-            # Document unavailable — fall back to old behavior: any 13D clears
-            activist_clears = True
+            # P0-E: document unavailable — only known biotech activists clear the gate.
+            # Unknown filers with unavailable docs do not receive process-gate credit.
+            # reason: item4_unavailable_no_process_gate for unknown filers.
+            is_known = act.get('is_known', False)
+            activist_clears = bool(is_known)
+
+    # P0-C: ROFR/ROFN scope gate — non-company-level rights do not clear process gate.
+    _non_company_scopes = frozenset({'asset_specific_likely', 'securities_or_lockup_likely'})
+    rofn_clears = (
+        ts.get('rofn') and
+        ts.get('rofn_scope_hint') not in _non_company_scopes
+    )
+    rofr_clears = (
+        ts.get('rofr') and
+        ts.get('rofr_scope_hint') not in _non_company_scopes
+    )
+    rofo_clears = bool(ts.get('rofo'))   # no scope hint for rofo; preserved as-is
 
     return bool(
         activist_clears
         or ts.get('sa_is_affirm')         # board affirm SA clears the cap
         or ts.get('banker_retained')
-        or ts.get('rofn')
-        or ts.get('rofr')
-        or ts.get('rofo')
+        or rofn_clears
+        or rofr_clears
+        or rofo_clears
         or ts.get('merger_agreement')
     )
 
@@ -3081,7 +3238,7 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
             text_sig  = {}
             proxy_sig = {}
         else:
-            text_sig  = fetch_8k_text_signals(fmp, ticker, n_filings=4)
+            text_sig  = fetch_8k_text_signals(fmp, ticker, n_filings=8)  # P0-D: raised from 4
             proxy_sig = fetch_proxy_signal(fmp, ticker)
             # Enrich activist signal with Item 4 contextual classification.
             # Only runs if there is an activist signal — adds ~1-2s per ticker (cached 72h).
@@ -3174,6 +3331,15 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
             'has_rofr':              (text_sig or {}).get('rofr', False),
             'named_pharma_partner':  (text_sig or {}).get('named_pharma'),
             'top_8k_phrase':         (text_sig or {}).get('top_phrase', ''),
+            # P0-B: source traceability for live monitoring audit trail
+            'signal_source_url':      (text_sig or {}).get('source_url', ''),
+            'signal_source_accession': (text_sig or {}).get('source_accession', ''),
+            'signal_source_date':     (text_sig or {}).get('source_filing_date', ''),
+            # P0-C: ROFR/ROFN scope hints
+            'rofn_scope_hint':        (text_sig or {}).get('rofn_scope_hint'),
+            'rofr_scope_hint':        (text_sig or {}).get('rofr_scope_hint'),
+            # P0-A: negation-suppressed phrases (audit trail)
+            'negated_8k_phrases':    (text_sig or {}).get('negated_phrases', []),
             'has_coc_provisions':    (proxy_sig or {}).get('has_coc_provisions', False),
             'coc_payout_estimate':   (proxy_sig or {}).get('coc_payout_estimate', 0),
             'deal_process_score':    result['layer_scores'].get('deal_process', 0),
