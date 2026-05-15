@@ -7,37 +7,37 @@ All PLACEHOLDER fields must be filled from the actual filing before promoting.
 
 ## Summary
 
-- Draft rows generated: 20
-- Cases skipped (P5/P6/PENDING_FILING_COLLECTION): 0
+- Draft rows generated: 0
+- Cases skipped (P5/P6/PENDING_FILING_COLLECTION): 20
 
 ## Draft Rows
 
-| evidence_id | ticker | tier | reason |
-|---|---|---|---|
-| RHC-0051-ACQUIRED-EPZM-ADJ-DRAFT-001 | EPZM | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0052-ACQUIRED-FMTX-ADJ-DRAFT-001 | FMTX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0053-ACQUIRED-GBT-ADJ-DRAFT-001 | GBT | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0054-ACQUIRED-IMGO-ADJ-DRAFT-001 | IMGO | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0055-ACQUIRED-OYST-ADJ-DRAFT-001 | OYST | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0056-ACQUIRED-SRRA-ADJ-DRAFT-001 | SRRA | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0057-ACQUIRED-TPTX-ADJ-DRAFT-001 | TPTX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0058-ACQUIRED-BLU-ADJ-DRAFT-001 | BLU | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0059-ACQUIRED-CINC-ADJ-DRAFT-001 | CINC | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0060-ACQUIRED-CTIC-ADJ-DRAFT-001 | CTIC | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0061-ACQUIRED-DICE-ADJ-DRAFT-001 | DICE | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0062-ACQUIRED-HARP-ADJ-DRAFT-001 | HARP | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0063-ACQUIRED-ISEE-ADJ-DRAFT-001 | ISEE | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0064-ACQUIRED-RETA-ADJ-DRAFT-001 | RETA | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0066-ACQUIRED-ZYNE-ADJ-DRAFT-001 | ZYNE | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0067-ACQUIRED-ALPN-ADJ-DRAFT-001 | ALPN | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0068-ACQUIRED-AMAM-ADJ-DRAFT-001 | AMAM | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0069-ACQUIRED-CBAY-ADJ-DRAFT-001 | CBAY | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0070-ACQUIRED-CERE-ADJ-DRAFT-001 | CERE | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0071-ACQUIRED-DCPH-ADJ-DRAFT-001 | DCPH | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
+No draft rows generated — all cases are P5/P6/PENDING_FILING_COLLECTION.
 
 ## Skipped Cases
 
-None.
+| case_id | ticker | tier | reason |
+|---|---|---|---|
+| RHC-0051-ACQUIRED-EPZM | EPZM | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0052-ACQUIRED-FMTX | FMTX | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0053-ACQUIRED-GBT | GBT | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0054-ACQUIRED-IMGO | IMGO | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0055-ACQUIRED-OYST | OYST | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0056-ACQUIRED-SRRA | SRRA | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0057-ACQUIRED-TPTX | TPTX | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0058-ACQUIRED-BLU | BLU | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0059-ACQUIRED-CINC | CINC | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0060-ACQUIRED-CTIC | CTIC | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0061-ACQUIRED-DICE | DICE | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0062-ACQUIRED-HARP | HARP | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0063-ACQUIRED-ISEE | ISEE | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0064-ACQUIRED-RETA | RETA | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0066-ACQUIRED-ZYNE | ZYNE | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0067-ACQUIRED-ALPN | ALPN | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0068-ACQUIRED-AMAM | AMAM | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0069-ACQUIRED-CBAY | CBAY | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0070-ACQUIRED-CERE | CERE | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0071-ACQUIRED-DCPH | DCPH | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
 
 ## Workflow
 
