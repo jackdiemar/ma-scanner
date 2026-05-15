@@ -13,9 +13,9 @@ The workflow reuses acquisition announcement dates, pre-announcement filing targ
 - Cases reviewed: 50
 - True prior public signal cases: 3
 - Deal-announcement baseline candidates: 35
-- False-positive cases: 11
+- False-positive cases: 12
 - Needs manual review: 0
-- Date/source blockers: 1
+- Date/source blockers: 0
 
 ## True Prior Public Signal Cases
 
@@ -78,6 +78,7 @@ The workflow reuses acquisition announcement dates, pre-announcement filing targ
 | RHC-0020-ACQUIRED-ARRY | ARRY | ASSET_SPECIFIC_RIGHTS_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0029-ACQUIRED-FTSV | FTSV | PRIVATE_BACKGROUND_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0033-ACQUIRED-PRNB | PRNB | PRIVATE_BACKGROUND_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
+| RHC-0042-ACQUIRED-PTLA | PTLA | PRIVATE_BACKGROUND_ONLY | Existing evidence is post-announcement proxy or tender background only; keep out of prior-public-signal counts unless pre-announcement public evidence is found. |
 | RHC-0043-ACQUIRED-TRIL | TRIL | PRIVATE_BACKGROUND_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0045-ACQUIRED-XLRN | XLRN | ASSET_SPECIFIC_RIGHTS_ONLY | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 
@@ -119,7 +120,6 @@ The scanner should not count private negotiations later disclosed in proxy or Sc
 
 | case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0042-ACQUIRED-PTLA | PTLA |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
 | RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
@@ -129,6 +129,7 @@ The scanner should not count private negotiations later disclosed in proxy or Sc
 | RHC-0024-ACQUIRED-ONCE | ONCE | 2019-02-25 | 26 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0009-ACQUIRED-VTAE | VTAE | 2016-09-14 | 18 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0011-ACQUIRED-CLCD | CLCD | 2017-01-18 | 7 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0021-ACQUIRED-CMTA | CMTA | 2019-02-25 | 3 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 
 ## Current Packet Fields
 

@@ -78,7 +78,7 @@ Generated: 2026-05-14
 - prior process signal review: 40
 - observation date candidate: 40
 - core acquisition evidence: 37
-- source evidence rows: 15
+- source evidence rows: 14
 
 ## Cases Closest To PARTIAL
 

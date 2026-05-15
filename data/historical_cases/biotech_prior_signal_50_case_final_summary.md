@@ -6,7 +6,7 @@ Generated: 2026-05-14 | Status: Final (all 50 cases adjudicated)
 
 ## 1. Executive Headline
 
-Of 50 US-listed small-cap biotech acquisitions reviewed (2015–2022), 3 cases (6%) had source-backed public prior process signals before the acquisition announcement. The remaining 94% had either no confirmed public prior signal (35 cases, 70%), private-only process background (8 cases, 16%), or rights-language that does not constitute company-level sale-process evidence (3 cases, 6%). The core finding is not that biotech acquisitions are unpredictable, but that a distinct and identifiable minority had public evidence before announcement — and that the false-positive surface is substantial and classifiable.
+Of 50 US-listed small-cap biotech acquisitions reviewed (2015–2022), 3 cases (6%) had source-backed public prior process signals before the acquisition announcement. The remaining 94% had either no confirmed public prior signal (35 cases, 70%), private-only process background (9 cases, 18%), or rights-language that does not constitute company-level sale-process evidence (3 cases, 6%). The core finding is not that biotech acquisitions are unpredictable, but that a distinct and identifiable minority had public evidence before announcement — and that the false-positive surface is substantial and classifiable.
 
 ---
 
@@ -15,13 +15,12 @@ Of 50 US-listed small-cap biotech acquisitions reviewed (2015–2022), 3 cases (
 | Status | Count | Pct |
 |---|---:|---:|
 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | 35 | 70% |
-| PRIVATE_BACKGROUND_ONLY | 8 | 16% |
+| PRIVATE_BACKGROUND_ONLY | 9 | 18% |
 | TRUE_PUBLIC_PRIOR_SIGNAL | 3 | 6% |
 | ASSET_SPECIFIC_RIGHTS_ONLY | 2 | 4% |
 | RIGHTS_LANGUAGE_ONLY | 1 | 2% |
-| DATE_MISSING | 1 | 2% |
 
-One case (PTLA) excluded from adjudication due to missing announcement date. Not counted in percentages.
+All 50 cases now have source-backed announcement-date handling. PTLA was resolved from `DATE_MISSING` into `PRIVATE_BACKGROUND_ONLY`; no date/source blocker remains in the 50-case denominator.
 
 ---
 
@@ -53,7 +52,7 @@ All three required explicit, source-backed public disclosure before the final ac
 
 **DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE (35 cases, 70%).** No public prior process signal confirmed. These cases represent the majority of the batch. Includes cases where the scanner found no relevant filings, where filing coverage was complete and returned no hits, and where post-announcement SC 14D-9 backgrounds confirm the process was entirely private. Examples: AVXS, RLYP, RXDX, ALDR, LOXO.
 
-**PRIVATE_BACKGROUND_ONLY (8 cases, 16%).** Process facts exist but appear exclusively in post-announcement deal background (proxy or SC 14D-9). These were not publicly available before announcement. Cases: TBRA, ARIA, KITE, BIVV, JUNO, FTSV, PRNB, TRIL. Examples of private process types: bilateral confidential discussions (FTSV, Gilead), private unsolicited asset proposals (PRNB, Sanofi), plain equity investments with no acquisition option (TRIL, Pfizer).
+**PRIVATE_BACKGROUND_ONLY (9 cases, 18%).** Process facts exist but appear exclusively in post-announcement deal background (proxy or SC 14D-9). These were not publicly available before announcement. Cases: TBRA, ARIA, KITE, BIVV, JUNO, FTSV, PRNB, PTLA, TRIL. Examples of private process types: bilateral confidential discussions (FTSV, Gilead), private unsolicited asset proposals (PRNB, Sanofi), confidential tender-offer/merger negotiations later disclosed in SC 14D-9 background (PTLA, Alexion), plain equity investments with no acquisition option (TRIL, Pfizer).
 
 **ASSET_SPECIFIC_RIGHTS_ONLY (2 cases, 4%).** Rights language appeared in public filings before announcement but was limited to assets, programs, or therapeutic areas — not the whole company. Cases: ARRY (product ROFR), XLRN (BMS right of first negotiation for sotatercept PH field only; acquirer was Merck, not BMS).
 
@@ -71,7 +70,7 @@ TSRO required external news integration. The signal was a media report, not an S
 
 ## 7. What the Scanner Could Not Have Caught
 
-- Private negotiations disclosed only in post-announcement proxy or SC 14D-9 backgrounds (8 cases).
+- Private negotiations disclosed only in post-announcement proxy or SC 14D-9 backgrounds (9 cases).
 - Deals where no public process signal existed before announcement (35 cases).
 - Asset-specific ROFR/ROFN language unless scope is verified as company-level (2 cases).
 - Generic legal rights representations (1 case).
@@ -115,7 +114,7 @@ Rules with direct support from this batch:
 
 ## 11. Data Quality Caveats
 
-- **PTLA excluded.** Portola Pharmaceuticals announcement date not confirmed; excluded from the adjudicated 50-case set until backfilled.
+- **PTLA resolved.** Portola Pharmaceuticals was not an asset-only transaction. SEC-filed Alexion materials confirm a May 5, 2020 public-company tender offer and merger announcement. PTLA remains classified as `PRIVATE_BACKGROUND_ONLY` because the pre-announcement Alexion/Portola process was private and later described in the Schedule 14D-9 background.
 - **TSRO evidence type.** The TSRO true signal relies on a public media report. An EDGAR-only scanner would not capture it.
 - **6% rate is a lower bound.** Baseline candidates (35 cases) may contain prior signals not captured in current filing coverage. No systematic EDGAR full-text search was completed for every filing in every baseline case.
 - **Batch scope.** US-listed small-cap biotech acquisitions, 2015–2022. Findings may not generalize across sectors, deal sizes, or later periods.
@@ -125,9 +124,8 @@ Rules with direct support from this batch:
 
 ## 12. Next Steps
 
-1. Backfill PTLA announcement date; complete adjudication.
-2. Verify that live 8-K monitoring would have surfaced MDVN and DMTX signals in near-real-time.
-3. Assess whether external news integration is required to capture media-sourced signals (TSRO-type).
-4. Run spot checks on the highest-filing-count baseline candidates (AVXS 43, RLYP 38, RXDX 37, ALDR 36, LOXO 34) to confirm no missed prior signals.
-5. Separate evidence-backed scanner rules from anecdotal observations before live deployment.
-6. Do not scale to 100 cases until current 50-case standards are fully preserved.
+1. Verify that live 8-K monitoring would have surfaced MDVN and DMTX signals in near-real-time.
+2. Assess whether external news integration is required to capture media-sourced signals (TSRO-type).
+3. Run spot checks on the highest-filing-count baseline candidates (AVXS 43, RLYP 38, RXDX 37, ALDR 36, LOXO 34) to confirm no missed prior signals.
+4. Separate evidence-backed scanner rules from anecdotal observations before live deployment.
+5. Do not scale to 100 cases until current 50-case standards are fully preserved.

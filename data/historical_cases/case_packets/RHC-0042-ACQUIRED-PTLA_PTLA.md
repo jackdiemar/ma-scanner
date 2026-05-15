@@ -6,13 +6,13 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: KEEP_CANDIDATE
-- Workflow completeness score: 5/100
+- Workflow completeness score: 20/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
+- Source evidence rows: 2
 - Acquisition evidence status: NOT_STARTED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
@@ -46,7 +46,6 @@
 ## Missing Fields
 
 - core acquisition evidence
-- source evidence rows
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -59,7 +58,20 @@ Open primary acquisition evidence, then run date and pre-announcement signal wor
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0042-ACQUIRED-PTLA-SRC-001`
+  - type: 8K_MERGER
+  - status: SOURCE_BACKED
+  - filing: 8-K 2020-05-05
+  - source: https://www.sec.gov/Archives/edgar/data/899866/000110465920056508/tm2018594d2_ex99-1.htm
+  - supports: deal_announcement_date|source_filing_type|source_filing_date|source_filing_url|deal_price_per_share|acquirer|outcome
+  - excerpt: entered into a definitive merger agreement for Alexion to acquire Portola
+- `RHC-0042-ACQUIRED-PTLA-ADJ-001`
+  - type: PROXY_SA_LANGUAGE
+  - status: ADJUDICATED
+  - filing: SC 14D-9 2020-05-27
+  - source: https://www.sec.gov/Archives/edgar/data/1269021/000104746920003216/a2241700zsc14d9.htm
+  - supports: proxy_or_tender_background|process_timeline
+  - excerpt: On May 5 2020 Alexion and Portola announced the entry into the Merger Agreement
 
 ## Queue Queries
 

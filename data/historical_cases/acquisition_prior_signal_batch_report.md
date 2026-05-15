@@ -7,19 +7,18 @@ Generated: 2026-05-14
 - Cases processed: 50
 - True prior public signals: 3
 - Baseline candidates: 35
-- False positives: 11
+- False positives: 12
 - Needs manual review: 0
-- Blockers: 1
+- Blockers: 0
 - No cases were marked `VERIFIED` or `CALIBRATION_ELIGIBLE`.
 
 ## Counts By Adjudication Status
 
 - DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE: 35
-- PRIVATE_BACKGROUND_ONLY: 8
+- PRIVATE_BACKGROUND_ONLY: 9
 - TRUE_PUBLIC_PRIOR_SIGNAL: 3
 - ASSET_SPECIFIC_RIGHTS_ONLY: 2
 - RIGHTS_LANGUAGE_ONLY: 1
-- DATE_MISSING: 1
 
 ## True Prior Public Signal Candidates
 
@@ -42,6 +41,7 @@ Generated: 2026-05-14
 | RHC-0020-ACQUIRED-ARRY | ARRY | ASSET_SPECIFIC_RIGHTS_ONLY | LOW | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0029-ACQUIRED-FTSV | FTSV | PRIVATE_BACKGROUND_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0033-ACQUIRED-PRNB | PRNB | PRIVATE_BACKGROUND_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
+| RHC-0042-ACQUIRED-PTLA | PTLA | PRIVATE_BACKGROUND_ONLY | MEDIUM | Existing evidence is post-announcement proxy or tender background only; keep out of prior-public-signal counts unless pre-announcement public evidence is found. |
 | RHC-0043-ACQUIRED-TRIL | TRIL | PRIVATE_BACKGROUND_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 | RHC-0045-ACQUIRED-XLRN | XLRN | ASSET_SPECIFIC_RIGHTS_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. |
 
@@ -87,15 +87,12 @@ Generated: 2026-05-14
 
 ## Blockers
 
-| case_id | ticker | adjudication_status | next_action |
-| --- | --- | --- | --- |
-| RHC-0042-ACQUIRED-PTLA | PTLA | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
+None.
 
 ## Next 10 Manual Reviews
 
 | case_id | ticker | announcement_date | filings_checked_count | possible_hits_count | adjudication_status | next_action |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0042-ACQUIRED-PTLA | PTLA |  | 0 | 0 | DATE_MISSING | Backfill exact acquisition announcement date before prior-signal review. |
 | RHC-0014-ACQUIRED-AVXS | AVXS | 2018-04-09 | 43 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0007-ACQUIRED-RLYP | RLYP | 2016-07-21 | 38 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0018-ACQUIRED-RXDX | RXDX | 2017-12-22 | 37 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
@@ -105,6 +102,7 @@ Generated: 2026-05-14
 | RHC-0024-ACQUIRED-ONCE | ONCE | 2019-02-25 | 26 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0009-ACQUIRED-VTAE | VTAE | 2016-09-14 | 18 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 | RHC-0011-ACQUIRED-CLCD | CLCD | 2017-01-18 | 7 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
+| RHC-0021-ACQUIRED-CMTA | CMTA | 2019-02-25 | 3 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Use as baseline candidate after final manual EDGAR hit/no-hit spot check. |
 
 ## All Batch Results
 
@@ -151,6 +149,7 @@ Generated: 2026-05-14
 | RHC-0039-ACQUIRED-FPRX | FPRX | Five Prime Therapeutics, Inc. | 2021-03-04 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0039-ACQUIRED-FPRX_FPRX.md | 20 |
 | RHC-0040-ACQUIRED-GWPH | GWPH | GW Pharmaceuticals plc | 2021-02-03 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0040-ACQUIRED-GWPH_GWPH.md | 20 |
 | RHC-0041-ACQUIRED-PAND | PAND | Pandion Therapeutics | 2021-02-24 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0041-ACQUIRED-PAND_PAND.md | 20 |
+| RHC-0042-ACQUIRED-PTLA | PTLA | Portola Pharmaceuticals | 2020-05-05 | HIGH | 0 | 0 | PRIVATE_BACKGROUND_ONLY | MEDIUM | Existing evidence is post-announcement proxy or tender background only; keep out of prior-public-signal counts unless pre-announcement public evidence is found. | data/historical_cases/case_packets/RHC-0042-ACQUIRED-PTLA_PTLA.md | 20 |
 | RHC-0043-ACQUIRED-TRIL | TRIL | Trillium Therapeutics Inc. | 2021-08-23 | HIGH | 0 | 0 | PRIVATE_BACKGROUND_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. | data/historical_cases/case_packets/RHC-0043-ACQUIRED-TRIL_TRIL.md | 20 |
 | RHC-0044-ACQUIRED-VIE | VIE | Viela Bio, Inc. | 2021-01-31 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0044-ACQUIRED-VIE_VIE.md | 20 |
 | RHC-0045-ACQUIRED-XLRN | XLRN | Acceleron Pharma Inc. | 2021-09-29 | HIGH | 0 | 0 | ASSET_SPECIFIC_RIGHTS_ONLY | HIGH | Keep out of true prior-signal counts unless separate public whole-company process evidence is found. | data/historical_cases/case_packets/RHC-0045-ACQUIRED-XLRN_XLRN.md | 20 |
@@ -159,4 +158,3 @@ Generated: 2026-05-14
 | RHC-0048-ACQUIRED-BHVN | BHVN | Biohaven Pharmaceutical Holding Company Ltd. | 2022-05-09 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0048-ACQUIRED-BHVN_BHVN.md | 20 |
 | RHC-0049-ACQUIRED-CCXI | CCXI | ChemoCentryx, Inc. | 2022-08-03 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0049-ACQUIRED-CCXI_CCXI.md | 20 |
 | RHC-0050-ACQUIRED-CMPI | CMPI | Checkmate Pharmaceuticals | 2022-04-18 | HIGH | 0 | 0 | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | MEDIUM | Source evidence indicates no public prior process signal; keep as baseline candidate pending final hit/no-hit confirmation. | data/historical_cases/case_packets/RHC-0050-ACQUIRED-CMPI_CMPI.md | 20 |
-| RHC-0042-ACQUIRED-PTLA | PTLA | Portola Pharmaceuticals |  | MISSING | 0 | 0 | DATE_MISSING | LOW | Backfill exact acquisition announcement date before prior-signal review. | data/historical_cases/case_packets/RHC-0042-ACQUIRED-PTLA_PTLA.md | 5 |
