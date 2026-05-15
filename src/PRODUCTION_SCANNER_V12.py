@@ -1494,6 +1494,10 @@ _KNOWN_ACTIVISTS = [
 _8K_SIGNAL_PHRASES = [
     ('strategic alternatives',            'strategic_alternatives', 30),
     ('exploring strategic',               'strategic_alternatives', 30),  # alt wording
+    ('unsolicited proposal',              'unsolicited_proposal',   30),
+    ('superior proposal',                 'superior_proposal',      28),
+    ('proposal to acquire',               'acquisition_proposal',   25),
+    ('acquisition proposal',              'acquisition_proposal',   25),
     ('right of first negotiation',        'rofn',                   18),
     ('first right to negotiate',          'rofn',                   18),  # legal variant
     ('right of first refusal',            'rofr',                   15),
