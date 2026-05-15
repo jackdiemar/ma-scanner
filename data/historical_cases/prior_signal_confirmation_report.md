@@ -71,11 +71,11 @@ None confirmed as no-hit yet because live EDGAR hit/no-hit searches require manu
 
 Updated by `src/historical_case_tools/pre_announcement_filing_collector.py`.
 
-- Cases checked: 15
-- Filing target rows collected: 411
-- Possible signal hit rows: 16
-- Possible-hit cases: 4
-- Likely no-hit cases: 11
+- Cases checked: 20
+- Filing target rows collected: 509
+- Possible signal hit rows: 21
+- Possible-hit cases: 13
+- Likely no-hit cases: 7
 - Needs manual review cases: 0
 - Date or CIK blocked cases: 0
 
@@ -83,19 +83,31 @@ Updated by `src/historical_case_tools/pre_announcement_filing_collector.py`.
 
 | case_id | ticker | announcement_date | filing_date | filing_type | recommended_status | keyword_hits |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0006-ACQUIRED-MDVN | MDVN | 2016-08-22 | 2016-04-28 | 8-K | POSSIBLE_HIT | proposal from/proposal to acquire |
-| RHC-0005-ACQUIRED-CPXX | CPXX | 2016-05-31 | 2016-03-23 | 8-K | POSSIBLE_HIT | right of first refusal |
-| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-08-25 | 8-K | POSSIBLE_HIT | acquisition proposal/financial advisor/right of first refusal/superior proposal/unsolicited proposal |
-| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-02-06 | 10-Q | POSSIBLE_HIT | right of first refusal |
+| RHC-0051-ACQUIRED-EPZM | EPZM | 2022-06-27 | 2022-05-10 | 10-Q | POSSIBLE_HIT | right of first negotiation |
+| RHC-0052-ACQUIRED-FMTX | FMTX | 2022-09-01 | 2021-04-21 | DEF 14A | POSSIBLE_HIT | sale of the company |
+| RHC-0053-ACQUIRED-GBT | GBT | 2022-08-08 | 2022-05-04 | 8-K | POSSIBLE_HIT | rofr |
+| RHC-0054-ACQUIRED-IMGO | IMGO | 2022-11-21 | 2021-07-30 | SC 13D | POSSIBLE_HIT | strategic alternatives |
+| RHC-0055-ACQUIRED-OYST | OYST | 2022-11-08 | 2021-08-05 | 10-Q | POSSIBLE_HIT | right of first negotiation/sale of the company |
+| RHC-0056-ACQUIRED-SRRA | SRRA | 2022-04-13 | 2022-02-02 | SC 13D/A | POSSIBLE_HIT | right of first refusal |
+| RHC-0057-ACQUIRED-TPTX | TPTX | 2022-06-03 | 2021-03-01 | 10-K | POSSIBLE_HIT | right of first negotiation |
+| RHC-0059-ACQUIRED-CINC | CINC | 2023-01-09 | 2022-05-10 | 10-Q | POSSIBLE_HIT | sale of the company |
+| RHC-0061-ACQUIRED-DICE | DICE | 2023-06-20 | 2022-10-19 | SC 13D/A | POSSIBLE_HIT | proposal to acquire |
+| RHC-0064-ACQUIRED-RETA | RETA | 2023-07-31 | 2022-02-28 | 8-K | POSSIBLE_HIT | rofr |
+| RHC-0066-ACQUIRED-ZYNE | ZYNE | 2023-08-14 | 2022-04-25 | DEF 14A | POSSIBLE_HIT | sale of the company |
+| RHC-0067-ACQUIRED-ALPN | ALPN | 2024-04-10 | 2023-11-13 | SC 13D/A | POSSIBLE_HIT | sale of the company |
+| RHC-0068-ACQUIRED-AMAM | AMAM | 2024-01-08 | 2023-11-13 | 10-Q | POSSIBLE_HIT | option to acquire |
 
 ### Best Possible MDVN-Like Candidates Beyond MDVN
 
 | case_id | ticker | announcement_date | filing_date | filing_type | possible_signal_type | keyword_hits |
 | --- | --- | --- | --- | --- | --- | --- |
-| RHC-0005-ACQUIRED-CPXX | CPXX | 2016-05-31 | 2016-03-23 | 8-K | rofr_rofn | right of first refusal |
-| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-08-25 | 8-K | acquisition_proposal/competing_bid/retained_advisor/rofr_rofn/unsolicited_proposal | acquisition proposal/financial advisor/right of first refusal/superior proposal/unsolicited proposal |
-| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-09-18 | 8-K | acquisition_proposal/retained_advisor/unsolicited_proposal | financial advisor/proposal from/unsolicited proposal |
-| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-09-19 | 8-K | acquisition_proposal/competing_bid/retained_advisor/unsolicited_proposal | financial advisor/proposal from/superior proposal/unsolicited proposal |
-| RHC-0012-ACQUIRED-DMTX | DMTX | 2017-10-03 | 2017-10-02 | 8-K | acquisition_proposal/competing_bid/unsolicited_proposal | proposal to acquire/superior proposal/unsolicited proposal |
-| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-02-06 | 10-Q | rofr_rofn | right of first refusal |
-| RHC-0020-ACQUIRED-ARRY | ARRY | 2019-06-17 | 2018-05-09 | 10-Q | rofr_rofn | right of first refusal |
+| RHC-0051-ACQUIRED-EPZM | EPZM | 2022-06-27 | 2022-05-10 | 10-Q | rofr_rofn | right of first negotiation |
+| RHC-0052-ACQUIRED-FMTX | FMTX | 2022-09-01 | 2021-04-21 | DEF 14A | sale_process | sale of the company |
+| RHC-0052-ACQUIRED-FMTX | FMTX | 2022-09-01 | 2021-05-14 | 10-Q | sale_process | sale of the company |
+| RHC-0052-ACQUIRED-FMTX | FMTX | 2022-09-01 | 2021-08-13 | 10-Q | sale_process | sale of the company |
+| RHC-0052-ACQUIRED-FMTX | FMTX | 2022-09-01 | 2021-11-12 | 10-Q | sale_process | sale of the company |
+| RHC-0053-ACQUIRED-GBT | GBT | 2022-08-08 | 2022-05-04 | 8-K | rofr_rofn | rofr |
+| RHC-0054-ACQUIRED-IMGO | IMGO | 2022-11-21 | 2021-07-30 | SC 13D | strategic_alternatives | strategic alternatives |
+| RHC-0055-ACQUIRED-OYST | OYST | 2022-11-08 | 2021-08-05 | 10-Q | rofr_rofn/sale_process | right of first negotiation/sale of the company |
+| RHC-0055-ACQUIRED-OYST | OYST | 2022-11-08 | 2022-04-22 | DEF 14A | retained_advisor | financial advisor |
+| RHC-0055-ACQUIRED-OYST | OYST | 2022-11-08 | 2022-11-07 | 8-K | acquisition_proposal | acquisition proposal |

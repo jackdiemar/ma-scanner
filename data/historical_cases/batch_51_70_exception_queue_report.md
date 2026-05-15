@@ -1,6 +1,6 @@
 # Batch 51–70 Exception Queue
 
-Generated: 2026-05-14
+Generated: 2026-05-15
 
 Work queue only. No cases adjudicated. Do not classify any case as TRUE_PUBLIC_PRIOR_SIGNAL.
 Resolve BLOCKED cases first (date backfill), then run filing collector, then review P1–P4.
@@ -8,34 +8,46 @@ Resolve BLOCKED cases first (date backfill), then run filing collector, then rev
 ## Summary
 
 - Cases in scope: 20
-- PENDING_FILING_COLLECTION: 20
+- P1: 2
+- P3: 3
+- P6: 15
 
 ## Priority Queue
 
-### PENDING_FILING_COLLECTION (20 cases)
+### P1 (2 cases)
 
 | case_id | ticker | company | year | reason |
 |---|---|---|---|---|
-| RHC-0051-ACQUIRED-EPZM | EPZM | Epizyme | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0052-ACQUIRED-FMTX | FMTX | Forma Therapeutics Holdings, Inc. | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0053-ACQUIRED-GBT | GBT | Global Blood Therapeutics, Inc. | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0054-ACQUIRED-IMGO | IMGO | Imago BioSciences | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0055-ACQUIRED-OYST | OYST | Oyster Point Pharma | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0056-ACQUIRED-SRRA | SRRA | Sierra Oncology | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0057-ACQUIRED-TPTX | TPTX | Turning Point Therapeutics, Inc. | 2022 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0058-ACQUIRED-BLU | BLU | BELLUS Health Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0059-ACQUIRED-CINC | CINC | CinCor Pharma, Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0060-ACQUIRED-CTIC | CTIC | CTI BioPharma | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0061-ACQUIRED-DICE | DICE | DICE Therapeutics, Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0062-ACQUIRED-HARP | HARP | Harpoon Therapeutics | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0063-ACQUIRED-ISEE | ISEE | IVERIC bio, Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0064-ACQUIRED-RETA | RETA | Reata Pharmaceuticals, Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0066-ACQUIRED-ZYNE | ZYNE | Zynerba Pharmaceuticals, Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0067-ACQUIRED-ALPN | ALPN | Alpine Immune Sciences, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0068-ACQUIRED-AMAM | AMAM | Ambrx Biopharma Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0069-ACQUIRED-CBAY | CBAY | CymaBay Therapeutics, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0070-ACQUIRED-CERE | CERE | Cerevel Therapeutics Holdings, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
-| RHC-0071-ACQUIRED-DCPH | DCPH | Deciphera Pharmaceuticals, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0055-ACQUIRED-OYST | OYST | Oyster Point Pharma | 2022 | Explicit process language: acquisition_proposal. |
+| RHC-0061-ACQUIRED-DICE | DICE | DICE Therapeutics, Inc. | 2023 | Explicit process language: acquisition_proposal. |
+
+### P3 (3 cases)
+
+| case_id | ticker | company | year | reason |
+|---|---|---|---|---|
+| RHC-0054-ACQUIRED-IMGO | IMGO | Imago BioSciences | 2022 | SC 13D filing found — verify Item 4 for acquisition-pressure language. |
+| RHC-0056-ACQUIRED-SRRA | SRRA | Sierra Oncology | 2022 | SC 13D filing found — verify Item 4 for acquisition-pressure language. |
+| RHC-0067-ACQUIRED-ALPN | ALPN | Alpine Immune Sciences, Inc. | 2024 | SC 13D filing found — verify Item 4 for acquisition-pressure language. |
+
+### P6 (15 cases)
+
+| case_id | ticker | company | year | reason |
+|---|---|---|---|---|
+| RHC-0051-ACQUIRED-EPZM | EPZM | Epizyme | 2022 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0052-ACQUIRED-FMTX | FMTX | Forma Therapeutics Holdings, Inc. | 2022 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0053-ACQUIRED-GBT | GBT | Global Blood Therapeutics, Inc. | 2022 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0057-ACQUIRED-TPTX | TPTX | Turning Point Therapeutics, Inc. | 2022 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0058-ACQUIRED-BLU | BLU | BELLUS Health Inc. | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0059-ACQUIRED-CINC | CINC | CinCor Pharma, Inc. | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0060-ACQUIRED-CTIC | CTIC | CTI BioPharma | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0062-ACQUIRED-HARP | HARP | Harpoon Therapeutics | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0063-ACQUIRED-ISEE | ISEE | IVERIC bio, Inc. | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0064-ACQUIRED-RETA | RETA | Reata Pharmaceuticals, Inc. | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0066-ACQUIRED-ZYNE | ZYNE | Zynerba Pharmaceuticals, Inc. | 2023 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0068-ACQUIRED-AMAM | AMAM | Ambrx Biopharma Inc. | 2024 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0069-ACQUIRED-CBAY | CBAY | CymaBay Therapeutics, Inc. | 2024 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0070-ACQUIRED-CERE | CERE | Cerevel Therapeutics Holdings, Inc. | 2024 | Filing collection ran; no relevant signal phrases found. |
+| RHC-0071-ACQUIRED-DCPH | DCPH | Deciphera Pharmaceuticals, Inc. | 2024 | Filing collection ran; no relevant signal phrases found. |
 
 ## Next Steps
 
