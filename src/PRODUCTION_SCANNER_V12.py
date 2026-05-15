@@ -2039,11 +2039,10 @@ def has_real_process_evidence(activist_signal=None, text_signals=None):
                 item4.get('classification') == 'ACTIVIST_ESCALATION'
             )
         else:
-            # P0-E: document unavailable — only known biotech activists clear the gate.
-            # Unknown filers with unavailable docs do not receive process-gate credit.
-            # reason: item4_unavailable_no_process_gate for unknown filers.
-            is_known = act.get('is_known', False)
-            activist_clears = bool(is_known)
+            # P0-E: document unavailable — gate does not clear regardless of filer.
+            # Item 4 text is required for acquisition-pressure classification.
+            # Known activists still score 20 pts from preload; that is not process evidence.
+            activist_clears = False
 
     # P0-C: ROFR/ROFN scope gate — non-company-level rights do not clear process gate.
     _non_company_scopes = frozenset({'asset_specific_likely', 'securities_or_lockup_likely'})
@@ -2055,7 +2054,10 @@ def has_real_process_evidence(activist_signal=None, text_signals=None):
         ts.get('rofr') and
         ts.get('rofr_scope_hint') not in _non_company_scopes
     )
-    rofo_clears = bool(ts.get('rofo'))   # no scope hint for rofo; preserved as-is
+    rofo_clears = (
+        ts.get('rofo') and
+        ts.get('rofo_scope_hint') not in _non_company_scopes
+    )
 
     return bool(
         activist_clears

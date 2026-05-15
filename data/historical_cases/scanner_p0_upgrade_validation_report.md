@@ -5,7 +5,8 @@ Generated: 2026-05-15
 ## Summary
 
 All five P0 scanner-core upgrades implemented in `src/PRODUCTION_SCANNER_V12.py`.
-Validation suite: 33/33 tests passed, 0 failed.
+Two conservative corrections applied after edge-case review (ROFO scope gate, known activist fallback).
+Validation suite: 37/37 tests passed, 0 failed.
 
 Validation script: `src/historical_case_tools/validate_scanner_p0_upgrades.py`
 
@@ -93,11 +94,19 @@ Updated `has_real_process_evidence()`:
 
 **After:**
 - If Item 4 was parsed: gate clears only if `is_sale_pressure=True` or `classification='ACTIVIST_ESCALATION'` (unchanged)
-- If Item 4 is unavailable (filing fetch failed or doc not found):
-  - Known activist (`is_known=True`): filing existence itself is treated as signal → gate clears
-  - Unknown filer (`is_known=False`): gate does NOT clear
+- If Item 4 is unavailable (filing fetch failed or doc not found): gate does NOT clear regardless of filer identity.
 
-Rationale: Unknown filers routinely file SC 13D for passive accumulation, governance, or disclosure reasons. Clearing the process gate on filing existence alone generated false positives in historical review (cases like DICE where a passive filer's boilerplate language appeared to clear process evidence).
+Rationale: Item 4 text is the evidence standard for acquisition-pressure classification. A known activist still scores 20 pts from the preloaded activist signal — that is a scoring contribution, not process evidence. Clearing the process gate without parsed Item 4 allowed governance and passive filings to bypass the cap when the document was unreachable.
+
+An earlier version of P0-E allowed known activists (`is_known=True`) to clear the gate without Item 4. This was corrected after edge-case review: the historical standard requires Item 4 context, and filer identity alone is not a substitute.
+
+### P0-C correction: ROFO scope gate
+
+**File:** `src/PRODUCTION_SCANNER_V12.py`
+
+Initial P0-C implementation applied scope gating to ROFN and ROFR but left ROFO with an unconditional `rofo_clears = bool(ts.get('rofo'))`. This was an inconsistency: a ROFO in an asset-specific collaboration 8-K would have cleared the process gate while an identical-context ROFN would not.
+
+Fixed: `rofo_clears` now checks `rofo_scope_hint` against `_non_company_scopes` identically to ROFN and ROFR.
 
 ---
 
@@ -119,8 +128,9 @@ Fixed: all three keys now initialized to `False` at result dict construction. Co
 | 4 | Lock-up ROFR "right of first refusal on any transfer of shares or other securities" | `rofr=True`, `rofr_scope_hint=securities_or_lockup_likely`, `pts=0` | PASS |
 | 5 | Company-level ROFR "right of first refusal to acquire the company or its business" | `rofr=True`, `rofr_scope_hint=company_level_possible`, `pts>0` | PASS |
 | 6 | Scope gate — asset-specific ROFN vs company-level ROFN in `has_real_process_evidence()` | asset_specific does NOT clear; company_level DOES clear | PASS |
+| 6b | Asset-specific ROFO / securities ROFO / company ROFO / unknown ROFO scope gate | mirrors ROFN/ROFR logic | PASS |
 | 7 | Unknown filer, no Item 4 doc | gate NOT cleared | PASS |
-| 8 | Known activist, no Item 4 doc | gate DOES clear | PASS |
+| 8 | Known activist, no Item 4 doc | gate NOT cleared (Item 4 required) | PASS |
 | 9 | Affirmative 8-K match — source metadata captured | `source_url`, `source_accession`, `source_filing_date`, `source_form_type`, `source_matched_phrase` all set | PASS |
 | 10 | ROFN score comparison: asset_specific (0 pts) vs company_level (18 pts) | asset_specific=0, company_level=18 | PASS |
 

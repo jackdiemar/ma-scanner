@@ -269,6 +269,29 @@ check('securities_or_lockup ROFR does NOT clear gate',
       'expected False')
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Test 6b: P0-C — ROFO scope gate (mirrors ROFN/ROFR)
+# ─────────────────────────────────────────────────────────────────────────────
+
+print('\n[Test 6b] P0-C: ROFO scope gate — asset-specific ROFO does NOT clear gate')
+ts_asset_rofo = {'rofo': True, 'rofo_scope_hint': 'asset_specific_likely'}
+ts_company_rofo = {'rofo': True, 'rofo_scope_hint': 'company_level_possible'}
+ts_unknown_rofo = {'rofo': True, 'rofo_scope_hint': 'unknown_scope'}
+ts_lockup_rofo = {'rofo': True, 'rofo_scope_hint': 'securities_or_lockup_likely'}
+
+check('asset_specific ROFO does NOT clear gate',
+      not has_real_process_evidence(text_signals=ts_asset_rofo),
+      'expected False')
+check('company_level ROFO DOES clear gate',
+      has_real_process_evidence(text_signals=ts_company_rofo),
+      'expected True')
+check('unknown_scope ROFO DOES clear gate (conservative)',
+      has_real_process_evidence(text_signals=ts_unknown_rofo),
+      'expected True')
+check('securities_or_lockup ROFO does NOT clear gate',
+      not has_real_process_evidence(text_signals=ts_lockup_rofo),
+      'expected False')
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Test 7: P0-E — Unknown filer + unavailable Item 4 does NOT clear gate
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -285,10 +308,12 @@ check('unknown filer, no item4 → does NOT clear gate',
       'expected False')
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Test 8: P0-E — Known activist + unavailable Item 4 DOES clear gate
+# Test 8: P0-E — Known activist + unavailable Item 4 does NOT clear gate
+# Item 4 text is required for acquisition-pressure evidence regardless of filer identity.
+# Known activist still scores 20 pts from preload; that is not process evidence.
 # ─────────────────────────────────────────────────────────────────────────────
 
-print('\n[Test 8] P0-E: Known activist + unavailable Item 4 DOES clear gate')
+print('\n[Test 8] P0-E: Known activist + unavailable Item 4 does NOT clear gate')
 known_13d = {
     'filer':        'Sarissa Capital Management LP',
     'filing_date':  '2024-01-15',
@@ -296,9 +321,9 @@ known_13d = {
     'pts':          20,
     # No 'item4' key — document unavailable
 }
-check('known activist, no item4 → DOES clear gate',
-      has_real_process_evidence(activist_signal=known_13d, text_signals={}),
-      'expected True')
+check('known activist, no item4 → does NOT clear gate (Item 4 required)',
+      not has_real_process_evidence(activist_signal=known_13d, text_signals={}),
+      'expected False')
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Test 9: P0-B — source_url/accession captured on first affirmative match
