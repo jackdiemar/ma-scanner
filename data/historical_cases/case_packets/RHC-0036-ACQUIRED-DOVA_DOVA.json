@@ -1,5 +1,5 @@
 {
-  "acquisition_evidence_status": "NOT_STARTED",
+  "acquisition_evidence_status": "SOURCE_BACKED",
   "background_section_status": {
     "background_heading": "",
     "background_section_available": "FALSE",
@@ -14,12 +14,11 @@
   "case_id": "RHC-0036-ACQUIRED-DOVA",
   "company_name": "Dova Pharmaceuticals",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2019",
-  "missing_field_count": 6,
+  "missing_field_count": 5,
   "missing_fields": [
-    "core acquisition evidence",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -68,10 +67,49 @@
     "queue_notes": "Seed year error corrected: deal was 2019 not 2021. Sobi acquired Dova; andexanet alfa (Andexxa). EDGAR 8-K acc 0001104659-19-051883 period 2019-09-30.",
     "queue_recommended_status": "CANDIDATE"
   },
-  "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
-  "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 1,
+  "recommended_next_action": "Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section.",
+  "recommended_status": "PARTIAL_READY",
+  "source_evidence_count": 4,
   "source_evidence_rows": [
+    {
+      "confidence": "LOW",
+      "evidence_id": "DOVA-2021-001-SRC-001",
+      "evidence_type": "8K_SA",
+      "excerpt": "Expected check: any SA or banker 8-K before Sobi merger announcement",
+      "filing_date": "",
+      "filing_type": "8-K",
+      "notes": "RESEARCH_TARGET \u2014 Check DOVA 8-K filings 2020-2021 for prior process signal. NOT SEEDED PROPERLY YET.",
+      "source_name": "SEC EDGAR",
+      "source_url": "VERIFY_REQUIRED",
+      "supports_field": "observation_date|signal_type|had_prior_process_signal",
+      "verification_status": "VERIFY_REQUIRED"
+    },
+    {
+      "confidence": "HIGH",
+      "evidence_id": "DOVA-2021-001-SRC-002",
+      "evidence_type": "8K_MERGER",
+      "excerpt": "Swedish Orphan Biovitrum AB (publ)...Dragonfly Acquisition Corp...Merger Agreement provides that Purchaser will commence a tender offer...$27.50 per Share...plus one non-transferable contractual contingent value right",
+      "filing_date": "2019-10-03",
+      "filing_type": "8-K",
+      "notes": "CRITICAL SEED ERROR: deal was 2019 (period 2019-09-30), NOT 2021. case_id should be DOVA-2019-001. Acquirer = Swedish Orphan Biovitrum AB (Sobi) confirmed. $27.50/share + CVR. SC TO-T filed 2019-10-11 acc 0001047469-19-005717.",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1685071/000110465919052965/a19-19184_38k.htm",
+      "supports_field": "deal_date|deal_price_per_share|acquirer|outcome|deal_value_M",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "confidence": "LOW",
+      "evidence_id": "DOVA-2021-001-SRC-003",
+      "evidence_type": "PRICE_DATA",
+      "excerpt": "price_at_signal on confirmed observation_date",
+      "filing_date": "",
+      "filing_type": "",
+      "notes": "RESEARCH_TARGET \u2014 DOVA delisted after Sobi acquisition. Use Stooq or Bloomberg.",
+      "source_name": "Yahoo Finance / yfinance",
+      "source_url": "https://finance.yahoo.com/quote/DOVA/history/",
+      "supports_field": "price_at_signal|price_30d_after|price_90d_after|price_180d_after",
+      "verification_status": "VERIFY_REQUIRED"
+    },
     {
       "confidence": "MEDIUM",
       "evidence_id": "RHC-0036-ACQUIRED-DOVA-ADJ-001",
@@ -87,6 +125,6 @@
     }
   ],
   "ticker": "DOVA",
-  "workflow_completeness_score": 20,
+  "workflow_completeness_score": 40,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

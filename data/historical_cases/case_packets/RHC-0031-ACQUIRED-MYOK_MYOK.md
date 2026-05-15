@@ -6,13 +6,13 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: KEEP_CANDIDATE
-- Workflow completeness score: 5/100
+- Workflow completeness score: 20/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
+- Source evidence rows: 1
 - Acquisition evidence status: NOT_STARTED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
@@ -30,24 +30,23 @@
 
 ## Prior Signal Adjudication
 
-- Adjudication status: NEEDS_MORE_REVIEW
+- Adjudication status: DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE
 - Confirmation hit status: not available
 - Case-level true signal: FALSE
 - True prior-signal rows: 0
 - False-positive rows: 1
-- Classification counts: {"NEEDS_MORE_REVIEW": 1}
+- Classification counts: {"DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE": 1}
 - Best source URL: not available
 - Best source excerpt: not available
 
 ### Adjudicated Rows
 
--  : NEEDS_MORE_REVIEW (; )
-  - notes: Bloomberg pre-announcement report suspected before Oct 5, 2020 BMS deal. Media reports count if published before announcement and source-backed.
+-  : DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE (; )
+  - notes: EDGAR research confirmed: no pre-announcement SA filing, no Rule 425 or SC14D9C before Oct 5, no EDGAR-sourced evidence of Bloomberg article before announcement. SC14D9C and SC TO-C both filed Oct 5 (announcement day). Entire process private. Bloomberg scoop hypothesis cannot be source-backed within adjudication standard.
 
 ## Missing Fields
 
 - core acquisition evidence
-- source evidence rows
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -60,7 +59,13 @@ Open primary acquisition evidence, then run date and pre-announcement signal wor
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0031-ACQUIRED-MYOK-ADJ-001`
+  - type: ADJUDICATION_NOTE
+  - status: ADJUDICATED
+  - filing: 8-K 2020-10-05
+  - source: https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001552451&type=8-K&dateb=&owner=include&count=40
+  - supports: had_prior_process_signal
+  - excerpt: No excerpt.
 
 ## Queue Queries
 

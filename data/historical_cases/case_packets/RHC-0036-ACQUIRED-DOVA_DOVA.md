@@ -5,15 +5,15 @@
 - Company: Dova Pharmaceuticals
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
-- Recommended status: KEEP_CANDIDATE
-- Workflow completeness score: 20/100
+- Recommended status: PARTIAL_READY
+- Workflow completeness score: 40/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 1
-- Acquisition evidence status: NOT_STARTED
+- Source evidence rows: 4
+- Acquisition evidence status: SOURCE_BACKED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
 - Proxy source URL: not available
@@ -45,7 +45,6 @@
 
 ## Missing Fields
 
-- core acquisition evidence
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -54,10 +53,31 @@
 
 ## Recommended Next Action
 
-Open primary acquisition evidence, then run date and pre-announcement signal workflows.
+Run acquisition_background_extractor.py or manually capture proxy/Schedule 14D-9 background section.
 
 ## Source Evidence Rows
 
+- `DOVA-2021-001-SRC-001`
+  - type: 8K_SA
+  - status: VERIFY_REQUIRED
+  - filing: 8-K
+  - source: VERIFY_REQUIRED
+  - supports: observation_date|signal_type|had_prior_process_signal
+  - excerpt: Expected check: any SA or banker 8-K before Sobi merger announcement
+- `DOVA-2021-001-SRC-002`
+  - type: 8K_MERGER
+  - status: VERIFIED
+  - filing: 8-K 2019-10-03
+  - source: https://www.sec.gov/Archives/edgar/data/1685071/000110465919052965/a19-19184_38k.htm
+  - supports: deal_date|deal_price_per_share|acquirer|outcome|deal_value_M
+  - excerpt: Swedish Orphan Biovitrum AB (publ)...Dragonfly Acquisition Corp...Merger Agreement provides that Purchaser will commence a tender offer...$27.50 per Share...plus one non-transferable contractual contingent value right
+- `DOVA-2021-001-SRC-003`
+  - type: PRICE_DATA
+  - status: VERIFY_REQUIRED
+  - filing:
+  - source: https://finance.yahoo.com/quote/DOVA/history/
+  - supports: price_at_signal|price_30d_after|price_90d_after|price_180d_after
+  - excerpt: price_at_signal on confirmed observation_date
 - `RHC-0036-ACQUIRED-DOVA-ADJ-001`
   - type: ADJUDICATION_NOTE
   - status: ADJUDICATED

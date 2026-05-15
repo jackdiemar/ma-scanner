@@ -14,13 +14,12 @@
   "case_id": "RHC-0031-ACQUIRED-MYOK",
   "company_name": "MyoKardia, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2020",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "Bloomberg pre-announcement report suspected before Oct 5, 2020 BMS deal. Media reports count if published before announcement and source-backed.",
+        "notes": "EDGAR research confirmed: no pre-announcement SA filing, no Rule 425 or SC14D9C before Oct 5, no EDGAR-sourced evidence of Bloomberg article before announcement. SC14D9C and SC TO-C both filed Oct 5 (announcement day). Entire process private. Bloomberg scoop hypothesis cannot be source-backed within adjudication standard.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0031-ACQUIRED-MYOK-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "",
+      "filing_date": "2020-10-05",
+      "filing_type": "8-K",
+      "notes": "[NONE_FOUND] No pre-announcement SA filing, no Rule 425/SC14D9C before Oct 5 2020, no EDGAR evidence of Bloomberg article. SC14D9C and SC TO-C both filed Oct 5 (announcement day). Bloomberg scoop hypothesis cannot be source-backed within adjudication standard. DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE.",
+      "source_name": "MYOK_EDGAR_research",
+      "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001552451&type=8-K&dateb=&owner=include&count=40",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "MYOK",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

@@ -14,13 +14,12 @@
   "case_id": "RHC-0043-ACQUIRED-TRIL",
   "company_name": "Trillium Therapeutics Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2021",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "PRIVATE_BACKGROUND_ONLY": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "PRIVATE_BACKGROUND_ONLY",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "Pfizer equity investments in Trillium publicly disclosed; investment agreements may include company-level ROFR or option.",
+        "notes": "EDGAR research confirmed: Pfizer $25M registered direct equity investment (Sept 8 2020 acc 0001062993-20-004396) publicly disclosed; Pfizer CSO joined SAB. No ROFR, no acquisition option, no strategic collaboration agreement with company-level rights -- plain financial investment. Acquisition process was entirely private. Source: TRIL 6-K acc 0001062993-20-004396.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "PRIVATE_BACKGROUND_ONLY",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0043-ACQUIRED-TRIL-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "TRILLIUM THERAPEUTICS ANNOUNCES $25 MILLION EQUITY INVESTMENT FROM PFIZER INC. Pfizer invests $25 million in Trillium common shares at $10.88 per share...The common shares were offered and sold to Pfizer Inc. in a registered direct offering conducted without an underwriter or placement agent.",
+      "filing_date": "2020-09-09",
+      "filing_type": "6-K",
+      "notes": "[NONE_FOUND] Pfizer $25M registered direct equity investment publicly disclosed (Sept 8 2020 6-K acc 0001062993-20-004396). Pfizer CSO joined SAB. Plain financial investment -- no ROFR, no acquisition option, no strategic collaboration with company-level rights. Acquisition process entirely private. PRIVATE_BACKGROUND_ONLY confirmed.",
+      "source_name": "TRIL_6K_Pfizer_investment_research",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1616212/000106299320004396/exhibit99-1.htm",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "TRIL",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

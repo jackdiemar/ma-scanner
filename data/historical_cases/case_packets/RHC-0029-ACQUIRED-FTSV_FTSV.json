@@ -14,13 +14,12 @@
   "case_id": "RHC-0029-ACQUIRED-FTSV",
   "company_name": "Forty Seven, Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2020",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "PRIVATE_BACKGROUND_ONLY": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "PRIVATE_BACKGROUND_ONLY",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "Gilead equity investment + research collaboration (2018) publicly disclosed; collaboration agreement exhibit in 8-K may include company-level ROFR or option.",
+        "notes": "EDGAR research confirmed: no public ROFR or acquisition option. Gilead engaged in private partnership discussions since summer 2018 under mutual confidentiality agreements. Acquisition offer arrived privately Jan 31 2020 per SC 14D-9 background. No public process signal before Mar 2 2020 announcement. Source: FTSV SC 14D-9 acc 0001047469-20-001349.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "PRIVATE_BACKGROUND_ONLY",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0029-ACQUIRED-FTSV-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "senior management engaged in discussions regarding potential partnerships with global pharmaceutical companies, including Gilead, Party X, Party Y and Party Z, since summer 2018, which discussions continued through 2020. The Company conducted these discussions and provided due diligence materials to potential partners pursuant to mutual confidentiality agreements",
+      "filing_date": "2020-03-10",
+      "filing_type": "SC 14D-9",
+      "notes": "[NONE_FOUND] SC 14D-9 background confirms all Gilead discussions were private partnership talks under confidentiality agreements. No ROFR, no public acquisition option. First acquisition offer Jan 31 2020 (private). PRIVATE_BACKGROUND_ONLY confirmed.",
+      "source_name": "FTSV_SC14D9_background_research",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1667633/000104746920001349/a2240913zsc14d9.htm",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "FTSV",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

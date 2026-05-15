@@ -249,6 +249,8 @@ def status_from_adjudication(rows: list[dict[str, str]]) -> str:
         return 'ASSET_SPECIFIC_RIGHTS_ONLY'
     if classes.get('RIGHTS_LANGUAGE_ONLY') and len(classes) == 1:
         return 'RIGHTS_LANGUAGE_ONLY'
+    if classes.get('DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE') and len(classes) == 1:
+        return 'DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE'
     return 'FALSE_POSITIVE'
 
 

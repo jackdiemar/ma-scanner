@@ -14,13 +14,12 @@
   "case_id": "RHC-0045-ACQUIRED-XLRN",
   "company_name": "Acceleron Pharma Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2021",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "ASSET_SPECIFIC_RIGHTS_ONLY": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "ASSET_SPECIFIC_RIGHTS_ONLY",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "BMS had collaboration with Acceleron for sotatercept; collaboration agreement may include ROFR or company-level option. BMS reportedly attempted to acquire Acceleron before Merck.",
+        "notes": "EDGAR research confirmed: BMS right of first negotiation publicly disclosed in XLRN 10-K (acc 0001280600-21-000017). However right is ASSET-SPECIFIC -- covers only Acceleron rights to develop/commercialize sotatercept in the pulmonary hypertension (PH) field. Not a company-level acquisition right. Merck acquirer (not BMS) paid $180/share. Asset-specific ROFN does not constitute whole-company process signal. Source: XLRN 10-K 2020 p.85542.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "ASSET_SPECIFIC_RIGHTS_ONLY",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0045-ACQUIRED-XLRN-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "We have the right to license, transfer or sell our rights to develop and commercialize sotatercept in the PH field, subject to BMS's right of first negotiation.",
+      "filing_date": "2021-02-25",
+      "filing_type": "10-K",
+      "notes": "[ASSET_SPECIFIC] BMS right of first negotiation publicly disclosed in XLRN 10-K (acc 0001280600-21-000017). RIGHT IS ASSET-SPECIFIC: covers only Acceleron sotatercept rights in pulmonary hypertension (PH) field. Not company-level. Acquirer was Merck (not BMS) at $180/share. Asset-specific ROFN does not constitute whole-company process signal. ASSET_SPECIFIC_RIGHTS_ONLY.",
+      "source_name": "XLRN_10K_BMS_ROFN_research",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1280600/000128060021000017/xlrn-20201231.htm",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "XLRN",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

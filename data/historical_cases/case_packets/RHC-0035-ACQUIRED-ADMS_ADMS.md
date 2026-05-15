@@ -6,13 +6,13 @@
 - Likely outcome type: ACQUIRED
 - Current status: CANDIDATE
 - Recommended status: KEEP_CANDIDATE
-- Workflow completeness score: 5/100
+- Workflow completeness score: 20/100
 - Score note: workflow completeness only. Not investment quality and not P(deal).
 - Priority: HIGH
 
 ## Evidence Status
 
-- Source evidence rows: 0
+- Source evidence rows: 1
 - Acquisition evidence status: NOT_STARTED
 - Background section status: NOT_REVIEWED
 - Background heading: not available
@@ -30,24 +30,23 @@
 
 ## Prior Signal Adjudication
 
-- Adjudication status: NEEDS_MORE_REVIEW
+- Adjudication status: DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE
 - Confirmation hit status: not available
 - Case-level true signal: FALSE
 - True prior-signal rows: 0
 - False-positive rows: 1
-- Classification counts: {"NEEDS_MORE_REVIEW": 1}
+- Classification counts: {"DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE": 1}
 - Best source URL: not available
 - Best source excerpt: not available
 
 ### Adjudicated Rows
 
--  : NEEDS_MORE_REVIEW (; )
-  - notes: Adamas likely publicly announced strategic alternatives review in 2021 before Oct 11, 2021 Supernus acquisition. SA announcement in public 8-K would be TRUE_PUBLIC_PRIOR_SIGNAL.
+-  : DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE (; )
+  - notes: EDGAR research confirmed: no public SA announcement. SC 14D-9 background confirms Supernus made unsolicited private offer Oct 14 2020 ($6.82/share, declined), second offer Nov 12 2020 ($7.25/share, declined), further offers through 2021 -- all private. No Lazard/banker public announcement. No SA review 8-K found. Source: ADMS SC 14D-9 acc 0001104659-21-129362.
 
 ## Missing Fields
 
 - core acquisition evidence
-- source evidence rows
 - background section extraction
 - prior process signal review
 - observation date candidate
@@ -60,7 +59,13 @@ Open primary acquisition evidence, then run date and pre-announcement signal wor
 
 ## Source Evidence Rows
 
-No source evidence rows found.
+- `RHC-0035-ACQUIRED-ADMS-ADJ-001`
+  - type: ADJUDICATION_NOTE
+  - status: ADJUDICATED
+  - filing: SC 14D-9 2021-10-25
+  - source: https://www.sec.gov/Archives/edgar/data/1328143/000110465921129362/tm2129361-8_sc14d9.htm
+  - supports: had_prior_process_signal
+  - excerpt: On October 14, 2020, Supernus submitted an unsolicited, non-binding indication of interest to acquire the Company for $6.82 per Share in cash...On November 2, 2020, Mr. McFarlane responded...declining the offer
 
 ## Queue Queries
 

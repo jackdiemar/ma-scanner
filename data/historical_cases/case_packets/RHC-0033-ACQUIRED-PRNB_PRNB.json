@@ -14,13 +14,12 @@
   "case_id": "RHC-0033-ACQUIRED-PRNB",
   "company_name": "Principia Biopharma Inc.",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2020",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "PRIVATE_BACKGROUND_ONLY": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "PRIVATE_BACKGROUND_ONLY",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "Sanofi collaboration (Nov 2019) publicly disclosed; collaboration agreement may include option for Sanofi to acquire Principia as a company.",
+        "notes": "EDGAR research confirmed: Sanofi License Agreement publicly disclosed but Co-Funding Option belongs to Principia (not Sanofi acquisition option). SC 14D-9 background confirms Sanofi CEO made private asset proposal May 29 2020 (~$1.5B for sotatercept assets); Principia board rejected it; full company acquisition process was entirely private. No public ROFR. Source: PRNB SC 14D-9 acc 0001193125-20-233615.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "PRIVATE_BACKGROUND_ONLY",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0033-ACQUIRED-PRNB-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "Principia and Genzyme Corporation, a wholly owned subsidiary of Sanofi, are parties to the Sanofi License Agreement. Under the Sanofi License Agreement, Principia has the option, subject to the satisfaction of certain terms and conditions, to fund a portion of the Phase 3 development costs of PRN2246/SAR442168 in return for...either a profit and loss sharing arrangement...or an additional worldwide royalty",
+      "filing_date": "2020-08-28",
+      "filing_type": "SC 14D-9",
+      "notes": "[NONE_FOUND] Sanofi License Agreement is public but Co-Funding Option belongs to Principia (not a Sanofi acquisition option). SC 14D-9 background confirms Sanofi CEO first proposed privately on May 29 2020 (~$1.5B asset purchase); board rejected; full company acquisition process entirely private until Aug 16 2020. PRIVATE_BACKGROUND_ONLY confirmed.",
+      "source_name": "PRNB_SC14D9_background_research",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1510487/000119312520233615/d161225dsc14d9.htm",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "PRNB",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }

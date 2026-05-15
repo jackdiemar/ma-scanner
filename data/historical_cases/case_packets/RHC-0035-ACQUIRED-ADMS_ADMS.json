@@ -14,13 +14,12 @@
   "case_id": "RHC-0035-ACQUIRED-ADMS",
   "company_name": "Adamas Pharmaceuticals",
   "current_status": "CANDIDATE",
-  "generated_at": "2026-05-14T14:22:44+00:00",
+  "generated_at": "2026-05-15T03:29:32+00:00",
   "likely_outcome_type": "ACQUIRED",
   "likely_outcome_year": "2021",
-  "missing_field_count": 7,
+  "missing_field_count": 6,
   "missing_fields": [
     "core acquisition evidence",
-    "source evidence rows",
     "background section extraction",
     "prior process signal review",
     "observation date candidate",
@@ -51,7 +50,7 @@
     "best_source_url": "",
     "case_level_true_signal": "FALSE",
     "classification_counts": {
-      "NEEDS_MORE_REVIEW": 1
+      "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE": 1
     },
     "confirmation_confidence": "",
     "confirmation_hit_status": "",
@@ -59,17 +58,17 @@
     "source_rows": [
       {
         "adjudicated_signal_type": "",
-        "adjudication_classification": "NEEDS_MORE_REVIEW",
+        "adjudication_classification": "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE",
         "collector_keyword_hits": "",
         "collector_signal_type": "",
-        "confidence": "MEDIUM",
+        "confidence": "HIGH",
         "filing_date": "",
         "filing_type": "",
-        "notes": "Adamas likely publicly announced strategic alternatives review in 2021 before Oct 11, 2021 Supernus acquisition. SA announcement in public 8-K would be TRUE_PUBLIC_PRIOR_SIGNAL.",
+        "notes": "EDGAR research confirmed: no public SA announcement. SC 14D-9 background confirms Supernus made unsolicited private offer Oct 14 2020 ($6.82/share, declined), second offer Nov 12 2020 ($7.25/share, declined), further offers through 2021 -- all private. No Lazard/banker public announcement. No SA review 8-K found. Source: ADMS SC 14D-9 acc 0001104659-21-129362.",
         "source_url": ""
       }
     ],
-    "status": "NEEDS_MORE_REVIEW",
+    "status": "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE",
     "true_prior_signal_rows": 0
   },
   "priority": "HIGH",
@@ -85,9 +84,23 @@
   },
   "recommended_next_action": "Open primary acquisition evidence, then run date and pre-announcement signal workflows.",
   "recommended_status": "KEEP_CANDIDATE",
-  "source_evidence_count": 0,
-  "source_evidence_rows": [],
+  "source_evidence_count": 1,
+  "source_evidence_rows": [
+    {
+      "confidence": "HIGH",
+      "evidence_id": "RHC-0035-ACQUIRED-ADMS-ADJ-001",
+      "evidence_type": "ADJUDICATION_NOTE",
+      "excerpt": "On October 14, 2020, Supernus submitted an unsolicited, non-binding indication of interest to acquire the Company for $6.82 per Share in cash...On November 2, 2020, Mr. McFarlane responded...declining the offer",
+      "filing_date": "2021-10-25",
+      "filing_type": "SC 14D-9",
+      "notes": "[NONE_FOUND] SC 14D-9 background confirms no public SA announcement. Supernus made private unsolicited offers Oct 2020 and Nov 2020 (both declined privately). Lazard retained but no public banker announcement. Entire process private from Oct 2020 to Oct 11 2021 announcement. DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE.",
+      "source_name": "ADMS_SC14D9_background_research",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1328143/000110465921129362/tm2129361-8_sc14d9.htm",
+      "supports_field": "had_prior_process_signal",
+      "verification_status": "ADJUDICATED"
+    }
+  ],
   "ticker": "ADMS",
-  "workflow_completeness_score": 5,
+  "workflow_completeness_score": 20,
   "workflow_score_note": "Workflow completeness only. Not investment quality and not P(deal)."
 }
