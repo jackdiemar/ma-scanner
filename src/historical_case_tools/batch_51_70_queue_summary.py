@@ -47,22 +47,7 @@ def int_value(value: str | None) -> int:
 
 def is_possible_hit(row: dict[str, str]) -> bool:
     status = clean(row.get("recommended_status")).upper()
-    if status and status not in {"LIKELY_NO_HIT", "NO_HIT", "CLEAN_BASELINE"}:
-        return True
-    if clean(row.get("possible_signal_type")):
-        return True
-    if clean(row.get("keyword_hits")):
-        return True
-    return False
-
-
-def case_label(row: dict[str, str]) -> str:
-    ticker = clean(row.get("ticker"))
-    case_id = clean(row.get("case_id"))
-    company = clean(row.get("company")) or clean(row.get("company_name"))
-    if company:
-        return f"{ticker} ({case_id}) - {company}"
-    return f"{ticker} ({case_id})"
+    return status == "POSSIBLE_HIT"
 
 
 def markdown_table(rows: list[dict[str, str]], columns: list[tuple[str, str]]) -> str:
@@ -110,13 +95,17 @@ def summarize() -> tuple[str, str]:
         row for row in queue_rows
         if clean(row.get("priority_tier")) == "P6"
     ]
+    for row in p6_rows:
+        case_id = clean(row.get("case_id"))
+        row["possible_hit_rows"] = str(possible_hits_by_case.get(case_id, 0))
+
     p6_with_hits = [
         row for row in p6_rows
-        if int_value(row.get("signal_hit_count")) > 0 or possible_hits_by_case.get(clean(row.get("case_id")), 0) > 0
+        if possible_hits_by_case.get(clean(row.get("case_id")), 0) > 0
     ]
     p6_true_no_hits = [
         row for row in p6_rows
-        if int_value(row.get("signal_hit_count")) == 0 and possible_hits_by_case.get(clean(row.get("case_id")), 0) == 0
+        if possible_hits_by_case.get(clean(row.get("case_id")), 0) == 0
     ]
 
     recommended_review = sorted(
@@ -151,6 +140,8 @@ Status: read-only workload summary. This script does not adjudicate cases, edit 
 - Possible-hit filing rows needing context checks: {len(possible_hit_rows)}
 - Draft source-evidence rows pending review: {len(draft_rows)}
 
+Possible-hit filing rows are counted from `batch_51_70_pre_announcement_filing_targets.csv` where `recommended_status` is `POSSIBLE_HIT`. The exception queue's `signal_hit_count` is retained as queue metadata, but it is not used to split P6 cases.
+
 ## Tier Distribution
 
 {tier_block}
@@ -168,7 +159,7 @@ Status: read-only workload summary. This script does not adjudicate cases, edit 
 
 ## P6 Cases With Hits
 
-These are still P6 cases. The hit count indicates low-value or non-adjudicated phrase workload, not a true prior signal.
+These are still P6 cases. The possible-hit rows indicate low-value or non-adjudicated phrase workload, not a true prior signal.
 
 {markdown_table(p6_with_hits, [
     ("case_id", "case_id"),
@@ -176,6 +167,7 @@ These are still P6 cases. The hit count indicates low-value or non-adjudicated p
     ("company", "company"),
     ("signal_phrase_types", "signal_phrase_types"),
     ("signal_hit_count", "signal_hit_count"),
+    ("possible_hit_rows", "possible_hit_rows"),
     ("next_action", "next_action"),
 ])}
 
@@ -210,6 +202,7 @@ This summary is a workload view only. It does not classify cases, does not promo
         f"Total filing targets: {len(target_rows)}",
         f"Total possible hits from queue: {total_queue_hits}",
         f"Possible-hit filing rows needing context checks: {len(possible_hit_rows)}",
+        "Possible-hit source: filing targets with recommended_status=POSSIBLE_HIT",
         "Tier distribution: " + ", ".join(f"{tier}={count}" for tier, count in sorted(tier_counts.items())),
         "P1/P3 cases: " + ", ".join(clean(row.get("ticker")) for row in p1_p3_rows),
         "P6 cases with hits: " + str(len(p6_with_hits)),

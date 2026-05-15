@@ -38,6 +38,7 @@ The markdown report includes:
 - Total filing targets.
 - Total possible hits from the queue.
 - Possible-hit filing rows needing context checks.
+- Source note for possible-hit rows.
 - Tier distribution.
 - P1/P3 case list.
 - P6 cases with low-value or non-adjudicated hits.
@@ -51,7 +52,9 @@ Use the output as a queue-control view before manual review:
 
 1. Review P1 cases first.
 2. Review P3 Item 4 cases next.
-3. Use P6 hit counts only as workload flags, not as signal classifications.
+3. Use P6 possible-hit row counts only as workload flags, not as signal classifications.
 4. Promote evidence into `source_evidence.csv` only after source-backed human review.
+
+`P6_WITH_HITS` and `P6_TRUE_NO_HIT` are split using `batch_51_70_pre_announcement_filing_targets.csv` rows where `recommended_status` is `POSSIBLE_HIT`. The exception queue's `signal_hit_count` is queue metadata and should not be used by itself to define true no-hit cases.
 
 The helper is intentionally narrow so it can be rerun during Batch 51-70 review without interfering with Claude's adjudication work.
