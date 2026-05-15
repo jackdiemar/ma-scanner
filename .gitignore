@@ -26,3 +26,6 @@ data/scans/scan_v12_*.json
 # Scanner run artifacts
 data/scans/legacy/
 *.tmp
+
+# Historical case source text cache (local support material)
+data/historical_cases/source_text_cache/
