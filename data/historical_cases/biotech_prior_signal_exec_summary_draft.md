@@ -1,4 +1,4 @@
-# DRAFT - Biotech Acquisition Prior-Signal Study
+# Biotech Acquisition Prior-Signal Study — Executive Summary
 
 ## Working Title
 
@@ -6,68 +6,93 @@ Public Prior Signals in Biotech Acquisitions: A 50-Case Historical Review
 
 ## One-Paragraph Thesis
 
-This study evaluates whether public filings and public reports contained observable acquisition-process signals before announced biotech acquisitions. The early pattern is not that most acquisitions are predictable. It is that a small subset of cases had public, source-backed process evidence before announcement, while many apparent signals were either private background narrative, generic rights-language noise, or asset-specific rights that should not be treated as company-level sale-process evidence. Final conclusions remain pending adjudication of the six possible-signal cases.
+This study evaluates whether public filings and public reports contained observable acquisition-process signals before announced biotech acquisitions. The pattern from 50 cases is not that most acquisitions are predictable. A small subset (3 of 50) had public, source-backed process evidence before announcement. The majority had no confirmed public prior signal. A significant minority (8 of 50) had process-like facts visible only in post-announcement deal background, not available to the market beforehand. The study also identified two distinct false-positive families: generic or asset-specific rights language that should not be counted as company-level sale-process evidence. All six POSSIBLE_SIGNAL_NEEDS_REVIEW cases have been adjudicated; none added to the true-signal count.
 
-## Current Status Distribution
+## Final Status Distribution
 
-Draft status as of the current batch artifacts:
-
-| Status | Current count | Notes |
+| Status | Count | Notes |
 |---|---:|---|
-| DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | 33 | Baseline cases with no confirmed public prior signal in current review. |
-| POSSIBLE_SIGNAL_NEEDS_REVIEW | 6 | Pending Claude adjudication: FTSV, MYOK, PRNB, ADMS, TRIL, XLRN. Counts may change. |
-| PRIVATE_BACKGROUND_ONLY | 5 | Process-like facts appear in later deal background, but were not public before announcement. |
-| TRUE_PUBLIC_PRIOR_SIGNAL | 3 | Current true-signal examples: MDVN, DMTX, TSRO. |
-| RIGHTS_LANGUAGE_ONLY | 1 | CPXX currently treated as rights-language noise. |
-| ASSET_SPECIFIC_RIGHTS_ONLY | 1 | ARRY currently treated as asset-specific rights only. |
-| DATE_MISSING | 1 | PTLA needs date backfill before interpretation. |
-
-Placeholder: update distribution after Claude completes the six possible-signal adjudications.
+| DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | 35 | No confirmed public prior signal. |
+| PRIVATE_BACKGROUND_ONLY | 8 | Process facts appear in deal background but were not public before announcement. |
+| TRUE_PUBLIC_PRIOR_SIGNAL | 3 | MDVN, DMTX, TSRO. |
+| ASSET_SPECIFIC_RIGHTS_ONLY | 2 | ARRY, XLRN. Rights limited to assets or programs, not company-level sale pathway. |
+| RIGHTS_LANGUAGE_ONLY | 1 | CPXX. Generic rights language not treated as process evidence. |
+| DATE_MISSING | 1 | PTLA. Announcement date not confirmed; excluded from adjudication. |
 
 ## True-Signal Examples
 
-**MDVN - public unsolicited proposal.** Medivation had public pre-announcement acquisition pressure from Sanofi before Pfizer's announced deal. This is the cleanest example of a public proposal/process signal that a scanner should be able to detect.
+**MDVN — public unsolicited proposal.** Medivation had public pre-announcement acquisition pressure from Sanofi disclosed in SEC filings (8-K, 10-Q, DEF 14A) beginning April 28, 2016, 116 days before Pfizer's announced deal. This is the cleanest example of an ongoing public proposal/process signal detectable in EDGAR filings before announcement.
 
-**DMTX - superior proposal / competing-bid process.** Dimension Therapeutics had public pre-announcement proposal activity before the final acquisition announcement. This supports rules that elevate superior-proposal and competing-bid language when source timing is clear.
+**DMTX — superior proposal and competing-bid process.** Dimension Therapeutics had public pre-announcement proposal activity disclosed in SEC filings beginning August 25, 2017, 39 days before the final acquisition announcement. Superior-proposal and competing-bid language appeared across DEF 14A and 8-K filings.
 
-**TSRO - public sale-process media report.** TESARO had a public pre-announcement sale-process report before the GSK deal. This should be separated from SEC-filed signals because media-source availability and timing need independent verification.
+**TSRO — public sale-process media report.** TESARO had a public pre-announcement sale-process report on November 16, 2018, 17 days before the GSK deal announcement. This signal is categorized separately from SEC-filed signals because it originated in a media report. Source availability and publication date require independent verification.
 
-## False-Positive Examples
+## False-Positive and Non-Signal Examples
 
-**CPXX - generic rights language.** The current adjudication treats CPXX as rights-language-only. The key issue is that generic right-of-first-refusal language can appear in legal representations without indicating an active company-level sale process.
+**CPXX — generic rights language.** Right-of-first-refusal language appeared in CPXX filings 69 days before the acquisition announcement. Adjudicated as RIGHTS_LANGUAGE_ONLY because the language was a generic legal representation, not whole-company process evidence.
 
-**ARRY - asset-specific rights.** The current adjudication treats ARRY as asset-specific-rights-only. The distinction is that rights attached to a product, subsidiary, territory, or asset should not be counted like a whole-company acquisition pathway.
+**ARRY and XLRN — asset-specific rights.** Both had rights-related language in SEC filings before their acquisition announcements. Both adjudicated as ASSET_SPECIFIC_RIGHTS_ONLY: the rights were limited to specific assets, programs, or therapeutic areas, not a company-level sale pathway. XLRN's BMS right of first negotiation covered sotatercept pulmonary hypertension only; the actual acquirer was Merck.
 
-## Key Learned Distinction
+**FTSV, PRNB, TRIL — private background only.** All three had process-like facts that appear in post-announcement deal background but were not publicly disclosed before announcement. Gilead-FTSV discussions were private under mutual confidentiality since summer 2018. Sanofi's private asset proposal to Principia was never publicly announced. Pfizer's $25M registered direct equity investment in Trillium was a financial investment with no ROFR or acquisition option.
 
-The core distinction is public prior signal versus private background versus rights-language noise. Public prior signals are observable before the announcement and can plausibly support process intelligence. Private background facts may explain how a deal developed, but they were not available to the market beforehand. Rights-language noise may be real contract language, but it often does not imply a company-level sale process.
+**MYOK, ADMS — no public prior signal.** Supernus's private unsolicited offers to Adamas in October and November 2020 were declined privately with no public SA announcement before the October 2021 deal. No pre-announcement public process disclosure was found for MyoKardia.
+
+## Key Distinction
+
+The core distinction is **public prior signal** versus **private background** versus **rights-language noise**.
+
+- Public prior signals are observable before the announcement in source-backed public filings or reports. They can plausibly support process intelligence.
+- Private background facts may explain how a deal developed, but they were not available to the market beforehand. They appear only after the fact in proxy or SC 14D-9 background sections.
+- Rights-language noise may be real contract language, but generic or asset-specific ROFR/ROFN language does not imply an active company-level sale process.
 
 ## What the Scanner Can Catch
 
-- Public unsolicited acquisition proposals disclosed in SEC filings.
-- Superior-proposal or competing-bid language when filed before the final announcement.
-- Public sale-process reports when the source and publication date are verified.
+- Public unsolicited acquisition proposals disclosed in SEC filings before final announcement.
+- Superior-proposal or competing-bid language filed before the final announcement, confirmed by source date.
+- Public sale-process reports when source and publication date are verified.
 - Repeated or escalating public process language across multiple filings.
-- Clear pre-announcement SEC-filed language that references acquisition proposals, strategic alternatives, or public bidder pressure.
+- Clear pre-announcement 8-K language referencing acquisition proposals, strategic alternatives, or public bidder pressure.
 
 ## What It Cannot Catch
 
 - Private outreach, negotiations, or board discussions only disclosed later in transaction-background sections.
-- Deals with no public process signal before announcement.
+- Deals with no public process signal before announcement (70% of this batch).
 - Generic legal rights language that does not create a company-level transaction pathway.
-- Asset-specific rights unless the scope clearly affects whole-company acquisition dynamics.
+- Asset-specific rights unless scope clearly affects whole-company acquisition dynamics.
 - Unverified media rumors where source timing cannot be confirmed.
 
-## Next Research Steps Before Publishing
+## False-Positive Rules (Evidence-Backed)
 
-1. Finish adjudication of FTSV, MYOK, PRNB, ADMS, TRIL, and XLRN.
-2. Refresh the status distribution and true-positive / false-positive counts.
-3. Re-run the pattern prep report after final adjudication.
-4. Separate evidence-backed scanner rules from anecdotal observations.
-5. Decide whether PTLA remains in the 50-case set or needs date repair before inclusion.
-6. Tighten examples so every claim points to a source-backed row.
+1. Generic rights language in legal representations is not process evidence.
+2. Asset-specific or program-specific ROFR/ROFN is not company-level process evidence.
+3. Post-announcement proxy or SC 14D-9 background narrative is not a prior public signal.
+4. Equity investments without acquisition options are not process signals.
+5. Private unsolicited offers that were declined without public disclosure are not prior public signals.
 
-## Why This Matters for Investors and Funds
+## Signal Timing Observations
 
-The study suggests that biotech acquisition-process intelligence is less about predicting every deal and more about filtering for the small number of situations where public evidence shows a real process before the market has fully organized around it. For funds, the value is workflow compression: fewer names, clearer process states, and stronger false-positive controls. Even if final hit rates remain modest, distinguishing public process evidence from private background and rights-language noise can improve research quality and reduce wasted diligence.
+True signals ranged from 17 to 116 days before announcement (median approximately 39 days). The media-sourced signal (TSRO, 17 days) was later-breaking than the SEC-filed signals (DMTX, 39 days; MDVN, 116 days), consistent with media reports tending to break at a later deal stage. False-positive rights-language hits extended to 496 days before announcement (ARRY), suggesting that very stale rights hits are likely noise. A freshness window of 180–365 days is directionally supported by this data.
 
+## Filing Type Findings
+
+8-K is the highest-value filing type for prior-signal detection (score=72 in this batch). 10-Q provides marginal secondary value (score=6). Media reports can carry true signals but require source verification. DEF 14A, 10-K, and SC 13D/A produced zero true signals. SC 14D-9 filings are post-announcement and cannot be prior signals themselves.
+
+## Edge Thesis
+
+The study suggests that biotech acquisition-process intelligence is not about predicting most deals. It is about filtering for the small number of situations where public evidence shows a real process before the market has fully organized around it. For a fund, the value is workflow compression: fewer names, clearer process states, and stronger false-positive controls. Even at a 6% true-signal rate in this batch, distinguishing public process evidence from private background and rights-language noise can improve research quality and reduce wasted diligence on false positives.
+
+## Data Quality Caveats
+
+- PTLA excluded from adjudication due to missing announcement date.
+- TSRO true-signal classification relies on a media report; EDGAR-only workflows would not have surfaced it without external news integration.
+- The 6% true-signal rate should be interpreted as a lower bound: the baseline candidate group may contain cases where pre-announcement public signals exist but were not captured in this batch's filing coverage.
+- This batch is US-listed small-cap biotech acquisitions 2015–2022. Results may not generalize to other sectors, deal sizes, or time periods.
+
+## Next Steps Before Scaling
+
+1. Resolve PTLA announcement date and complete adjudication.
+2. Run pattern prep after any future reclassifications.
+3. Separate evidence-backed scanner rules from anecdotal observations before live deployment.
+4. Verify that live 8-K monitoring would have surfaced MDVN and DMTX signals in real time.
+5. Consider whether external news integration is required to catch media-sourced signals like TSRO.
+6. Do not scale to 100 cases until current 50-case standards are fully preserved and documented.

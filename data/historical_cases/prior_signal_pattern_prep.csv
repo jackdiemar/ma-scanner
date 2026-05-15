@@ -27,25 +27,25 @@ RHC-0025-ACQUIRED-TSRO,TSRO,"TESARO, Inc.",TRUE_PUBLIC_PRIOR_SIGNAL,2018-12-03,2
 RHC-0026-ACQUIRED-ACHN,ACHN,Achillion Pharmaceuticals,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2020-01-15,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0027-ACQUIRED-BOLD,BOLD,"Audentes Therapeutics, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2019-12-02,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0028-ACQUIRED-DERM,DERM,Dermira,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2020-01-10,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0029-ACQUIRED-FTSV,FTSV,"Forty Seven, Inc.",PRIVATE_BACKGROUND_ONLY,2020-03-02,,,SC 14D-9,,private_background_only,NONE,Signal appears in transaction-background narrative but was not public before announcement.
 RHC-0030-ACQUIRED-MNTA,MNTA,"Momenta Pharmaceuticals, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2020-08-19,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0031-ACQUIRED-MYOK,MYOK,"MyoKardia, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2020-10-05,,,8-K,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0032-ACQUIRED-PGNX,PGNX,Progenics Pharmaceuticals,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2019-10-01,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0033-ACQUIRED-PRNB,PRNB,Principia Biopharma Inc.,PRIVATE_BACKGROUND_ONLY,2020-08-16,,,SC 14D-9,,private_background_only,NONE,Signal appears in transaction-background narrative but was not public before announcement.
 RHC-0034-ACQUIRED-PRVL,PRVL,Prevail Therapeutics Inc.,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2020-12-14,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0035-ACQUIRED-ADMS,ADMS,Adamas Pharmaceuticals,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-10-11,,,SC 14D-9,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0036-ACQUIRED-DOVA,DOVA,Dova Pharmaceuticals,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2019-09-30,,,8-K,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0037-ACQUIRED-DRNA,DRNA,"Dicerna Pharmaceuticals, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-11-17,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0038-ACQUIRED-FLXN,FLXN,Flexion Therapeutics,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-10-11,,,8-K,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0039-ACQUIRED-FPRX,FPRX,"Five Prime Therapeutics, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-03-04,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0040-ACQUIRED-GWPH,GWPH,GW Pharmaceuticals plc,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-02-03,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0041-ACQUIRED-PAND,PAND,Pandion Therapeutics,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-02-24,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0043-ACQUIRED-TRIL,TRIL,Trillium Therapeutics Inc.,PRIVATE_BACKGROUND_ONLY,2021-08-23,,,6-K,,private_background_only,NONE,Signal appears in transaction-background narrative but was not public before announcement.
 RHC-0044-ACQUIRED-VIE,VIE,"Viela Bio, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2021-01-31,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
+RHC-0045-ACQUIRED-XLRN,XLRN,Acceleron Pharma Inc.,ASSET_SPECIFIC_RIGHTS_ONLY,2021-09-29,,,10-K,,asset_specific_rights,NONE,"Rights signal appears limited to an asset or program, not a company-level sale process."
 RHC-0046-ACQUIRED-ATRS,ATRS,Antares Pharma,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2022-04-12,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0047-ACQUIRED-AVEO,AVEO,AVEO Oncology,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2022-10-18,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0048-ACQUIRED-BHVN,BHVN,Biohaven Pharmaceutical Holding Company Ltd.,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2022-05-09,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0049-ACQUIRED-CCXI,CCXI,"ChemoCentryx, Inc.",DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2022-08-03,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
 RHC-0050-ACQUIRED-CMPI,CMPI,Checkmate Pharmaceuticals,DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE,2022-04-18,,,,,no_public_prior_signal,NONE,No public prior signal currently identified in batch result.
-RHC-0029-ACQUIRED-FTSV,FTSV,"Forty Seven, Inc.",POSSIBLE_SIGNAL_NEEDS_REVIEW,2020-03-02,,,,,rights_language,LOW,Still needs manual review; current keyword basis: unclear.
-RHC-0031-ACQUIRED-MYOK,MYOK,"MyoKardia, Inc.",POSSIBLE_SIGNAL_NEEDS_REVIEW,2020-10-05,,,,,sale_process_media_report,HIGH,Still needs manual review; current keyword basis: unclear.
-RHC-0033-ACQUIRED-PRNB,PRNB,Principia Biopharma Inc.,POSSIBLE_SIGNAL_NEEDS_REVIEW,2020-08-16,,,,,unclear,MEDIUM,Still needs manual review; current keyword basis: unclear.
-RHC-0035-ACQUIRED-ADMS,ADMS,Adamas Pharmaceuticals,POSSIBLE_SIGNAL_NEEDS_REVIEW,2021-10-11,,,,,unclear,MEDIUM,Still needs manual review; current keyword basis: unclear.
-RHC-0043-ACQUIRED-TRIL,TRIL,Trillium Therapeutics Inc.,POSSIBLE_SIGNAL_NEEDS_REVIEW,2021-08-23,,,,,rights_language,LOW,Still needs manual review; current keyword basis: unclear.
-RHC-0045-ACQUIRED-XLRN,XLRN,Acceleron Pharma Inc.,POSSIBLE_SIGNAL_NEEDS_REVIEW,2021-09-29,,,,,rights_language,LOW,Still needs manual review; current keyword basis: unclear.
 RHC-0042-ACQUIRED-PTLA,PTLA,Portola Pharmaceuticals,DATE_MISSING,,,,,,unclear,NONE,Announcement date missing; timing and prior-signal interpretation are incomplete.
