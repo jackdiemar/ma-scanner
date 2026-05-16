@@ -23,7 +23,10 @@ Generated: 2026-05-16
 | review_required_cases | 11 |
 | clean_likely_no_hit_cases | 5 |
 | blocked_missing_date_cases | 10 |
-| next_recommended_step | manual adjudication of batch_71_100_adjudication_queue.md |
+| next_recommended_step | resolve 10 blocked cases (date lookup) then proceed to batch_101_130 |
+| adjudication_status | COMPLETE (16 dated cases) |
+| true_prior_signals_this_batch | 0 |
+| cumulative_signal_rate | 3/86 (3.5%) |
 
 ---
 
@@ -123,6 +126,39 @@ No failures caused by batch_71_100. New batch_71_100 rows generate WARN (MEDIUM 
 
 ---
 
+## 4b. Adjudication Results
+
+| Metric | Value |
+|---|---|
+| Adjudication date | 2026-05-16 |
+| Cases adjudicated | 16 (11 review + 5 spot-check) |
+| Cases blocked (no date) | 10 |
+| TRUE_PUBLIC_PRIOR_SIGNAL | 0 |
+| DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | 16 |
+| Total false-positive hits | 25 |
+
+### False-Positive Pattern Breakdown
+
+| Pattern | Hits |
+|---|---|
+| Securities offering prospectus disclaimer | 5 |
+| Asset-specific ROFN/ROFR | 7 |
+| Director biography | 3 |
+| Performance condition equity award boilerplate | 3 |
+| Partner equity stake divestiture | 2 |
+| Wrong-direction acquisition | 2 |
+| Anti-takeover provision disclosure | 1 |
+| ROFR warranty (negative statement) | 1 |
+| UUEncoded binary artifact | 1 |
+
+### Adjudication Files
+
+- `batch_71_100_adjudication_results.csv`
+- `batch_71_100_adjudication_working_summary.md`
+- `batch_71_100_adjudication_report.md`
+
+---
+
 ## 5. Files Written
 
 - `batch_71_100_date_prefill_queue.csv`
@@ -141,6 +177,9 @@ No failures caused by batch_71_100. New batch_71_100 rows generate WARN (MEDIUM 
 - `batch_71_100_review_packet.md`
 - `batch_71_100_adjudication_queue.md`
 - `batch_71_100_package_report.md`
+- `batch_71_100_adjudication_results.csv`
+- `batch_71_100_adjudication_working_summary.md`
+- `batch_71_100_adjudication_report.md`
 
 ---
 

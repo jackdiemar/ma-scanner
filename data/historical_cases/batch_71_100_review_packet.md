@@ -1,8 +1,8 @@
 # Batch 71–100 Manual Review Packet
 
 Generated: 2026-05-16 (updated post-EDGAR filing collection)
-Status: Review preparation only. No cases adjudicated by this system.
-All classifications must be made by a human researcher.
+Updated: 2026-05-16 (adjudication complete for 16 dated cases)
+Status: ADJUDICATION COMPLETE — 16 dated cases finalized. 10 blocked cases pending date resolution.
 
 ---
 
@@ -19,6 +19,9 @@ All classifications must be made by a human researcher.
 | Cases flagged for manual review | 11 |
 | Likely clean no-hit cases | 5 |
 | True prior signal rate through case 70 | 3/70 (4.3%) |
+| TRUE_PUBLIC_PRIOR_SIGNAL (this batch) | 0 |
+| Cumulative signal rate (cases 1–86) | 3/86 (3.5%) |
+| Adjudication status | COMPLETE (dated cases) |
 
 ---
 
@@ -239,3 +242,31 @@ Do not proceed if any of these apply:
 - Marking VERIFIED or CALIBRATION_ELIGIBLE
 - Changing any of the first 70 classifications
 - Running the full live scanner
+
+---
+
+## 13. Adjudication Outcomes (2026-05-16)
+
+All 16 dated cases adjudicated. Zero TRUE_PUBLIC_PRIOR_SIGNAL.
+
+| Ticker | Final Classification | False-Positive Pattern |
+|---|---|---|
+| SGEN | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Binary artifact + defined term in license exhibit |
+| TBIO | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Asset-specific license option (pathogen licenses) |
+| VSTM | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | ROFR warranty (negative) + offering disclaimer |
+| LBPH | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Offering disclaimer + asset-specific ROFN (LP659) |
+| G1T | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | G1T's own ROFN on outbound-licensed compound |
+| HZNP | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | S-8 boilerplate + wrong-direction acquisition |
+| SNDX | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Partner equity stake divestiture |
+| STML | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Director bio + performance condition boilerplate |
+| MRTX | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | S-8 equity plan boilerplate |
+| ALBO | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Anti-takeover provision prospectus disclosure |
+| CHMA | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Director biography (advisory career) |
+| CNST | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | No signal hits |
+| FUSN | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | No signal hits |
+| KROS | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | No signal hits |
+| KRTX | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | No signal hits |
+| MORF | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | No signal hits |
+
+Full per-hit detail: `batch_71_100_adjudication_results.csv`
+Narrative: `batch_71_100_adjudication_report.md`

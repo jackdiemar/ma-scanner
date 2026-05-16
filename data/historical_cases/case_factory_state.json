@@ -1,6 +1,6 @@
 {
   "target_case_count": 200,
-  "current_case_count": 70,
+  "current_case_count": 86,
   "batches_created": [
     {
       "batch_name": "first_50",
@@ -21,25 +21,40 @@
       "true_prior_signal_count": 0,
       "combined_signal_rate": "0/20 (0%)",
       "summary_file": "data/historical_cases/batch_51_70_final_summary.md"
+    },
+    {
+      "batch_name": "batch_71_100",
+      "start": 71,
+      "end": 100,
+      "status": "adjudicated_partial",
+      "adjudicated_date": "2026-05-16",
+      "candidates": 26,
+      "dated_cases_adjudicated": 16,
+      "blocked_cases": 10,
+      "true_prior_signal_count": 0,
+      "combined_signal_rate": "0/16 (0%)",
+      "package_report": "data/historical_cases/batch_71_100_package_report.md",
+      "adjudication_report": "data/historical_cases/batch_71_100_adjudication_report.md",
+      "note": "10 cases still blocked (no announcement date). Resolve before finalizing batch."
     }
   ],
-  "last_completed_case_number": 70,
+  "last_completed_case_number": 86,
   "candidates_selected": 26,
   "dates_backfilled": 7,
   "filings_collected": 4,
   "exception_queues_created": 6,
   "manual_review_packets_created": 4,
-  "finalized_cases": 70,
-  "blocked_cases": 0,
+  "finalized_cases": 86,
+  "blocked_cases": 10,
   "unresolved_cases": 0,
   "combined_true_prior_signal_count": 3,
-  "combined_signal_rate": "3/70 (4.3%)",
+  "combined_signal_rate": "3/86 (3.5%)",
   "latest_reports": {
     "50_case_summary": "data/historical_cases/biotech_prior_signal_50_case_final_summary.md",
     "batch_51_70_summary": "data/historical_cases/batch_51_70_final_summary.md",
     "universe_report": "data/historical_cases/five_year_acquisition_universe_report.md"
   },
   "last_run_timestamp": "2026-05-16T22:15:24.364193+00:00",
-  "last_completed_step": "adjudication_queue_batch_71_100",
-  "next_recommended_step": "manual_adjudication_batch_71_100_adjudication_queue"
+  "last_completed_step": "adjudication_complete_batch_71_100",
+  "next_recommended_step": "resolve_blocked_dates_batch_71_100_then_batch_101_130"
 }

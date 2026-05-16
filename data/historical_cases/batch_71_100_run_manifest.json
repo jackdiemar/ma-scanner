@@ -112,8 +112,43 @@
       "status": "PASS",
       "output": "batch_71_100_adjudication_queue.md",
       "ranked_cases": 11
+    },
+    {
+      "step": "adjudication",
+      "status": "COMPLETE",
+      "adjudication_date": "2026-05-16",
+      "cases_adjudicated": 16,
+      "cases_blocked": 10,
+      "true_public_prior_signals": 0,
+      "deal_announcement_baseline": 16,
+      "false_positive_hits_resolved": 25,
+      "outputs": [
+        "batch_71_100_adjudication_results.csv",
+        "batch_71_100_adjudication_working_summary.md",
+        "batch_71_100_adjudication_report.md"
+      ]
     }
   ],
+  "adjudication_summary": {
+    "adjudication_started": "2026-05-16",
+    "adjudication_complete": true,
+    "cases_adjudicated": 16,
+    "cases_blocked": 10,
+    "true_public_prior_signals": 0,
+    "deal_announcement_baseline": 16,
+    "false_positive_patterns": {
+      "securities_offering_disclaimer": 5,
+      "asset_specific_rofn_rofr": 7,
+      "director_bio": 3,
+      "performance_condition_boilerplate": 3,
+      "partner_equity_stake_divestiture": 2,
+      "wrong_direction_acquisition": 2,
+      "antitakeover_provision_disclosure": 1,
+      "rofr_warranty_negative": 1,
+      "binary_artifact": 1
+    },
+    "cumulative_signal_rate": "3/86 (3.5%)"
+  },
   "files_written": [
     "batch_71_100_date_prefill_queue.csv",
     "batch_71_100_date_prefill_report.md",
@@ -130,7 +165,10 @@
     "batch_71_100_source_evidence_draft_report.md",
     "batch_71_100_review_packet.md",
     "batch_71_100_adjudication_queue.md",
-    "batch_71_100_package_report.md"
+    "batch_71_100_package_report.md",
+    "batch_71_100_adjudication_results.csv",
+    "batch_71_100_adjudication_working_summary.md",
+    "batch_71_100_adjudication_report.md"
   ],
   "safety": {
     "no_adjudication": true,
