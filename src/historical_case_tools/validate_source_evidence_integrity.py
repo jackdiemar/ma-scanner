@@ -22,9 +22,14 @@ import re
 import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable
+
+from case_factory_schema import (
+    detect_column,
+    normalize_ticker as schema_normalize_ticker,
+    parse_iso_date,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -105,14 +110,7 @@ def read_csv_data(path: Path) -> CsvData:
 
 
 def first_field(fieldnames: Iterable[str], candidates: tuple[str, ...]) -> str:
-    exact = {field: field for field in fieldnames}
-    lower = {field.lower(): field for field in fieldnames}
-    for candidate in candidates:
-        if candidate in exact:
-            return exact[candidate]
-        if candidate.lower() in lower:
-            return lower[candidate.lower()]
-    return ""
+    return detect_column({field: "" for field in fieldnames}, list(candidates)) or ""
 
 
 def fields_with_hint(fieldnames: Iterable[str], hints: tuple[str, ...]) -> list[str]:
@@ -136,7 +134,7 @@ def case_id(row: Row, fieldnames: Iterable[str]) -> str:
 
 
 def ticker(row: Row, fieldnames: Iterable[str]) -> str:
-    return upper(value(row, TICKER_FIELDS, fieldnames))
+    return schema_normalize_ticker(value(row, TICKER_FIELDS, fieldnames))
 
 
 def source_url(row: Row, fieldnames: Iterable[str]) -> str:
@@ -170,13 +168,7 @@ def valid_url(url: str) -> bool:
 def valid_date(value_: str) -> bool:
     if not value_:
         return True
-    if not DATE_RE.match(value_):
-        return False
-    try:
-        datetime.strptime(value_, "%Y-%m-%d")
-    except ValueError:
-        return False
-    return True
+    return bool(DATE_RE.match(value_) and parse_iso_date(value_))
 
 
 def date_year(value_: str) -> int | None:

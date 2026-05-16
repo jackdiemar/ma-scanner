@@ -21,6 +21,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from case_factory_schema import detect_column, normalize_ticker as schema_normalize_ticker
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 HISTORICAL_DIR = REPO_ROOT / "data" / "historical_cases"
@@ -102,7 +104,7 @@ def clean(value: Any) -> str:
 
 
 def normalize_ticker(value: Any) -> str:
-    return clean(value).upper()
+    return schema_normalize_ticker(clean(value))
 
 
 def normalize_case_id(value: Any) -> str:
@@ -112,15 +114,8 @@ def normalize_case_id(value: Any) -> str:
 def first_present_field(fieldnames: Iterable[str] | None, candidates: tuple[str, ...]) -> str:
     if not fieldnames:
         return ""
-    field_set = {field.strip(): field for field in fieldnames}
-    for candidate in candidates:
-        if candidate in field_set:
-            return field_set[candidate]
-    lower_map = {field.strip().lower(): field for field in fieldnames}
-    for candidate in candidates:
-        if candidate.lower() in lower_map:
-            return lower_map[candidate.lower()]
-    return ""
+    detected = detect_column({field: "" for field in fieldnames}, list(candidates))
+    return detected or ""
 
 
 def read_csv_file(spec: FileSpec, path: Path) -> ExtractedFile:
