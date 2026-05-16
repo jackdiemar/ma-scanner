@@ -25,10 +25,10 @@
   ],
   "last_completed_case_number": 70,
   "candidates_selected": 26,
-  "dates_backfilled": 2,
-  "filings_collected": 0,
-  "exception_queues_created": 2,
-  "manual_review_packets_created": 0,
+  "dates_backfilled": 3,
+  "filings_collected": 1,
+  "exception_queues_created": 3,
+  "manual_review_packets_created": 1,
   "finalized_cases": 70,
   "blocked_cases": 0,
   "unresolved_cases": 0,
@@ -39,7 +39,7 @@
     "batch_51_70_summary": "data/historical_cases/batch_51_70_final_summary.md",
     "universe_report": "data/historical_cases/five_year_acquisition_universe_report.md"
   },
-  "last_run_timestamp": "2026-05-16T15:37:54.945104+00:00",
-  "last_completed_step": "exception-queue_batch_71_100",
-  "next_recommended_step": "source-evidence_batch_71_100"
+  "last_run_timestamp": "2026-05-16T15:53:50.122965+00:00",
+  "last_completed_step": "batch_package_batch_71_100",
+  "next_recommended_step": "manual_adjudication_batch_71_100"
 }

@@ -178,6 +178,260 @@ def _write_staging_candidates_csv(
     return staging_path
 
 
+# ---------------------------------------------------------------------------
+# --run-batch-package helpers
+# ---------------------------------------------------------------------------
+
+_CONFIRMATION_RESULTS_FIELDS = [
+    "case_id", "ticker", "company_name", "acquisition_announcement_date",
+    "search_window_start", "search_window_end", "searched_signal_types",
+    "strategic_alternatives_hit", "banker_advisor_hit", "activist_13d_hit",
+    "competing_bid_hit", "rofr_rofn_hit", "public_process_hit",
+    "hit_status", "best_source_url", "best_source_excerpt",
+    "confidence", "next_action", "notes",
+]
+
+_DATES_CSV = REPO_ROOT / "data" / "historical_cases" / "acquisition_announcement_dates.csv"
+
+
+def _check_dates_gate(
+    queue_rows: list[dict[str, str]],
+    dates_csv: Path = _DATES_CSV,
+) -> tuple[dict[str, str], list[str]]:
+    """Return (dates_found, missing_tickers) for batch candidates vs announcement dates CSV."""
+    batch_tickers = {r["ticker"] for r in queue_rows}
+    date_map: dict[str, str] = {}
+    if dates_csv.exists():
+        for row in read_csv(dates_csv):
+            tk = row.get("ticker", "")
+            conf = row.get("confidence", "").upper()
+            dt = row.get("acquisition_announcement_date", "").strip()
+            if tk in batch_tickers and dt and conf in {"HIGH", "MEDIUM"}:
+                date_map[tk] = dt
+    missing = [r["ticker"] for r in queue_rows if r["ticker"] not in date_map]
+    return date_map, missing
+
+
+def _write_confirmation_results_staging(
+    hdir: Path,
+    label: str,
+    queue_rows: list[dict[str, str]],
+    dates_found: dict[str, str],
+) -> Path:
+    """Write batch-specific prior_signal_confirmation_results staging for filing collector."""
+    import csv as _csv
+    staging_path = hdir / f"{label}_confirmation_results_staging.csv"
+    rows = []
+    for r in queue_rows:
+        tk = r.get("ticker", "")
+        dt = dates_found.get(tk, "")
+        search_start = ""
+        if dt:
+            try:
+                search_start = f"{int(dt[:4]) - 2}-01-01"
+            except (ValueError, IndexError):
+                pass
+        rows.append({
+            "case_id":                      r.get("candidate_id", "") or f"RHC-BATCH-{tk}",
+            "ticker":                       tk,
+            "company_name":                 r.get("company", ""),
+            "acquisition_announcement_date": dt,
+            "search_window_start":          search_start,
+            "search_window_end":            dt,
+            "searched_signal_types":        "strategic_alternatives|banker_advisor|activist_13d|competing_bid|rofr_rofn|public_process",
+            "strategic_alternatives_hit":   "",
+            "banker_advisor_hit":           "",
+            "activist_13d_hit":             "",
+            "competing_bid_hit":            "",
+            "rofr_rofn_hit":               "",
+            "public_process_hit":           "",
+            "hit_status":                   "NEEDS_MANUAL_REVIEW" if dt else "DATE_OR_CIK_BLOCKED",
+            "best_source_url":              "",
+            "best_source_excerpt":          "",
+            "confidence":                   "LOW",
+            "next_action":                  (
+                "Run EDGAR queries manually and record hit/no-hit evidence."
+                if dt else "Resolve announcement date before filing collection."
+            ),
+            "notes":                        f"Batch package staging. Year={r.get('announcement_year', '')}.",
+        })
+    staging_path.parent.mkdir(parents=True, exist_ok=True)
+    with staging_path.open("w", newline="", encoding="utf-8") as f:
+        writer = _csv.DictWriter(
+            f, fieldnames=_CONFIRMATION_RESULTS_FIELDS,
+            extrasaction="ignore", lineterminator="\n",
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+    return staging_path
+
+
+def _write_proposed_baselines_csv(
+    hdir: Path,
+    label: str,
+    exception_rows: list[dict[str, str]],
+) -> tuple[Path, int]:
+    """Write proposed DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE rows from PENDING/P6 tier cases."""
+    import csv as _csv
+    out_path = hdir / f"{label}_proposed_clean_baselines.csv"
+    fields = ["case_id", "ticker", "priority_tier", "priority_reason",
+              "proposed_classification", "rationale"]
+    baseline_tiers = {"PENDING_FILING_COLLECTION", "P6"}
+    rows = [
+        {
+            "case_id":                  r.get("case_id", ""),
+            "ticker":                   r.get("ticker", ""),
+            "priority_tier":            r.get("priority_tier", ""),
+            "priority_reason":          r.get("priority_reason", ""),
+            "proposed_classification":  "DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE",
+            "rationale":                (
+                "No prior public signal evidence at exception-queue stage. "
+                "Proposed baseline — researcher must confirm before finalizing."
+            ),
+        }
+        for r in exception_rows
+        if r.get("priority_tier", "") in baseline_tiers
+    ]
+    with out_path.open("w", newline="", encoding="utf-8") as f:
+        writer = _csv.DictWriter(f, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    return out_path, len(rows)
+
+
+def _write_package_report(
+    hdir: Path,
+    label: str,
+    start: int,
+    end: int,
+    limit: int,
+    steps_log: list[dict],
+    files_written: list[str],
+    dry_run: bool,
+    n_found: int,
+    n_missing: int,
+    gate_passed: bool,
+) -> "Path | None":
+    rpt_path = hdir / f"{label}_package_report.md"
+    if dry_run:
+        print(f"  [DRY RUN] Would write {rpt_path.name}")
+        return None
+
+    lines = [
+        f"# {label.replace('_', ' ').title()} Package Report",
+        "",
+        f"Generated: {RUN_DATE}",
+        "",
+        "---",
+        "",
+        "## 1. Scope",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+        f"| Batch | {label} |",
+        f"| Cases | {start}–{end} ({limit} target) |",
+        f"| Run date | {RUN_DATE} |",
+        f"| Dry run | {dry_run} |",
+        f"| Dates confirmed | {n_found} / {limit} |",
+        f"| Dates missing | {n_missing} |",
+        f"| Date gate | {'PASS' if gate_passed and n_missing == 0 else 'PARTIAL' if gate_passed else 'BLOCKED'} |",
+        "",
+        "---",
+        "",
+        "## 2. Step Results",
+        "",
+        "| Step | Status | Notes |",
+        "|---|---|---|",
+    ]
+    for s in steps_log:
+        note_parts = [f"{k}={v}" for k, v in s.items() if k not in {"step", "status"}]
+        lines.append(f"| {s.get('step', '')} | {s.get('status', '')} | {'; '.join(note_parts)} |")
+
+    lines += [
+        "",
+        "---",
+        "",
+        "## 3. Files Written",
+        "",
+    ]
+    for fp in files_written:
+        lines.append(f"- `{Path(fp).name}`")
+
+    lines += [
+        "",
+        "---",
+        "",
+        "## 4. Safety Constraints",
+        "",
+        "- No cases adjudicated.",
+        "- No VERIFIED flag set.",
+        "- No CALIBRATION_ELIGIBLE flag set.",
+        "- No live API calls made.",
+        "- No live scanner run.",
+        "- No first-70 classifications changed.",
+        "- `source_evidence.csv` not written by this pipeline.",
+    ]
+
+    rpt_path.parent.mkdir(parents=True, exist_ok=True)
+    rpt_path.write_text("\n".join(lines) + "\n")
+    return rpt_path
+
+
+def _write_run_manifest(
+    hdir: Path,
+    label: str,
+    start: int,
+    end: int,
+    limit: int,
+    steps_log: list[dict],
+    files_written: list[str],
+    dry_run: bool,
+    allow_date_backfill: bool,
+    allow_filing_collection: bool,
+    allow_clean_baseline_autofinalize: bool,
+    gate_passed: bool,
+    n_found: int,
+    n_missing: int,
+) -> "Path | None":
+    import json as _json
+    manifest_path = hdir / f"{label}_run_manifest.json"
+    if dry_run:
+        print(f"  [DRY RUN] Would write {manifest_path.name}")
+        return None
+
+    manifest = {
+        "batch": label,
+        "start": start,
+        "end": end,
+        "limit": limit,
+        "run_date": RUN_DATE,
+        "dry_run": dry_run,
+        "flags": {
+            "allow_date_backfill": allow_date_backfill,
+            "allow_filing_collection": allow_filing_collection,
+            "allow_clean_baseline_autofinalize": allow_clean_baseline_autofinalize,
+        },
+        "gate_summary": {
+            "dates_found": n_found,
+            "dates_missing": n_missing,
+            "gate_passed": gate_passed,
+        },
+        "steps": steps_log,
+        "files_written": [Path(fp).name for fp in files_written],
+        "safety": {
+            "no_adjudication": True,
+            "no_verified_flag": True,
+            "no_calibration_eligible": True,
+            "no_live_api": True,
+            "no_live_scanner": True,
+            "source_evidence_csv_untouched": True,
+        },
+    }
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(_json.dumps(manifest, indent=2) + "\n")
+    return manifest_path
+
+
 def _count_local_available(universe: list[dict]) -> int:
     return sum(
         1 for r in universe
@@ -746,6 +1000,314 @@ def cmd_write_review_packets(cfg: CaseFactoryConfig, sm: StateManager,
 
 
 # ---------------------------------------------------------------------------
+# --run-batch-package
+# ---------------------------------------------------------------------------
+
+def cmd_run_batch_package(
+    cfg: CaseFactoryConfig,
+    sm: StateManager,
+    start: int,
+    limit: int,
+    allow_date_backfill: bool,
+    allow_filing_collection: bool,
+    allow_clean_baseline_autofinalize: bool,
+    dry_run: bool,
+) -> int:
+    end = start + limit - 1
+    label = batch_name(start, end)
+    hdir = _historical_dir(cfg)
+
+    steps_log: list[dict] = []
+    files_written: list[str] = []
+    n_found = 0
+    n_missing = 0
+    gate_passed = False
+    exception_rows: list[dict[str, str]] = []
+
+    def _step(name: str, status: str, **extra) -> dict:
+        entry: dict = {"step": name, "status": status, **extra}
+        steps_log.append(entry)
+        return entry
+
+    def _run_cmd(cmd: list, step_name: str) -> int:
+        if dry_run:
+            print(f"  [DRY RUN] Would run: {Path(cmd[1]).name} {' '.join(str(c) for c in cmd[2:])}")
+            return 0
+        sys.stdout.flush()
+        return subprocess.run(cmd).returncode
+
+    print(f"=== Batch Package: {label} (cases {start}–{end}) ===")
+    print(f"  dry_run:                          {dry_run}")
+    print(f"  allow_date_backfill:              {allow_date_backfill}")
+    print(f"  allow_filing_collection:          {allow_filing_collection}")
+    print(f"  allow_clean_baseline_autofinalize:{allow_clean_baseline_autofinalize}")
+    print()
+
+    # ------------------------------------------------------------------
+    # STEP 1: Validate candidate queue
+    # ------------------------------------------------------------------
+    candidate_queue_csv = hdir / f"{label}_candidate_queue.csv"
+    if not candidate_queue_csv.exists():
+        print(f"ERROR: Candidate queue not found: {candidate_queue_csv}")
+        print(f"  Run --select-next-batch first.")
+        _step("validate_candidate_queue", "FAIL", error="No candidate queue")
+        return 1
+
+    queue_rows = read_csv(candidate_queue_csv)
+    if not queue_rows:
+        print(f"ERROR: Candidate queue is empty: {candidate_queue_csv}")
+        _step("validate_candidate_queue", "FAIL", error="Empty candidate queue")
+        return 1
+
+    _step("validate_candidate_queue", "PASS", candidates=len(queue_rows))
+    print(f"STEP 1 — Candidate queue: {len(queue_rows)} candidates  [PASS]")
+
+    # ------------------------------------------------------------------
+    # STEP 2: Date-prefill queue
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 2 — Date prefill queue...")
+    if not dry_run:
+        rc = cmd_run_step("date-prefill", cfg, sm, start, limit)
+        if rc != 0:
+            _step("date_prefill", "FAIL", exit_code=rc)
+            return rc
+        dp_csv = hdir / f"{label}_date_prefill_queue.csv"
+        dp_rows = len(read_csv(dp_csv)) if dp_csv.exists() else 0
+        _step("date_prefill", "PASS", output=dp_csv.name, rows=dp_rows)
+        files_written += [str(dp_csv), str(hdir / f"{label}_date_prefill_report.md")]
+        staging = hdir / f"{label}_staging_candidates.csv"
+        if staging.exists():
+            files_written.append(str(staging))
+    else:
+        _run_cmd([sys.executable, "merger_date_prefiller.py"], "date_prefill")
+        _step("date_prefill", "DRY_RUN")
+
+    # ------------------------------------------------------------------
+    # STEP 3: Date gate
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 3 — Date gate...")
+    dates_found, missing_tickers = _check_dates_gate(queue_rows)
+    n_found = len(dates_found)
+    n_missing = len(missing_tickers)
+
+    print(f"  Candidates with confirmed dates (HIGH/MEDIUM): {n_found} / {len(queue_rows)}")
+    if dates_found:
+        for tk, dt in sorted(dates_found.items()):
+            print(f"    {tk}: {dt}")
+    if missing_tickers:
+        print(f"  Missing dates ({n_missing}): {', '.join(sorted(missing_tickers))}")
+        print(f"  EDGAR work queue: {label}_date_prefill_queue.csv")
+
+    if n_missing == 0:
+        gate_passed = True
+        _step("date_gate", "PASS", dates_found=n_found, dates_missing=0)
+        print(f"  Date gate: PASS")
+    elif allow_date_backfill:
+        gate_passed = True
+        _step("date_gate", "PARTIAL", dates_found=n_found, dates_missing=n_missing,
+              note="allow_date_backfill — continuing; BLOCKED tiers expected in exception queue")
+        print(f"  Date gate: PARTIAL — proceeding (--allow-date-backfill set).")
+        print(f"  Exception queue will mark {n_missing} cases BLOCKED until dates are resolved.")
+    else:
+        _step("date_gate", "BLOCKED", dates_found=n_found, dates_missing=n_missing,
+              note="--allow-date-backfill not set")
+        print(f"  Date gate: BLOCKED — {n_missing} dates missing; --allow-date-backfill not passed.")
+        print(f"  Resolve dates in acquisition_announcement_dates.csv, then re-run with --allow-date-backfill.")
+        rpt = _write_package_report(
+            hdir, label, start, end, limit, steps_log, files_written,
+            dry_run, n_found, n_missing, gate_passed=False,
+        )
+        _write_run_manifest(
+            hdir, label, start, end, limit, steps_log, files_written, dry_run,
+            allow_date_backfill, allow_filing_collection, allow_clean_baseline_autofinalize,
+            gate_passed=False, n_found=n_found, n_missing=n_missing,
+        )
+        return 0
+
+    # ------------------------------------------------------------------
+    # STEP 4: Exception queue
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 4 — Exception queue...")
+    if not dry_run:
+        rc = cmd_run_step("exception-queue", cfg, sm, start, limit)
+        if rc != 0:
+            _step("exception_queue", "FAIL", exit_code=rc)
+            return rc
+        exception_csv = hdir / f"{label}_exception_queue.csv"
+        exception_rows = read_csv(exception_csv) if exception_csv.exists() else []
+        tier_counts: dict[str, int] = {}
+        for r in exception_rows:
+            t = r.get("priority_tier", "UNKNOWN")
+            tier_counts[t] = tier_counts.get(t, 0) + 1
+        _step("exception_queue", "PASS", output=exception_csv.name,
+              rows=len(exception_rows), tiers=tier_counts)
+        files_written += [str(exception_csv), str(hdir / f"{label}_exception_queue_report.md")]
+    else:
+        _run_cmd([sys.executable, "exception_queue_builder.py"], "exception_queue")
+        _step("exception_queue", "DRY_RUN")
+        tier_counts = {}
+
+    # ------------------------------------------------------------------
+    # STEP 5: Filing collection (opt-in)
+    # ------------------------------------------------------------------
+    print()
+    filing_script = REPO_ROOT / "src" / "historical_case_tools" / "pre_announcement_filing_collector.py"
+    if allow_filing_collection and n_found > 0 and filing_script.exists():
+        print(f"STEP 5 — Filing collection ({n_found} of {len(queue_rows)} candidates have dates)...")
+        if not dry_run:
+            cr_staging = _write_confirmation_results_staging(hdir, label, queue_rows, dates_found)
+            files_written.append(str(cr_staging))
+            targets_out = hdir / f"{label}_filing_targets.csv"
+            hits_out    = hdir / f"{label}_signal_hits.csv"
+            filing_rpt  = hdir / f"{label}_filing_report.md"
+            cmd = [
+                sys.executable, str(filing_script),
+                "--confirmation-results", str(cr_staging),
+                "--targets-output",       str(targets_out),
+                "--hits-output",          str(hits_out),
+                "--report",               str(filing_rpt),
+                "--no-api",
+            ]
+            rc = _run_cmd(cmd, "filing_collection")
+            if rc != 0:
+                _step("filing_collection", "WARN", exit_code=rc,
+                      note="Non-fatal — continuing to source evidence")
+                print(f"  WARNING: Filing collector exit={rc}. Continuing.")
+            else:
+                _step("filing_collection", "PASS",
+                      staging=cr_staging.name, targets=targets_out.name, hits=hits_out.name)
+                files_written += [str(targets_out), str(hits_out), str(filing_rpt)]
+        else:
+            _run_cmd([sys.executable, str(filing_script), "--no-api"], "filing_collection")
+            _step("filing_collection", "DRY_RUN", candidates_with_dates=n_found)
+    elif allow_filing_collection and n_found == 0:
+        print(f"STEP 5 — Filing collection: SKIPPED (0 candidates have confirmed dates)")
+        _step("filing_collection", "SKIPPED", reason="No candidates with confirmed dates")
+    else:
+        print(f"STEP 5 — Filing collection: SKIPPED (--allow-filing-collection not set)")
+        _step("filing_collection", "SKIPPED", reason="allow_filing_collection=False")
+
+    # ------------------------------------------------------------------
+    # STEP 6: Source evidence draft
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 6 — Source evidence draft...")
+    if not dry_run:
+        rc = cmd_run_step("source-evidence", cfg, sm, start, limit)
+        if rc != 0:
+            _step("source_evidence", "FAIL", exit_code=rc)
+            return rc
+        se_csv = hdir / f"{label}_source_evidence_draft.csv"
+        se_rows = len(read_csv(se_csv)) if se_csv.exists() else 0
+        _step("source_evidence", "PASS", output=se_csv.name, rows=se_rows)
+        files_written += [str(se_csv), str(hdir / f"{label}_source_evidence_draft_report.md")]
+    else:
+        _run_cmd([sys.executable, "source_evidence_autofill.py"], "source_evidence")
+        _step("source_evidence", "DRY_RUN")
+
+    # ------------------------------------------------------------------
+    # STEP 7: Review packet
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 7 — Review packet...")
+    if not dry_run:
+        rc = cmd_write_review_packets(cfg, sm, start, limit)
+        if rc != 0:
+            _step("review_packet", "FAIL", exit_code=rc)
+            return rc
+        packet_path = hdir / f"{label}_review_packet.md"
+        _step("review_packet", "PASS", output=packet_path.name)
+        files_written.append(str(packet_path))
+    else:
+        print(f"  [DRY RUN] Would write {label}_review_packet.md")
+        _step("review_packet", "DRY_RUN")
+
+    # ------------------------------------------------------------------
+    # STEP 8: Proposed clean baselines (opt-in)
+    # ------------------------------------------------------------------
+    print()
+    if allow_clean_baseline_autofinalize:
+        print(f"STEP 8 — Proposed clean baselines...")
+        if not dry_run and exception_rows:
+            bl_path, bl_count = _write_proposed_baselines_csv(hdir, label, exception_rows)
+            files_written.append(str(bl_path))
+            _step("proposed_baselines", "PASS", output=bl_path.name, count=bl_count)
+            print(f"  Proposed baselines: {bl_count} rows → {bl_path.name}")
+            print(f"  Researcher must confirm each before finalizing.")
+        elif dry_run:
+            print(f"  [DRY RUN] Would write {label}_proposed_clean_baselines.csv")
+            _step("proposed_baselines", "DRY_RUN")
+        else:
+            _step("proposed_baselines", "SKIPPED", reason="Exception queue unavailable")
+            print(f"  Proposed baselines: SKIPPED (no exception queue data)")
+    else:
+        print(f"STEP 8 — Proposed baselines: SKIPPED (--allow-clean-baseline-autofinalize not set)")
+        _step("proposed_baselines", "SKIPPED", reason="allow_clean_baseline_autofinalize=False")
+
+    # ------------------------------------------------------------------
+    # STEP 9: Package report
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 9 — Package report...")
+    rpt_path = _write_package_report(
+        hdir, label, start, end, limit, steps_log, files_written,
+        dry_run, n_found, n_missing, gate_passed,
+    )
+    if rpt_path:
+        files_written.append(str(rpt_path))
+        print(f"  Package report: {rpt_path.name}")
+
+    # ------------------------------------------------------------------
+    # STEP 10: Run manifest
+    # ------------------------------------------------------------------
+    print()
+    print(f"STEP 10 — Run manifest...")
+    manifest_path = _write_run_manifest(
+        hdir, label, start, end, limit, steps_log, files_written, dry_run,
+        allow_date_backfill, allow_filing_collection, allow_clean_baseline_autofinalize,
+        gate_passed=gate_passed, n_found=n_found, n_missing=n_missing,
+    )
+    if manifest_path:
+        files_written.append(str(manifest_path))
+        print(f"  Run manifest:   {manifest_path.name}")
+
+    # ------------------------------------------------------------------
+    # STEP 11: State update
+    # ------------------------------------------------------------------
+    if not dry_run:
+        state = sm.load()
+        state["last_completed_step"] = f"batch_package_{label}"
+        state["next_recommended_step"] = f"manual_adjudication_{label}"
+        sm.save(state)
+
+    # ------------------------------------------------------------------
+    # Summary
+    # ------------------------------------------------------------------
+    print()
+    passed_cnt  = sum(1 for s in steps_log if s.get("status") == "PASS")
+    skipped_cnt = sum(1 for s in steps_log if s.get("status") in {"SKIPPED", "DRY_RUN"})
+    blocked_cnt = sum(1 for s in steps_log if s.get("status") in {"BLOCKED", "FAIL", "WARN"})
+    gate_label  = ("PASS" if gate_passed and n_missing == 0
+                   else "PARTIAL" if gate_passed else "BLOCKED")
+
+    print(f"=== Batch Package Complete: {label} ===")
+    print(f"  Steps PASS:           {passed_cnt}")
+    print(f"  Steps SKIPPED/DRY:    {skipped_cnt}")
+    print(f"  Steps BLOCKED/WARN:   {blocked_cnt}")
+    print(f"  Date gate:            {gate_label}")
+    print(f"  Dates found:          {n_found} / {len(queue_rows)}")
+    if n_missing and not dry_run:
+        print(f"  Manual backfill needed: {', '.join(sorted(missing_tickers))}")
+    print(f"  Files written:        {len(files_written)}")
+    if rpt_path:
+        print(f"  Report: {rpt_path}")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -766,6 +1328,18 @@ def main() -> int:
                         help=f"Run one pipeline step: {{{','.join(_STEP_REGISTRY)}}}")
     parser.add_argument("--write-review-packets", action="store_true",
                         help="Generate manual review packet for a batch")
+    parser.add_argument("--run-batch-package", action="store_true",
+                        help="Run full batch pipeline: date-prefill → exception-queue → "
+                             "source-evidence → review-packet → package report + manifest")
+    parser.add_argument("--allow-date-backfill", action="store_true",
+                        help="Proceed past date gate even when candidates lack confirmed dates "
+                             "(exception queue will mark them BLOCKED; requires manual EDGAR research)")
+    parser.add_argument("--allow-filing-collection", action="store_true",
+                        help="Run pre_announcement_filing_collector --no-api for candidates with dates")
+    parser.add_argument("--allow-clean-baseline-autofinalize", action="store_true",
+                        help="Write proposed_clean_baselines.csv for PENDING/P6 tier cases")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Print planned steps without running subprocesses or writing output files")
     parser.add_argument("--start", type=int, default=None,
                         help="First case number in this batch")
     parser.add_argument("--limit", type=int, default=None,
@@ -806,6 +1380,17 @@ def main() -> int:
         start = args.start or cfg.start_case_number
         limit = args.limit or cfg.batch_size
         return cmd_write_review_packets(cfg, sm, start, limit)
+
+    if args.run_batch_package:
+        start = args.start or cfg.start_case_number
+        limit = args.limit or cfg.batch_size
+        return cmd_run_batch_package(
+            cfg, sm, start, limit,
+            allow_date_backfill=args.allow_date_backfill,
+            allow_filing_collection=args.allow_filing_collection,
+            allow_clean_baseline_autofinalize=args.allow_clean_baseline_autofinalize,
+            dry_run=args.dry_run,
+        )
 
     parser.print_help()
     return 0

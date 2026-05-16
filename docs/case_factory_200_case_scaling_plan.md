@@ -202,6 +202,95 @@ python3 src/historical_case_tools/pre_announcement_filing_collector.py --no-api
 
 ---
 
+## One-Command Batch Package Workflow
+
+`--run-batch-package` runs the full pipeline in a single command and writes all outputs.
+
+### Flags
+
+| Flag | Effect |
+|---|---|
+| `--allow-date-backfill` | Proceed past the date gate even when candidates lack confirmed dates. Exception queue will mark them BLOCKED. Manual EDGAR research still required. |
+| `--allow-filing-collection` | Run `pre_announcement_filing_collector --no-api` for candidates that have confirmed dates. Skipped automatically if 0 candidates have dates. |
+| `--allow-clean-baseline-autofinalize` | Write `batch_N_M_proposed_clean_baselines.csv` for PENDING_FILING_COLLECTION and P6 tier cases. Researcher must confirm before finalizing. |
+| `--dry-run` | Print planned steps without running subprocesses or writing output files. |
+
+### Pipeline steps
+
+1. Validate candidate queue exists
+2. Run date-prefill queue (`merger_date_prefiller.py` — generates EDGAR work URLs, does NOT fetch dates)
+3. Check date gate: read `acquisition_announcement_dates.csv`, count HIGH/MEDIUM confidence dates
+   - All dates present → PASS
+   - Partial dates + `--allow-date-backfill` → PARTIAL, continue
+   - Missing dates + no flag → BLOCKED, write package report and exit cleanly
+4. Run exception queue (`exception_queue_builder.py` — missing-date cases marked BLOCKED)
+5. Run filing collection (`pre_announcement_filing_collector --no-api`) if `--allow-filing-collection` and at least one candidate has a date
+6. Run source evidence draft (`source_evidence_autofill.py`)
+7. Write review packet
+8. Write proposed clean baselines (if `--allow-clean-baseline-autofinalize`)
+9. Write `batch_N_M_package_report.md`
+10. Write `batch_N_M_run_manifest.json`
+11. Update `case_factory_state.json`
+
+### Outputs
+
+| File | When written |
+|---|---|
+| `batch_N_M_date_prefill_queue.csv` | Always |
+| `batch_N_M_exception_queue.csv` | After date gate (PASS or PARTIAL) |
+| `batch_N_M_source_evidence_draft.csv` | After exception queue |
+| `batch_N_M_review_packet.md` | After source evidence |
+| `batch_N_M_filing_targets.csv` / `batch_N_M_signal_hits.csv` | If `--allow-filing-collection` and dates exist |
+| `batch_N_M_proposed_clean_baselines.csv` | If `--allow-clean-baseline-autofinalize` |
+| `batch_N_M_package_report.md` | Always |
+| `batch_N_M_run_manifest.json` | Always (except dry-run) |
+
+### Example: batch 71–100 (pre-date-backfill state)
+
+```bash
+# Dry run first — prints planned steps, no file writes
+python3 src/historical_case_tools/case_factory_orchestrator.py \
+  --config configs/case_factory.yaml \
+  --run-batch-package \
+  --start 71 --limit 30 \
+  --allow-date-backfill \
+  --allow-filing-collection \
+  --dry-run
+
+# Real run (proceeds past date gate; 26 cases will be BLOCKED in exception queue)
+python3 src/historical_case_tools/case_factory_orchestrator.py \
+  --config configs/case_factory.yaml \
+  --run-batch-package \
+  --start 71 --limit 30 \
+  --allow-date-backfill \
+  --allow-filing-collection
+```
+
+**Important:** `--allow-date-backfill` does NOT fetch or fake dates. It tells the orchestrator
+to proceed past the date gate so the exception queue and review packet can be written.
+Dates must still be resolved manually using the EDGAR URLs in `batch_N_M_date_prefill_queue.csv`,
+then re-running `--run-step exception-queue` and `--write-review-packets`.
+
+### After date backfill (re-run to unlock filing collection)
+
+Once dates are recorded in `acquisition_announcement_dates.csv` with `confidence=HIGH`:
+
+```bash
+# Re-run exception queue (cases will move from BLOCKED to PENDING_FILING_COLLECTION)
+python3 src/historical_case_tools/case_factory_orchestrator.py \
+  --config configs/case_factory.yaml \
+  --run-step exception-queue --start 71 --limit 30
+
+# Re-run full package (filing collection will now run for dated candidates)
+python3 src/historical_case_tools/case_factory_orchestrator.py \
+  --config configs/case_factory.yaml \
+  --run-batch-package \
+  --start 71 --limit 30 \
+  --allow-filing-collection
+```
+
+---
+
 ## Risks and Stop Conditions
 
 ### Stop conditions (do not proceed if any apply)

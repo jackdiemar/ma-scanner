@@ -1,0 +1,87 @@
+{
+  "batch": "batch_71_100",
+  "start": 71,
+  "end": 100,
+  "limit": 30,
+  "run_date": "2026-05-16",
+  "dry_run": false,
+  "flags": {
+    "allow_date_backfill": true,
+    "allow_filing_collection": true,
+    "allow_clean_baseline_autofinalize": false
+  },
+  "gate_summary": {
+    "dates_found": 0,
+    "dates_missing": 26,
+    "gate_passed": true
+  },
+  "steps": [
+    {
+      "step": "validate_candidate_queue",
+      "status": "PASS",
+      "candidates": 26
+    },
+    {
+      "step": "date_prefill",
+      "status": "PASS",
+      "output": "batch_71_100_date_prefill_queue.csv",
+      "rows": 26
+    },
+    {
+      "step": "date_gate",
+      "status": "PARTIAL",
+      "dates_found": 0,
+      "dates_missing": 26,
+      "note": "allow_date_backfill \u2014 continuing; BLOCKED tiers expected in exception queue"
+    },
+    {
+      "step": "exception_queue",
+      "status": "PASS",
+      "output": "batch_71_100_exception_queue.csv",
+      "rows": 26,
+      "tiers": {
+        "BLOCKED": 26
+      }
+    },
+    {
+      "step": "filing_collection",
+      "status": "SKIPPED",
+      "reason": "No candidates with confirmed dates"
+    },
+    {
+      "step": "source_evidence",
+      "status": "PASS",
+      "output": "batch_71_100_source_evidence_draft.csv",
+      "rows": 26
+    },
+    {
+      "step": "review_packet",
+      "status": "PASS",
+      "output": "batch_71_100_review_packet.md"
+    },
+    {
+      "step": "proposed_baselines",
+      "status": "SKIPPED",
+      "reason": "allow_clean_baseline_autofinalize=False"
+    }
+  ],
+  "files_written": [
+    "batch_71_100_date_prefill_queue.csv",
+    "batch_71_100_date_prefill_report.md",
+    "batch_71_100_staging_candidates.csv",
+    "batch_71_100_exception_queue.csv",
+    "batch_71_100_exception_queue_report.md",
+    "batch_71_100_source_evidence_draft.csv",
+    "batch_71_100_source_evidence_draft_report.md",
+    "batch_71_100_review_packet.md",
+    "batch_71_100_package_report.md"
+  ],
+  "safety": {
+    "no_adjudication": true,
+    "no_verified_flag": true,
+    "no_calibration_eligible": true,
+    "no_live_api": true,
+    "no_live_scanner": true,
+    "source_evidence_csv_untouched": true
+  }
+}
