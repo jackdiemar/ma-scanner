@@ -93,7 +93,8 @@ Each non-baseline or upgraded case requires all of:
 
 | Tier | Count |
 |---|---|
-| BLOCKED | 26 |
+| BLOCKED | 10 |
+| PENDING_FILING_COLLECTION | 16 |
 
 ### Cases By Tier
 
@@ -102,31 +103,36 @@ Each non-baseline or upgraded case requires all of:
 | case_id | ticker | priority_reason | next_action |
 |---|---|---|---|
 | RHC-0072-ACQUIRED-FATE | FATE | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0073-ACQUIRED-FUSN | FUSN | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0074-ACQUIRED-G1T | G1T | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0075-ACQUIRED-GRCL | GRCL | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0076-ACQUIRED-KRTX | KRTX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0077-ACQUIRED-LBPH | LBPH | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0078-ACQUIRED-MORF | MORF | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0079-ACQUIRED-MRTX | MRTX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0101-ACQUIRED-CHMA | CHMA | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0102-ACQUIRED-CNST | CNST | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0103-ACQUIRED-STML | STML | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0104-ACQUIRED-ALBO | ALBO | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0105-ACQUIRED-HZNP | HZNP | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0106-ACQUIRED-SGEN | SGEN | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0107-ACQUIRED-SNDX | SNDX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0108-ACQUIRED-VECT | VECT | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0109-ACQUIRED-MOR | MOR | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0131-ACQUIRED-LMNX | LMNX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0132-ACQUIRED-TBIO | TBIO | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0134-ACQUIRED-ENLV | ENLV | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0135-ACQUIRED-HRMY | HRMY | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0136-ACQUIRED-SYNH | SYNH | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0137-ACQUIRED-KPTI | KPTI | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0138-ACQUIRED-KROS | KROS | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
 | RHC-0139-ACQUIRED-TGTX | TGTX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0140-ACQUIRED-VSTM | VSTM | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
+
+#### PENDING_FILING_COLLECTION
+
+| case_id | ticker | priority_reason | next_action |
+|---|---|---|---|
+| RHC-0073-ACQUIRED-FUSN | FUSN | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0074-ACQUIRED-G1T | G1T | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0076-ACQUIRED-KRTX | KRTX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0077-ACQUIRED-LBPH | LBPH | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0078-ACQUIRED-MORF | MORF | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0079-ACQUIRED-MRTX | MRTX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0101-ACQUIRED-CHMA | CHMA | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0102-ACQUIRED-CNST | CNST | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0103-ACQUIRED-STML | STML | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0104-ACQUIRED-ALBO | ALBO | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0105-ACQUIRED-HZNP | HZNP | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0106-ACQUIRED-SGEN | SGEN | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0107-ACQUIRED-SNDX | SNDX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0132-ACQUIRED-TBIO | TBIO | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0138-ACQUIRED-KROS | KROS | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
+| RHC-0140-ACQUIRED-VSTM | VSTM | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
 
 ---
 
@@ -168,31 +174,15 @@ Each non-baseline or upgraded case requires all of:
 Cases that cannot proceed without external resolution:
 
 - **FATE** (RHC-0072-ACQUIRED-FATE): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **FUSN** (RHC-0073-ACQUIRED-FUSN): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **G1T** (RHC-0074-ACQUIRED-G1T): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **GRCL** (RHC-0075-ACQUIRED-GRCL): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **KRTX** (RHC-0076-ACQUIRED-KRTX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **LBPH** (RHC-0077-ACQUIRED-LBPH): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **MORF** (RHC-0078-ACQUIRED-MORF): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **MRTX** (RHC-0079-ACQUIRED-MRTX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **CHMA** (RHC-0101-ACQUIRED-CHMA): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **CNST** (RHC-0102-ACQUIRED-CNST): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **STML** (RHC-0103-ACQUIRED-STML): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **ALBO** (RHC-0104-ACQUIRED-ALBO): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **HZNP** (RHC-0105-ACQUIRED-HZNP): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **SGEN** (RHC-0106-ACQUIRED-SGEN): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **SNDX** (RHC-0107-ACQUIRED-SNDX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **VECT** (RHC-0108-ACQUIRED-VECT): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **MOR** (RHC-0109-ACQUIRED-MOR): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **LMNX** (RHC-0131-ACQUIRED-LMNX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **TBIO** (RHC-0132-ACQUIRED-TBIO): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **ENLV** (RHC-0134-ACQUIRED-ENLV): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **HRMY** (RHC-0135-ACQUIRED-HRMY): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **SYNH** (RHC-0136-ACQUIRED-SYNH): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **KPTI** (RHC-0137-ACQUIRED-KPTI): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **KROS** (RHC-0138-ACQUIRED-KROS): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 - **TGTX** (RHC-0139-ACQUIRED-TGTX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **VSTM** (RHC-0140-ACQUIRED-VSTM): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
 
 ---
 

@@ -62,6 +62,10 @@ from historical_case_tools.case_factory_batch_selector import (
     write_csv,
     write_report as _write_selector_report,
 )
+from historical_case_tools.case_factory_date_backfiller import (
+    run_date_backfill as _run_date_backfill,
+    write_backfill_report as _write_backfill_report,
+)
 
 RUN_DATE = date.today().isoformat()
 
@@ -1013,9 +1017,25 @@ def cmd_run_batch_package(
     allow_clean_baseline_autofinalize: bool,
     dry_run: bool,
 ) -> int:
+    import re as _re
     end = start + limit - 1
     label = batch_name(start, end)
     hdir = _historical_dir(cfg)
+
+    # Auto-discover batch when exact label doesn't match existing candidate queue.
+    # Handles --limit 26 (actual candidates) vs --limit 30 (batch target size).
+    candidate_queue_csv = hdir / f"{label}_candidate_queue.csv"
+    if not candidate_queue_csv.exists():
+        matches = sorted(hdir.glob(f"batch_{start}_*_candidate_queue.csv"))
+        if matches:
+            m = _re.match(r"batch_(\d+)_(\d+)_candidate_queue\.csv", matches[0].name)
+            if m:
+                actual_end = int(m.group(2))
+                limit = actual_end - start + 1
+                end = actual_end
+                label = batch_name(start, end)
+                candidate_queue_csv = matches[0]
+                print(f"  Auto-discovered batch: {label} (limit={limit})")
 
     steps_log: list[dict] = []
     files_written: list[str] = []
@@ -1046,7 +1066,6 @@ def cmd_run_batch_package(
     # ------------------------------------------------------------------
     # STEP 1: Validate candidate queue
     # ------------------------------------------------------------------
-    candidate_queue_csv = hdir / f"{label}_candidate_queue.csv"
     if not candidate_queue_csv.exists():
         print(f"ERROR: Candidate queue not found: {candidate_queue_csv}")
         print(f"  Run --select-next-batch first.")
@@ -1102,16 +1121,67 @@ def cmd_run_batch_package(
 
     if n_missing == 0:
         gate_passed = True
-        _step("date_gate", "PASS", dates_found=n_found, dates_missing=0)
-        print(f"  Date gate: PASS")
+        _step("date_gate_initial", "PASS", dates_found=n_found, dates_missing=0)
+        print(f"  Date gate: PASS — all {n_found} candidates have confirmed dates")
     elif allow_date_backfill:
-        gate_passed = True
-        _step("date_gate", "PARTIAL", dates_found=n_found, dates_missing=n_missing,
-              note="allow_date_backfill — continuing; BLOCKED tiers expected in exception queue")
-        print(f"  Date gate: PARTIAL — proceeding (--allow-date-backfill set).")
-        print(f"  Exception queue will mark {n_missing} cases BLOCKED until dates are resolved.")
+        _step("date_gate_initial", "PARTIAL", dates_found=n_found, dates_missing=n_missing,
+              note="will attempt automated EDGAR backfill")
+        print(f"  Date gate: PARTIAL — {n_missing} dates missing. Attempting automated backfill...")
+
+        # ------------------------------------------------------------------
+        # STEP 3b: Automated date backfill via EDGAR submissions JSON
+        # ------------------------------------------------------------------
+        print()
+        print(f"STEP 3b — Automated date backfill ({n_missing} candidates)...")
+        backfill_rpt_path = hdir / f"{label}_date_backfill_report.md"
+        if not dry_run:
+            bf_summary = _run_date_backfill(
+                queue_rows=queue_rows,
+                dates_csv=_DATES_CSV,
+                evidence_csv=REPO_ROOT / "data" / "historical_cases" / "source_evidence.csv",
+                run_date=RUN_DATE,
+            )
+            _write_backfill_report(backfill_rpt_path, bf_summary, RUN_DATE, label)
+            files_written.append(str(backfill_rpt_path))
+            _step(
+                "date_backfill", "PASS",
+                attempted=bf_summary["attempted"],
+                found=bf_summary["found"],
+                not_found=bf_summary["not_found"],
+                new_dates_written=bf_summary["new_dates_written"],
+            )
+            print(
+                f"  Backfill complete: "
+                f"{bf_summary['found']}/{bf_summary['attempted']} resolved, "
+                f"{bf_summary['not_found']} unresolved."
+            )
+            if bf_summary.get("new_dates_written", 0) > 0:
+                files_written.append(str(_DATES_CSV))
+            if bf_summary.get("new_evidence_written", 0) > 0:
+                files_written.append(str(REPO_ROOT / "data" / "historical_cases" / "source_evidence.csv"))
+        else:
+            print(f"  [DRY RUN] Would attempt EDGAR submissions JSON lookup for {n_missing} candidates")
+            _step("date_backfill", "DRY_RUN", candidates=n_missing)
+
+        # Re-check date gate after backfill
+        print()
+        print(f"STEP 3c — Date gate re-check (post-backfill)...")
+        dates_found, missing_tickers = _check_dates_gate(queue_rows)
+        n_found = len(dates_found)
+        n_missing = len(missing_tickers)
+        print(f"  Confirmed dates: {n_found} / {len(queue_rows)}")
+        if missing_tickers:
+            print(f"  Still missing ({n_missing}): {', '.join(sorted(missing_tickers))}")
+
+        gate_passed = True  # always continue after backfill attempt
+        gate_label = "PASS" if n_missing == 0 else "PARTIAL"
+        _step("date_gate_final", gate_label, dates_found=n_found, dates_missing=n_missing)
+        print(f"  Date gate final: {gate_label}")
+        if n_missing:
+            print(f"  Remaining {n_missing} cases will be BLOCKED in exception queue.")
+            print(f"  Use EDGAR URLs in {label}_date_prefill_queue.csv to resolve manually.")
     else:
-        _step("date_gate", "BLOCKED", dates_found=n_found, dates_missing=n_missing,
+        _step("date_gate_initial", "BLOCKED", dates_found=n_found, dates_missing=n_missing,
               note="--allow-date-backfill not set")
         print(f"  Date gate: BLOCKED — {n_missing} dates missing; --allow-date-backfill not passed.")
         print(f"  Resolve dates in acquisition_announcement_dates.csv, then re-run with --allow-date-backfill.")
@@ -1163,12 +1233,14 @@ def cmd_run_batch_package(
             targets_out = hdir / f"{label}_filing_targets.csv"
             hits_out    = hdir / f"{label}_signal_hits.csv"
             filing_rpt  = hdir / f"{label}_filing_report.md"
+            confirmation_rpt = hdir / f"{label}_confirmation_results_report.md"
             cmd = [
                 sys.executable, str(filing_script),
-                "--confirmation-results", str(cr_staging),
-                "--targets-output",       str(targets_out),
-                "--hits-output",          str(hits_out),
-                "--report",               str(filing_rpt),
+                "--confirmation-results",  str(cr_staging),
+                "--confirmation-report",   str(confirmation_rpt),
+                "--targets-output",        str(targets_out),
+                "--hits-output",           str(hits_out),
+                "--report",                str(filing_rpt),
                 "--no-api",
             ]
             rc = _run_cmd(cmd, "filing_collection")
@@ -1179,7 +1251,8 @@ def cmd_run_batch_package(
             else:
                 _step("filing_collection", "PASS",
                       staging=cr_staging.name, targets=targets_out.name, hits=hits_out.name)
-                files_written += [str(targets_out), str(hits_out), str(filing_rpt)]
+                files_written += [str(targets_out), str(hits_out), str(filing_rpt),
+                                  str(confirmation_rpt)]
         else:
             _run_cmd([sys.executable, str(filing_script), "--no-api"], "filing_collection")
             _step("filing_collection", "DRY_RUN", candidates_with_dates=n_found)

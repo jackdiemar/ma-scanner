@@ -12,8 +12,8 @@ Generated: 2026-05-16
 | Cases | 71–100 (30 target) |
 | Run date | 2026-05-16 |
 | Dry run | False |
-| Dates confirmed | 0 / 30 |
-| Dates missing | 26 |
+| Dates confirmed | 16 / 30 |
+| Dates missing | 10 |
 | Date gate | PARTIAL |
 
 ---
@@ -24,10 +24,12 @@ Generated: 2026-05-16
 |---|---|---|
 | validate_candidate_queue | PASS | candidates=26 |
 | date_prefill | PASS | output=batch_71_100_date_prefill_queue.csv; rows=26 |
-| date_gate | PARTIAL | dates_found=0; dates_missing=26; note=allow_date_backfill — continuing; BLOCKED tiers expected in exception queue |
-| exception_queue | PASS | output=batch_71_100_exception_queue.csv; rows=26; tiers={'BLOCKED': 26} |
-| filing_collection | SKIPPED | reason=No candidates with confirmed dates |
-| source_evidence | PASS | output=batch_71_100_source_evidence_draft.csv; rows=26 |
+| date_gate_initial | PARTIAL | dates_found=16; dates_missing=10; note=will attempt automated EDGAR backfill |
+| date_backfill | PASS | attempted=10; found=0; not_found=10; new_dates_written=0 |
+| date_gate_final | PARTIAL | dates_found=16; dates_missing=10 |
+| exception_queue | PASS | output=batch_71_100_exception_queue.csv; rows=26; tiers={'BLOCKED': 10, 'PENDING_FILING_COLLECTION': 16} |
+| filing_collection | PASS | staging=batch_71_100_confirmation_results_staging.csv; targets=batch_71_100_filing_targets.csv; hits=batch_71_100_signal_hits.csv |
+| source_evidence | PASS | output=batch_71_100_source_evidence_draft.csv; rows=10 |
 | review_packet | PASS | output=batch_71_100_review_packet.md |
 | proposed_baselines | SKIPPED | reason=allow_clean_baseline_autofinalize=False |
 
@@ -38,8 +40,14 @@ Generated: 2026-05-16
 - `batch_71_100_date_prefill_queue.csv`
 - `batch_71_100_date_prefill_report.md`
 - `batch_71_100_staging_candidates.csv`
+- `batch_71_100_date_backfill_report.md`
 - `batch_71_100_exception_queue.csv`
 - `batch_71_100_exception_queue_report.md`
+- `batch_71_100_confirmation_results_staging.csv`
+- `batch_71_100_filing_targets.csv`
+- `batch_71_100_signal_hits.csv`
+- `batch_71_100_filing_report.md`
+- `batch_71_100_confirmation_results_report.md`
 - `batch_71_100_source_evidence_draft.csv`
 - `batch_71_100_source_evidence_draft_report.md`
 - `batch_71_100_review_packet.md`

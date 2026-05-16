@@ -8,40 +8,46 @@ Resolve BLOCKED cases first (date backfill), then run filing collector, then rev
 ## Summary
 
 - Cases in scope: 26
-- BLOCKED: 26
+- PENDING_FILING_COLLECTION: 16
+- BLOCKED: 10
 
 ## Priority Queue
 
-### BLOCKED (26 cases)
+### PENDING_FILING_COLLECTION (16 cases)
+
+| case_id | ticker | company | year | reason |
+|---|---|---|---|---|
+| RHC-0073-ACQUIRED-FUSN | FUSN | Fusion Pharmaceuticals Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0074-ACQUIRED-G1T | G1T | G1 Therapeutics | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0076-ACQUIRED-KRTX | KRTX | Karuna Therapeutics, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0077-ACQUIRED-LBPH | LBPH | Longboard Pharmaceuticals, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0078-ACQUIRED-MORF | MORF | Morphic Holding, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0079-ACQUIRED-MRTX | MRTX | Mirati Therapeutics, Inc. | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0101-ACQUIRED-CHMA | CHMA | Chiasma | 2021 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0102-ACQUIRED-CNST | CNST | Constellation Pharmaceuticals | 2021 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0103-ACQUIRED-STML | STML | Stemline Therapeutics | 2021 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0104-ACQUIRED-ALBO | ALBO | Albireo Pharma | 2023 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0105-ACQUIRED-HZNP | HZNP | Horizon Therapeutics plc | 2023 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0106-ACQUIRED-SGEN | SGEN | Seagen Inc. | 2023 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0107-ACQUIRED-SNDX | SNDX | Syndax Pharmaceuticals | 2023 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0132-ACQUIRED-TBIO | TBIO | Translate Bio | 2021 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0138-ACQUIRED-KROS | KROS | Keros Therapeutics | 2024 | Date confirmed; filing collector has not yet run for this case. |
+| RHC-0140-ACQUIRED-VSTM | VSTM | Verastem Oncology | 2024 | Date confirmed; filing collector has not yet run for this case. |
+
+### BLOCKED (10 cases)
 
 | case_id | ticker | company | year | reason |
 |---|---|---|---|---|
 | RHC-0072-ACQUIRED-FATE | FATE | Fate Therapeutics | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0073-ACQUIRED-FUSN | FUSN | Fusion Pharmaceuticals Inc. | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0074-ACQUIRED-G1T | G1T | G1 Therapeutics | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0075-ACQUIRED-GRCL | GRCL | Gracell Biotechnologies | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0076-ACQUIRED-KRTX | KRTX | Karuna Therapeutics, Inc. | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0077-ACQUIRED-LBPH | LBPH | Longboard Pharmaceuticals, Inc. | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0078-ACQUIRED-MORF | MORF | Morphic Holding, Inc. | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0079-ACQUIRED-MRTX | MRTX | Mirati Therapeutics, Inc. | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0101-ACQUIRED-CHMA | CHMA | Chiasma | 2021 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0102-ACQUIRED-CNST | CNST | Constellation Pharmaceuticals | 2021 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0103-ACQUIRED-STML | STML | Stemline Therapeutics | 2021 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0104-ACQUIRED-ALBO | ALBO | Albireo Pharma | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0105-ACQUIRED-HZNP | HZNP | Horizon Therapeutics plc | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0106-ACQUIRED-SGEN | SGEN | Seagen Inc. | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0107-ACQUIRED-SNDX | SNDX | Syndax Pharmaceuticals | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0108-ACQUIRED-VECT | VECT | VectivBio Holding | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0109-ACQUIRED-MOR | MOR | MorphoSys AG | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0131-ACQUIRED-LMNX | LMNX | Luminex Corporation | 2021 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0132-ACQUIRED-TBIO | TBIO | Translate Bio | 2021 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0134-ACQUIRED-ENLV | ENLV | Enliven Therapeutics | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0135-ACQUIRED-HRMY | HRMY | Harmony Biosciences | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0136-ACQUIRED-SYNH | SYNH | Syneos Health, Inc. | 2023 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0137-ACQUIRED-KPTI | KPTI | Karyopharm Therapeutics | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0138-ACQUIRED-KROS | KROS | Keros Therapeutics | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 | RHC-0139-ACQUIRED-TGTX | TGTX | TG Therapeutics | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
-| RHC-0140-ACQUIRED-VSTM | VSTM | Verastem Oncology | 2024 | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. |
 
 ## Next Steps
 

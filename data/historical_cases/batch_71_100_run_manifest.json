@@ -11,8 +11,8 @@
     "allow_clean_baseline_autofinalize": false
   },
   "gate_summary": {
-    "dates_found": 0,
-    "dates_missing": 26,
+    "dates_found": 16,
+    "dates_missing": 10,
     "gate_passed": true
   },
   "steps": [
@@ -28,11 +28,25 @@
       "rows": 26
     },
     {
-      "step": "date_gate",
+      "step": "date_gate_initial",
       "status": "PARTIAL",
-      "dates_found": 0,
-      "dates_missing": 26,
-      "note": "allow_date_backfill \u2014 continuing; BLOCKED tiers expected in exception queue"
+      "dates_found": 16,
+      "dates_missing": 10,
+      "note": "will attempt automated EDGAR backfill"
+    },
+    {
+      "step": "date_backfill",
+      "status": "PASS",
+      "attempted": 10,
+      "found": 0,
+      "not_found": 10,
+      "new_dates_written": 0
+    },
+    {
+      "step": "date_gate_final",
+      "status": "PARTIAL",
+      "dates_found": 16,
+      "dates_missing": 10
     },
     {
       "step": "exception_queue",
@@ -40,19 +54,22 @@
       "output": "batch_71_100_exception_queue.csv",
       "rows": 26,
       "tiers": {
-        "BLOCKED": 26
+        "BLOCKED": 10,
+        "PENDING_FILING_COLLECTION": 16
       }
     },
     {
       "step": "filing_collection",
-      "status": "SKIPPED",
-      "reason": "No candidates with confirmed dates"
+      "status": "PASS",
+      "staging": "batch_71_100_confirmation_results_staging.csv",
+      "targets": "batch_71_100_filing_targets.csv",
+      "hits": "batch_71_100_signal_hits.csv"
     },
     {
       "step": "source_evidence",
       "status": "PASS",
       "output": "batch_71_100_source_evidence_draft.csv",
-      "rows": 26
+      "rows": 10
     },
     {
       "step": "review_packet",
@@ -69,8 +86,14 @@
     "batch_71_100_date_prefill_queue.csv",
     "batch_71_100_date_prefill_report.md",
     "batch_71_100_staging_candidates.csv",
+    "batch_71_100_date_backfill_report.md",
     "batch_71_100_exception_queue.csv",
     "batch_71_100_exception_queue_report.md",
+    "batch_71_100_confirmation_results_staging.csv",
+    "batch_71_100_filing_targets.csv",
+    "batch_71_100_signal_hits.csv",
+    "batch_71_100_filing_report.md",
+    "batch_71_100_confirmation_results_report.md",
     "batch_71_100_source_evidence_draft.csv",
     "batch_71_100_source_evidence_draft_report.md",
     "batch_71_100_review_packet.md",

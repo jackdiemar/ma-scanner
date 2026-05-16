@@ -7,43 +7,44 @@ All PLACEHOLDER fields must be filled from the actual filing before promoting.
 
 ## Summary
 
-- Draft rows generated: 26
-- Cases skipped (P5/P6/PENDING_FILING_COLLECTION): 0
+- Draft rows generated: 10
+- Cases skipped (P5/P6/PENDING_FILING_COLLECTION): 16
 
 ## Draft Rows
 
 | evidence_id | ticker | tier | reason |
 |---|---|---|---|
 | RHC-0072-ACQUIRED-FATE-ADJ-DRAFT-001 | FATE | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0073-ACQUIRED-FUSN-ADJ-DRAFT-001 | FUSN | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0074-ACQUIRED-G1T-ADJ-DRAFT-001 | G1T | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0075-ACQUIRED-GRCL-ADJ-DRAFT-001 | GRCL | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0076-ACQUIRED-KRTX-ADJ-DRAFT-001 | KRTX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0077-ACQUIRED-LBPH-ADJ-DRAFT-001 | LBPH | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0078-ACQUIRED-MORF-ADJ-DRAFT-001 | MORF | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0079-ACQUIRED-MRTX-ADJ-DRAFT-001 | MRTX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0101-ACQUIRED-CHMA-ADJ-DRAFT-001 | CHMA | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0102-ACQUIRED-CNST-ADJ-DRAFT-001 | CNST | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0103-ACQUIRED-STML-ADJ-DRAFT-001 | STML | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0104-ACQUIRED-ALBO-ADJ-DRAFT-001 | ALBO | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0105-ACQUIRED-HZNP-ADJ-DRAFT-001 | HZNP | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0106-ACQUIRED-SGEN-ADJ-DRAFT-001 | SGEN | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0107-ACQUIRED-SNDX-ADJ-DRAFT-001 | SNDX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0108-ACQUIRED-VECT-ADJ-DRAFT-001 | VECT | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0109-ACQUIRED-MOR-ADJ-DRAFT-001 | MOR | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0131-ACQUIRED-LMNX-ADJ-DRAFT-001 | LMNX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0132-ACQUIRED-TBIO-ADJ-DRAFT-001 | TBIO | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0134-ACQUIRED-ENLV-ADJ-DRAFT-001 | ENLV | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0135-ACQUIRED-HRMY-ADJ-DRAFT-001 | HRMY | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0136-ACQUIRED-SYNH-ADJ-DRAFT-001 | SYNH | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0137-ACQUIRED-KPTI-ADJ-DRAFT-001 | KPTI | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0138-ACQUIRED-KROS-ADJ-DRAFT-001 | KROS | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 | RHC-0139-ACQUIRED-TGTX-ADJ-DRAFT-001 | TGTX | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
-| RHC-0140-ACQUIRED-VSTM-ADJ-DRAFT-001 | VSTM | BLOCKED | No HIGH/MEDIUM announcement date — run merger_date_prefiller |
 
 ## Skipped Cases
 
-None.
+| case_id | ticker | tier | reason |
+|---|---|---|---|
+| RHC-0073-ACQUIRED-FUSN | FUSN | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0074-ACQUIRED-G1T | G1T | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0076-ACQUIRED-KRTX | KRTX | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0077-ACQUIRED-LBPH | LBPH | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0078-ACQUIRED-MORF | MORF | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0079-ACQUIRED-MRTX | MRTX | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0101-ACQUIRED-CHMA | CHMA | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0102-ACQUIRED-CNST | CNST | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0103-ACQUIRED-STML | STML | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0104-ACQUIRED-ALBO | ALBO | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0105-ACQUIRED-HZNP | HZNP | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0106-ACQUIRED-SGEN | SGEN | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0107-ACQUIRED-SNDX | SNDX | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0132-ACQUIRED-TBIO | TBIO | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0138-ACQUIRED-KROS | KROS | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
+| RHC-0140-ACQUIRED-VSTM | VSTM | PENDING_FILING_COLLECTION | Date confirmed; filing collector has not yet run for this ca |
 
 ## Workflow
 

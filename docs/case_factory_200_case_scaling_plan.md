@@ -266,10 +266,24 @@ python3 src/historical_case_tools/case_factory_orchestrator.py \
   --allow-filing-collection
 ```
 
-**Important:** `--allow-date-backfill` does NOT fetch or fake dates. It tells the orchestrator
-to proceed past the date gate so the exception queue and review packet can be written.
-Dates must still be resolved manually using the EDGAR URLs in `batch_N_M_date_prefill_queue.csv`,
-then re-running `--run-step exception-queue` and `--write-review-packets`.
+**What `--allow-date-backfill` actually does:**
+1. Identifies candidates missing confirmed dates.
+2. Resolves each company's SEC CIK via `company_tickers.json` or EDGAR company search.
+3. Fetches the EDGAR submissions JSON for each company.
+4. Finds 8-K filings with Item 1.01 (Material Definitive Agreement) in a ±2-year window.
+5. Checks the filing index for EX-2.x (merger/acquisition agreement) exhibits.
+6. Writes HIGH or MEDIUM confidence dates to `acquisition_announcement_dates.csv`.
+7. Writes source evidence rows to `source_evidence.csv`.
+8. Reports all results in `batch_N_M_date_backfill_report.md`.
+9. Re-checks the date gate — dated cases proceed, remaining BLOCKED cases get manual EDGAR URLs.
+
+**Confidence levels:**
+- `HIGH`: Single Item 1.01 8-K in expected year + EX-2.x confirmed
+- `MEDIUM`: Item 1.01 8-K with EX-2.x but multiple candidates or year−1 filing
+- `LOW`: Skipped — not written (too ambiguous)
+
+Cases that the automated backfill cannot resolve remain BLOCKED in the exception queue.
+Resolve them manually using EDGAR URLs in `batch_N_M_date_prefill_queue.csv`.
 
 ### After date backfill (re-run to unlock filing collection)
 

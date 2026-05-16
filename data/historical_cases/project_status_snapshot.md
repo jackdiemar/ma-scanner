@@ -1,6 +1,6 @@
 # Project Status Snapshot
 
-Generated: 2026-05-15 11:20:39 CDT
+Generated: 2026-05-15 (updated after Batch 51-70 final summary)
 
 ## Git
 
@@ -38,7 +38,8 @@ ebc8121 Add EDGAR source pull helper
 - PRESENT: `data/historical_cases/batch_51_70_filing_collection_report.md`
 - PRESENT: `data/historical_cases/batch_51_70_source_evidence_draft.csv`
 - PRESENT: `data/historical_cases/batch_51_70_high_priority_adjudication_report.md`
-- MISSING: `data/historical_cases/batch_51_70_p6_adjudication_report.md`
+- PRESENT: `data/historical_cases/batch_51_70_p6_adjudication_report.md`
+- PRESENT: `data/historical_cases/batch_51_70_final_summary.md`
 
 ## FMP And Universe File Check
 
@@ -57,7 +58,11 @@ ebc8121 Add EDGAR source pull helper
 - Batch 51-70 filing collection: complete.
 - Batch 51-70 high-priority review: complete.
 - High-priority review result: 0 TRUE_PUBLIC_PRIOR_SIGNAL.
-- Remaining Batch 51-70 work: P6 possible-hit adjudication, no-hit baseline finalization, final batch report.
+- Batch 51-70 P6 adjudication: complete (d7a3ca0).
+- Batch 51-70 final summary: complete (b2a893c).
+- Batch 51-70 final distribution: TRUE_PUBLIC_PRIOR_SIGNAL 0, DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE 11, RIGHTS_LANGUAGE_ONLY 7, ASSET_SPECIFIC_RIGHTS_ONLY 2.
+- Combined 70-case signal rate: 3/70 (4.3%).
+- Remaining Batch 51-70 work: none.
 - FMP integration plan: exists.
 - Five-year acquisition universe builder: exists.
 - FMP candidate discovery stub: exists, but live API is not enabled.
@@ -83,10 +88,10 @@ Possible-hit filing rows are counted from `batch_51_70_pre_announcement_filing_t
 
 ## Remaining Known Work
 
-1. Finish Batch 51-70 P6 possible-hit adjudication.
-2. Finalize true no-hit P6 baseline cases after coverage check.
-3. Build final Batch 51-70 distribution/report.
-4. Decide whether the historical factory is fast enough to scale toward 100 cases.
+1. Implement collector engineering improvements before Batch 71-90: binary artifact exclusion, PWERM section exclusion, negation lookback, lock-up exhibit exclusion. See `batch_51_70_final_summary.md` section 9.
+2. Align exception queue vocabulary with collector output (rofr_rofn, sale_process, retained_advisor) to eliminate P6 vocabulary-gap bucket.
+3. Optionally backfill PRIVATE_BACKGROUND_ONLY review for Batch 51-70 DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE cases.
+4. Decide whether to scale toward Batch 71-90 before or after engineering fixes.
 5. Keep FMP as discovery/context only until EDGAR/source-backed evidence confirms candidates.
 
 ## Do Not Touch Without Explicit Direction
@@ -104,7 +109,8 @@ Possible-hit filing rows are counted from `batch_51_70_pre_announcement_filing_t
 
 ```bash
 git status --short
-python3 src/historical_case_tools/batch_51_70_queue_summary.py
-sed -n '1,220p' data/historical_cases/batch_51_70_queue_summary.md
-# After Claude finishes P6 adjudication, review the P6 report and then build the final Batch 51-70 report.
+git log --oneline -5
+# Review final summary:
+head -80 data/historical_cases/batch_51_70_final_summary.md
+# Before Batch 71-90: implement collector engineering improvements (see summary section 9).
 ```
