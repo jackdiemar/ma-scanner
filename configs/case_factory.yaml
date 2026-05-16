@@ -1,0 +1,43 @@
+# Case Factory Configuration
+# Controls the 200-case historical prior-signal research factory.
+# All safety flags default to OFF. Do not enable without explicit intent.
+
+# ---- Scale targets ----
+target_case_count: 200
+current_confirmed_case_count: 70
+batch_size: 30
+start_case_number: 71
+end_case_number: 200
+
+# ---- Evidence requirements ----
+lookback_years: 5
+require_source_backed_dates: true
+require_edgar_or_source_url: true
+
+# ---- Discovery flags (default OFF) ----
+allow_fmp_discovery: false
+allow_live_api: false
+collect_filings: false
+
+# ---- Classification safety flags (must stay false) ----
+adjudicate_automatically: false
+mark_verified: false
+mark_calibration_eligible: false
+run_full_live_scanner: false
+
+# ---- Output paths ----
+output_dir: data/historical_cases
+cache_dir: ~/.ma_scanner_cache
+
+# ---- Filing collection limits ----
+max_filings_per_case: 50
+eight_k_scan_depth: 8
+
+# ---- Manual review tiers ----
+# Cases in these tiers always require human adjudication.
+manual_review_required_tiers:
+  - P1
+  - P2
+  - P3
+  - P4
+  - P6_WITH_HITS

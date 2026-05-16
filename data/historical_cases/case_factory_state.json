@@ -1,0 +1,45 @@
+{
+  "target_case_count": 200,
+  "current_case_count": 70,
+  "batches_created": [
+    {
+      "batch_name": "first_50",
+      "start": 1,
+      "end": 50,
+      "status": "finalized",
+      "finalized_date": "2026-05-14",
+      "true_prior_signal_count": 3,
+      "combined_signal_rate": "3/50 (6%)",
+      "summary_file": "data/historical_cases/biotech_prior_signal_50_case_final_summary.md"
+    },
+    {
+      "batch_name": "batch_51_70",
+      "start": 51,
+      "end": 70,
+      "status": "finalized",
+      "finalized_date": "2026-05-15",
+      "true_prior_signal_count": 0,
+      "combined_signal_rate": "0/20 (0%)",
+      "summary_file": "data/historical_cases/batch_51_70_final_summary.md"
+    }
+  ],
+  "last_completed_case_number": 70,
+  "candidates_selected": 26,
+  "dates_backfilled": 0,
+  "filings_collected": 0,
+  "exception_queues_created": 0,
+  "manual_review_packets_created": 0,
+  "finalized_cases": 70,
+  "blocked_cases": 0,
+  "unresolved_cases": 0,
+  "combined_true_prior_signal_count": 3,
+  "combined_signal_rate": "3/70 (4.3%)",
+  "latest_reports": {
+    "50_case_summary": "data/historical_cases/biotech_prior_signal_50_case_final_summary.md",
+    "batch_51_70_summary": "data/historical_cases/batch_51_70_final_summary.md",
+    "universe_report": "data/historical_cases/five_year_acquisition_universe_report.md"
+  },
+  "last_run_timestamp": "2026-05-16T15:31:26.463900+00:00",
+  "last_completed_step": "select_next_batch",
+  "next_recommended_step": "prepare_batch_71_100"
+}
