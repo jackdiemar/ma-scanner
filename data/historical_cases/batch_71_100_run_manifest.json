@@ -16,6 +16,25 @@
     "dates_missing": 10,
     "gate_passed": true
   },
+  "filing_collection_summary": {
+    "filing_collection_ran": true,
+    "enable_edgar_fetch": true,
+    "dated_cases_processed": 16,
+    "blocked_missing_date_cases": 10,
+    "filing_target_rows": 427,
+    "possible_signal_hits": 25,
+    "review_required_cases": 11,
+    "clean_likely_no_hit_cases": 5,
+    "next_recommended_step": "manual adjudication of batch_71_100_adjudication_queue.md"
+  },
+  "review_cases": {
+    "P1_manual_source_pull": ["SGEN", "TBIO"],
+    "P2_context_check": ["VSTM", "LBPH", "G1T"],
+    "P3_confirm_and_close": ["HZNP", "SNDX"],
+    "P4_known_pattern": ["STML", "MRTX", "ALBO", "CHMA"]
+  },
+  "clean_no_hit_cases": ["CNST", "FUSN", "KROS", "KRTX", "MORF"],
+  "blocked_cases": ["ENLV", "FATE", "GRCL", "HRMY", "KPTI", "LMNX", "MOR", "SYNH", "TGTX", "VECT"],
   "steps": [
     {
       "step": "validate_candidate_queue",
@@ -63,9 +82,14 @@
       "step": "filing_collection",
       "status": "PASS",
       "mode": "EDGAR API",
+      "dated_cases_processed": 16,
       "staging": "batch_71_100_confirmation_results_staging.csv",
       "targets": "batch_71_100_pre_announcement_filing_targets.csv",
-      "hits": "batch_71_100_signal_hits.csv"
+      "hits": "batch_71_100_signal_hits.csv",
+      "filing_target_rows": 427,
+      "possible_signal_hit_rows": 25,
+      "review_required_cases": 11,
+      "clean_likely_no_hit_cases": 5
     },
     {
       "step": "source_evidence",
@@ -82,6 +106,12 @@
       "step": "proposed_baselines",
       "status": "SKIPPED",
       "reason": "allow_clean_baseline_autofinalize=False"
+    },
+    {
+      "step": "adjudication_queue",
+      "status": "PASS",
+      "output": "batch_71_100_adjudication_queue.md",
+      "ranked_cases": 11
     }
   ],
   "files_written": [
@@ -99,14 +129,16 @@
     "batch_71_100_source_evidence_draft.csv",
     "batch_71_100_source_evidence_draft_report.md",
     "batch_71_100_review_packet.md",
+    "batch_71_100_adjudication_queue.md",
     "batch_71_100_package_report.md"
   ],
   "safety": {
     "no_adjudication": true,
     "no_verified_flag": true,
     "no_calibration_eligible": true,
-    "no_live_api": true,
+    "no_live_fmp_api": true,
     "no_live_scanner": true,
+    "no_first_70_changes": true,
     "source_evidence_csv_untouched": true
   }
 }

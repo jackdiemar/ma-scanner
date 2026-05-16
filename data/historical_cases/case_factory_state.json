@@ -40,6 +40,6 @@
     "universe_report": "data/historical_cases/five_year_acquisition_universe_report.md"
   },
   "last_run_timestamp": "2026-05-16T22:15:24.364193+00:00",
-  "last_completed_step": "batch_package_batch_71_100",
-  "next_recommended_step": "manual_adjudication_batch_71_100"
+  "last_completed_step": "adjudication_queue_batch_71_100",
+  "next_recommended_step": "manual_adjudication_batch_71_100_adjudication_queue"
 }

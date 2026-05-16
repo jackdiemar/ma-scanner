@@ -1,9 +1,8 @@
-# Batch 71 100 Manual Review Packet
+# Batch 71–100 Manual Review Packet
 
-Generated: 2026-05-16
-
-Manual review only. No cases adjudicated by this system.
-All classifications must be made by a human researcher following the decision tree below.
+Generated: 2026-05-16 (updated post-EDGAR filing collection)
+Status: Review preparation only. No cases adjudicated by this system.
+All classifications must be made by a human researcher.
 
 ---
 
@@ -12,40 +11,75 @@ All classifications must be made by a human researcher following the decision tr
 | Metric | Value |
 |---|---|
 | Cases in scope | 71–100 (30 target) |
-| Candidate rows available | 26 |
-| Exception queue rows | 26 |
-| Review packet generated | 2026-05-16 |
+| Candidates available | 26 |
+| Dated cases (EDGAR filing collection ran) | 16 |
+| Blocked cases (date missing) | 10 |
+| Filing target rows collected | 427 |
+| Possible signal hit rows | 25 |
+| Cases flagged for manual review | 11 |
+| Likely clean no-hit cases | 5 |
+| True prior signal rate through case 70 | 3/70 (4.3%) |
 
 ---
 
 ## 2. Review Order
 
-| Priority | Tier | Review trigger |
-|---|---|---|
-| 1st | P1 | Explicit acquisition-process phrases (unsolicited / superior / competing proposals) |
-| 2nd | P2 | Strategic alternatives + advisor retention language |
-| 3rd | P3 | SC 13D Item 4 acquisition pressure |
-| 4th | P4 | ROFR/ROFN language requiring company-vs-asset scope check |
-| 5th | BLOCKED | Date or source missing — resolve before any filing collection |
-| Last | P6_WITH_HITS | Signal phrase hit but low-confidence type |
+| Priority | Tier | Cases | Review trigger |
+|---|---|---|---|
+| 1st | P1 (manual source pull) | SGEN, TBIO | ROFN / option-to-acquire requiring filing text inspection |
+| 2nd | P2 (excerpt context check) | VSTM, LBPH, G1T | ROFR/ROFN / offering language scope check |
+| 3rd | P3 (confirm and close) | HZNP, SNDX | Likely boilerplate / wrong-direction acquisition |
+| 4th | P4 (known pattern) | STML, MRTX, ALBO, CHMA | Director bio, equity plan, anti-takeover boilerplate |
+| 5th | Spot-check | CNST, FUSN, KROS, KRTX, MORF | 5 likely-clean no-hit cases |
+| Last | BLOCKED | 10 cases | Resolve dates before any filing collection |
+
+See `batch_71_100_adjudication_queue.md` for full per-case detail, source URLs, and next actions.
 
 ---
 
 ## 3. Classification Decision Tree
 
-1. Was the source public **before** the announcement date?
+1. Was the source public **before** the acquisition announcement date?
    - **NO** → not `TRUE_PUBLIC_PRIOR_SIGNAL`
-2. Is the evidence company-level (not asset / product / territory-specific)?
-   - **NO** → `ASSET_SPECIFIC_RIGHTS_ONLY`
-3. Is it generic legal rights language (boilerplate ROFR, lock-up, CIC clause)?
-   - **YES** → `RIGHTS_LANGUAGE_ONLY`
-4. Does the process appear only in post-announcement SC 14D-9 or proxy background?
-   - **YES** → `PRIVATE_BACKGROUND_ONLY`
-5. Is there explicit pre-announcement proposal or process language with source URL, filing date, and excerpt?
-   - **YES** → possible `TRUE_PUBLIC_PRIOR_SIGNAL` (requires all evidence fields)
-6. No public process evidence confirmed → `DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE`
 
-If evidence is unclear: leave as `POSSIBLE_SIGNAL_NEEDS_REVIEW`. Do not force.
+2. Is it equity plan / S-8 / 424B3 / prospectus boilerplate?
+   - "Form S-8... offer or the sale of the Company's securities to such person"
+   - Anti-takeover provisions section in prospectus
+   - Securities offering disclaimer language
+   - **YES** → `RIGHTS_LANGUAGE_ONLY`
+
+3. Is it a director biography referencing a prior employer's sale?
+   - **YES** → `RIGHTS_LANGUAGE_ONLY`
+
+4. Is it performance condition language in equity award accounting?
+   - "a change in control or a sale of the company, no expense is recognized..."
+   - **YES** → `RIGHTS_LANGUAGE_ONLY`
+
+5. Is the keyword in a UUEncoded binary artifact / complete submission .txt?
+   - Garbled encoding around the keyword hit
+   - **YES** → false positive — discard
+
+6. Is the target the acquiring party (not the acquisition target)?
+   - Target company buying a drug program or other company
+   - **YES** → not process evidence — discard
+
+7. Is the ROFR/ROFN asset-specific (program, territory, product)?
+   - Not the whole company
+   - **YES** → `ASSET_SPECIFIC_RIGHTS_ONLY`
+
+8. Is the "sale of Company's stock/securities" language about a partner selling equity?
+   - Partner terminating and divesting equity stake
+   - **YES** → `RIGHTS_LANGUAGE_ONLY`
+
+9. Is it a warranty that ROFR does NOT apply?
+   - "not subject to any agreement granting a right of first refusal..."
+   - **YES** → `RIGHTS_LANGUAGE_ONLY`
+
+10. Is there explicit pre-announcement proposal or process language?
+    - "unsolicited proposal," "superior proposal," "acquisition proposal," "strategic alternatives" + banker context
+    - **YES** → possible `TRUE_PUBLIC_PRIOR_SIGNAL` — requires all evidence fields
+
+If unclear: leave as `POSSIBLE_SIGNAL_NEEDS_REVIEW`. Do not force.
 
 ---
 
@@ -54,14 +88,22 @@ If evidence is unclear: leave as `POSSIBLE_SIGNAL_NEEDS_REVIEW`. Do not force.
 | Pattern | Correct classification |
 |---|---|
 | Deal-announcement 8-K flagged same day as announcement | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE |
-| Negation: 'no plan or proposal to acquire' | False positive — ignore |
-| UUEncoded binary artifact in complete submission .txt | False positive — not in primary doc |
+| Negation: "no plan or proposal to acquire" | False positive — ignore |
+| UUEncoded binary artifact in complete submission .txt | False positive — discard |
 | PWERM stock comp valuation (pre-IPO) in 10-Q | RIGHTS_LANGUAGE_ONLY |
 | CIC vesting clause in proxy | RIGHTS_LANGUAGE_ONLY |
 | Director biography: prior sale at a different organization | RIGHTS_LANGUAGE_ONLY |
-| VC/PE investor self-reservation in SC 13D (IPO-era) | RIGHTS_LANGUAGE_ONLY |
+| Performance condition equity award boilerplate | RIGHTS_LANGUAGE_ONLY |
+| Anti-takeover provisions section in 424B3 / prospectus | RIGHTS_LANGUAGE_ONLY |
+| S-8 equity plan: "offer or sale of Company's securities to such person" | RIGHTS_LANGUAGE_ONLY |
+| Securities offering prospectus disclaimer | RIGHTS_LANGUAGE_ONLY |
+| Partner sells equity stake in collaboration termination | RIGHTS_LANGUAGE_ONLY |
+| ROFR warranty stating ROFR does not apply | RIGHTS_LANGUAGE_ONLY |
+| Target acquiring another entity (wrong direction) | Not relevant — discard |
 | Geographic license ROFN (product + territory specific) | ASSET_SPECIFIC_RIGHTS_ONLY |
-| Product-level ROFR (not company-level) | ASSET_SPECIFIC_RIGHTS_ONLY |
+| Product-level ROFR/ROFN (not company-level) | ASSET_SPECIFIC_RIGHTS_ONLY |
+| Company's own ROFN to re-acquire outbound-licensed compound | ASSET_SPECIFIC_RIGHTS_ONLY |
+| ROFN defined term in licensing collaboration agreement | ASSET_SPECIFIC_RIGHTS_ONLY |
 | BVI→Delaware redomiciliation merger agreement | False positive — internal doc |
 | Lock-up employment-termination share repurchase right | RIGHTS_LANGUAGE_ONLY |
 | FPI 6-K filer — no EDGAR target-form coverage | Baseline; note coverage gap |
@@ -89,131 +131,111 @@ Each non-baseline or upgraded case requires all of:
 
 ---
 
-## 6. Exception Queue Summary
+## 6. 11 Cases Flagged for Manual Review
 
-| Tier | Count |
-|---|---|
-| BLOCKED | 10 |
-| PENDING_FILING_COLLECTION | 16 |
-
-### Cases By Tier
-
-#### BLOCKED
-
-| case_id | ticker | priority_reason | next_action |
-|---|---|---|---|
-| RHC-0072-ACQUIRED-FATE | FATE | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0075-ACQUIRED-GRCL | GRCL | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0108-ACQUIRED-VECT | VECT | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0109-ACQUIRED-MOR | MOR | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0131-ACQUIRED-LMNX | LMNX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0134-ACQUIRED-ENLV | ENLV | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0135-ACQUIRED-HRMY | HRMY | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0136-ACQUIRED-SYNH | SYNH | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0137-ACQUIRED-KPTI | KPTI | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-| RHC-0139-ACQUIRED-TGTX | TGTX | No HIGH/MEDIUM announcement date — run merger_date_prefiller first. | Add announcement date (HIGH or MEDIUM confidence)  |
-
-#### PENDING_FILING_COLLECTION
-
-| case_id | ticker | priority_reason | next_action |
-|---|---|---|---|
-| RHC-0073-ACQUIRED-FUSN | FUSN | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0074-ACQUIRED-G1T | G1T | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0076-ACQUIRED-KRTX | KRTX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0077-ACQUIRED-LBPH | LBPH | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0078-ACQUIRED-MORF | MORF | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0079-ACQUIRED-MRTX | MRTX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0101-ACQUIRED-CHMA | CHMA | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0102-ACQUIRED-CNST | CNST | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0103-ACQUIRED-STML | STML | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0104-ACQUIRED-ALBO | ALBO | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0105-ACQUIRED-HZNP | HZNP | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0106-ACQUIRED-SGEN | SGEN | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0107-ACQUIRED-SNDX | SNDX | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0132-ACQUIRED-TBIO | TBIO | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0138-ACQUIRED-KROS | KROS | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-| RHC-0140-ACQUIRED-VSTM | VSTM | Date confirmed; filing collector has not yet run for this case. | Run pre_announcement_filing_collector.py for this  |
-
----
-
-## 7. Candidate Cases
-
-| # | ticker | company | year | confidence | needs_backfill | source_url |
+| Rank | Ticker | case_id | Hit count | Signal types | Priority | Likely pattern |
 |---|---|---|---|---|---|---|
-| 71 | ALBO | Albireo Pharma | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=ALBO+%22Albireo+P |
-| 72 | CHMA | Chiasma | 2021 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=CHMA+%22Chiasma%2 |
-| 73 | CNST | Constellation Pharmaceuticals | 2021 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=CNST+%22Constella |
-| 74 | ENLV | Enliven Therapeutics | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=ENLV+%22Enliven+T |
-| 75 | FATE | Fate Therapeutics | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=FATE+%22Fate+Ther |
-| 76 | FUSN | Fusion Pharmaceuticals Inc. | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=FUSN+%22Fusion+Ph |
-| 77 | G1T | G1 Therapeutics | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=G1T+%22G1+Therape |
-| 78 | GRCL | Gracell Biotechnologies | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=GRCL+%22Gracell+B |
-| 79 | HRMY | Harmony Biosciences | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=HRMY+%22Harmony+B |
-| 80 | HZNP | Horizon Therapeutics plc | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=HZNP+%22Horizon+T |
-| 81 | KPTI | Karyopharm Therapeutics | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=KPTI+%22Karyophar |
-| 82 | KROS | Keros Therapeutics | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=KROS+%22Keros+The |
-| 83 | KRTX | Karuna Therapeutics, Inc. | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=KRTX+%22Karuna+Th |
-| 84 | LBPH | Longboard Pharmaceuticals, Inc | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=LBPH+%22Longboard |
-| 85 | LMNX | Luminex Corporation | 2021 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=LMNX+%22Luminex+C |
-| 86 | MOR | MorphoSys AG | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=MOR+%22MorphoSys+ |
-| 87 | MORF | Morphic Holding, Inc. | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=MORF+%22Morphic+H |
-| 88 | MRTX | Mirati Therapeutics, Inc. | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=MRTX+%22Mirati+Th |
-| 89 | SGEN | Seagen Inc. | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=SGEN+%22Seagen+In |
-| 90 | SNDX | Syndax Pharmaceuticals | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=SNDX+%22Syndax+Ph |
-| 91 | STML | Stemline Therapeutics | 2021 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=STML+%22Stemline+ |
-| 92 | SYNH | Syneos Health, Inc. | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=SYNH+%22Syneos+He |
-| 93 | TBIO | Translate Bio | 2021 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=TBIO+%22Translate |
-| 94 | TGTX | TG Therapeutics | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=TGTX+%22TG+Therap |
-| 95 | VECT | VectivBio Holding | 2023 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=VECT+%22VectivBio |
-| 96 | VSTM | Verastem Oncology | 2024 | LOW | TRUE | https://efts.sec.gov/LATEST/search-index?q=VSTM+%22Verastem+ |
+| 1 | SGEN | RHC-0106-ACQUIRED-SGEN | 2 | rofr_rofn | P1 (source pull) | Licensing agreement ROFN; binary artifact |
+| 2 | TBIO | RHC-0132-ACQUIRED-TBIO | 1 | option_to_acquire | P1 (source pull) | Asset-specific option to acquire licenses |
+| 3 | VSTM | RHC-0140-ACQUIRED-VSTM | 2 | rofr_rofn, sale_process | P2 (context check) | ROFR warranty (negative) + offering boilerplate |
+| 4 | LBPH | RHC-0077-ACQUIRED-LBPH | 2 | sale_process, rofr_rofn | P2 (context check) | Asset-specific ROFN (Arena on LP659) + offering boilerplate |
+| 5 | G1T | RHC-0074-ACQUIRED-G1T | 4 | rofr_rofn, sale_process | P2 (context check) | G1T's own ROFN to re-acquire licensed compound |
+| 6 | HZNP | RHC-0105-ACQUIRED-HZNP | 3 | sale_process, option_to_acquire | P3 (confirm) | S-8 boilerplate + wrong-direction acquisition |
+| 7 | SNDX | RHC-0107-ACQUIRED-SNDX | 2 | sale_process | P3 (confirm) | Partner equity stake termination settlement |
+| 8 | STML | RHC-0103-ACQUIRED-STML | 5 | sale_process | P4 (known pattern) | Director bio + performance condition boilerplate |
+| 9 | MRTX | RHC-0079-ACQUIRED-MRTX | 1 | sale_process | P4 (known pattern) | S-8 equity plan boilerplate |
+| 10 | ALBO | RHC-0104-ACQUIRED-ALBO | 1 | acquisition_proposal | P4 (known pattern) | 424B3 anti-takeover provision disclosure |
+| 11 | CHMA | RHC-0101-ACQUIRED-CHMA | 2 | retained_advisor | P4 (known pattern) | Proxy director bio |
 
 ---
 
-## 8. Unresolved Blockers
+## 7. 5 Likely Clean No-Hit Cases
 
-Cases that cannot proceed without external resolution:
+No signal hits detected. Proposed classification: `DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE`.
+Require researcher spot-check before finalizing.
 
-- **FATE** (RHC-0072-ACQUIRED-FATE): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **GRCL** (RHC-0075-ACQUIRED-GRCL): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **VECT** (RHC-0108-ACQUIRED-VECT): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **MOR** (RHC-0109-ACQUIRED-MOR): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **LMNX** (RHC-0131-ACQUIRED-LMNX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **ENLV** (RHC-0134-ACQUIRED-ENLV): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **HRMY** (RHC-0135-ACQUIRED-HRMY): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **SYNH** (RHC-0136-ACQUIRED-SYNH): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **KPTI** (RHC-0137-ACQUIRED-KPTI): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
-- **TGTX** (RHC-0139-ACQUIRED-TGTX): No HIGH/MEDIUM announcement date — run merger_date_prefiller first.
+| Ticker | case_id | Announcement date | Date confidence |
+|---|---|---|---|
+| CNST | RHC-0102-ACQUIRED-CNST | 2021-06-02 | HIGH |
+| FUSN | RHC-0073-ACQUIRED-FUSN | 2024-03-19 | MEDIUM |
+| KROS | RHC-0138-ACQUIRED-KROS | 2024-12-03 | MEDIUM |
+| KRTX | RHC-0076-ACQUIRED-KRTX | 2023-12-22 | MEDIUM |
+| MORF | RHC-0078-ACQUIRED-MORF | 2024-07-08 | MEDIUM |
 
 ---
 
-## 9. Inspector Commands
+## 8. 10 Blocked Missing-Date Cases
+
+All 10 remain BLOCKED. Do not attempt filing collection. Use EDGAR URLs in `batch_71_100_date_prefill_queue.csv` to resolve dates manually.
+
+| Ticker | case_id | Year | Backfill result |
+|---|---|---|---|
+| ENLV | RHC-0134-ACQUIRED-ENLV | 2023 | No Item 1.01 8-K found |
+| FATE | RHC-0072-ACQUIRED-FATE | 2024 | LOW confidence — skipped |
+| GRCL | RHC-0075-ACQUIRED-GRCL | 2024 | No Item 1.01 8-K found |
+| HRMY | RHC-0135-ACQUIRED-HRMY | 2023 | LOW confidence — skipped |
+| KPTI | RHC-0137-ACQUIRED-KPTI | 2024 | LOW confidence — skipped |
+| LMNX | RHC-0131-ACQUIRED-LMNX | 2021 | CIK not found |
+| MOR | RHC-0109-ACQUIRED-MOR | 2024 | No Item 1.01 8-K (FPI) |
+| SYNH | RHC-0136-ACQUIRED-SYNH | 2023 | LOW confidence — skipped |
+| TGTX | RHC-0139-ACQUIRED-TGTX | 2024 | LOW confidence — skipped |
+| VECT | RHC-0108-ACQUIRED-VECT | 2023 | No Item 1.01 8-K found |
+
+---
+
+## 9. What Qualifies as TRUE_PUBLIC_PRIOR_SIGNAL
+
+Based on 70-case standard:
+- SEC filing (8-K, 10-Q, 10-K, DEF 14A, SC 13D) — not post-announcement SC 14D-9
+- Filed before acquisition announcement date
+- Company-level scope — not asset, program, or territory-specific
+- Explicit language: "unsolicited proposal," "superior proposal," "acquisition proposal," "strategic alternatives" + banker retention context
+- All evidence fields populated (source_url, accession_number, verbatim excerpt, days_before_announcement)
+
+Prior TRUE_PUBLIC_PRIOR_SIGNAL cases for reference: MDVN (unsolicited proposal, 116 days), DMTX (superior proposal, 39 days), TSRO (sale-process media report, 17 days).
+
+Expected rate in this batch: 0–1 case based on 4.3% historical base rate.
+
+---
+
+## 10. What Should Each Case Be Classified As
+
+| Result | Classification | Trigger |
+|---|---|---|
+| Confirmed public process evidence | TRUE_PUBLIC_PRIOR_SIGNAL | Explicit proposal/process language, source-backed, company-level |
+| No public process evidence | DEAL_ANNOUNCEMENT_BASELINE_CANDIDATE | Clean review or likely-no-hit |
+| Process only in SC 14D-9 / proxy background | PRIVATE_BACKGROUND_ONLY | Background exists but was never public pre-announcement |
+| Company-level ROFR/ROFN (not asset-specific) | RIGHTS_LANGUAGE_ONLY | Generic rights clause, not sale-process evidence |
+| Asset-specific ROFR/ROFN | ASSET_SPECIFIC_RIGHTS_ONLY | Rights limited to program, territory, or licensed compound |
+| Missing date confirmed unresolvable | BLOCKED | No HIGH/MEDIUM date; manual EDGAR research needed |
+
+---
+
+## 11. EDGAR Source Pull Helper
+
+For SGEN and TBIO manual source pulls:
 
 ```bash
-# View EDGAR filings for a specific ticker (replace TICKER)
-python3 src/historical_case_tools/edgar_source_pull_helper.py --ticker TICKER
-
-# Date prefill work queue
-cat data/historical_cases/batch_71_100_date_prefill_queue.csv
-
-# Exception queue
-cat data/historical_cases/batch_71_100_exception_queue.csv
-
-# Source evidence draft
-cat data/historical_cases/batch_71_100_source_evidence_draft.csv
+python3 src/historical_case_tools/edgar_source_pull_helper.py \
+  --url "<SEC_ARCHIVE_URL>" \
+  --case-id "RHC-XXXX" \
+  --ticker "TICKER" \
+  --filing-type "8-K" \
+  --find "unsolicited proposal" \
+  --find "superior proposal" \
+  --find "acquisition proposal" \
+  --find "strategic alternatives" \
+  --find "right of first"
 ```
 
 ---
 
-## 10. Safety Constraints
+## 12. Stop Conditions
 
-- No automatic adjudication.
-- No VERIFIED flag.
-- No CALIBRATION_ELIGIBLE flag.
-- No alpha claims.
-- No M&A prediction framing.
-- EDGAR/source-backed evidence is the source of truth.
-- FMP is market context only — not classification evidence.
-- Post-announcement SC 14D-9 background is NOT prior public signal.
-- Generic ROFR is not process evidence.
-- Asset-specific rights are not company-level process evidence.
-- Private offers are not public signals unless publicly disclosed before announcement.
+Do not proceed if any of these apply:
+- Classifying from post-announcement SC 14D-9 / proxy background only
+- Marking TRUE_PUBLIC_PRIOR_SIGNAL without verified source URL, filing date, excerpt, and days-before
+- Using FMP data as classification evidence (context only)
+- Marking VERIFIED or CALIBRATION_ELIGIBLE
+- Changing any of the first 70 classifications
+- Running the full live scanner
