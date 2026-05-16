@@ -221,13 +221,20 @@ def _write_confirmation_results_staging(
     label: str,
     queue_rows: list[dict[str, str]],
     dates_found: dict[str, str],
+    dated_only: bool = False,
 ) -> Path:
-    """Write batch-specific prior_signal_confirmation_results staging for filing collector."""
+    """Write batch-specific prior_signal_confirmation_results staging for filing collector.
+
+    dated_only=True: include only candidates that have a confirmed date (for real EDGAR fetch).
+    dated_only=False: include all candidates, marking undated ones DATE_OR_CIK_BLOCKED.
+    """
     import csv as _csv
     staging_path = hdir / f"{label}_confirmation_results_staging.csv"
     rows = []
     for r in queue_rows:
         tk = r.get("ticker", "")
+        if dated_only and tk not in dates_found:
+            continue
         dt = dates_found.get(tk, "")
         search_start = ""
         if dt:
@@ -396,6 +403,7 @@ def _write_run_manifest(
     gate_passed: bool,
     n_found: int,
     n_missing: int,
+    enable_edgar_fetch: bool = False,
 ) -> "Path | None":
     import json as _json
     manifest_path = hdir / f"{label}_run_manifest.json"
@@ -414,6 +422,7 @@ def _write_run_manifest(
             "allow_date_backfill": allow_date_backfill,
             "allow_filing_collection": allow_filing_collection,
             "allow_clean_baseline_autofinalize": allow_clean_baseline_autofinalize,
+            "enable_edgar_fetch": enable_edgar_fetch,
         },
         "gate_summary": {
             "dates_found": n_found,
@@ -1016,6 +1025,7 @@ def cmd_run_batch_package(
     allow_filing_collection: bool,
     allow_clean_baseline_autofinalize: bool,
     dry_run: bool,
+    enable_edgar_fetch: bool = False,
 ) -> int:
     import re as _re
     end = start + limit - 1
@@ -1060,6 +1070,7 @@ def cmd_run_batch_package(
     print(f"  dry_run:                          {dry_run}")
     print(f"  allow_date_backfill:              {allow_date_backfill}")
     print(f"  allow_filing_collection:          {allow_filing_collection}")
+    print(f"  enable_edgar_fetch:               {enable_edgar_fetch}")
     print(f"  allow_clean_baseline_autofinalize:{allow_clean_baseline_autofinalize}")
     print()
 
@@ -1193,6 +1204,7 @@ def cmd_run_batch_package(
             hdir, label, start, end, limit, steps_log, files_written, dry_run,
             allow_date_backfill, allow_filing_collection, allow_clean_baseline_autofinalize,
             gate_passed=False, n_found=n_found, n_missing=n_missing,
+            enable_edgar_fetch=enable_edgar_fetch,
         )
         return 0
 
@@ -1226,36 +1238,49 @@ def cmd_run_batch_package(
     print()
     filing_script = REPO_ROOT / "src" / "historical_case_tools" / "pre_announcement_filing_collector.py"
     if allow_filing_collection and n_found > 0 and filing_script.exists():
-        print(f"STEP 5 — Filing collection ({n_found} of {len(queue_rows)} candidates have dates)...")
+        fetch_mode = "EDGAR API" if enable_edgar_fetch else "no-api (search-URL only)"
+        print(f"STEP 5 — Filing collection ({n_found} of {len(queue_rows)} candidates have dates) [{fetch_mode}]...")
         if not dry_run:
-            cr_staging = _write_confirmation_results_staging(hdir, label, queue_rows, dates_found)
+            # When fetching real filings, only include dated candidates to avoid useless BLOCKED rows.
+            cr_staging = _write_confirmation_results_staging(
+                hdir, label, queue_rows, dates_found,
+                dated_only=enable_edgar_fetch,
+            )
             files_written.append(str(cr_staging))
-            targets_out = hdir / f"{label}_filing_targets.csv"
-            hits_out    = hdir / f"{label}_signal_hits.csv"
-            filing_rpt  = hdir / f"{label}_filing_report.md"
+            # Use distinct filename for real-fetch targets to distinguish from no-api pass.
+            if enable_edgar_fetch:
+                targets_out = hdir / f"{label}_pre_announcement_filing_targets.csv"
+            else:
+                targets_out = hdir / f"{label}_filing_targets.csv"
+            hits_out         = hdir / f"{label}_signal_hits.csv"
+            filing_rpt       = hdir / f"{label}_filing_report.md"
             confirmation_rpt = hdir / f"{label}_confirmation_results_report.md"
             cmd = [
                 sys.executable, str(filing_script),
-                "--confirmation-results",  str(cr_staging),
-                "--confirmation-report",   str(confirmation_rpt),
-                "--targets-output",        str(targets_out),
-                "--hits-output",           str(hits_out),
-                "--report",                str(filing_rpt),
-                "--no-api",
+                "--confirmation-results", str(cr_staging),
+                "--confirmation-report",  str(confirmation_rpt),
+                "--targets-output",       str(targets_out),
+                "--hits-output",          str(hits_out),
+                "--report",               str(filing_rpt),
             ]
+            if not enable_edgar_fetch:
+                cmd.append("--no-api")
             rc = _run_cmd(cmd, "filing_collection")
             if rc != 0:
                 _step("filing_collection", "WARN", exit_code=rc,
                       note="Non-fatal — continuing to source evidence")
                 print(f"  WARNING: Filing collector exit={rc}. Continuing.")
             else:
-                _step("filing_collection", "PASS",
+                _step("filing_collection", "PASS", mode=fetch_mode,
                       staging=cr_staging.name, targets=targets_out.name, hits=hits_out.name)
                 files_written += [str(targets_out), str(hits_out), str(filing_rpt),
                                   str(confirmation_rpt)]
         else:
-            _run_cmd([sys.executable, str(filing_script), "--no-api"], "filing_collection")
-            _step("filing_collection", "DRY_RUN", candidates_with_dates=n_found)
+            dry_cmd = [sys.executable, str(filing_script)]
+            if not enable_edgar_fetch:
+                dry_cmd.append("--no-api")
+            _run_cmd(dry_cmd, "filing_collection")
+            _step("filing_collection", "DRY_RUN", mode=fetch_mode, candidates_with_dates=n_found)
     elif allow_filing_collection and n_found == 0:
         print(f"STEP 5 — Filing collection: SKIPPED (0 candidates have confirmed dates)")
         _step("filing_collection", "SKIPPED", reason="No candidates with confirmed dates")
@@ -1342,6 +1367,7 @@ def cmd_run_batch_package(
         hdir, label, start, end, limit, steps_log, files_written, dry_run,
         allow_date_backfill, allow_filing_collection, allow_clean_baseline_autofinalize,
         gate_passed=gate_passed, n_found=n_found, n_missing=n_missing,
+        enable_edgar_fetch=enable_edgar_fetch,
     )
     if manifest_path:
         files_written.append(str(manifest_path))
@@ -1408,7 +1434,12 @@ def main() -> int:
                         help="Proceed past date gate even when candidates lack confirmed dates "
                              "(exception queue will mark them BLOCKED; requires manual EDGAR research)")
     parser.add_argument("--allow-filing-collection", action="store_true",
-                        help="Run pre_announcement_filing_collector --no-api for candidates with dates")
+                        help="Run pre_announcement_filing_collector for candidates with dates "
+                             "(--no-api by default; add --enable-edgar-fetch for real EDGAR calls)")
+    parser.add_argument("--enable-edgar-fetch", action="store_true",
+                        help="Enable real EDGAR API filing collection. "
+                             "Requires --allow-filing-collection. "
+                             "Without this flag, filing collection runs in --no-api mode.")
     parser.add_argument("--allow-clean-baseline-autofinalize", action="store_true",
                         help="Write proposed_clean_baselines.csv for PENDING/P6 tier cases")
     parser.add_argument("--dry-run", action="store_true",
@@ -1463,6 +1494,7 @@ def main() -> int:
             allow_filing_collection=args.allow_filing_collection,
             allow_clean_baseline_autofinalize=args.allow_clean_baseline_autofinalize,
             dry_run=args.dry_run,
+            enable_edgar_fetch=args.enable_edgar_fetch,
         )
 
     parser.print_help()

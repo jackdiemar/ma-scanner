@@ -8,7 +8,8 @@
   "flags": {
     "allow_date_backfill": true,
     "allow_filing_collection": true,
-    "allow_clean_baseline_autofinalize": false
+    "allow_clean_baseline_autofinalize": false,
+    "enable_edgar_fetch": true
   },
   "gate_summary": {
     "dates_found": 16,
@@ -61,8 +62,9 @@
     {
       "step": "filing_collection",
       "status": "PASS",
+      "mode": "EDGAR API",
       "staging": "batch_71_100_confirmation_results_staging.csv",
-      "targets": "batch_71_100_filing_targets.csv",
+      "targets": "batch_71_100_pre_announcement_filing_targets.csv",
       "hits": "batch_71_100_signal_hits.csv"
     },
     {
@@ -90,7 +92,7 @@
     "batch_71_100_exception_queue.csv",
     "batch_71_100_exception_queue_report.md",
     "batch_71_100_confirmation_results_staging.csv",
-    "batch_71_100_filing_targets.csv",
+    "batch_71_100_pre_announcement_filing_targets.csv",
     "batch_71_100_signal_hits.csv",
     "batch_71_100_filing_report.md",
     "batch_71_100_confirmation_results_report.md",
