@@ -1,16 +1,16 @@
 # Case Factory Validation Suite Report: batch_71_100
 
-- Timestamp: 2026-05-16T17:20:21
+- Timestamp: 2026-05-16T17:24:51
 - Batch name: batch_71_100
 - Mode: non-strict
 - Overall result: FAIL
-- Next recommended action: Stop and resolve batch alignment before running package or adjudication steps.
+- Next recommended action: Do not mutate data automatically. Review the source evidence integrity report and fix evidence/date issues in a separate, intentional cleanup.
 
 ## Summary
 
 | Validator | Result | Scope | Exit code | Warnings | Failures |
 |---|---|---|---:|---:|---:|
-| alignment | FAIL | batch-specific | 1 | 2 | 1 |
+| alignment | PASS | batch-specific | 0 | 2 |  |
 | source_evidence | FAIL | global | 1 | 64 | 9 |
 
 ## Commands Run
@@ -22,14 +22,13 @@
 
 ### alignment
 
-- Result: FAIL
-- Exit code: 1
+- Result: PASS
+- Exit code: 0
 - Scope: batch-specific
 - Warnings: 2
-- Failures: 1
 
 ```text
-Batch alignment validation: FAIL
+Batch alignment validation: PASS
 Batch: batch_71_100
 Mode: non-strict
 Report: data/historical_cases/batch_71_100_alignment_validation_report.md
@@ -44,11 +43,7 @@ Files missing: None
 [WARN] source_evidence_draft: tickers=10 case_ids=10
   missing tickers: ALBO, CHMA, CNST, FUSN, G1T, HZNP, KROS, KRTX, LBPH, MORF, MRTX, SGEN, SNDX, STML, TBIO, VSTM
   missing case_ids: RHC-0073-ACQUIRED-FUSN, RHC-0074-ACQUIRED-G1T, RHC-0076-ACQUIRED-KRTX, RHC-0077-ACQUIRED-LBPH, RHC-0078-ACQUIRED-MORF, RHC-0079-ACQUIRED-MRTX, RHC-0101-ACQUIRED-CHMA, RHC-0102-ACQUIRED-CNST, RHC-0103-ACQUIRED-STML, RHC-0104-ACQUIRED-ALBO, RHC-0105-ACQUIRED-HZNP, RHC-0106-ACQUIRED-SGEN, RHC-0107-ACQUIRED-SNDX, RHC-0132-ACQUIRED-TBIO, RHC-0138-ACQUIRED-KROS, RHC-0140-ACQUIRED-VSTM
-[FAIL] pre_announcement_filing_targets: tickers=16 case_ids=16
-  missing tickers: ENLV, FATE, GRCL, HRMY, KPTI, LMNX, MOR, SYNH, TGTX, VECT
-  missing case_ids: RHC-0072-ACQUIRED-FATE, RHC-0075-ACQUIRED-GRCL, RHC-0108-ACQUIRED-VECT, RHC-0109-ACQUIRED-MOR, RHC-0131-ACQUIRED-LMNX, RHC-0134-ACQUIRED-ENLV, RHC-0135-ACQUIRED-HRMY, RHC-0136-ACQUIRED-SYNH, RHC-0137-ACQUIRED-KPTI, RHC-0139-ACQUIRED-TGTX
-  duplicated tickers: ALBO, CHMA, CNST, FUSN, G1T, HZNP, KROS, KRTX, LBPH, MORF, MRTX, SGEN, SNDX, STML, TBIO, VSTM
-  duplicated case_ids: RHC-0073-ACQUIRED-FUSN, RHC-0074-ACQUIRED-G1T, RHC-0076-ACQUIRED-KRTX, RHC-0077-ACQUIRED-LBPH, RHC-0078-ACQUIRED-MORF, RHC-0079-ACQUIRED-MRTX, RHC-0101-ACQUIRED-CHMA, RHC-0102-ACQUIRED-CNST, RHC-0103-ACQUIRED-STML, RHC-0104-ACQUIRED-ALBO, RHC-0105-ACQUIRED-HZNP, RHC-0106-ACQUIRED-SGEN, RHC-0107-ACQUIRED-SNDX, RHC-0132-ACQUIRED-TBIO, RHC-0138-ACQUIRED-KROS, RHC-0140-ACQUIRED-VSTM
+[PASS] pre_announcement_filing_targets: tickers=16 case_ids=16
 [PASS] filing_targets: tickers=26 case_ids=26
 [WARN] run_manifest: tickers=0 case_ids=0
 ```

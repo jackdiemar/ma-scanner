@@ -63,6 +63,7 @@ class ExtractedFile:
     ticker_field: str = ""
     case_id_field: str = ""
     read_error: str = ""
+    rows: list[dict[str, str]] | None = None
 
     @property
     def tickers(self) -> set[str]:
@@ -93,6 +94,7 @@ class Comparison:
     wrong_old_index_tickers: list[str]
     failures: list[str]
     warnings: list[str]
+    expected_source: str = "candidate_queue"
 
 
 def clean(value: Any) -> str:
@@ -142,6 +144,7 @@ def read_csv_file(spec: FileSpec, path: Path) -> ExtractedFile:
         case_id_values=case_ids,
         ticker_field=ticker_field,
         case_id_field=case_id_field,
+        rows=rows,
     )
 
 
@@ -196,6 +199,142 @@ def read_batch_file(spec: FileSpec, batch_name: str) -> ExtractedFile:
     return read_csv_file(spec, path)
 
 
+def upper(value: Any) -> str:
+    return clean(value).upper()
+
+
+def row_value(row: dict[str, str], candidates: tuple[str, ...]) -> str:
+    field = first_present_field(row.keys(), candidates)
+    if not field:
+        return ""
+    return clean(row.get(field))
+
+
+def row_ticker(row: dict[str, str]) -> str:
+    return normalize_ticker(row_value(row, TICKER_FIELDS))
+
+
+def row_case_id(row: dict[str, str]) -> str:
+    return normalize_case_id(row_value(row, CASE_ID_FIELDS))
+
+
+def row_date(row: dict[str, str]) -> str:
+    return row_value(
+        row,
+        (
+            "announcement_date",
+            "acquisition_announcement_date",
+            "current_announcement_date",
+            "event_date",
+        ),
+    )
+
+
+def row_status_text(row: dict[str, str]) -> str:
+    fields = (
+        "priority_tier",
+        "adjudication_status",
+        "recommended_status",
+        "hit_status",
+        "next_action",
+        "notes",
+    )
+    return " ".join(upper(row.get(field)) for field in fields if field in row)
+
+
+def is_blocked_row(row: dict[str, str]) -> bool:
+    status = row_status_text(row)
+    if "DATE_OR_CIK_BLOCKED" in status or "BLOCKED" in status:
+        return True
+    needs_backfill = upper(row.get("needs_date_backfill"))
+    return needs_backfill in {"TRUE", "YES", "1"}
+
+
+def is_multirow_filing_target(file: ExtractedFile) -> bool:
+    if "filing_targets" not in file.spec.label:
+        return False
+    unique_case_count = len(file.case_ids)
+    if unique_case_count and file.row_count > unique_case_count:
+        return True
+    for row in file.rows or []:
+        if clean(row.get("filing_date")) or clean(row.get("accession_number")):
+            return True
+    return False
+
+
+@dataclass(frozen=True)
+class ExpectedSet:
+    tickers: set[str]
+    case_ids: set[str]
+    source: str
+    warnings: tuple[str, ...] = ()
+
+
+def expected_from_rows(rows: list[dict[str, str]], source: str) -> ExpectedSet:
+    tickers = {row_ticker(row) for row in rows if row_ticker(row)}
+    case_ids = {row_case_id(row) for row in rows if row_case_id(row)}
+    return ExpectedSet(tickers=tickers, case_ids=case_ids, source=source)
+
+
+def eligible_from_exception_queue(exception_file: ExtractedFile) -> ExpectedSet | None:
+    if not exception_file.found or exception_file.read_error:
+        return None
+
+    eligible_rows = []
+    for row in exception_file.rows or []:
+        status = row_status_text(row)
+        if is_blocked_row(row):
+            continue
+        has_date = bool(row_date(row))
+        has_eligible_status = (
+            "PENDING_FILING_COLLECTION" in status
+            or "P1" in status
+            or "P2" in status
+            or "P3" in status
+            or "P4" in status
+            or "P5" in status
+            or "P6" in status
+            or "REVIEW" in status
+        )
+        if has_date and has_eligible_status:
+            eligible_rows.append(row)
+
+    return expected_from_rows(eligible_rows, "eligible_dated_cases_from_exception_queue")
+
+
+def eligible_from_confirmation_staging(batch_name: str) -> ExpectedSet | None:
+    path = HISTORICAL_DIR / f"{batch_name}_confirmation_results_staging.csv"
+    if not path.exists():
+        return None
+    spec = FileSpec("confirmation_results_staging", "confirmation_results_staging.csv")
+    staging = read_csv_file(spec, path)
+    if staging.read_error:
+        return None
+
+    eligible_rows = []
+    for row in staging.rows or []:
+        if row_date(row) and not is_blocked_row(row):
+            eligible_rows.append(row)
+    return expected_from_rows(eligible_rows, "eligible_dated_cases_from_confirmation_results_staging")
+
+
+def eligible_filing_targets(files_by_label: dict[str, ExtractedFile], batch_name: str) -> ExpectedSet:
+    from_exception = eligible_from_exception_queue(files_by_label["exception_queue"])
+    if from_exception and (from_exception.tickers or from_exception.case_ids):
+        return from_exception
+
+    from_staging = eligible_from_confirmation_staging(batch_name)
+    if from_staging and (from_staging.tickers or from_staging.case_ids):
+        return from_staging
+
+    return ExpectedSet(
+        tickers=set(),
+        case_ids=set(),
+        source="eligible_set_unavailable",
+        warnings=("eligible_set_unavailable",),
+    )
+
+
 def case_number(case_id: str) -> int | None:
     match = re.match(r"^RHC-(\d+)-", case_id)
     if not match:
@@ -229,9 +368,16 @@ def wrong_old_index_tickers(file: ExtractedFile, canonical_case_ids: set[str], b
     return sorted(set(wrong))
 
 
-def compare_file(file: ExtractedFile, canonical: ExtractedFile, batch_name: str) -> Comparison:
+def compare_file(
+    file: ExtractedFile,
+    canonical: ExtractedFile,
+    batch_name: str,
+    expected: ExpectedSet | None = None,
+) -> Comparison:
     failures: list[str] = []
     warnings: list[str] = []
+    expected = expected or ExpectedSet(canonical.tickers, canonical.case_ids, "candidate_queue")
+    multirow_filing_target = is_multirow_filing_target(file)
 
     has_identifier_values = bool(file.ticker_values or file.case_id_values)
     if not has_identifier_values and not file.read_error:
@@ -247,33 +393,49 @@ def compare_file(file: ExtractedFile, canonical: ExtractedFile, batch_name: str)
             wrong_old_index_tickers=[],
             failures=failures,
             warnings=warnings,
+            expected_source=expected.source,
         )
 
-    extra_tickers = sorted(file.tickers - canonical.tickers)
-    missing_tickers = sorted(canonical.tickers - file.tickers)
-    extra_case_ids = sorted(file.case_ids - canonical.case_ids)
-    missing_case_ids = sorted(canonical.case_ids - file.case_ids)
-    duplicated_tickers = file.duplicate_tickers
-    duplicated_case_ids = file.duplicate_case_ids
+    extra_tickers = sorted(file.tickers - expected.tickers)
+    missing_tickers = sorted(expected.tickers - file.tickers)
+    extra_case_ids = sorted(file.case_ids - expected.case_ids)
+    missing_case_ids = sorted(expected.case_ids - file.case_ids)
+    outside_candidate_tickers = sorted(file.tickers - canonical.tickers)
+    outside_candidate_case_ids = sorted(file.case_ids - canonical.case_ids)
+    duplicated_tickers = [] if multirow_filing_target else file.duplicate_tickers
+    duplicated_case_ids = [] if multirow_filing_target else file.duplicate_case_ids
     old_index_tickers = wrong_old_index_tickers(file, canonical.case_ids, batch_name)
 
     if file.read_error:
         failures.append(f"read_error: {file.read_error}")
+    warnings.extend(expected.warnings)
     if duplicated_tickers:
         failures.append("duplicated_tickers")
     if duplicated_case_ids:
         failures.append("duplicated_case_ids")
+    if outside_candidate_tickers:
+        failures.append("outside_candidate_tickers")
+    if outside_candidate_case_ids:
+        failures.append("outside_candidate_case_ids")
     if extra_tickers:
-        failures.append("extra_tickers")
+        failures.append("extra_or_ineligible_tickers")
     if extra_case_ids:
-        failures.append("extra_case_ids")
+        failures.append("extra_or_ineligible_case_ids")
     if old_index_tickers:
         failures.append("wrong_old_index_tickers")
-    if file.spec.requires_full_batch and missing_tickers:
+    if multirow_filing_target and expected.source == "eligible_set_unavailable":
+        warnings.append("filing_target_eligible_set_unavailable")
+    elif multirow_filing_target and missing_tickers:
+        failures.append("missing_eligible_tickers")
+    elif file.spec.requires_full_batch and missing_tickers:
         failures.append("missing_tickers")
     elif missing_tickers:
         warnings.append("missing_tickers")
-    if file.spec.requires_full_batch and missing_case_ids:
+    if multirow_filing_target and expected.source == "eligible_set_unavailable":
+        pass
+    elif multirow_filing_target and missing_case_ids:
+        failures.append("missing_eligible_case_ids")
+    elif file.spec.requires_full_batch and missing_case_ids:
         failures.append("missing_case_ids")
     elif missing_case_ids:
         warnings.append("missing_case_ids")
@@ -289,6 +451,7 @@ def compare_file(file: ExtractedFile, canonical: ExtractedFile, batch_name: str)
         wrong_old_index_tickers=old_index_tickers,
         failures=failures,
         warnings=warnings,
+        expected_source=expected.source,
     )
 
 
@@ -346,9 +509,11 @@ def write_report(
         lines.append("- None")
 
     lines.extend(["", "## Counts By File", ""])
-    lines.append("| File | Rows | Ticker field | Ticker count | Case ID field | Case ID count | Duplicated tickers | Duplicated case_ids |")
+    lines.append("| File | Rows | Ticker field | Unique ticker count | Case ID field | Unique case ID count | Repeated tickers | Repeated case_ids |")
     lines.append("|---|---:|---|---:|---|---:|---|---|")
     for file in found_files:
+        repeated_tickers = "expected multi-row file" if is_multirow_filing_target(file) else fmt_list(file.duplicate_tickers)
+        repeated_case_ids = "expected multi-row file" if is_multirow_filing_target(file) else fmt_list(file.duplicate_case_ids)
         lines.append(
             "| "
             f"{file.spec.label} | "
@@ -357,18 +522,19 @@ def write_report(
             f"{len(file.tickers)} | "
             f"{file.case_id_field or 'not found'} | "
             f"{len(file.case_ids)} | "
-            f"{fmt_list(file.duplicate_tickers)} | "
-            f"{fmt_list(file.duplicate_case_ids)} |"
+            f"{repeated_tickers} | "
+            f"{repeated_case_ids} |"
         )
 
     lines.extend(["", "## Alignment Results", ""])
-    lines.append("| File | Status | Extra tickers | Missing tickers | Extra case_ids | Missing case_ids | Wrong old-index tickers | Notes |")
-    lines.append("|---|---|---|---|---|---|---|---|")
+    lines.append("| File | Expected set | Status | Extra tickers | Missing tickers | Extra case_ids | Missing case_ids | Wrong old-index tickers | Notes |")
+    lines.append("|---|---|---|---|---|---|---|---|---|")
     for comparison in comparisons:
         notes = comparison.failures + comparison.warnings
         lines.append(
             "| "
             f"{comparison.file.spec.label} | "
+            f"{comparison.expected_source} | "
             f"{status_for(comparison)} | "
             f"{fmt_list(comparison.extra_tickers)} | "
             f"{fmt_list(comparison.missing_tickers)} | "
@@ -383,8 +549,11 @@ def write_report(
         "## Interpretation",
         "",
         "- Full-batch files must contain every candidate queue ticker and case_id.",
+        "- Multi-row filing target files are compared against eligible dated cases, not the full candidate queue.",
+        "- Eligible dated cases come from the exception queue when available, excluding BLOCKED / DATE_OR_CIK_BLOCKED rows.",
+        "- Repeated tickers and case_ids are expected in multi-row filing target files.",
         "- Partial downstream files may omit canonical candidates, but may not introduce extras.",
-        "- Any extra ticker, extra case_id, duplicate, read error, or wrong old-index detection is a failure.",
+        "- Any extra ticker outside the expected set, outside-candidate ticker, duplicate in one-row-per-case files, read error, or wrong old-index detection is a failure.",
         "- In strict mode, missing expected downstream files are failures.",
         "",
     ])
@@ -411,10 +580,19 @@ def validate(batch_name: str, strict: bool) -> tuple[int, str, list[Comparison],
     else:
         canonical_comparison = compare_file(canonical, canonical, batch_name)
         comparisons.append(canonical_comparison)
+        eligible_for_filing_targets = eligible_filing_targets(by_label, batch_name)
+        if eligible_for_filing_targets.source == "eligible_set_unavailable":
+            eligible_for_filing_targets = ExpectedSet(
+                tickers=canonical.tickers,
+                case_ids=canonical.case_ids,
+                source="eligible_set_unavailable",
+                warnings=eligible_for_filing_targets.warnings,
+            )
         for file in files:
             if not file.found or file.spec.label == "candidate_queue":
                 continue
-            comparisons.append(compare_file(file, canonical, batch_name))
+            expected = eligible_for_filing_targets if is_multirow_filing_target(file) else None
+            comparisons.append(compare_file(file, canonical, batch_name, expected))
 
     if strict:
         failures.extend(f"missing_file:{file.spec.label}" for file in missing_files if file.spec.expected)
