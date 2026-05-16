@@ -1839,6 +1839,7 @@ def fetch_8k_text_signals(fmp, ticker, n_filings=8):
         'source_filing_date':     '',
         'source_form_type':       '',
         'source_matched_phrase':  '',
+        'source_excerpt':         '',
         # P0-C: ROFR/ROFN scope hints
         'rofn_scope_hint':        None,
         'rofr_scope_hint':        None,
@@ -1892,6 +1893,7 @@ def fetch_8k_text_signals(fmp, ticker, n_filings=8):
                     result['source_filing_date']   = filing.get('filingDate', '')
                     result['source_form_type']     = filing.get('formType', '8-K')
                     result['source_matched_phrase'] = phrase
+                    result['source_excerpt']       = text[max(0, idx - 150): idx + 200].strip()
 
         # Named pharma detection — bonus if paired with a structural clause
         if result['named_pharma'] is None:
@@ -3337,6 +3339,8 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
             'signal_source_url':      (text_sig or {}).get('source_url', ''),
             'signal_source_accession': (text_sig or {}).get('source_accession', ''),
             'signal_source_date':     (text_sig or {}).get('source_filing_date', ''),
+            'signal_source_form':     (text_sig or {}).get('source_form_type', ''),
+            'signal_source_excerpt':  (text_sig or {}).get('source_excerpt', ''),
             # P0-C: ROFR/ROFN scope hints
             'rofn_scope_hint':        (text_sig or {}).get('rofn_scope_hint'),
             'rofr_scope_hint':        (text_sig or {}).get('rofr_scope_hint'),
