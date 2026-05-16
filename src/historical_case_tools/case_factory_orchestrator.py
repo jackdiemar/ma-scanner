@@ -126,6 +126,58 @@ def _batch_files(cfg: CaseFactoryConfig, start: int, limit: int) -> dict[str, Pa
     }
 
 
+_RESOLVED_CANDIDATES_FIELDS = [
+    "candidate_id", "ticker", "company_name", "likely_outcome_type",
+    "likely_outcome_year", "outcome_source_hint", "outcome_edgar_query",
+    "prior_process_signal_query", "prior_13d_query", "prior_rofr_exhibit_query",
+    "proxy_or_s4_query", "verification_status", "priority",
+    "reason_for_inclusion", "notes",
+]
+
+
+def _write_staging_candidates_csv(
+    hdir: Path, label: str, queue_rows: list[dict[str, str]]
+) -> Path:
+    """
+    Write a staging CSV in resolved_case_candidates format containing exactly
+    the candidates in the batch selector's queue. Passed to existing step scripts
+    via --candidates so the index-window approach uses the right candidate set.
+
+    Uses --start 51 / --limit N with this file so idx_start = 51-51 = 0
+    (take from the very beginning of the list, which is exactly our candidates).
+    """
+    staging_path = hdir / f"{label}_staging_candidates.csv"
+    rows = []
+    for r in queue_rows:
+        rows.append({
+            "candidate_id":             r.get("candidate_id", ""),
+            "ticker":                   r.get("ticker", ""),
+            "company_name":             r.get("company", ""),
+            "likely_outcome_type":      "ACQUIRED",
+            "likely_outcome_year":      r.get("announcement_year", ""),
+            "outcome_source_hint":      r.get("source_url", ""),
+            "outcome_edgar_query":      "",
+            "prior_process_signal_query": "",
+            "prior_13d_query":          "",
+            "prior_rofr_exhibit_query": "",
+            "proxy_or_s4_query":        "",
+            "verification_status":      "CANDIDATE",
+            "priority":                 "HIGH",
+            "reason_for_inclusion":     "Batch selector candidate",
+            "notes":                    r.get("notes", ""),
+        })
+    staging_path.parent.mkdir(parents=True, exist_ok=True)
+    import csv as _csv
+    with staging_path.open("w", newline="", encoding="utf-8") as f:
+        writer = _csv.DictWriter(
+            f, fieldnames=_RESOLVED_CANDIDATES_FIELDS,
+            extrasaction="ignore", lineterminator="\n"
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+    return staging_path
+
+
 def _count_local_available(universe: list[dict]) -> int:
     return sum(
         1 for r in universe
@@ -338,7 +390,12 @@ def cmd_run_step(step: str, cfg: CaseFactoryConfig, sm: StateManager,
         print(f"ERROR: Script not found: {script}")
         return 1
 
-    # Build command (source-evidence step uses exception-queue as its candidate input)
+    # Build command:
+    #   source-evidence: pass --exception-queue (no candidate staging needed)
+    #   date-prefill / exception-queue: use staging candidates file if candidate
+    #     queue exists, so the index-window in each script operates on exactly
+    #     the batch-selector's chosen candidates rather than the full
+    #     resolved_case_candidates.csv window (which can include stale cases).
     if "exception_queue_required" in meta.get("extra_args", []):
         exception_csv = hdir / f"{label}_exception_queue.csv"
         if not exception_csv.exists():
@@ -352,19 +409,41 @@ def cmd_run_step(step: str, cfg: CaseFactoryConfig, sm: StateManager,
             "--report", str(out_report),
         ]
     else:
-        cmd = [
-            sys.executable, str(script),
-            "--start", str(start),
-            "--limit", str(limit),
-            "--output", str(out_csv),
-            "--report", str(out_report),
-        ]
+        candidate_queue_csv = hdir / f"{label}_candidate_queue.csv"
+        queue_rows = read_csv(candidate_queue_csv) if candidate_queue_csv.exists() else []
+
+        if queue_rows:
+            # Staging file approach: avoids index-window misalignment caused by
+            # batch_51_70 tickers missing from batch_results and 2020 candidates
+            # in resolved_case_candidates that fall in the [20:50] window.
+            staging = _write_staging_candidates_csv(hdir, label, queue_rows)
+            n = len(queue_rows)
+            cmd = [
+                sys.executable, str(script),
+                "--candidates", str(staging),
+                "--start", "51",   # idx_start = 51-51 = 0 → take from row 0
+                "--limit", str(n),
+                "--output", str(out_csv),
+                "--report", str(out_report),
+            ]
+            print(f"  Using staging candidates: {staging.name} ({n} rows)")
+        else:
+            # Fallback: original index-window behaviour (no candidate queue yet)
+            cmd = [
+                sys.executable, str(script),
+                "--start", str(start),
+                "--limit", str(limit),
+                "--output", str(out_csv),
+                "--report", str(out_report),
+            ]
+            print(f"  No candidate queue found — using index window (start={start}, limit={limit})")
 
     print(f"Running step '{step}' for {label}...")
     print(f"  Script:  {script.name}")
     print(f"  Output:  {out_csv.name}")
     print(f"  Report:  {out_report.name}")
     print()
+    sys.stdout.flush()   # ensure parent output appears before subprocess stdout
 
     result = subprocess.run(cmd)
     if result.returncode != 0:
@@ -393,6 +472,7 @@ def cmd_prepare_batch(cfg: CaseFactoryConfig, sm: StateManager,
     label = batch_name(start, start + limit - 1)
     print(f"=== Preparing batch {label} (cases {start}–{start + limit - 1}) ===")
     print()
+    sys.stdout.flush()
 
     rc = cmd_run_step("date-prefill", cfg, sm, start, limit)
     if rc != 0:
