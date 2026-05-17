@@ -115,6 +115,24 @@ def _write_state(state: dict) -> None:
     STATE_PATH.write_text(json.dumps(state, indent=2, default=str))
 
 
+def _send_email_updates(state: dict) -> dict:
+    """Send optional email notifications. Never fail the scanner for email."""
+    try:
+        sys.path.insert(0, str(_HERE))
+        from email_notifier import maybe_send_after_run
+        updates = maybe_send_after_run(state)
+    except Exception as exc:
+        log.exception('Email notification failed: %s', exc)
+        updates = {
+            'last_email_status': 'send_failed',
+            'last_email_error': str(exc),
+        }
+    if updates:
+        state.update(updates)
+        _write_state(state)
+    return state
+
+
 # ── V12 subprocess call ───────────────────────────────────────────────────────
 
 @dataclass(frozen=True)
@@ -357,12 +375,16 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
                 'last_v12_elapsed_sec': round(v12_result.elapsed_seconds, 1),
                 'last_v12_output_path': str(SCAN_LATEST),
                 'last_v12_output_exists': v12_result.output_exists,
+                'last_total_scanned':   0,
                 'total_runs':           state.get('total_runs', 0) + 1,
                 'last_alert_count':     0,
                 'last_new_count':       0,
+                'last_investigate_count': 0,
+                'last_watch_count':     0,
                 'state_path':           str(STATE_PATH),
             })
             _write_state(state)
+            state = _send_email_updates(state)
             return state
 
     raw_results = _load_scan_results()
@@ -407,13 +429,17 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
         'last_v12_elapsed_sec': round(v12_result.elapsed_seconds, 1),
         'last_v12_output_path': str(SCAN_LATEST),
         'last_v12_output_exists': v12_result.output_exists,
+        'last_total_scanned': total_scanned,
         'total_runs':        state.get('total_runs', 0) + 1,
         'total_alerts_ever': state.get('total_alerts_ever', 0) + len(alerts),
         'last_alert_count':  len(alerts),
         'last_new_count':    stats['new'],
+        'last_investigate_count': stats['KEEP_HIGH_PRIORITY'] + stats.get('KEEP_REVIEW', 0),
+        'last_watch_count':  stats['DOWNGRADE_WATCH'],
         'state_path':        str(STATE_PATH),
     })
     _write_state(state)
+    state = _send_email_updates(state)
     return state
 
 

@@ -285,6 +285,88 @@ cat /opt/ma-scanner/data/live_monitoring/live_alert_log.csv
 
 ---
 
+## Email Alerts
+
+Email notifications are optional and disabled by default. They use SMTP only.
+No broker APIs are involved, and notifications are research monitoring summaries,
+not execution instructions.
+
+### Configure SMTP
+
+Edit the VPS env file:
+
+```bash
+sudo nano /opt/ma-scanner/config/.env
+sudo chmod 600 /opt/ma-scanner/config/.env
+```
+
+Add SMTP settings:
+
+```bash
+EMAIL_ALERTS_ENABLED=true
+EMAIL_ON_EVERY_RUN=false
+EMAIL_ON_NEW_ALERTS=true
+EMAIL_DAILY_DIGEST=true
+
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_user
+SMTP_PASSWORD=your_smtp_app_password
+SMTP_RECIPIENT=you@example.com
+SMTP_FROM=your_smtp_user
+```
+
+Do not commit `config/.env`. Do not paste `SMTP_PASSWORD` into logs or support
+tickets.
+
+### Test email
+
+Run this explicitly after SMTP settings are in place:
+
+```bash
+cd /opt/ma-scanner
+.venv/bin/python src/live_monitoring/email_notifier.py --status
+.venv/bin/python src/live_monitoring/email_notifier.py --test
+```
+
+Send the latest memo manually:
+
+```bash
+.venv/bin/python src/live_monitoring/email_notifier.py --send-latest
+```
+
+### Send rules and throttling
+
+- Error runs (`v12_error` or `v12_timeout`) send an error email when
+  `EMAIL_ALERTS_ENABLED=true`.
+- New-alert runs send email when `EMAIL_ON_NEW_ALERTS=true` and `last_new_count`
+  is greater than zero.
+- Daily digest sends at most once per UTC day when `EMAIL_DAILY_DIGEST=true`.
+  The sent date is stored in `data/live_monitoring/live_scanner_state.json` as
+  `last_daily_digest_date`.
+- `EMAIL_ON_EVERY_RUN=true` sends after every non-dry-run scanner pass. Leave it
+  false unless you intentionally want hourly email.
+- `--once --dry-run` never sends email.
+
+The runner records email state fields when available:
+
+- `last_email_status`
+- `last_email_sent_at`
+- `last_email_subject`
+- `last_email_error`
+
+### Disable email
+
+Set:
+
+```bash
+EMAIL_ALERTS_ENABLED=false
+```
+
+Then the scanner continues normally and skips all email sends.
+
+---
+
 ## Updating the Code
 
 ```bash

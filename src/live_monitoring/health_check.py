@@ -73,6 +73,15 @@ def check_env() -> None:
     else:
         _fail('FMP_API_KEY missing or empty — scanner will fail on live run')
 
+    email_enabled = os.environ.get('EMAIL_ALERTS_ENABLED', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    recipient = os.environ.get('SMTP_RECIPIENT', '').strip()
+    if email_enabled:
+        _ok(f'EMAIL_ALERTS_ENABLED=true | SMTP_RECIPIENT set={bool(recipient)}')
+        if not recipient:
+            _warn('Email alerts enabled but SMTP_RECIPIENT is missing')
+    else:
+        _warn('EMAIL_ALERTS_ENABLED is not true — email notifications disabled')
+
 
 def check_state_file() -> None:
     if not STATE_PATH.exists():
@@ -88,6 +97,8 @@ def check_state_file() -> None:
     total    = state.get('total_runs', 0)
     alerts   = state.get('last_alert_count', 0)
     status   = state.get('last_run_status', 'unknown')
+    email_status = state.get('last_email_status', '')
+    email_sent_at = state.get('last_email_sent_at', '')
 
     if last_run and last_run != 'null':
         _ok(f'Last run: {last_run} | status: {status} | alerts: {alerts} | total runs: {total}')
@@ -103,6 +114,9 @@ def check_state_file() -> None:
             _warn(f'Read error log: {ERROR_LOG}')
             _warn(f'Read latest memo: {MEMO_PATH}')
             _warn('Inspect service logs: journalctl -u ma-scanner-live.service -n 80 --no-pager')
+
+    if email_status:
+        _ok(f'Last email status: {email_status} | sent_at: {email_sent_at or "not sent"}')
 
 
 def check_alert_log() -> None:
