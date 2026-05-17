@@ -37,6 +37,8 @@ RESEND_ENDPOINT = 'https://api.resend.com/emails'
 RESEND_USER_AGENT = 'ma-scanner-live/1.0'
 
 
+# ── Env / helpers ─────────────────────────────────────────────────────────────
+
 def _load_env_file() -> None:
     if not ENV_FILE.exists():
         return
@@ -80,42 +82,132 @@ def _clip(value: str, limit: int = 1200) -> str:
     return text[:limit].rstrip() + '\n...'
 
 
-def _memo_top_cases(limit: int = 5) -> str:
-    if not MEMO_PATH.exists():
-        return 'Latest memo not found yet.'
-    lines = MEMO_PATH.read_text(encoding='utf-8', errors='replace').splitlines()
-    out: list[str] = []
-    capture = False
-    for line in lines:
-        if line.startswith('## Top '):
-            capture = True
-            continue
-        if capture and line.startswith('## '):
-            break
-        if capture and line.startswith('### '):
-            out.append(line.replace('### ', '').strip())
-            if len(out) >= limit:
-                break
-    if out:
-        return '\n'.join(f'- {line}' for line in out)
-    return 'No top cases listed in the latest memo.'
+# ── Memo parsing ──────────────────────────────────────────────────────────────
 
-
-def _memo_summary(limit_chars: int = 3000) -> str:
+def _parse_memo_metrics() -> dict[str, int]:
+    """Extract summary counts from the ## Summary table in latest_review_memo.md."""
+    defaults: dict[str, int] = {
+        'names_scanned': 0,
+        'total_alerts':  0,
+        'new_alerts':    0,
+        'updated_alerts': 0,
+        'investigate':   0,
+        'watch':         0,
+        'suppressed':    0,
+    }
     if not MEMO_PATH.exists():
-        return 'Latest memo not found yet.'
-    lines = MEMO_PATH.read_text(encoding='utf-8', errors='replace').splitlines()
-    summary: list[str] = []
-    capture = False
-    for line in lines:
+        return defaults
+
+    _label_map = {
+        'names scanned':  'names_scanned',
+        'total alerts':   'total_alerts',
+        'new alerts':     'new_alerts',
+        'updated alerts': 'updated_alerts',
+        'high-priority':  'investigate',
+        'review':         'watch',
+        'suppressed':     'suppressed',
+    }
+
+    in_summary = False
+    result = dict(defaults)
+    for line in MEMO_PATH.read_text(encoding='utf-8', errors='replace').splitlines():
         if line.startswith('## Summary'):
-            capture = True
-        if capture:
-            if line.startswith('## ') and summary and not line.startswith('## Summary'):
-                break
-            summary.append(line)
-    return _clip('\n'.join(summary).strip() or '\n'.join(lines[:80]), limit_chars)
+            in_summary = True
+            continue
+        if in_summary and line.startswith('## ') and 'Summary' not in line:
+            break
+        if in_summary and line.startswith('|'):
+            parts = [p.strip() for p in line.split('|') if p.strip()]
+            if len(parts) >= 2:
+                label = parts[0].lower()
+                raw = parts[1].replace('*', '').strip()
+                for substr, field in _label_map.items():
+                    if substr in label:
+                        try:
+                            result[field] = int(raw)
+                        except ValueError:
+                            pass
+                        break
+    return result
 
+
+def _parse_case_table(lines: list[str]) -> dict[str, str]:
+    """Parse | Field | Value | rows from a case section."""
+    fields: dict[str, str] = {}
+    _field_map = {
+        'signal quality':     'signal_quality',
+        'recommended action': 'action',
+        'signal type':        'signal_type',
+        'market cap':         'market_cap',
+        'priced-in flag':     'priced_in',   # must be before 'price' to avoid substring match
+        'filing type':        'filing_type',
+        'filing date':        'filing_date',
+        'price':              'price',
+    }
+    for line in lines:
+        if not line.startswith('|'):
+            continue
+        parts = [p.strip() for p in line.split('|') if p.strip()]
+        if len(parts) >= 2:
+            label = parts[0].lower()
+            value = re.sub(r'\*+', '', parts[1]).strip()
+            for substr, key in _field_map.items():
+                if substr in label:
+                    fields[key] = value
+                    break
+    return fields
+
+
+def _parse_memo_top_cases(limit: int = 5) -> list[dict[str, str]]:
+    """
+    Parse top-N case sections from latest_review_memo.md.
+    Returns list of dicts with ticker, company, action, signal_quality, etc.
+    """
+    if not MEMO_PATH.exists():
+        return []
+
+    lines = MEMO_PATH.read_text(encoding='utf-8', errors='replace').splitlines()
+    cases: list[dict[str, str]] = []
+    i = 0
+    case_header_re = re.compile(r'^### \d+\. [^\s]+ (.+?) — (.+?)(?:\s+\*\*\[.+?\]\*\*)?$')
+
+    while i < len(lines) and len(cases) < limit:
+        line = lines[i]
+        if line.startswith('## ') and 'Top' not in line and cases:
+            break
+        m = case_header_re.match(line)
+        if not m:
+            i += 1
+            continue
+
+        ticker  = m.group(1).strip()
+        company = m.group(2).strip()
+
+        section: list[str] = []
+        j = i + 1
+        while j < len(lines):
+            nxt = lines[j]
+            if nxt.startswith('### ') or (nxt.startswith('## ') and j > i + 1):
+                break
+            section.append(nxt)
+            j += 1
+
+        case: dict[str, str] = {'ticker': ticker, 'company': company}
+        case.update(_parse_case_table(section))
+
+        for sl in section:
+            tm = re.search(r'\*\*Trigger phrase:\*\*\s+`(.+?)`', sl)
+            if tm:
+                case['trigger'] = tm.group(1)
+                break
+
+        cases.append(case)
+        i = j
+
+    return cases
+
+
+# ── Config ────────────────────────────────────────────────────────────────────
 
 @dataclass(frozen=True)
 class EmailConfig:
@@ -154,7 +246,10 @@ def load_config() -> EmailConfig:
     except ValueError:
         port = 587
     user = os.environ.get('SMTP_USER', '').strip()
-    recipient = os.environ.get('EMAIL_RECIPIENT', '').strip() or os.environ.get('SMTP_RECIPIENT', '').strip()
+    recipient = (
+        os.environ.get('EMAIL_RECIPIENT', '').strip()
+        or os.environ.get('SMTP_RECIPIENT', '').strip()
+    )
     sender = os.environ.get('SMTP_FROM', '').strip() or user
     resend_from = os.environ.get('RESEND_FROM', '').strip()
     return EmailConfig(
@@ -178,72 +273,195 @@ def status_dict() -> dict[str, Any]:
     cfg = load_config()
     state = _read_json(STATE_PATH)
     return {
-        'email_alerts_enabled': cfg.enabled,
-        'email_provider': cfg.provider,
-        'resend_api_key_set': bool(cfg.resend_api_key),
-        'resend_from_set': bool(cfg.resend_from),
-        'recipient_set': bool(cfg.recipient),
-        'smtp_host_set': bool(cfg.host),
-        'smtp_port': cfg.port,
-        'smtp_user_set': bool(cfg.user),
-        'smtp_password_set': bool(cfg.password),
-        'smtp_recipient_set': bool(os.environ.get('SMTP_RECIPIENT', '').strip()),
-        'smtp_from_set': bool(cfg.sender),
-        'email_on_every_run': cfg.on_every_run,
-        'email_on_new_alerts': cfg.on_new_alerts,
-        'email_daily_digest': cfg.daily_digest,
-        'last_email_status': state.get('last_email_status', ''),
-        'last_email_sent_at': state.get('last_email_sent_at', ''),
-        'last_email_subject': state.get('last_email_subject', ''),
+        'email_alerts_enabled':  cfg.enabled,
+        'email_provider':        cfg.provider,
+        'resend_api_key_set':    bool(cfg.resend_api_key),
+        'resend_from_set':       bool(cfg.resend_from),
+        'recipient_set':         bool(cfg.recipient),
+        'smtp_host_set':         bool(cfg.host),
+        'smtp_port':             cfg.port,
+        'smtp_user_set':         bool(cfg.user),
+        'smtp_password_set':     bool(cfg.password),
+        'smtp_recipient_set':    bool(os.environ.get('SMTP_RECIPIENT', '').strip()),
+        'smtp_from_set':         bool(cfg.sender),
+        'email_on_every_run':    cfg.on_every_run,
+        'email_on_new_alerts':   cfg.on_new_alerts,
+        'email_daily_digest':    cfg.daily_digest,
+        'last_email_type':       state.get('last_email_type', ''),
+        'last_email_status':     state.get('last_email_status', ''),
+        'last_email_sent_at':    state.get('last_email_sent_at', ''),
+        'last_email_subject':    state.get('last_email_subject', ''),
         'last_daily_digest_date': state.get('last_daily_digest_date', ''),
-        'env_file_exists': ENV_FILE.exists(),
+        'env_file_exists':       ENV_FILE.exists(),
     }
 
 
-def _subject(kind: str, state: dict[str, Any]) -> str:
-    status = state.get('last_run_status', 'unknown')
-    total = int(state.get('last_alert_count') or 0)
-    new = int(state.get('last_new_count') or 0)
-    investigate = int(state.get('last_investigate_count') or 0)
-    watch = int(state.get('last_watch_count') or 0)
-    if kind == 'error' or status in {'v12_error', 'v12_timeout'}:
-        return f'MA Scanner ERROR: {status}'
+# ── Email formatting ──────────────────────────────────────────────────────────
+
+_STATUS_LABEL = {
+    'ok':          'OK',
+    'v12_error':   'ERROR (V12 failed)',
+    'v12_timeout': 'ERROR (V12 timeout)',
+    'dry-run':     'DRY RUN',
+    'manual_test': 'OK (manual test)',
+    'unknown':     'unknown',
+}
+
+
+def _metrics_from_state_or_memo(state: dict[str, Any]) -> dict[str, int]:
+    """Return metrics. Prefer state fields; fall back to parsing the memo."""
+    memo = _parse_memo_metrics()
+
+    def _int(key: str) -> int | None:
+        v = state.get(key)
+        if v is not None and str(v).strip() not in ('', 'None', 'null'):
+            try:
+                return int(float(v))
+            except (ValueError, TypeError):
+                pass
+        return None
+
+    investigate = _int('last_investigate_count') or memo['investigate']
+    watch       = _int('last_watch_count')       or memo['watch']
+    total       = _int('last_alert_count')       or memo['total_alerts']
+    new_alerts  = _int('last_new_count')         if _int('last_new_count') is not None else memo['new_alerts']
+    scanned     = _int('last_total_scanned')     or memo['names_scanned']
+
+    return {
+        'investigate': investigate,
+        'watch':       watch,
+        'total':       total,
+        'new':         new_alerts,
+        'scanned':     scanned,
+        'updated':     memo['updated_alerts'],
+        'suppressed':  memo['suppressed'],
+    }
+
+
+def _subject(kind: str, state: dict[str, Any], is_test: bool = False) -> str:
+    run_status = state.get('last_run_status', 'unknown')
+    prefix = '[TEST] ' if is_test else ''
+
+    if kind == 'error' or run_status in ('v12_error', 'v12_timeout'):
+        return f'{prefix}MA Scanner ERROR: {run_status}'
+
+    m = _metrics_from_state_or_memo(state)
+
     if kind == 'daily':
-        return f'MA Scanner Daily Digest: {total} alerts | status {status}'
-    return f'MA Scanner: {new} new alerts | {investigate} investigate | {watch} watch'
+        return (
+            f'{prefix}MA Scanner Daily Digest: '
+            f'{m["total"]} alerts | {m["investigate"]} investigate | {m["watch"]} watch'
+        )
+    return (
+        f'{prefix}MA Scanner: '
+        f'{m["total"]} alerts | {m["investigate"]} investigate | {m["watch"]} watch | {m["new"]} new'
+    )
 
 
-def _body(kind: str, state: dict[str, Any]) -> str:
-    lines = [
-        'MA Scanner Live Monitor',
-        '',
-        f'Scan timestamp: {state.get("last_run", "")}',
-        f'Run status: {state.get("last_run_status", "")}',
-        f'Raw names scanned: {state.get("last_total_scanned", "")}',
-        f'Total alerts: {state.get("last_alert_count", 0)}',
-        f'New alerts: {state.get("last_new_count", 0)}',
-        f'Investigate count: {state.get("last_investigate_count", 0)}',
-        f'Watch count: {state.get("last_watch_count", 0)}',
-        f'V12 elapsed seconds: {state.get("last_v12_elapsed_sec", "")}',
-        '',
-        f'Latest memo path: {MEMO_PATH}',
-        f'Alert log path: {ALERT_LOG}',
-        f'Error log path: {ERROR_LOG}',
-        '',
-        'Health / status:',
-        f'- last_run_status: {state.get("last_run_status", "")}',
-        f'- last_error: {state.get("last_error", "") or "none"}',
-        '',
-        'Top cases:',
-        _memo_top_cases(limit=5),
-        '',
-        'Memo summary:',
-        _memo_summary(),
-        '',
-        'Reminder: research monitoring only. This is not investment advice.',
-    ]
+def _format_top_cases(limit: int = 5) -> str:
+    cases = _parse_memo_top_cases(limit=limit)
+    if not cases:
+        return 'No actionable cases in this scan.'
+
+    lines: list[str] = []
+    for i, c in enumerate(cases, 1):
+        ticker  = c.get('ticker', '?')
+        company = c.get('company', '')
+        sq      = c.get('signal_quality', '')
+        action  = re.sub(r'\*+', '', c.get('action', '')).strip()
+        ftype   = c.get('filing_type', '')
+        fdate   = c.get('filing_date', '')
+        trigger = c.get('trigger', '')
+        priced  = c.get('priced_in', '')
+        mcap    = c.get('market_cap', '')
+        price   = c.get('price', '')
+
+        filing_str = ', '.join(filter(None, [ftype, fdate]))
+
+        lines.append(f'{i}. {ticker} — {company}')
+        if sq:
+            lines.append(f'   Signal:    {sq}')
+        if action:
+            lines.append(f'   Action:    {action}')
+        if filing_str:
+            lines.append(f'   Filing:    {filing_str}')
+        if trigger:
+            lines.append(f'   Trigger:   {trigger}')
+        if priced:
+            lines.append(f'   Priced-in: {priced}')
+        if mcap or price:
+            # mcap and price come pre-formatted from the memo (e.g. "$966.0M", "$27.45", "—")
+            mstr = mcap  if (mcap  and mcap  != '—') else ''
+            pstr = price if (price and price != '—') else ''
+            parts_mkt = list(filter(None, [mstr, pstr]))
+            if parts_mkt:
+                lines.append('   Market:    ' + ' | '.join(parts_mkt))
+        lines.append('')
+
+    return '\n'.join(lines).rstrip()
+
+
+def _body(kind: str, state: dict[str, Any], is_test: bool = False) -> str:
+    run_ts     = state.get('last_run', 'unknown')
+    run_status = state.get('last_run_status', 'unknown')
+    status_str = _STATUS_LABEL.get(run_status, run_status.upper())
+    m          = _metrics_from_state_or_memo(state)
+    elapsed    = state.get('last_v12_elapsed_sec', '')
+
+    title = 'MA Scanner Daily Brief' if kind != 'error' else 'MA Scanner — Run Error'
+
+    lines: list[str] = []
+    lines.append(title)
+    lines.append('=' * len(title))
+    lines.append(f'Generated  : {_utc_now()}')
+    lines.append(f'Latest scan: {run_ts}')
+    lines.append(f'Status     : {status_str}')
+    if elapsed:
+        lines.append(f'V12 elapsed: {elapsed}s')
+    if is_test:
+        lines.append('Email type : TEST (real scanner state preserved)')
+    lines.append('')
+
+    lines.append('Summary')
+    lines.append('-------')
+    lines.append(f'Names scanned : {m["scanned"]}')
+    lines.append(f'Total alerts  : {m["total"]}')
+    lines.append(f'New alerts    : {m["new"]}')
+    lines.append(f'Updated       : {m["updated"]}')
+    lines.append(f'High-priority : {m["investigate"]}')
+    lines.append(f'Watch         : {m["watch"]}')
+    lines.append(f'Suppressed    : {m["suppressed"]}')
+    lines.append('')
+
+    if kind == 'error':
+        last_error = state.get('last_error', '')
+        lines.append('Error Detail')
+        lines.append('------------')
+        lines.append(f'Status : {run_status}')
+        if last_error:
+            lines.append(f'Error  : {last_error}')
+        lines.append('')
+        lines.append('Operator checks')
+        lines.append('  journalctl -u ma-scanner-live.service -n 80 --no-pager')
+        lines.append(f'  tail -50 {ERROR_LOG}')
+        lines.append('')
+    else:
+        lines.append('Top Cases')
+        lines.append('---------')
+        lines.append(_format_top_cases(limit=5))
+        lines.append('')
+
+    lines.append('Notes')
+    lines.append('-----')
+    lines.append(f'  Full memo : {MEMO_PATH}')
+    lines.append(f'  Alert log : {ALERT_LOG}')
+    lines.append(f'  Error log : {ERROR_LOG}')
+    lines.append('  Research monitoring only. Not investment advice.')
+
     return '\n'.join(lines)
 
+
+# ── Send infrastructure ───────────────────────────────────────────────────────
 
 def _missing_provider_config(cfg: EmailConfig) -> list[str]:
     if cfg.provider == 'resend':
@@ -271,7 +489,6 @@ def _missing_provider_config(cfg: EmailConfig) -> list[str]:
 def _format_resend_error(status_code: int, response_body: str) -> str:
     response_body = response_body.strip()
     fields: dict[str, Any] = {}
-
     if response_body:
         try:
             parsed = json.loads(response_body)
@@ -284,14 +501,12 @@ def _format_resend_error(status_code: int, response_body: str) -> str:
                 for key in ('code', 'message', 'name')
                 if source.get(key)
             }
-
     if 'code' not in fields and response_body:
         match = re.search(r'\berror code:\s*([A-Za-z0-9_-]+)', response_body, re.IGNORECASE)
         if match:
             fields['code'] = match.group(1)
     if 'message' not in fields and response_body:
         fields['message'] = _clip(response_body, 500)
-
     parts = [f'Resend HTTP {status_code}']
     for key in ('code', 'name', 'message'):
         if fields.get(key):
@@ -344,13 +559,11 @@ def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
 
 def _send_smtp(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
     sender = cfg.sender or cfg.user
-
     msg = EmailMessage()
     msg['Subject'] = subject
     msg['From'] = sender
     msg['To'] = cfg.recipient
     msg.set_content(body)
-
     try:
         context = ssl.create_default_context()
         with smtplib.SMTP(cfg.host, cfg.port, timeout=30) as smtp:
@@ -364,7 +577,12 @@ def _send_smtp(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
     return {'sent': True, 'status': 'sent', 'error': '', 'provider': 'smtp'}
 
 
-def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: bool = False) -> dict[str, Any]:
+def send_email(
+    subject: str,
+    body: str,
+    cfg: EmailConfig | None = None,
+    force: bool = False,
+) -> dict[str, Any]:
     cfg = cfg or load_config()
     if not cfg.enabled and not force:
         return {'sent': False, 'status': 'disabled', 'error': '', 'provider': cfg.provider}
@@ -381,13 +599,18 @@ def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: b
     return _send_smtp(subject, body, cfg)
 
 
-def send_for_state(state: dict[str, Any], kind: str, force: bool = False) -> dict[str, Any]:
-    cfg = load_config()
-    subject = _subject(kind, state)
-    body = _body(kind, state)
-    result = send_email(subject, body, cfg, force=force)
+def send_for_state(
+    state: dict[str, Any],
+    kind: str,
+    force: bool = False,
+    is_test: bool = False,
+) -> dict[str, Any]:
+    cfg     = load_config()
+    subject = _subject(kind, state, is_test=is_test)
+    body    = _body(kind, state, is_test=is_test)
+    result  = send_email(subject, body, cfg, force=force)
     result['subject'] = subject
-    result['kind'] = kind
+    result['kind']    = kind
     if result.get('sent'):
         result['sent_at'] = _utc_now()
     return result
@@ -400,12 +623,12 @@ def maybe_send_after_run(state: dict[str, Any]) -> dict[str, Any]:
     if state.get('last_run_mode') == 'dry-run':
         return {'last_email_status': 'skipped_dry_run'}
 
-    status = state.get('last_run_status', '')
+    run_status = state.get('last_run_status', '')
     new_alerts = int(state.get('last_new_count') or 0)
     today = _today_utc()
-    kind = ''
+    kind  = ''
 
-    if status in {'v12_error', 'v12_timeout'}:
+    if run_status in ('v12_error', 'v12_timeout'):
         kind = 'error'
     elif cfg.on_every_run:
         kind = 'summary'
@@ -416,11 +639,12 @@ def maybe_send_after_run(state: dict[str, Any]) -> dict[str, Any]:
     else:
         return {'last_email_status': 'skipped_no_trigger'}
 
-    result = send_for_state(state, kind)
-    updates = {
-        'last_email_status': result.get('status', ''),
+    result = send_for_state(state, kind, is_test=False)
+    updates: dict[str, Any] = {
+        'last_email_type':    kind,
+        'last_email_status':  result.get('status', ''),
         'last_email_subject': result.get('subject', ''),
-        'last_email_error': result.get('error', ''),
+        'last_email_error':   result.get('error', ''),
     }
     if result.get('sent'):
         updates['last_email_sent_at'] = result.get('sent_at', _utc_now())
@@ -429,6 +653,27 @@ def maybe_send_after_run(state: dict[str, Any]) -> dict[str, Any]:
     return updates
 
 
+# ── State writer (email fields only) ─────────────────────────────────────────
+
+def _write_email_state_only(result: dict[str, Any], kind: str) -> None:
+    """Write only email-tracking fields to state. Never touches scanner run fields."""
+    if not STATE_PATH.exists():
+        return
+    try:
+        state = json.loads(STATE_PATH.read_text(encoding='utf-8'))
+    except Exception:
+        return
+    state['last_email_type']    = kind
+    state['last_email_status']  = result.get('status', '')
+    state['last_email_subject'] = result.get('subject', '')
+    state['last_email_error']   = result.get('error', '')
+    if result.get('sent'):
+        state['last_email_sent_at'] = result.get('sent_at', _utc_now())
+    STATE_PATH.write_text(json.dumps(state, indent=2, default=str), encoding='utf-8')
+
+
+# ── Status printer ────────────────────────────────────────────────────────────
+
 def _print_status() -> None:
     status = status_dict()
     print('MA Scanner Email Notifier Status')
@@ -436,45 +681,59 @@ def _print_status() -> None:
     for key, value in status.items():
         if key.startswith('smtp_') and provider != 'smtp':
             continue
-        if key == 'smtp_password_set':
-            print(f'  {key}: {bool(value)}')
-        else:
-            print(f'  {key}: {value}')
+        print(f'  {key}: {value}')
 
+
+# ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Live scanner email notifier')
     mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument('--status', action='store_true', help='Print email configuration status without secrets')
-    mode.add_argument('--test', action='store_true', help='Send a test email using configured SMTP settings')
-    mode.add_argument('--send-latest', action='store_true', help='Send the latest memo/status email now')
+    mode.add_argument('--status',          action='store_true', help='Print config status without secrets')
+    mode.add_argument('--test',            action='store_true', help='Send a test email (never corrupts scanner state)')
+    mode.add_argument('--send-latest',     action='store_true', help='Send latest memo/status email now')
+    mode.add_argument('--dry-run-preview', action='store_true', help='Print subject and body preview; do not send')
     args = parser.parse_args(argv)
 
     if args.status:
         _print_status()
         return 0
 
+    # Load real state — never mutate it for test or preview sends
     state = _read_json(STATE_PATH)
     if not state:
         state = {
-            'last_run': _utc_now(),
-            'last_run_status': 'manual_test',
-            'last_alert_count': 0,
-            'last_new_count': 0,
+            'last_run':               _utc_now(),
+            'last_run_status':        'unknown',
+            'last_alert_count':       0,
+            'last_new_count':         0,
             'last_investigate_count': 0,
-            'last_watch_count': 0,
+            'last_watch_count':       0,
+            'last_total_scanned':     0,
         }
 
-    kind = 'test' if args.test else 'summary'
-    if args.test:
-        state = dict(state)
-        state['last_run_status'] = 'test_email'
+    if args.dry_run_preview:
+        subject = _subject('summary', state, is_test=False)
+        body    = _body('summary', state, is_test=False)
+        print(f'Subject: {subject}')
+        print()
+        print(body)
+        return 0
 
-    result = send_for_state(state, kind, force=args.test or args.send_latest)
-    print(f'Email status: {result.get("status")}')
-    print(f'Subject: {result.get("subject")}')
+    if args.test:
+        # is_test=True adds [TEST] prefix and "Email type: TEST" note.
+        # Real scanner state fields are NEVER overwritten.
+        result = send_for_state(state, kind='test', force=True, is_test=True)
+        _write_email_state_only(result, kind='test')
+    else:
+        # --send-latest
+        result = send_for_state(state, kind='summary', force=True, is_test=False)
+        _write_email_state_only(result, kind='summary')
+
+    print(f'Email status : {result.get("status")}')
+    print(f'Subject      : {result.get("subject")}')
     if result.get('error'):
-        print(f'Error: {result.get("error")}')
+        print(f'Error        : {result.get("error")}')
     return 0 if result.get('sent') else 1
 
 
