@@ -4,6 +4,7 @@
 config/.env
 config/.env.*
 !config/.env.example
+.venv/
 __pycache__/
 *.pyc
 *.log
@@ -25,6 +26,9 @@ data/scans/scan_v12_*.json
 
 # Scanner run artifacts
 data/scans/legacy/
+data/live_monitoring/runs/
+data/live_monitoring/*.log
+data/live_monitoring/source_pull_cache/
 *.tmp
 
 # Historical case source text cache (local support material)

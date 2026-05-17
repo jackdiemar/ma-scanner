@@ -19,6 +19,97 @@ Runs one scan per hour via systemd timer. No auto-trading. No broker APIs.
 
 ---
 
+## Fastest path: buy server + bootstrap
+
+The goal is to make the server setup nearly one-click. You still need to buy
+the VPS and provide secrets. Do not paste real secrets into git, screenshots, or
+support tickets.
+
+### Path A: Cloud-init during server creation
+
+Use this when the VPS provider has a **User Data**, **Cloud-init**, or
+**Startup Script** field.
+
+1. Open `deploy/vps/bootstrap_cloud_init.yaml`.
+2. Replace these placeholders before creating the server:
+   - `REPO_URL_PLACEHOLDER` — your repo remote, for example `https://github.com/USER/REPO.git`
+   - `FMP_API_KEY_PLACEHOLDER` — your FMP key, or leave blank and add it later
+   - `INSTALL_DIR_PLACEHOLDER` — use `/opt/ma-scanner`
+   - `BRANCH_PLACEHOLDER` — usually `main`
+3. Paste the edited YAML into the provider's User Data field.
+4. Create the Ubuntu server.
+5. SSH in after cloud-init finishes.
+6. Run:
+
+```bash
+bash /opt/ma-scanner/deploy/vps/post_deploy_check.sh
+```
+
+Cloud-init writes a bootstrap log here:
+
+```bash
+sudo tail -200 /var/log/ma-scanner-bootstrap.log
+```
+
+If you left `FMP_API_KEY_PLACEHOLDER` blank, edit the env file after SSH:
+
+```bash
+sudo nano /opt/ma-scanner/config/.env
+sudo chmod 600 /opt/ma-scanner/config/.env
+bash /opt/ma-scanner/deploy/vps/post_deploy_check.sh
+```
+
+### Path B: SSH once and run bootstrap
+
+Use this when you prefer to create the server first and run one setup command
+after SSH.
+
+1. Create an Ubuntu 22.04 or 24.04 VPS.
+2. SSH in:
+
+```bash
+ssh root@<your-server-ip>
+```
+
+3. Install git if needed and clone the repo:
+
+```bash
+apt-get update
+apt-get install -y git
+git clone <your-repo-url> /opt/ma-scanner
+cd /opt/ma-scanner
+```
+
+4. Run bootstrap with the FMP key supplied as an environment variable. The key is
+written to `config/.env` but not printed:
+
+```bash
+sudo REPO_URL="https://github.com/USER/REPO.git" \
+  FMP_API_KEY="your_fmp_key_here" \
+  bash deploy/vps/bootstrap_one_command.sh
+```
+
+Private repo via SSH remote:
+
+```bash
+sudo REPO_URL="git@github.com:USER/REPO.git" \
+  bash deploy/vps/bootstrap_one_command.sh
+```
+
+For SSH remotes, make sure the server has a deploy key with read access before
+the clone/pull step.
+
+5. Verify:
+
+```bash
+bash /opt/ma-scanner/deploy/vps/post_deploy_check.sh
+```
+
+The bootstrap does not run a live scanner pass. It runs status and health
+checks, installs the hourly systemd timer, and prints next steps.
+
+---
+
 ## One-Time Setup
 
 ### 1. Provision the server

@@ -1,0 +1,82 @@
+#cloud-config
+#
+# TEMPLATE: MA Scanner VPS bootstrap user-data.
+#
+# Before pasting into DigitalOcean / Hetzner / AWS Lightsail user data:
+#   1. Replace REPO_URL_PLACEHOLDER with your git remote.
+#      Example: https://github.com/USER/REPO.git
+#      Example: git@github.com:USER/REPO.git
+#   2. Replace FMP_API_KEY_PLACEHOLDER with the real FMP key, or leave blank
+#      and add it later in /opt/ma-scanner/config/.env.
+#   3. Replace INSTALL_DIR_PLACEHOLDER with /opt/ma-scanner unless you know you
+#      also need to adjust the systemd unit paths.
+#   4. Replace BRANCH_PLACEHOLDER with main unless deploying another branch.
+#
+# This template does not run a live scanner pass. It installs dependencies,
+# clones the repo, runs bootstrap_one_command.sh, installs the systemd timer,
+# and writes logs to /var/log/ma-scanner-bootstrap.log.
+
+package_update: true
+package_upgrade: false
+
+packages:
+  - git
+  - python3
+  - python3-venv
+  - python3-pip
+  - curl
+  - ca-certificates
+
+write_files:
+  - path: /root/ma-scanner-bootstrap.env
+    owner: root:root
+    permissions: '0600'
+    content: |
+      REPO_URL='REPO_URL_PLACEHOLDER'
+      FMP_API_KEY='FMP_API_KEY_PLACEHOLDER'
+      INSTALL_DIR='INSTALL_DIR_PLACEHOLDER'
+      BRANCH='BRANCH_PLACEHOLDER'
+      REPO_USER='ubuntu'
+
+runcmd:
+  - |
+    set -eu
+    LOG=/var/log/ma-scanner-bootstrap.log
+    exec > "$LOG" 2>&1
+    echo "MA Scanner cloud-init bootstrap started at $(date -Is)"
+    . /root/ma-scanner-bootstrap.env
+    if [ -z "${INSTALL_DIR}" ] || [ "${INSTALL_DIR}" = "INSTALL_DIR_PLACEHOLDER" ]; then
+      INSTALL_DIR=/opt/ma-scanner
+    fi
+    if [ -z "${BRANCH}" ] || [ "${BRANCH}" = "BRANCH_PLACEHOLDER" ]; then
+      BRANCH=main
+    fi
+    if [ -z "${REPO_URL}" ] || [ "${REPO_URL}" = "REPO_URL_PLACEHOLDER" ]; then
+      echo "ERROR: replace REPO_URL_PLACEHOLDER before creating the server."
+      exit 1
+    fi
+    if [ "${FMP_API_KEY}" = "FMP_API_KEY_PLACEHOLDER" ]; then
+      FMP_API_KEY=
+    fi
+    if ! id ubuntu >/dev/null 2>&1; then
+      useradd --create-home --shell /bin/bash ubuntu
+      passwd -l ubuntu >/dev/null 2>&1 || true
+    fi
+    if [ ! -d "${INSTALL_DIR}/.git" ]; then
+      mkdir -p "$(dirname "${INSTALL_DIR}")"
+      git clone --branch "${BRANCH}" "${REPO_URL}" "${INSTALL_DIR}"
+      chown -R ubuntu:ubuntu "${INSTALL_DIR}"
+    fi
+    env REPO_URL="${REPO_URL}" \
+      FMP_API_KEY="${FMP_API_KEY}" \
+      INSTALL_DIR="${INSTALL_DIR}" \
+      BRANCH="${BRANCH}" \
+      REPO_USER=ubuntu \
+      bash "${INSTALL_DIR}/deploy/vps/bootstrap_one_command.sh"
+    echo "MA Scanner cloud-init bootstrap finished at $(date -Is)"
+
+final_message: |
+  MA Scanner bootstrap finished. SSH into the server and run:
+    bash /opt/ma-scanner/deploy/vps/post_deploy_check.sh
+  Full bootstrap log:
+    sudo tail -200 /var/log/ma-scanner-bootstrap.log
