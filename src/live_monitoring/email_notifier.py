@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import smtplib
 import ssl
 import sys
@@ -33,6 +34,7 @@ MEMO_PATH = LIVE_DATA / 'latest_review_memo.md'
 ALERT_LOG = LIVE_DATA / 'live_alert_log.csv'
 ERROR_LOG = LIVE_DATA / 'live_scanner_errors.log'
 RESEND_ENDPOINT = 'https://api.resend.com/emails'
+RESEND_USER_AGENT = 'ma-scanner-live/1.0'
 
 
 def _load_env_file() -> None:
@@ -266,6 +268,37 @@ def _missing_provider_config(cfg: EmailConfig) -> list[str]:
     return missing
 
 
+def _format_resend_error(status_code: int, response_body: str) -> str:
+    response_body = response_body.strip()
+    fields: dict[str, Any] = {}
+
+    if response_body:
+        try:
+            parsed = json.loads(response_body)
+        except json.JSONDecodeError:
+            parsed = {}
+        if isinstance(parsed, dict):
+            source = parsed.get('error') if isinstance(parsed.get('error'), dict) else parsed
+            fields = {
+                key: source.get(key)
+                for key in ('code', 'message', 'name')
+                if source.get(key)
+            }
+
+    if 'code' not in fields and response_body:
+        match = re.search(r'\berror code:\s*([A-Za-z0-9_-]+)', response_body, re.IGNORECASE)
+        if match:
+            fields['code'] = match.group(1)
+    if 'message' not in fields and response_body:
+        fields['message'] = _clip(response_body, 500)
+
+    parts = [f'Resend HTTP {status_code}']
+    for key in ('code', 'name', 'message'):
+        if fields.get(key):
+            parts.append(f'{key}={fields[key]}')
+    return ' | '.join(parts)
+
+
 def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
     payload = {
         'from': cfg.resend_from,
@@ -281,6 +314,7 @@ def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
         headers={
             'Authorization': f'Bearer {cfg.resend_api_key}',
             'Content-Type': 'application/json',
+            'User-Agent': RESEND_USER_AGENT,
         },
     )
     try:
@@ -293,7 +327,7 @@ def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
         return {
             'sent': False,
             'status': 'send_failed',
-            'error': f'Resend HTTP {status_code}: {_clip(response_body, 500)}',
+            'error': _format_resend_error(status_code, response_body),
             'provider': 'resend',
         }
     except urllib.error.HTTPError as exc:
@@ -301,7 +335,7 @@ def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
         return {
             'sent': False,
             'status': 'send_failed',
-            'error': f'Resend HTTP {exc.code}: {_clip(response_body, 500)}',
+            'error': _format_resend_error(exc.code, response_body),
             'provider': 'resend',
         }
     except Exception as exc:
