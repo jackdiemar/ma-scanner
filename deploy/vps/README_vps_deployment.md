@@ -287,11 +287,15 @@ cat /opt/ma-scanner/data/live_monitoring/live_alert_log.csv
 
 ## Email Alerts
 
-Email notifications are optional and disabled by default. They use SMTP only.
-No broker APIs are involved, and notifications are research monitoring summaries,
-not execution instructions.
+Email notifications are optional and disabled by default. Some VPS providers,
+including DigitalOcean in common configurations, block or degrade outbound SMTP
+ports. The recommended provider is therefore **Resend over HTTPS**. SMTP remains
+available as a fallback.
 
-### Configure SMTP
+No broker APIs are involved, and notifications are research monitoring
+summaries, not execution instructions.
+
+### Configure Resend over HTTPS
 
 Edit the VPS env file:
 
@@ -300,13 +304,32 @@ sudo nano /opt/ma-scanner/config/.env
 sudo chmod 600 /opt/ma-scanner/config/.env
 ```
 
-Add SMTP settings:
+Add Resend settings:
 
 ```bash
+EMAIL_PROVIDER=resend
 EMAIL_ALERTS_ENABLED=true
 EMAIL_ON_EVERY_RUN=false
 EMAIL_ON_NEW_ALERTS=true
 EMAIL_DAILY_DIGEST=true
+
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM=Scanner <alerts@your-verified-domain.com>
+EMAIL_RECIPIENT=you@example.com
+```
+
+`RESEND_FROM` must use a sender/domain allowed by your Resend account.
+
+Do not commit `config/.env`. Do not paste `RESEND_API_KEY` into logs or support
+tickets.
+
+### SMTP fallback
+
+Use this only if outbound SMTP works from the server:
+
+```bash
+EMAIL_PROVIDER=smtp
+EMAIL_ALERTS_ENABLED=true
 
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
@@ -316,12 +339,11 @@ SMTP_RECIPIENT=you@example.com
 SMTP_FROM=your_smtp_user
 ```
 
-Do not commit `config/.env`. Do not paste `SMTP_PASSWORD` into logs or support
-tickets.
+Do not paste `SMTP_PASSWORD` into logs or support tickets.
 
 ### Test email
 
-Run this explicitly after SMTP settings are in place:
+Run this explicitly after email settings are in place:
 
 ```bash
 cd /opt/ma-scanner

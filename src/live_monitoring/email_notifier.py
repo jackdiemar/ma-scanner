@@ -13,6 +13,8 @@ import os
 import smtplib
 import ssl
 import sys
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from email.message import EmailMessage
@@ -30,6 +32,7 @@ STATE_PATH = LIVE_DATA / 'live_scanner_state.json'
 MEMO_PATH = LIVE_DATA / 'latest_review_memo.md'
 ALERT_LOG = LIVE_DATA / 'live_alert_log.csv'
 ERROR_LOG = LIVE_DATA / 'live_scanner_errors.log'
+RESEND_ENDPOINT = 'https://api.resend.com/emails'
 
 
 def _load_env_file() -> None:
@@ -115,12 +118,15 @@ def _memo_summary(limit_chars: int = 3000) -> str:
 @dataclass(frozen=True)
 class EmailConfig:
     enabled: bool
+    provider: str
     host: str
     port: int
     user: str
     password: str
     recipient: str
     sender: str
+    resend_api_key: str
+    resend_from: str
     on_every_run: bool
     on_new_alerts: bool
     daily_digest: bool
@@ -129,9 +135,16 @@ class EmailConfig:
     def smtp_ready(self) -> bool:
         return bool(self.host and self.port and self.user and self.password and self.recipient)
 
+    @property
+    def resend_ready(self) -> bool:
+        return bool(self.resend_api_key and self.resend_from and self.recipient)
+
 
 def load_config() -> EmailConfig:
     _load_env_file()
+    provider = os.environ.get('EMAIL_PROVIDER', 'smtp').strip().lower() or 'smtp'
+    if provider not in {'smtp', 'resend'}:
+        provider = 'smtp'
     host = os.environ.get('SMTP_HOST', '').strip()
     port_raw = os.environ.get('SMTP_PORT', '587').strip() or '587'
     try:
@@ -139,16 +152,20 @@ def load_config() -> EmailConfig:
     except ValueError:
         port = 587
     user = os.environ.get('SMTP_USER', '').strip()
-    recipient = os.environ.get('SMTP_RECIPIENT', '').strip()
+    recipient = os.environ.get('EMAIL_RECIPIENT', '').strip() or os.environ.get('SMTP_RECIPIENT', '').strip()
     sender = os.environ.get('SMTP_FROM', '').strip() or user
+    resend_from = os.environ.get('RESEND_FROM', '').strip()
     return EmailConfig(
         enabled=_truthy(os.environ.get('EMAIL_ALERTS_ENABLED'), default=False),
+        provider=provider,
         host=host,
         port=port,
         user=user,
         password=os.environ.get('SMTP_PASSWORD', ''),
         recipient=recipient,
         sender=sender,
+        resend_api_key=os.environ.get('RESEND_API_KEY', ''),
+        resend_from=resend_from,
         on_every_run=_truthy(os.environ.get('EMAIL_ON_EVERY_RUN'), default=False),
         on_new_alerts=_truthy(os.environ.get('EMAIL_ON_NEW_ALERTS'), default=True),
         daily_digest=_truthy(os.environ.get('EMAIL_DAILY_DIGEST'), default=True),
@@ -160,11 +177,15 @@ def status_dict() -> dict[str, Any]:
     state = _read_json(STATE_PATH)
     return {
         'email_alerts_enabled': cfg.enabled,
+        'email_provider': cfg.provider,
+        'resend_api_key_set': bool(cfg.resend_api_key),
+        'resend_from_set': bool(cfg.resend_from),
+        'recipient_set': bool(cfg.recipient),
         'smtp_host_set': bool(cfg.host),
         'smtp_port': cfg.port,
         'smtp_user_set': bool(cfg.user),
         'smtp_password_set': bool(cfg.password),
-        'smtp_recipient_set': bool(cfg.recipient),
+        'smtp_recipient_set': bool(os.environ.get('SMTP_RECIPIENT', '').strip()),
         'smtp_from_set': bool(cfg.sender),
         'email_on_every_run': cfg.on_every_run,
         'email_on_new_alerts': cfg.on_new_alerts,
@@ -222,12 +243,18 @@ def _body(kind: str, state: dict[str, Any]) -> str:
     return '\n'.join(lines)
 
 
-def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: bool = False) -> dict[str, Any]:
-    cfg = cfg or load_config()
-    if not cfg.enabled and not force:
-        return {'sent': False, 'status': 'disabled', 'error': ''}
-    if not cfg.smtp_ready:
+def _missing_provider_config(cfg: EmailConfig) -> list[str]:
+    if cfg.provider == 'resend':
         missing = []
+        if not cfg.resend_api_key:
+            missing.append('RESEND_API_KEY')
+        if not cfg.resend_from:
+            missing.append('RESEND_FROM')
+        if not cfg.recipient:
+            missing.append('EMAIL_RECIPIENT or SMTP_RECIPIENT')
+        return missing
+    missing = []
+    if not cfg.smtp_ready:
         if not cfg.host:
             missing.append('SMTP_HOST')
         if not cfg.user:
@@ -236,11 +263,57 @@ def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: b
             missing.append('SMTP_PASSWORD')
         if not cfg.recipient:
             missing.append('SMTP_RECIPIENT')
-        return {'sent': False, 'status': 'missing_config', 'error': f'Missing: {", ".join(missing)}'}
+    return missing
+
+
+def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
+    payload = {
+        'from': cfg.resend_from,
+        'to': [cfg.recipient],
+        'subject': subject,
+        'text': body,
+    }
+    data = json.dumps(payload).encode('utf-8')
+    request = urllib.request.Request(
+        RESEND_ENDPOINT,
+        data=data,
+        method='POST',
+        headers={
+            'Authorization': f'Bearer {cfg.resend_api_key}',
+            'Content-Type': 'application/json',
+        },
+    )
+    try:
+        context = ssl.create_default_context()
+        with urllib.request.urlopen(request, timeout=30, context=context) as response:
+            response_body = response.read().decode('utf-8', errors='replace')
+            status_code = getattr(response, 'status', 0)
+        if 200 <= status_code < 300:
+            return {'sent': True, 'status': 'sent', 'error': '', 'provider': 'resend'}
+        return {
+            'sent': False,
+            'status': 'send_failed',
+            'error': f'Resend HTTP {status_code}: {_clip(response_body, 500)}',
+            'provider': 'resend',
+        }
+    except urllib.error.HTTPError as exc:
+        response_body = exc.read().decode('utf-8', errors='replace')
+        return {
+            'sent': False,
+            'status': 'send_failed',
+            'error': f'Resend HTTP {exc.code}: {_clip(response_body, 500)}',
+            'provider': 'resend',
+        }
+    except Exception as exc:
+        return {'sent': False, 'status': 'send_failed', 'error': str(exc), 'provider': 'resend'}
+
+
+def _send_smtp(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
+    sender = cfg.sender or cfg.user
 
     msg = EmailMessage()
     msg['Subject'] = subject
-    msg['From'] = cfg.sender
+    msg['From'] = sender
     msg['To'] = cfg.recipient
     msg.set_content(body)
 
@@ -253,8 +326,25 @@ def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: b
             smtp.login(cfg.user, cfg.password)
             smtp.send_message(msg)
     except Exception as exc:
-        return {'sent': False, 'status': 'send_failed', 'error': str(exc)}
-    return {'sent': True, 'status': 'sent', 'error': ''}
+        return {'sent': False, 'status': 'send_failed', 'error': str(exc), 'provider': 'smtp'}
+    return {'sent': True, 'status': 'sent', 'error': '', 'provider': 'smtp'}
+
+
+def send_email(subject: str, body: str, cfg: EmailConfig | None = None, force: bool = False) -> dict[str, Any]:
+    cfg = cfg or load_config()
+    if not cfg.enabled and not force:
+        return {'sent': False, 'status': 'disabled', 'error': '', 'provider': cfg.provider}
+    missing = _missing_provider_config(cfg)
+    if missing:
+        return {
+            'sent': False,
+            'status': 'missing_config',
+            'error': f'Missing: {", ".join(missing)}',
+            'provider': cfg.provider,
+        }
+    if cfg.provider == 'resend':
+        return _send_resend(subject, body, cfg)
+    return _send_smtp(subject, body, cfg)
 
 
 def send_for_state(state: dict[str, Any], kind: str, force: bool = False) -> dict[str, Any]:
@@ -292,7 +382,7 @@ def maybe_send_after_run(state: dict[str, Any]) -> dict[str, Any]:
     else:
         return {'last_email_status': 'skipped_no_trigger'}
 
-    result = send_for_state(state, kind, force=args.test or args.send_latest)
+    result = send_for_state(state, kind)
     updates = {
         'last_email_status': result.get('status', ''),
         'last_email_subject': result.get('subject', ''),
@@ -308,7 +398,10 @@ def maybe_send_after_run(state: dict[str, Any]) -> dict[str, Any]:
 def _print_status() -> None:
     status = status_dict()
     print('MA Scanner Email Notifier Status')
+    provider = status.get('email_provider', 'smtp')
     for key, value in status.items():
+        if key.startswith('smtp_') and provider != 'smtp':
+            continue
         if key == 'smtp_password_set':
             print(f'  {key}: {bool(value)}')
         else:
@@ -343,7 +436,7 @@ def main(argv: list[str] | None = None) -> int:
         state = dict(state)
         state['last_run_status'] = 'test_email'
 
-    result = send_for_state(state, kind)
+    result = send_for_state(state, kind, force=args.test or args.send_latest)
     print(f'Email status: {result.get("status")}')
     print(f'Subject: {result.get("subject")}')
     if result.get('error'):

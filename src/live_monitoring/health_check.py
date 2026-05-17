@@ -74,11 +74,12 @@ def check_env() -> None:
         _fail('FMP_API_KEY missing or empty — scanner will fail on live run')
 
     email_enabled = os.environ.get('EMAIL_ALERTS_ENABLED', '').strip().lower() in {'1', 'true', 'yes', 'on'}
-    recipient = os.environ.get('SMTP_RECIPIENT', '').strip()
+    provider = os.environ.get('EMAIL_PROVIDER', 'smtp').strip().lower() or 'smtp'
+    recipient = os.environ.get('EMAIL_RECIPIENT', '').strip() or os.environ.get('SMTP_RECIPIENT', '').strip()
     if email_enabled:
-        _ok(f'EMAIL_ALERTS_ENABLED=true | SMTP_RECIPIENT set={bool(recipient)}')
+        _ok(f'EMAIL_ALERTS_ENABLED=true | provider={provider} | recipient set={bool(recipient)}')
         if not recipient:
-            _warn('Email alerts enabled but SMTP_RECIPIENT is missing')
+            _warn('Email alerts enabled but EMAIL_RECIPIENT / SMTP_RECIPIENT is missing')
     else:
         _warn('EMAIL_ALERTS_ENABLED is not true — email notifications disabled')
 
