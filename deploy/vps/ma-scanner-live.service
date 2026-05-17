@@ -1,0 +1,43 @@
+[Unit]
+Description=MA Scanner — Live Biotech Process Signal Monitor (single pass)
+# Runs one --once pass per timer invocation. Not a long-running daemon.
+# No auto-trading. No broker API connections. No buy/sell output.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+
+# User/group that owns the repo files. Change if you deployed as a different user.
+User=ubuntu
+Group=ubuntu
+
+# Where the repo is deployed.
+WorkingDirectory=/opt/ma-scanner
+
+# Load secrets from config/.env. File must exist and be chmod 600.
+# Required variables: FMP_API_KEY, SMTP_USER, SMTP_PASSWORD, SMTP_RECIPIENT
+EnvironmentFile=/opt/ma-scanner/config/.env
+
+# Run one scanner pass using the virtualenv Python.
+# --once: normalize results, apply FP filter, write memo, update alert log.
+ExecStart=/opt/ma-scanner/.venv/bin/python \
+    /opt/ma-scanner/src/live_monitoring/live_scanner_runner.py \
+    --once
+
+# Safety: no network access restrictions, but explicitly no trading behavior.
+# The scanner is read-only against SEC EDGAR and FMP APIs.
+
+# Restart policy: do not restart on failure — timer handles next invocation.
+Restart=no
+
+# Allow up to 90 minutes per scan pass (large universe can be slow).
+TimeoutStartSec=5400
+
+# Write stdout/stderr through journald (use: journalctl -u ma-scanner-live.service)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ma-scanner-live
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+[Unit]
+Description=MA Scanner — Hourly trigger for live biotech process-signal monitor
+# Activates ma-scanner-live.service once per hour.
+# Persistent=true means if the system was off during a scheduled run,
+# it will fire once immediately on next boot to catch up.
+
+[Timer]
+# Fire at the top of every hour.
+OnCalendar=hourly
+
+# If a scheduled run was missed (e.g. server was down), fire immediately on startup.
+Persistent=true
+
+# Add up to 5 minutes of random jitter to avoid thundering-herd on EDGAR/FMP.
+RandomizedDelaySec=300
+
+Unit=ma-scanner-live.service
+
+[Install]
+WantedBy=timers.target
