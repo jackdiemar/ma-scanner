@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
 
 _HERE    = Path(__file__).resolve().parent
@@ -29,6 +29,7 @@ ALERT_LOG    = REPO / 'data' / 'live_monitoring' / 'live_alert_log.csv'
 MEMO_PATH    = REPO / 'data' / 'live_monitoring' / 'latest_review_memo.md'
 SCAN_LATEST  = REPO / 'data' / 'scans' / 'scan_latest.json'
 ENV_FILE     = REPO / 'config' / '.env'
+ERROR_LOG    = REPO / 'data' / 'live_monitoring' / 'live_scanner_errors.log'
 
 STALE_HOURS  = 25   # warn if scan_latest.json hasn't been updated in this long
 
@@ -95,6 +96,13 @@ def check_state_file() -> None:
 
     if status not in ('ok', None, 'null', ''):
         _warn(f'Last run status was not OK: {status}')
+        if status in ('v12_error', 'v12_timeout'):
+            last_error = state.get('last_error', '')
+            if last_error:
+                _warn(f'Last V12 error: {last_error}')
+            _warn(f'Read error log: {ERROR_LOG}')
+            _warn(f'Read latest memo: {MEMO_PATH}')
+            _warn('Inspect service logs: journalctl -u ma-scanner-live.service -n 80 --no-pager')
 
 
 def check_alert_log() -> None:

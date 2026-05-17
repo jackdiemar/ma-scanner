@@ -354,6 +354,93 @@ This removes the systemd files. Repo and data are untouched.
 | Lock file stuck | `rm /opt/ma-scanner/live_scanner.lock` — only if no scan is running |
 | Stale scan | `systemctl start ma-scanner-live.service` — force one run immediately |
 
+### V12 missing `backtest` import
+
+Older code imported `backtest` at V12 startup, even when the live scanner was not
+running backtests. That can fail on a clean VPS with:
+
+```text
+ModuleNotFoundError: No module named 'backtest'
+```
+
+Fix path:
+
+```bash
+cd /opt/ma-scanner
+git pull origin main
+python3 -m py_compile src/PRODUCTION_SCANNER_V12.py
+```
+
+Normal live monitoring does not require the backtest module. If `--backtest` is
+requested and the module is unavailable, V12 now exits that mode with a clear
+message.
+
+### V12 timeout
+
+The live runner bounds the V12 subprocess with a 15-minute timeout by default:
+
+```bash
+/opt/ma-scanner/.venv/bin/python \
+  /opt/ma-scanner/src/live_monitoring/live_scanner_runner.py \
+  --once --v12-timeout-seconds 900
+```
+
+If V12 times out, the runner:
+
+- terminates or kills the V12 subprocess
+- writes `last_run_status: v12_timeout` to `data/live_monitoring/live_scanner_state.json`
+- writes details to `data/live_monitoring/live_scanner_errors.log`
+- writes a failure memo to `data/live_monitoring/latest_review_memo.md`
+- avoids treating an old `scan_latest.json` as fresh output
+- releases `live_scanner.lock`
+
+Systemd also has `TimeoutStartSec=20min` as a second safety boundary.
+
+### Stop the timer before debugging
+
+```bash
+sudo systemctl stop ma-scanner-live.timer
+systemctl list-timers ma-scanner-live.timer
+```
+
+### Kill a stuck scanner process
+
+Use this only after checking that the timer is stopped and a process is truly
+stuck:
+
+```bash
+pgrep -af 'live_scanner_runner|PRODUCTION_SCANNER_V12'
+sudo pkill -f PRODUCTION_SCANNER_V12.py
+sudo pkill -f live_scanner_runner.py
+rm -f /opt/ma-scanner/live_scanner.lock
+```
+
+### Run one manual service pass
+
+After secrets are set and the code is updated:
+
+```bash
+sudo systemctl start ma-scanner-live.service
+systemctl status ma-scanner-live.service --no-pager -l
+```
+
+### View logs
+
+```bash
+journalctl -u ma-scanner-live.service -n 80 --no-pager
+journalctl -u ma-scanner-live.service -f
+tail -80 /opt/ma-scanner/data/live_monitoring/live_scanner_errors.log
+```
+
+### Re-enable the hourly timer after a fix
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start ma-scanner-live.timer
+systemctl list-timers ma-scanner-live.timer
+bash /opt/ma-scanner/deploy/vps/post_deploy_check.sh
+```
+
 ---
 
 ## File Layout (server)

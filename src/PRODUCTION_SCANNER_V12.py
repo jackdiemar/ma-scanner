@@ -3977,7 +3977,6 @@ def check_portfolio(tickers=None):
 if __name__ == '__main__':
     import argparse
     from outcome_tracker import update_outcome, print_summary as _print_outcomes
-    from backtest import run_backtest
 
     parser = argparse.ArgumentParser(description='M&A Scanner V12.0 — Institutional-Grade Acquisition Predictor')
     parser.add_argument('--ticker',    type=str, help='Analyze a single ticker')
@@ -4019,6 +4018,12 @@ if __name__ == '__main__':
                 notes=args.notes,
             )
     elif args.backtest:
+        try:
+            from backtest import run_backtest
+        except ImportError as exc:
+            print(f'Backtest mode unavailable: could not import backtest ({exc}).')
+            print('Normal scanner operation does not require the backtest module.')
+            raise SystemExit(2)
         run_backtest(fetch_prices=args.full)
     elif args.tickers:
         run_scan(tickers=[t.strip().upper() for t in args.tickers.split(',')],

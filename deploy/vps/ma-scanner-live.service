@@ -23,7 +23,8 @@ EnvironmentFile=/opt/ma-scanner/config/.env
 # --once: normalize results, apply FP filter, write memo, update alert log.
 ExecStart=/opt/ma-scanner/.venv/bin/python \
     /opt/ma-scanner/src/live_monitoring/live_scanner_runner.py \
-    --once
+    --once \
+    --v12-timeout-seconds 900
 
 # Safety: no network access restrictions, but explicitly no trading behavior.
 # The scanner is read-only against SEC EDGAR and FMP APIs.
@@ -31,8 +32,9 @@ ExecStart=/opt/ma-scanner/.venv/bin/python \
 # Restart policy: do not restart on failure — timer handles next invocation.
 Restart=no
 
-# Allow up to 90 minutes per scan pass (large universe can be slow).
-TimeoutStartSec=5400
+# Bound the oneshot so systemd cannot leave a stuck scanner indefinitely.
+# The Python runner has its own 15-minute V12 subprocess timeout.
+TimeoutStartSec=20min
 
 # Write stdout/stderr through journald (use: journalctl -u ma-scanner-live.service)
 StandardOutput=journal
