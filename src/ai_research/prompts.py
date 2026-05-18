@@ -8,6 +8,7 @@ Returns a prompt that instructs the model to:
   - Be skeptical and identify false positives
   - Cite the source excerpt provided
   - Separate facts from inference
+  - Fill every field in the expanded output schema
   - Output ONLY valid JSON matching the gate schema
 """
 from __future__ import annotations
@@ -85,6 +86,7 @@ _RESEARCH_ACTION_DESCRIPTIONS = {
 }
 
 _OUTPUT_SCHEMA = {
+    # ── Existing fields ─────────────────────────────────────────────────────
     'ticker': 'string',
     'classification': ' | '.join(_CLASSIFICATION_DESCRIPTIONS.keys()),
     'research_action': ' | '.join(_RESEARCH_ACTION_DESCRIPTIONS.keys()),
@@ -99,7 +101,53 @@ _OUTPUT_SCHEMA = {
     'missing_information': ['list of strings — what would confirm or deny the thesis'],
     'next_research_steps': ['list of strings — concrete analyst actions'],
     'human_review_questions': ['list of strings — specific questions for a human reviewer'],
+    # ── New fields ──────────────────────────────────────────────────────────
+    'short_thesis': '1-2 sentence direct statement of what this case is and whether it is actionable',
+    'why_this_matters': 'Why this signal type is or is not strategically significant',
+    'why_now': 'Timing context — is the signal fresh, stale, post-announcement?',
+    'evidence_summary': 'What evidence was actually found — quote or paraphrase from excerpt',
+    'source_timing_analysis': 'Filing date vs today — is opportunity window still open?',
+    'signal_quality_analysis': 'Is the trigger phrase strong pre-announcement evidence or generic boilerplate? Be specific.',
+    'priced_in_analysis': 'Is market likely aware? What does price/mcap data suggest?',
+    'false_positive_risk': 'Main false positive risk for this specific case',
+    'key_reasons': ['list of 3-5 verb-led facts driving the decision'],
+    'operator_next_steps': ['list of 2-4 concrete specific actions for operator'],
+    'what_would_change_the_decision': 'What new evidence/event would change classification',
+    'watch_triggers': ['if action=WATCH, specific events to watch for'],
+    'discard_reason': 'Required if action=DISCARD — single clearest reason to discard. Else empty string.',
+    'escalation_reason': 'Required if action=ESCALATE — what makes this urgent. Else empty string.',
+    'human_review_reason': 'Required if action=NEEDS_HUMAN_REVIEW — what human should look for. Else empty string.',
 }
+
+
+# ── Strategy context ──────────────────────────────────────────────────────────
+
+_STRATEGY_CONTEXT = """OUR RESEARCH STRATEGY:
+We are NOT trying to predict every biotech M&A deal.
+We ARE trying to identify public, pre-announcement process evidence suggesting a company may be in or near a strategic process — BEFORE the market fully prices it.
+
+HIGH-VALUE signals (escalate or watch):
+- Explicit "strategic alternatives review" or "sale process" language in 8-K before a deal is announced
+- Company-level banker or financial advisor retention for strategic alternatives
+- Unsolicited acquisition proposal disclosed in 8-K or proxy
+- Superior proposal / competing bid language in merger proxy
+- Credible activist 13D Item 4 acquisition pressure citing company-level strategic value
+- Board committee specifically formed to evaluate strategic alternatives
+
+LOW-VALUE / DISCARD signals:
+- Already-announced merger agreement or acquisition (deal is public, opportunity gone)
+- Post-announcement proxy (background section describes process that already happened)
+- Generic rights agreement or poison pill (anti-takeover, not a process signal)
+- Asset-specific ROFR, ROFN, or ROFO (product/asset level, not company level)
+- Equity investment or minority stake without acquisition option at company level
+- Stale signal (filing is months or years old)
+- Offering prospectus boilerplate change-of-control risk factor language
+- Negated language: "no acquisition proposal has been received"
+
+CALIBRATION:
+- "merger agreement" in a filing almost always = ALREADY ANNOUNCED → ALREADY_ANNOUNCED_DEAL → DISCARD
+- "change of control" in executive comp = standard boilerplate → FALSE_POSITIVE unless tied to actual process
+- "strategic alternatives" in 10-K risk factor = boilerplate → FALSE_POSITIVE unless it's an 8-K disclosure of an actual review"""
 
 
 # ── Prompt builder ────────────────────────────────────────────────────────────
@@ -180,6 +228,10 @@ IMPORTANT INSTRUCTIONS:
 
 ---
 
+{_STRATEGY_CONTEXT}
+
+---
+
 ALERT CASE SUMMARY: {ticker} — {company_name}
 
 {case_block}
@@ -200,13 +252,53 @@ CLASSIFICATION DEFINITIONS:
 
 ---
 
+FIELD-BY-FIELD INSTRUCTIONS (fill every field — do not skip any):
+
+1. CLASSIFY using exactly one classification from the list. Most alerts are ALREADY_ANNOUNCED_DEAL,
+   FALSE_POSITIVE, or GENERIC_PARTNERSHIP_LANGUAGE. Default to skepticism.
+
+2. short_thesis: Write 1-2 direct sentences saying what this case is and whether it is actionable.
+   Example: "APLS has a signed merger agreement with Apellis Pharmaceuticals announced publicly.
+   This is a completed deal; there is no pre-announcement edge."
+
+3. evidence_summary: Quote or paraphrase the actual trigger phrase or evidence from the source excerpt.
+   If excerpt is empty, say so explicitly: "No source excerpt was provided."
+
+4. source_timing_analysis: State the filing date and today's approximate date. Assess whether the
+   opportunity window (if any) is still open. A filing from months ago with a signed merger agreement
+   means the window closed long ago.
+
+5. signal_quality_analysis: Be specific. Name the trigger phrase. Explain whether it is strong
+   pre-announcement evidence (e.g., an actual 8-K disclosing a strategic review) or generic boilerplate
+   (e.g., a change-of-control clause in an employment agreement or a 10-K risk factor).
+
+6. operator_next_steps: Be concrete. If action=DISCARD, write "Discard — [specific reason]."
+   If action=ESCALATE, write specific analyst actions. If action=WATCH, write what to monitor.
+
+7. key_reasons: Each item is a standalone fact starting with a verb. 3-5 items.
+   Example: ["Contains signed merger agreement dated X", "Deal publicly announced on Y", "No pre-announcement edge remains"]
+
+8. discard_reason: Fill if action=DISCARD. Leave as "" otherwise.
+   escalation_reason: Fill if action=ESCALATE. Leave as "" otherwise.
+   human_review_reason: Fill if action=NEEDS_HUMAN_REVIEW. Leave as "" otherwise.
+
+9. investability_score: Use these ranges:
+   - 0-10: DISCARD or FALSE_POSITIVE (no research value)
+   - 10-40: WATCH_ONLY (weak signal, monitor only)
+   - 40-70: WATCH (real signal, monitor actively)
+   - 70-100: ESCALATE or PRE_PROCESS_OPPORTUNITY (high priority, read filing now)
+
+10. watch_triggers: Only fill if action=WATCH. List specific events that would trigger escalation.
+    Example: ["Follow-on 8-K disclosing banker retention", "Price movement >15% without news"]
+
+11. what_would_change_the_decision: What new evidence or event would change your classification?
+
 OUTPUT SCHEMA (output ONLY this JSON, no other text):
 {schema_json}
 
-Fill every field. For list fields, provide at least one item if relevant evidence exists; use an empty list [] only if truly nothing applies.
+Fill every field. For list fields, provide at least one item if relevant evidence exists; use [] only if truly nothing applies.
 Set confidence based on how certain you are of your classification (0.0 = no idea, 1.0 = certain).
-Set investability_score 0–100 based on likelihood this is a genuine pre-deal research opportunity (not a transaction signal — a research-worth signal).
-Cite specific phrases from the source excerpt in key_evidence where available.
+Cite specific phrases from the source excerpt in key_evidence and evidence_summary where available.
 
 Produce your JSON assessment now:"""
 

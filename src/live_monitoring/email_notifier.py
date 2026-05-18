@@ -514,13 +514,15 @@ def _format_resend_error(status_code: int, response_body: str) -> str:
     return ' | '.join(parts)
 
 
-def _send_resend(subject: str, body: str, cfg: EmailConfig) -> dict[str, Any]:
+def _send_resend(subject: str, body: str, cfg: EmailConfig, html: str | None = None) -> dict[str, Any]:
     payload = {
         'from': cfg.resend_from,
         'to': [cfg.recipient],
         'subject': subject,
         'text': body,
     }
+    if html:
+        payload['html'] = html
     data = json.dumps(payload).encode('utf-8')
     request = urllib.request.Request(
         RESEND_ENDPOINT,
@@ -582,6 +584,7 @@ def send_email(
     body: str,
     cfg: EmailConfig | None = None,
     force: bool = False,
+    html: str | None = None,
 ) -> dict[str, Any]:
     cfg = cfg or load_config()
     if not cfg.enabled and not force:
@@ -595,7 +598,7 @@ def send_email(
             'provider': cfg.provider,
         }
     if cfg.provider == 'resend':
-        return _send_resend(subject, body, cfg)
+        return _send_resend(subject, body, cfg, html=html)
     return _send_smtp(subject, body, cfg)
 
 
@@ -604,11 +607,12 @@ def send_for_state(
     kind: str,
     force: bool = False,
     is_test: bool = False,
+    html: str | None = None,
 ) -> dict[str, Any]:
     cfg     = load_config()
     subject = _subject(kind, state, is_test=is_test)
     body    = _body(kind, state, is_test=is_test)
-    result  = send_email(subject, body, cfg, force=force)
+    result  = send_email(subject, body, cfg, force=force, html=html)
     result['subject'] = subject
     result['kind']    = kind
     if result.get('sent'):

@@ -97,22 +97,38 @@ _VALID_TIME_SENSITIVITY  = frozenset({'HIGH', 'MEDIUM', 'LOW'})
 
 def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
     return {
-        'ticker':                  ticker,
-        'classification':          'NEEDS_HUMAN_REVIEW',
-        'research_action':         'NEEDS_HUMAN_REVIEW',
-        'confidence':              0.0,
-        'investability_score':     0,
-        'evidence_strength':       'LOW',
-        'priced_in_assessment':    'UNKNOWN',
-        'time_sensitivity':        'LOW',
-        'why_interesting':         [],
-        'why_not':                 [],
-        'key_evidence':            [],
-        'missing_information':     [],
-        'next_research_steps':     [],
-        'human_review_questions':  [],
-        'note':                    note,
-        'ran_at':                  datetime.now(timezone.utc).isoformat(),
+        'ticker':                          ticker,
+        'classification':                  'NEEDS_HUMAN_REVIEW',
+        'research_action':                 'NEEDS_HUMAN_REVIEW',
+        'confidence':                      0.0,
+        'investability_score':             0,
+        'evidence_strength':               'LOW',
+        'priced_in_assessment':            'UNKNOWN',
+        'time_sensitivity':                'LOW',
+        'why_interesting':                 [],
+        'why_not':                         [],
+        'key_evidence':                    [],
+        'missing_information':             [],
+        'next_research_steps':             [],
+        'human_review_questions':          [],
+        # New fields
+        'short_thesis':                    '',
+        'why_this_matters':                '',
+        'why_now':                         '',
+        'evidence_summary':                '',
+        'source_timing_analysis':          '',
+        'signal_quality_analysis':         '',
+        'priced_in_analysis':              '',
+        'false_positive_risk':             '',
+        'key_reasons':                     [],
+        'operator_next_steps':             [],
+        'what_would_change_the_decision':  '',
+        'watch_triggers':                  [],
+        'discard_reason':                  '',
+        'escalation_reason':               '',
+        'human_review_reason':             '',
+        'note':                            note,
+        'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -122,24 +138,32 @@ _REQUIRED_DECISION_FIELDS = frozenset(
 )
 
 
+_REQUIRED_NARRATIVE_FIELDS = frozenset({
+    'short_thesis',
+    'evidence_summary',
+    'source_timing_analysis',
+    'signal_quality_analysis',
+})
+
+
 def validate_decision_schema(decision: dict) -> list[str]:
     """Return schema validation errors for a gate decision dict."""
     errors: list[str] = []
     missing = sorted(_REQUIRED_DECISION_FIELDS - set(decision.keys()))
     if missing:
         errors.append(f'Missing fields: {", ".join(missing)}')
-    if not isinstance(decision.get('why_interesting', []), list):
-        errors.append('why_interesting must be a list')
-    if not isinstance(decision.get('why_not', []), list):
-        errors.append('why_not must be a list')
-    if not isinstance(decision.get('key_evidence', []), list):
-        errors.append('key_evidence must be a list')
-    if not isinstance(decision.get('missing_information', []), list):
-        errors.append('missing_information must be a list')
-    if not isinstance(decision.get('next_research_steps', []), list):
-        errors.append('next_research_steps must be a list')
-    if not isinstance(decision.get('human_review_questions', []), list):
-        errors.append('human_review_questions must be a list')
+    # Validate list fields
+    for list_field in (
+        'why_interesting', 'why_not', 'key_evidence', 'missing_information',
+        'next_research_steps', 'human_review_questions',
+        'key_reasons', 'operator_next_steps', 'watch_triggers',
+    ):
+        if not isinstance(decision.get(list_field, []), list):
+            errors.append(f'{list_field} must be a list')
+    # Warn if key narrative fields are empty (non-fatal)
+    for field in _REQUIRED_NARRATIVE_FIELDS:
+        if not str(decision.get(field, '')).strip():
+            errors.append(f'WARNING: {field} is empty — LLM did not fill this field')
     return errors
 
 
@@ -225,21 +249,38 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         return []
 
     result = {
-        'ticker':                  ticker,
-        'classification':          classification,
-        'research_action':         research_action,
-        'confidence':              confidence,
-        'investability_score':     investability_score,
-        'evidence_strength':       evidence_strength,
-        'priced_in_assessment':    priced_in,
-        'time_sensitivity':        time_sensitivity,
-        'why_interesting':         _list_of_str('why_interesting'),
-        'why_not':                 _list_of_str('why_not'),
-        'key_evidence':            _list_of_str('key_evidence'),
-        'missing_information':     _list_of_str('missing_information'),
-        'next_research_steps':     _list_of_str('next_research_steps'),
-        'human_review_questions':  _list_of_str('human_review_questions'),
-        'ran_at':                  datetime.now(timezone.utc).isoformat(),
+        # ── Existing fields ─────────────────────────────────────────────────
+        'ticker':                          ticker,
+        'classification':                  classification,
+        'research_action':                 research_action,
+        'confidence':                      confidence,
+        'investability_score':             investability_score,
+        'evidence_strength':               evidence_strength,
+        'priced_in_assessment':            priced_in,
+        'time_sensitivity':                time_sensitivity,
+        'why_interesting':                 _list_of_str('why_interesting'),
+        'why_not':                         _list_of_str('why_not'),
+        'key_evidence':                    _list_of_str('key_evidence'),
+        'missing_information':             _list_of_str('missing_information'),
+        'next_research_steps':             _list_of_str('next_research_steps'),
+        'human_review_questions':          _list_of_str('human_review_questions'),
+        # ── New narrative fields ────────────────────────────────────────────
+        'short_thesis':                    str(data.get('short_thesis', '')).strip(),
+        'why_this_matters':                str(data.get('why_this_matters', '')).strip(),
+        'why_now':                         str(data.get('why_now', '')).strip(),
+        'evidence_summary':                str(data.get('evidence_summary', '')).strip(),
+        'source_timing_analysis':          str(data.get('source_timing_analysis', '')).strip(),
+        'signal_quality_analysis':         str(data.get('signal_quality_analysis', '')).strip(),
+        'priced_in_analysis':              str(data.get('priced_in_analysis', '')).strip(),
+        'false_positive_risk':             str(data.get('false_positive_risk', '')).strip(),
+        'key_reasons':                     _list_of_str('key_reasons'),
+        'operator_next_steps':             _list_of_str('operator_next_steps'),
+        'what_would_change_the_decision':  str(data.get('what_would_change_the_decision', '')).strip(),
+        'watch_triggers':                  _list_of_str('watch_triggers'),
+        'discard_reason':                  str(data.get('discard_reason', '')).strip(),
+        'escalation_reason':               str(data.get('escalation_reason', '')).strip(),
+        'human_review_reason':             str(data.get('human_review_reason', '')).strip(),
+        'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
 
     if errors:
@@ -254,14 +295,16 @@ def run_gate(
     case: dict,
     client=None,
     dry_run: bool | None = None,
+    force_refresh: bool = False,
 ) -> dict:
     """
     Run the investment gate on a research case dict.
 
     Args:
-        case:    Research case dict (output of research_case_builder).
-        client:  LLMClient instance. If None, one is created from config.
-        dry_run: Override dry_run config. If None, uses client config.
+        case:          Research case dict (output of research_case_builder).
+        client:        LLMClient instance. If None, one is created from config.
+        dry_run:       Override dry_run config. If None, uses client config.
+        force_refresh: If True, bypass cache and rerun LLM even if fingerprint exists.
 
     Returns:
         Decision dict matching the gate output schema.
@@ -283,13 +326,16 @@ def run_gate(
         return _dry_run_decision(ticker, note='DRY_RUN')
 
     # Fingerprint cache — skip LLM if same case signal was processed today
+    # force_refresh=True bypasses cache and reruns the LLM
     fingerprint = _case_fingerprint(case)
     cache = _load_gate_cache()
-    if fingerprint in cache:
+    if fingerprint in cache and not force_refresh:
         cached = dict(cache[fingerprint])
         cached['note'] = f'CACHE_HIT (fingerprint={fingerprint})'
         print(f'  [CACHE] {ticker}: returning cached decision (fingerprint={fingerprint})')
         return cached
+    if fingerprint in cache and force_refresh:
+        print(f'  [FORCE-REFRESH] {ticker}: cache bypassed (fingerprint={fingerprint})')
 
     if not client.available:
         print(f'  [SKIP] AI not available for {ticker}: {client.status_message}')

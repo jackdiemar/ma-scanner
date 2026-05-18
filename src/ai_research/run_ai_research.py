@@ -5,8 +5,11 @@ Usage:
   python3 src/ai_research/run_ai_research.py --latest --limit 5
   python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan
   python3 src/ai_research/run_ai_research.py --latest --dry-run
+  python3 src/ai_research/run_ai_research.py --latest --limit 10 --depth fast_gate --email
+  python3 src/ai_research/run_ai_research.py --latest --limit 5 --force-refresh
   python3 src/ai_research/run_ai_research.py --ticker SDGR
   python3 src/ai_research/run_ai_research.py --status
+  python3 src/ai_research/run_ai_research.py --email-latest-summary
 
 Behavior:
   - Builds research cases from latest scanner outputs.
@@ -16,6 +19,8 @@ Behavior:
   - Saves JSON decisions into case files.
   - Updates watchlist.
   - Writes data/ai_research/latest_ai_research_summary.md.
+  - Optionally sends branded HTML research email via --email.
+  - --force-refresh bypasses the fingerprint cache and reruns LLM.
 
 No auto-trading. No broker APIs. No transaction recommendation language.
 """
@@ -245,10 +250,23 @@ def run(
     dry_run: bool = False,
     depth: str | None = None,
     run_date: str | None = None,
+    force_refresh: bool = False,
+    send_email: bool = False,
 ) -> int:
     """
     Main execution: build cases, optionally run gate, update watchlist, write summary.
-    Returns exit code (0 = success).
+
+    Args:
+        ticker:        Run for a single ticker instead of latest alerts.
+        limit:         Max cases to process.
+        dry_run:       Skip LLM calls; return placeholder decisions.
+        depth:         Research depth preset (fast_gate, deep).
+        run_date:      Override the run date (YYYY-MM-DD).
+        force_refresh: Bypass cache and rerun LLM for every case.
+        send_email:    Send branded AI research email after run completes.
+
+    Returns:
+        Exit code (0 = success).
     """
     _load_env()
     run_at   = _utc_now()
@@ -287,12 +305,14 @@ def run(
 
     print('AI Research Layer')
     print('=================')
-    print(f'Run at      : {run_at}')
-    print(f'AI ready    : {_bool_text(ai_ready)}')
-    print(f'Dry run     : {_bool_text(effective_dry_run)}')
-    print(f'Depth       : {depth}')
-    print(f'Limit       : {limit or "none"}')
-    print(f'Ticker      : {ticker or "all (from latest)"}')
+    print(f'Run at        : {run_at}')
+    print(f'AI ready      : {_bool_text(ai_ready)}')
+    print(f'Dry run       : {_bool_text(effective_dry_run)}')
+    print(f'Depth         : {depth}')
+    print(f'Limit         : {limit or "none"}')
+    print(f'Ticker        : {ticker or "all (from latest)"}')
+    print(f'Force refresh : {_bool_text(force_refresh)}')
+    print(f'Send email    : {_bool_text(send_email)}')
     print()
 
     # ── 1. Build research cases ──────────────────────────────────────────────
@@ -341,7 +361,12 @@ def run(
 
     for case in gate_cases:
         t = case.get('ticker', 'UNKNOWN')
-        decision = run_gate(case, client=client, dry_run=effective_dry_run)
+        decision = run_gate(
+            case,
+            client=client,
+            dry_run=effective_dry_run,
+            force_refresh=force_refresh,
+        )
         decisions.append(decision)
 
         case_json_path = _case_json_path(run_date, t)
@@ -357,11 +382,18 @@ def run(
             )
 
     decision_errors = _validate_decisions(decisions)
-    if decision_errors:
+    # Warnings (empty narrative fields) are non-fatal — filter real errors.
+    # Format from _validate_decisions is "TICKER: WARNING: <msg>" or "TICKER: <msg>"
+    warnings    = [e for e in decision_errors if 'WARNING:' in e]
+    hard_errors = [e for e in decision_errors if 'WARNING:' not in e]
+    if hard_errors:
         print('Decision schema validation: FAIL')
-        for err in decision_errors:
+        for err in hard_errors:
             print(f'  - {err}')
         return 1
+    if warnings:
+        for w in warnings:
+            print(f'  {w}')
     print()
     print(f'Decision schema validation: PASS ({len(decisions)} decision(s))')
     print(f'Gate complete: {len(decisions)} decision(s) made.')
@@ -388,6 +420,24 @@ def run(
         ai_enabled        = ai_ready,
         watchlist_summary = watchlist_summary,
     )
+
+    # ── 6. Send email (optional) ─────────────────────────────────────────────
+    if send_email:
+        cache_hits = sum(
+            1 for d in decisions
+            if 'CACHE_HIT' in str(d.get('note', ''))
+        )
+        run_metadata = {
+            'run_at':       run_at,
+            'model':        getattr(llm_cfg, 'model', 'unknown'),
+            'ai_enabled':   ai_ready,
+            'dry_run':      effective_dry_run,
+            'case_count':   len(cases),
+            'decision_count': len(decisions),
+            'cache_hits':   cache_hits,
+        }
+        from ai_research.ai_emailer import send_ai_research_email
+        send_ai_research_email(decisions, run_metadata)
 
     return 0
 
@@ -522,13 +572,21 @@ def _parse_args(argv=None):
                    help='Preview what would run - no files written, no LLM calls')
     p.add_argument('--limit',   type=int, default=None,
                    help='Max cases to process (default: AI_RESEARCH_MAX_CASES_PER_RUN)')
-    p.add_argument('--depth', default=None,
-                   help='Research depth preset (default: AI_RESEARCH_DEFAULT_DEPTH)')
+    p.add_argument('--depth', default='fast_gate',
+                   choices=['fast_gate', 'deep'],
+                   help='Research depth preset (default: fast_gate)')
     p.add_argument('--dry-run', action='store_true',
                    help='Build cases but do not call LLM')
+    p.add_argument('--force-refresh', action='store_true',
+                   help='Bypass cache and rerun LLM for all cases')
+    p.add_argument('--email', action='store_true',
+                   help='Send branded AI research email after run')
+    p.add_argument('--email-latest-summary', action='store_true',
+                   help='Send latest AI summary email without rerunning LLM')
     args = p.parse_args(argv)
-    if not args.status and not args.plan and not args.latest and not args.ticker:
-        p.error('one of --status, --plan, --latest, or --ticker is required')
+    if (not args.status and not args.plan and not args.latest
+            and not args.ticker and not args.email_latest_summary):
+        p.error('one of --status, --plan, --latest, --ticker, or --email-latest-summary is required')
     return args
 
 
@@ -538,6 +596,13 @@ def main(argv=None) -> int:
     if args.status:
         print_status()
         return 0
+
+    # --email-latest-summary is independent of the main run modes
+    if args.email_latest_summary:
+        _load_env()
+        from ai_research.ai_emailer import send_latest_summary_email
+        result = send_latest_summary_email(force=True)
+        return 0 if result.get('sent') else 1
 
     _load_env()
     from ai_research.llm_client import load_config as load_llm_config
@@ -551,10 +616,12 @@ def main(argv=None) -> int:
 
     ticker = args.ticker.upper() if args.ticker else None
     return run(
-        ticker   = ticker,
-        limit    = args.limit,
-        dry_run  = args.dry_run,
-        depth    = depth,
+        ticker        = ticker,
+        limit         = args.limit,
+        dry_run       = args.dry_run,
+        depth         = depth,
+        force_refresh = args.force_refresh,
+        send_email    = args.email,
     )
 
 

@@ -1,0 +1,19 @@
+[Unit]
+Description=MA Scanner AI Research Brief — scheduled diligence run
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/ma-scanner
+ExecStart=/opt/ma-scanner/.venv/bin/python \
+    /opt/ma-scanner/src/ai_research/run_ai_research.py \
+    --latest --limit 10 --depth fast_gate --email
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=600
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

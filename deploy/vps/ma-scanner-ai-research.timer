@@ -1,0 +1,15 @@
+[Unit]
+Description=MA Scanner AI Research Schedule (Mon-Fri 9:30 AM / 1:00 PM / 4:10 PM New York)
+Requires=ma-scanner-ai-research.service
+
+[Timer]
+# New York market hours — systemd v240+ supports timezone suffix in OnCalendar
+# Survives DST transitions automatically via the America/New_York timezone database
+OnCalendar=Mon..Fri *-*-* 09:30:00 America/New_York
+OnCalendar=Mon..Fri *-*-* 13:00:00 America/New_York
+OnCalendar=Mon..Fri *-*-* 16:10:00 America/New_York
+# Persistent=false: do not catch up on missed runs (market is closed if server was down)
+Persistent=false
+
+[Install]
+WantedBy=timers.target
