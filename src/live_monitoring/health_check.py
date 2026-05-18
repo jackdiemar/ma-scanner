@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -153,6 +154,59 @@ def check_scan_freshness() -> None:
         _warn(f'scan_latest.json age: {age_h:.1f}h — stale (>{STALE_HOURS}h). Timer may have missed runs.')
 
 
+_SERVICE_NAME = 'ma-scanner-live.service'
+
+
+def check_systemd_service() -> None:
+    """
+    Check the systemd service status. Warns when service is in a failed state,
+    even if the last scanner state file says ok — the two can diverge if the
+    service crashes before writing state.
+    Skips gracefully if systemctl is not available (non-Linux or test env).
+    """
+    try:
+        result = subprocess.run(
+            ['systemctl', 'is-failed', _SERVICE_NAME],
+            capture_output=True, text=True, timeout=5,
+        )
+        # is-failed exits 0 when the unit IS in a failed state
+        if result.returncode == 0:
+            # Service is failed — check if last scanner state contradicts this
+            state_ok = False
+            if STATE_PATH.exists():
+                try:
+                    state = json.loads(STATE_PATH.read_text())
+                    state_ok = state.get('last_run_status') == 'ok'
+                except Exception:
+                    pass
+            if state_ok:
+                _warn(
+                    f'{_SERVICE_NAME} is FAILED but last scanner state says ok — '
+                    'service crashed after last successful run. '
+                    f'Fix: sudo bash deploy/vps/repair_live_scanner.sh'
+                )
+            else:
+                _warn(
+                    f'{_SERVICE_NAME} is FAILED. '
+                    f'Fix: sudo bash deploy/vps/repair_live_scanner.sh'
+                )
+        else:
+            # returncode != 0 means unit is NOT in failed state (active, inactive, etc.)
+            active = subprocess.run(
+                ['systemctl', 'is-active', _SERVICE_NAME],
+                capture_output=True, text=True, timeout=5,
+            )
+            unit_state = active.stdout.strip() or 'unknown'
+            _ok(f'{_SERVICE_NAME} systemd state: {unit_state}')
+    except FileNotFoundError:
+        # systemctl not on PATH — not a Linux/systemd host
+        _ok('systemd not available (skipping service check)')
+    except subprocess.TimeoutExpired:
+        _warn(f'systemctl timed out checking {_SERVICE_NAME}')
+    except Exception as exc:
+        _warn(f'systemd service check failed unexpectedly: {exc}')
+
+
 def main() -> int:
     print('MA Scanner Health Check')
     print(f'Repo: {REPO}')
@@ -160,6 +214,7 @@ def main() -> int:
     print()
 
     check_env()
+    check_systemd_service()
     check_state_file()
     check_alert_log()
     check_memo()

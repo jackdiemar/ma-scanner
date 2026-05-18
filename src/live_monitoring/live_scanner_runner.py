@@ -52,16 +52,23 @@ DEFAULT_V12_TIMEOUT_SECONDS = 900
 # ── Logging ───────────────────────────────────────────────────────────────────
 
 def _setup_logging() -> None:
-    LIVE_DATA.mkdir(parents=True, exist_ok=True)
     fmt = '%(asctime)s %(levelname)s %(message)s'
-    logging.basicConfig(
-        level=logging.INFO,
-        format=fmt,
-        handlers=[
-            logging.FileHandler(ERROR_LOG),
-            logging.StreamHandler(sys.stdout),
-        ],
-    )
+    handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]
+
+    try:
+        ERROR_LOG.parent.mkdir(parents=True, exist_ok=True)
+        ERROR_LOG.touch()  # raises PermissionError early, before FileHandler opens
+        handlers.insert(0, logging.FileHandler(ERROR_LOG))
+    except (PermissionError, OSError) as exc:
+        print(
+            f'\nWARNING: Cannot write to log file {ERROR_LOG}\n'
+            f'  Reason  : {exc}\n'
+            f'  Falling back to console-only logging.\n'
+            f'  Fix with: sudo bash deploy/vps/repair_live_scanner.sh\n',
+            file=sys.stderr,
+        )
+
+    logging.basicConfig(level=logging.INFO, format=fmt, handlers=handlers)
 
 log = logging.getLogger(__name__)
 
