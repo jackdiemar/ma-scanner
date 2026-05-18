@@ -326,7 +326,11 @@ def _load_scan_results() -> list:
 # ── Per-run snapshot ──────────────────────────────────────────────────────────
 
 def _write_run_snapshot(ts: str, alerts: list, stats: dict, dry_run: bool) -> None:
-    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    except PermissionError as exc:
+        log.warning('Run snapshot skipped — cannot create runs dir: %s', exc)
+        return
     safe_ts = ts.replace(':', '').replace(' ', '_')
     path = RUNS_DIR / f'run_{safe_ts}.json'
     snapshot = {
@@ -336,8 +340,11 @@ def _write_run_snapshot(ts: str, alerts: list, stats: dict, dry_run: bool) -> No
         'stats':         stats,
         'alerts':        alerts,
     }
-    path.write_text(json.dumps(snapshot, indent=2, default=str), encoding='utf-8')
-    log.info('Run snapshot → %s', path.name)
+    try:
+        path.write_text(json.dumps(snapshot, indent=2, default=str), encoding='utf-8')
+        log.info('Run snapshot → %s', path.name)
+    except OSError as exc:
+        log.warning('Run snapshot write failed — continuing: %s', exc)
 
 
 def _write_failure_memo(scan_ts: str, run_mode: str, result: V12RunResult) -> None:
@@ -496,7 +503,10 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
         run_mode    = run_mode,
         dry_run     = dry_run,
     )
-    _write_run_snapshot(scan_ts, alerts, stats, dry_run)
+    try:
+        _write_run_snapshot(scan_ts, alerts, stats, dry_run)
+    except Exception as exc:
+        log.warning('Run snapshot unexpectedly failed — continuing: %s', exc)
 
     state = _read_state()
     state.update({
