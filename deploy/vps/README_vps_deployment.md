@@ -447,6 +447,30 @@ This removes the systemd files. Repo and data are untouched.
 
 ---
 
+## Recovery Scripts
+
+### Fix permissions and restart
+
+When the scanner hits `PermissionError` on data directories, run:
+
+```bash
+sudo bash /opt/ma-scanner/deploy/vps/repair_live_scanner.sh
+```
+
+This stops the service, creates missing dirs, fixes ownership, clears stale lock,
+and restarts. **Only run when no scan is actively in progress.**
+
+### Check AI research layer
+
+```bash
+bash /opt/ma-scanner/deploy/vps/check_ai_research.sh
+```
+
+Verifies `config/.env` AI config, runs `--status`, and prints the latest summary
+mtime and watchlist entry count.
+
+---
+
 ## Troubleshooting
 
 | Symptom | Check |
@@ -455,7 +479,8 @@ This removes the systemd files. Repo and data are untouched.
 | Service fails immediately | `journalctl -u ma-scanner-live.service -n 20` — check for import errors |
 | `FMP_API_KEY` error | Verify `config/.env` exists and contains the key |
 | Empty alerts | Old scan format — run `--once` with live FMP to get Gate 1 enriched results |
-| Lock file stuck | `rm /opt/ma-scanner/live_scanner.lock` — only if no scan is running |
+| Lock file stuck | `python3 src/live_monitoring/live_scanner_runner.py --clear-stale-lock` |
+| PermissionError on data dirs | `sudo bash deploy/vps/repair_live_scanner.sh` |
 | Stale scan | `systemctl start ma-scanner-live.service` — force one run immediately |
 
 ### V12 missing `backtest` import

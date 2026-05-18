@@ -7,9 +7,10 @@ No trade recommendations, no broker APIs, no BUY/SELL language.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,44 @@ REPO    = _SRCDIR.parent
 # Ensure src/ is on sys.path for direct script execution
 if str(_SRCDIR) not in sys.path:
     sys.path.insert(0, str(_SRCDIR))
+
+CACHE_DIR = REPO / 'data' / 'ai_research' / 'cache'
+
+
+# ── Fingerprint cache ─────────────────────────────────────────────────────────
+
+def _case_fingerprint(case: dict) -> str:
+    """SHA-256 of the fields that uniquely identify a case signal. Rotates daily."""
+    key = '|'.join([
+        str(case.get('ticker', '')),
+        str(case.get('filing_date', '')),
+        str(case.get('filing_type', '')),
+        str(case.get('trigger_phrase', '')),
+        str(case.get('source_excerpt', ''))[:200],
+    ])
+    return hashlib.sha256(key.encode()).hexdigest()[:16]
+
+
+def _cache_path() -> Path:
+    return CACHE_DIR / f'gate_cache_{date.today().isoformat()}.json'
+
+
+def _load_gate_cache() -> dict:
+    p = _cache_path()
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+
+
+def _save_gate_cache(cache: dict) -> None:
+    try:
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        _cache_path().write_text(json.dumps(cache, indent=2, default=str), encoding='utf-8')
+    except OSError:
+        pass  # never fail the gate for a cache write error
 
 
 # ── Schema defaults ───────────────────────────────────────────────────────────
@@ -213,6 +252,15 @@ def run_gate(
         print(f'  [SKIP] AI not available for {ticker}: {client.status_message}')
         return _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
 
+    # Fingerprint cache — skip LLM if same case signal was processed today
+    fingerprint = _case_fingerprint(case)
+    cache = _load_gate_cache()
+    if fingerprint in cache:
+        cached = dict(cache[fingerprint])
+        cached['note'] = f'CACHE_HIT (fingerprint={fingerprint})'
+        print(f'  [CACHE] {ticker} — returning cached decision (fingerprint={fingerprint})')
+        return cached
+
     from ai_research.prompts import build_investment_gate_prompt
     prompt = build_investment_gate_prompt(case)
 
@@ -230,6 +278,9 @@ def run_gate(
         }
 
     decision = _parse_llm_response(raw, ticker)
+    decision['fingerprint'] = fingerprint
+    cache[fingerprint] = decision
+    _save_gate_cache(cache)
     print(
         f'  [GATE] {ticker} → {decision["classification"]} | '
         f'action={decision["research_action"]} | '

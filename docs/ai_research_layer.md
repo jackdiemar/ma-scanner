@@ -88,6 +88,18 @@ python3 src/ai_research/run_ai_research.py --status
 Prints watchlist counts (escalated, active watch, needs review, discarded, stale)
 and LLM config status without exposing secrets.
 
+### Plan preview (no writes, no LLM)
+
+```bash
+python3 src/ai_research/run_ai_research.py --plan
+python3 src/ai_research/run_ai_research.py --plan --limit 5
+python3 src/ai_research/run_ai_research.py --plan --ticker SDGR
+```
+
+Shows which tickers would be processed, how many would go to the LLM gate,
+and the current AI config — without writing any files or calling the API.
+Safe to run any time.
+
 ### Build cases only (no gate)
 
 ```bash
@@ -106,8 +118,20 @@ python3 src/ai_research/research_case_builder.py --ticker SDGR
 | `data/ai_research/cases/YYYY-MM-DD/{TICKER}_research_case.md` | Human-readable version |
 | `data/ai_research/watchlist.json` | Per-ticker watchlist with history |
 | `data/ai_research/latest_ai_research_summary.md` | Summary of most recent run |
+| `data/ai_research/cache/gate_cache_YYYY-MM-DD.json` | Daily LLM result cache |
 
 All output paths are gitignored (`data/ai_research/`). They are local-only.
+
+---
+
+## LLM Response Caching
+
+The investment gate caches results by content fingerprint (hash of ticker, filing date,
+filing type, trigger phrase, and source excerpt). If the same signal is encountered again
+on the same calendar day, the cached decision is returned without calling the LLM.
+
+Cache files rotate daily (`gate_cache_YYYY-MM-DD.json`). Yesterday's cache is never used
+for today's run, ensuring fresh analysis on each new trading day.
 
 ---
 
@@ -161,3 +185,13 @@ python3 src/ai_research/run_ai_research.py --status
 The AI layer does not touch the systemd service and does not modify any live scanner state files.
 It reads from `data/live_monitoring/` (read-only from its perspective) and writes only to
 `data/ai_research/`.
+
+### VPS health scripts
+
+```bash
+# Check AI layer config and status
+bash deploy/vps/check_ai_research.sh
+
+# Fix permissions, clear stale lock, restart scanner service
+sudo bash deploy/vps/repair_live_scanner.sh
+```

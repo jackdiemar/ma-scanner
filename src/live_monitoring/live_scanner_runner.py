@@ -391,6 +391,37 @@ def _write_failure_memo(scan_ts: str, run_mode: str, result: V12RunResult) -> No
     log.info('Failure memo written to %s', MEMO_PATH)
 
 
+# ── Self-healing dirs + write preflight ───────────────────────────────────────
+
+def _ensure_live_dirs() -> None:
+    """Create all required output dirs. Logs a warning if a dir cannot be created."""
+    for d in [LIVE_DATA, RUNS_DIR, SCAN_LATEST.parent]:
+        try:
+            d.mkdir(parents=True, exist_ok=True)
+        except PermissionError as exc:
+            log.warning('Cannot create dir %s: %s', d, exc)
+
+
+def _preflight_write_check() -> bool:
+    """
+    Verify LIVE_DATA is writable before V12 starts.
+    Returns True if OK. On failure, logs remediation command and returns False.
+    """
+    test_path = LIVE_DATA / '.write_check'
+    try:
+        LIVE_DATA.mkdir(parents=True, exist_ok=True)
+        test_path.write_text('ok')
+        test_path.unlink(missing_ok=True)
+        return True
+    except PermissionError:
+        log.error(
+            'Write permission denied on %s. '
+            'Fix: sudo chown -R $USER %s && chmod -R 755 %s',
+            LIVE_DATA, LIVE_DATA.parent, LIVE_DATA.parent,
+        )
+        return False
+
+
 # ── Directory structure validation (dry-run) ──────────────────────────────────
 
 def _validate_dirs() -> bool:
@@ -420,6 +451,23 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
     Execute one full scan cycle.
     Returns state dict with run metadata.
     """
+    _ensure_live_dirs()
+    if not _preflight_write_check():
+        scan_ts = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+        state = _read_state()
+        state.update({
+            'last_run': scan_ts,
+            'last_run_status': 'preflight_failed',
+            'last_run_mode': 'dry-run' if dry_run else 'once',
+            'last_error': f'Write permission denied on {LIVE_DATA}',
+            'total_runs': state.get('total_runs', 0) + 1,
+            'last_alert_count': 0,
+            'last_new_count': 0,
+            'last_investigate_count': 0,
+            'last_watch_count': 0,
+        })
+        return state
+
     # Import here to avoid circular issues and keep startup fast
     sys.path.insert(0, str(_HERE))
     from alert_normalizer import (

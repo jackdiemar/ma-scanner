@@ -283,6 +283,67 @@ def run(
     return 0
 
 
+# ── Plan command ─────────────────────────────────────────────────────────────
+
+def print_plan(ticker: str | None = None, limit: int | None = None) -> None:
+    """
+    Preview what would run — no files written, no LLM calls.
+    Shows case count, alert sources, and AI gate config.
+    """
+    _load_env()
+    from ai_research.llm_client import LLMClient, load_config as load_llm_config
+    from ai_research.research_case_builder import (
+        _load_alerts_from_json, _load_alerts_from_csv,
+    )
+
+    llm_cfg = load_llm_config()
+    ai_enabled = llm_cfg.enabled and bool(llm_cfg.api_key)
+
+    # Load alerts (mirrors build_cases logic, no file writes)
+    if ticker:
+        alerts_json = _load_alerts_from_json()
+        alerts = [a for a in alerts_json if str(a.get('ticker', '')).strip() == ticker]
+        if not alerts:
+            alerts = _load_alerts_from_csv(ticker=ticker)
+    else:
+        alerts = _load_alerts_from_json()
+        if not alerts:
+            alerts = _load_alerts_from_csv()
+
+    if limit:
+        alerts = alerts[:limit]
+
+    cap = llm_cfg.max_cases_per_run
+    gate_count = min(len(alerts), cap) if not limit else len(alerts)
+
+    print('AI Research Layer — Plan Preview')
+    print('=================================')
+    print(f'  Ticker filter   : {ticker or "all"}')
+    print(f'  Alerts found    : {len(alerts)}')
+    print(f'  Limit flag      : {limit or "none"}')
+    print(f'  AI enabled      : {ai_enabled}')
+    print(f'  Model           : {llm_cfg.model}')
+    print(f'  Max cases/run   : {cap}')
+    print(f'  Cases to gate   : {gate_count if ai_enabled else 0} ({"AI disabled" if not ai_enabled else "AI enabled"})')
+    print(f'  Dry run config  : {llm_cfg.dry_run}')
+    print()
+
+    if alerts:
+        print('  Tickers (by priority):')
+        for a in alerts[:20]:
+            t = str(a.get('ticker', '?')).strip()
+            cls = str(a.get('fp_classification', '?')).strip()
+            action = str(a.get('recommended_action', '?')).strip()
+            print(f'    {t:<8} {cls:<30} {action}')
+        if len(alerts) > 20:
+            print(f'    ... and {len(alerts) - 20} more')
+    else:
+        print('  No alerts found — run scanner first.')
+
+    print()
+    print('  Run with --latest (--limit N) to execute.')
+
+
 # ── Status command ────────────────────────────────────────────────────────────
 
 def print_status() -> None:
@@ -327,6 +388,8 @@ def _parse_args(argv=None):
                       help='Run for a single ticker')
     mode.add_argument('--status', action='store_true',
                       help='Print current watchlist + config summary')
+    mode.add_argument('--plan', action='store_true',
+                      help='Preview what would run — no files written, no LLM calls')
 
     p.add_argument('--limit',   type=int, default=None,
                    help='Max cases to process (default: AI_RESEARCH_MAX_CASES_PER_RUN)')
@@ -340,6 +403,11 @@ def main(argv=None) -> int:
 
     if args.status:
         print_status()
+        return 0
+
+    if args.plan:
+        ticker = args.ticker.upper() if args.ticker else None
+        print_plan(ticker=ticker, limit=args.limit)
         return 0
 
     ticker = args.ticker.upper() if args.ticker else None
