@@ -6,6 +6,7 @@ Config from environment (loaded from config/.env or process env):
   OPENAI_API_KEY               API key — required if AI enabled
   AI_MODEL                     Model name (default: gpt-4.1-mini)
   AI_RESEARCH_MAX_CASES_PER_RUN  Max cases per run (default: 5)
+  AI_RESEARCH_DEFAULT_DEPTH    Research depth preset (default: fast_gate)
   AI_RESEARCH_DRY_RUN          true/false (default: true)
 
 If key missing or AI_RESEARCH_ENABLED=false: skip gracefully.
@@ -26,6 +27,7 @@ ENV_FILE = REPO / 'config' / '.env'
 
 _DEFAULT_MODEL = 'gpt-4.1-mini'
 _DEFAULT_MAX_CASES = 5
+_DEFAULT_DEPTH = 'fast_gate'
 
 
 # ── Env loader (mirrors live_scanner_runner.py convention) ────────────────────
@@ -48,6 +50,10 @@ def _truthy(value: str | None, default: bool = False) -> bool:
     return value.strip().lower() in {'1', 'true', 'yes', 'on'}
 
 
+def _bool_text(value: bool) -> str:
+    return 'true' if value else 'false'
+
+
 # ── Config ────────────────────────────────────────────────────────────────────
 
 @dataclass(frozen=True)
@@ -56,12 +62,18 @@ class LLMConfig:
     api_key: str
     model: str
     max_cases_per_run: int
+    default_depth: str
     dry_run: bool
 
     @property
     def ready(self) -> bool:
         """True if AI is enabled and an API key is present."""
         return self.enabled and bool(self.api_key)
+
+    @property
+    def live_call_allowed(self) -> bool:
+        """True if config permits live LLM calls."""
+        return self.ready and not self.dry_run
 
 
 def load_config() -> LLMConfig:
@@ -75,6 +87,7 @@ def load_config() -> LLMConfig:
         api_key           = os.environ.get('OPENAI_API_KEY', '').strip(),
         model             = os.environ.get('AI_MODEL', _DEFAULT_MODEL).strip() or _DEFAULT_MODEL,
         max_cases_per_run = max_cases,
+        default_depth     = os.environ.get('AI_RESEARCH_DEFAULT_DEPTH', _DEFAULT_DEPTH).strip() or _DEFAULT_DEPTH,
         dry_run           = _truthy(os.environ.get('AI_RESEARCH_DRY_RUN'), default=True),
     )
 
@@ -101,11 +114,11 @@ class LLMClient:
 
     def _init_client(self) -> None:
         if not self._cfg.enabled:
-            self._init_error = 'AI_RESEARCH_ENABLED=false — skipping AI layer.'
+            self._init_error = 'AI_RESEARCH_ENABLED=false: skipping AI layer.'
             return
         if not self._cfg.api_key:
             self._init_error = (
-                'OPENAI_API_KEY not set — AI layer disabled. '
+                'OPENAI_API_KEY not set: AI layer disabled. '
                 'Set the key in config/.env to enable AI research.'
             )
             return
@@ -134,6 +147,7 @@ class LLMClient:
             return (
                 f'AI client ready: model={self._cfg.model} '
                 f'dry_run={self._cfg.dry_run} '
+                f'depth={self._cfg.default_depth} '
                 f'max_cases={self._cfg.max_cases_per_run}'
             )
         return self._init_error or 'AI client not available.'
@@ -159,7 +173,7 @@ class LLMClient:
                         'content': (
                             'You are a biotech M&A research analyst. '
                             'You classify scanner alerts and produce structured research assessments. '
-                            'You are NOT making investment recommendations or trade decisions. '
+                            'You are NOT making investment recommendations or transaction decisions. '
                             'Output only valid JSON as instructed.'
                         ),
                     },
@@ -183,12 +197,14 @@ class LLMClient:
 def print_status() -> None:
     """Print LLM config status without exposing secrets."""
     cfg = load_config()
-    print('AI Research Layer — LLM Config')
-    print(f'  AI_RESEARCH_ENABLED        : {cfg.enabled}')
-    print(f'  OPENAI_API_KEY set         : {bool(cfg.api_key)}')
+    print('AI Research Layer - LLM Config')
+    print(f'  AI_RESEARCH_ENABLED        : {_bool_text(cfg.enabled)}')
+    print(f'  OPENAI_API_KEY set         : {_bool_text(bool(cfg.api_key))}')
     print(f'  AI_MODEL                   : {cfg.model}')
-    print(f'  AI_RESEARCH_MAX_CASES      : {cfg.max_cases_per_run}')
-    print(f'  AI_RESEARCH_DRY_RUN        : {cfg.dry_run}')
+    print(f'  AI_RESEARCH_MAX_CASES_PER_RUN: {cfg.max_cases_per_run}')
+    print(f'  AI_RESEARCH_DEFAULT_DEPTH  : {cfg.default_depth}')
+    print(f'  AI_RESEARCH_DRY_RUN        : {_bool_text(cfg.dry_run)}')
+    print(f'  LIVE_LLM_CALL_ALLOWED      : {_bool_text(cfg.live_call_allowed)}')
     client = LLMClient(cfg)
     print(f'  Client status              : {client.status_message}')
 

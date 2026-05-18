@@ -99,6 +99,7 @@ def _build_case_from_alert(
     alert: dict,
     memo_section: str,
     run_date: str,
+    research_depth: str = 'fast_gate',
 ) -> dict:
     """
     Build a single research case dict from an alert + memo section.
@@ -172,10 +173,46 @@ def _build_case_from_alert(
         'has_rofn':                 alert.get('has_rofn'),
         'has_rofr':                 alert.get('has_rofr'),
         'memo_section_excerpt':     memo_excerpt,
+        'research_depth':           research_depth,
         'initial_classification':   'PENDING',
         'ai_decision':              None,
         'ai_run_at':                None,
     }
+
+
+_REQUIRED_CASE_FIELDS = frozenset({
+    'ticker',
+    'company_name',
+    'run_date',
+    'signal_quality',
+    'signal_type',
+    'recommended_scanner_action',
+    'filing_type',
+    'filing_date',
+    'source_url',
+    'source_excerpt',
+    'trigger_phrase',
+    'memo_section_excerpt',
+    'research_depth',
+    'initial_classification',
+    'ai_decision',
+    'ai_run_at',
+})
+
+
+def validate_case_schema(case: dict) -> list[str]:
+    """Return schema validation errors for a research case dict."""
+    errors: list[str] = []
+    missing = sorted(_REQUIRED_CASE_FIELDS - set(case.keys()))
+    if missing:
+        errors.append(f'Missing fields: {", ".join(missing)}')
+    if not str(case.get('ticker', '')).strip():
+        errors.append('ticker is required')
+    if not isinstance(case.get('scanner_flags', []), list):
+        errors.append('scanner_flags must be a list')
+    if not isinstance(case.get('known_false_positive_flags', []), list):
+        errors.append('known_false_positive_flags must be a list')
+    return errors
 
 
 def _write_case_files(case: dict, cases_dir: Path) -> tuple[Path, Path]:
@@ -299,6 +336,8 @@ def build_cases(
     limit: int | None = None,
     run_date: str | None = None,
     dry_run: bool = False,
+    research_depth: str = 'fast_gate',
+    verbose: bool = True,
 ) -> list[dict]:
     """
     Build research cases from latest scanner outputs.
@@ -308,6 +347,8 @@ def build_cases(
         limit:    Max number of cases to build (prioritised by scanner action).
         run_date: YYYY-MM-DD date for case directory. Defaults to today UTC.
         dry_run:  If True, print what would happen but do not write files.
+        research_depth: Research depth preset to include in each case.
+        verbose:  If False, suppress per-case logging.
 
     Returns:
         List of case dicts (regardless of dry_run).
@@ -333,7 +374,8 @@ def build_cases(
             alerts = _load_alerts_from_csv()
 
     if not alerts:
-        print(f'  [WARN] No alerts found{" for " + ticker if ticker else ""}.', file=sys.stderr)
+        if verbose:
+            print(f'  [WARN] No alerts found{" for " + ticker if ticker else ""}.', file=sys.stderr)
         return []
 
     if limit:
@@ -345,14 +387,16 @@ def build_cases(
         if not t:
             continue
         memo_section = memo_sections.get(t, '')
-        case = _build_case_from_alert(alert, memo_section, run_date)
+        case = _build_case_from_alert(alert, memo_section, run_date, research_depth=research_depth)
         cases.append(case)
 
         if dry_run:
-            print(f'  [DRY-RUN] Would write case for {t} to {cases_dir / (t + "_research_case.json")}')
+            if verbose:
+                print(f'  [DRY-RUN] Would write case for {t} to {cases_dir / (t + "_research_case.json")}')
         else:
             json_path, md_path = _write_case_files(case, cases_dir)
-            print(f'  [WROTE] {json_path.relative_to(REPO)}')
+            if verbose:
+                print(f'  [WROTE] {json_path.relative_to(REPO)}')
 
     return cases
 
@@ -368,6 +412,7 @@ def _parse_args(argv=None):
     mode.add_argument('--latest', action='store_true', help='Build cases from latest scanner outputs')
     mode.add_argument('--ticker', metavar='TICKER', help='Build case for a single ticker')
     p.add_argument('--limit',   type=int, default=None, help='Max number of cases to build')
+    p.add_argument('--depth',   default='fast_gate', help='Research depth label to write into cases')
     p.add_argument('--dry-run', action='store_true',    help='Preview without writing files')
     return p.parse_args(argv)
 
@@ -390,6 +435,7 @@ def main(argv=None) -> int:
         ticker   = ticker,
         limit    = args.limit,
         dry_run  = args.dry_run,
+        research_depth = args.depth,
     )
     print()
     print(f'Cases built: {len(cases)}')

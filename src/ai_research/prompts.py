@@ -109,7 +109,7 @@ def build_investment_gate_prompt(case: dict) -> str:
     Build a structured diligence prompt for the investment gate.
 
     The model is instructed to classify whether the alert warrants deeper
-    human research. It is NOT asked to make trade recommendations.
+    human research. It is NOT asked to make transaction recommendations.
     """
     ticker       = case.get('ticker', 'UNKNOWN')
     company_name = case.get('company_name', 'Unknown Company')
@@ -166,8 +166,8 @@ def build_investment_gate_prompt(case: dict) -> str:
     prompt = f"""You are a biotech M&A research analyst reviewing scanner alerts for potential strategic activity.
 
 IMPORTANT INSTRUCTIONS:
-- You are NOT making trade recommendations or investment advice.
-- You are NOT advising anyone to buy or sell any security.
+- You are NOT making transaction recommendations or investment advice.
+- You are NOT advising anyone to transact in any security.
 - Your sole task is to classify whether this scanner alert warrants deeper human research.
 - Be skeptical. Most scanner alerts are false positives, already-announced deals, or low-signal noise.
 - Do not hype vague or aspirational language in filings.
@@ -205,7 +205,7 @@ OUTPUT SCHEMA (output ONLY this JSON, no other text):
 
 Fill every field. For list fields, provide at least one item if relevant evidence exists; use an empty list [] only if truly nothing applies.
 Set confidence based on how certain you are of your classification (0.0 = no idea, 1.0 = certain).
-Set investability_score 0–100 based on likelihood this is a genuine pre-deal research opportunity (not a trade signal — a research-worth signal).
+Set investability_score 0–100 based on likelihood this is a genuine pre-deal research opportunity (not a transaction signal — a research-worth signal).
 Cite specific phrases from the source excerpt in key_evidence where available.
 
 Produce your JSON assessment now:"""

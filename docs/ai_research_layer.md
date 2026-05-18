@@ -1,197 +1,203 @@
 # AI Research Layer
 
-The AI research layer is an optional, modular research gate that sits on top of the live scanner.
-It reads scanner alerts, builds structured research cases, and optionally calls an LLM to classify
-whether each alert warrants deeper human research.
+The AI research layer is an optional manual diligence layer on top of the live scanner. It reads scanner alerts, builds structured research cases, optionally calls an LLM for research classification, updates a local watchlist, and writes a local run summary.
 
-**This layer does not auto-trade, does not connect to any broker, and does not produce BUY or SELL signals.**
-Its sole purpose is to help a human analyst triage scanner alerts faster.
+This layer is research only. It is not trading advice, does not auto-trade, does not connect to broker APIs, and does not make transaction recommendations.
 
 ---
 
 ## What It Does
 
-1. **Research case builder** — reads `data/live_monitoring/latest_alerts.json`,
-   `data/live_monitoring/latest_review_memo.md`, and `data/live_monitoring/live_alert_log.csv`.
-   Writes per-ticker structured case files to `data/ai_research/cases/YYYY-MM-DD/`.
+1. **Research case builder** reads `data/live_monitoring/latest_alerts.json`, `data/live_monitoring/latest_review_memo.md`, and `data/live_monitoring/live_alert_log.csv`.
+2. **Research gate** classifies whether an alert deserves deeper human diligence.
+3. **Watchlist manager** maintains `data/ai_research/watchlist.json` after real AI runs.
+4. **Run summary** writes `data/ai_research/latest_ai_research_summary.md`.
+5. **Daily cache** stores same-day gate outputs in `data/ai_research/cache/`.
 
-2. **Investment gate** — takes a research case, builds a diligence prompt, calls the LLM,
-   and returns a structured JSON decision:
-   - Classification (e.g., `PRE_PROCESS_OPPORTUNITY`, `ALREADY_ANNOUNCED_DEAL`, `FALSE_POSITIVE`)
-   - Research action (e.g., `ESCALATE`, `WATCH`, `DISCARD`)
-   - Confidence, investability score, evidence strength
-   - Specific `why_interesting`, `why_not`, `key_evidence`, `next_research_steps`
-
-3. **Watchlist manager** — maintains `data/ai_research/watchlist.json` with per-ticker history,
-   status tracking, and automatic stale-marking after 14 days of inactivity.
-
-4. **Run summary** — writes `data/ai_research/latest_ai_research_summary.md` after every run.
+Generated AI research outputs live under `data/ai_research/` and are gitignored.
 
 ---
 
-## Setup
+## Environment
 
-### 1. Install the openai package
+`config/.env` exists only on the VPS. Do not commit real values.
 
-```bash
-pip install openai
-```
-
-The live scanner does not require this. It is only needed if `AI_RESEARCH_ENABLED=true`.
-
-### 2. Configure environment variables
-
-Copy `config/.env.example` to `config/.env` and fill in the AI Research section:
+Recommended first live settings:
 
 ```bash
 AI_RESEARCH_ENABLED=true
-OPENAI_API_KEY=sk-...           # your OpenAI API key
-AI_MODEL=gpt-4.1-mini           # or gpt-4o, gpt-4-turbo, etc.
-AI_RESEARCH_MAX_CASES_PER_RUN=5
-AI_RESEARCH_DRY_RUN=false       # set true to test without calling the API
+AI_RESEARCH_DRY_RUN=false
+AI_MODEL=gpt-4.1-mini
+AI_RESEARCH_MAX_CASES_PER_RUN=10
+AI_RESEARCH_DEFAULT_DEPTH=fast_gate
 ```
 
-Keep `config/.env` chmod 600. Never commit real values.
+`OPENAI_API_KEY` must also be set in `config/.env` before a live LLM run. Status commands only print whether the key is present.
 
 ---
 
-## Running
-
-### Dry run (safe — no API calls)
-
-```bash
-python3 src/ai_research/run_ai_research.py --latest --dry-run
-```
-
-Builds case files for all current alerts, skips LLM, prints status.
-
-### Run with limit (uses LLM if enabled)
-
-```bash
-python3 src/ai_research/run_ai_research.py --latest --limit 5
-```
-
-Processes the top 5 alerts by scanner priority, runs LLM gate on each.
-
-### Single ticker
-
-```bash
-python3 src/ai_research/run_ai_research.py --ticker SDGR
-```
-
-### Status check
+## Status
 
 ```bash
 python3 src/ai_research/run_ai_research.py --status
 ```
 
-Prints watchlist counts (escalated, active watch, needs review, discarded, stale)
-and LLM config status without exposing secrets.
+Status reports:
 
-### Plan preview (no writes, no LLM)
+- `AI_RESEARCH_ENABLED`
+- `AI_RESEARCH_DRY_RUN`
+- `OPENAI_API_KEY set` as `true` or `false`
+- `AI_MODEL`
+- `AI_RESEARCH_MAX_CASES_PER_RUN`
+- `AI_RESEARCH_DEFAULT_DEPTH`
+- latest scanner output found or missing
+- alert count available
+- watchlist path
+- cache path
+- latest AI summary path
+- whether a live LLM call is allowed
+
+No secrets are printed.
+
+---
+
+## Plan Mode
 
 ```bash
-python3 src/ai_research/run_ai_research.py --plan
-python3 src/ai_research/run_ai_research.py --plan --limit 5
-python3 src/ai_research/run_ai_research.py --plan --ticker SDGR
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan
 ```
 
-Shows which tickers would be processed, how many would go to the LLM gate,
-and the current AI config — without writing any files or calling the API.
-Safe to run any time.
+Plan mode is the safest preflight:
 
-### Build cases only (no gate)
+- does not call the LLM
+- does not write files
+- shows tickers that would be researched
+- shows cache hit or miss where possible
+- shows `estimated_action=would_call_llm` or `estimated_action=would_reuse_cache`
+
+Use this before the first live AI pass.
+
+---
+
+## Dry-Run Mode
 
 ```bash
-python3 src/ai_research/research_case_builder.py --latest
-python3 src/ai_research/research_case_builder.py --latest --limit 10
-python3 src/ai_research/research_case_builder.py --ticker SDGR
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --dry-run
 ```
 
----
+Dry-run mode:
 
-## Output Files
+- builds research cases
+- validates case and decision schemas
+- does not call the LLM
+- does not require `OPENAI_API_KEY`
+- does not fail just because `AI_RESEARCH_ENABLED=false`
+- does not update the watchlist
 
-| Path | Description |
-|---|---|
-| `data/ai_research/cases/YYYY-MM-DD/{TICKER}_research_case.json` | Structured case + AI decision |
-| `data/ai_research/cases/YYYY-MM-DD/{TICKER}_research_case.md` | Human-readable version |
-| `data/ai_research/watchlist.json` | Per-ticker watchlist with history |
-| `data/ai_research/latest_ai_research_summary.md` | Summary of most recent run |
-| `data/ai_research/cache/gate_cache_YYYY-MM-DD.json` | Daily LLM result cache |
-
-All output paths are gitignored (`data/ai_research/`). They are local-only.
+Dry-run may write local generated research files under `data/ai_research/`. These files are local-only and gitignored.
 
 ---
 
-## LLM Response Caching
+## First Real Manual Run
 
-The investment gate caches results by content fingerprint (hash of ticker, filing date,
-filing type, trigger phrase, and source excerpt). If the same signal is encountered again
-on the same calendar day, the cached decision is returned without calling the LLM.
-
-Cache files rotate daily (`gate_cache_YYYY-MM-DD.json`). Yesterday's cache is never used
-for today's run, ensuring fresh analysis on each new trading day.
-
----
-
-## Environment Variables
-
-| Variable | Default | Description |
-|---|---|---|
-| `AI_RESEARCH_ENABLED` | `false` | Master switch. `false` = no LLM calls ever |
-| `OPENAI_API_KEY` | _(empty)_ | OpenAI API key. Required if enabled |
-| `AI_MODEL` | `gpt-4.1-mini` | OpenAI model name |
-| `AI_RESEARCH_MAX_CASES_PER_RUN` | `5` | Max cases sent to LLM per run |
-| `AI_RESEARCH_DRY_RUN` | `true` | If `true`, builds cases but never calls LLM |
-
-If `AI_RESEARCH_ENABLED=false` or `OPENAI_API_KEY` is missing, the AI layer skips
-gracefully and prints a clear message. The live scanner is never affected.
-
----
-
-## Why It Does Not Auto-Trade
-
-The gate output is a research classification, not a trading signal. Classifications like
-`PRE_PROCESS_OPPORTUNITY` or `ESCALATE` mean "a human analyst should read this filing now."
-They do not mean "buy this stock." No position sizing, no order routing, no broker connection
-of any kind is present or intended. All outputs are advisory research notes only.
-
----
-
-## VPS Deployment
-
-The live scanner runs as a systemd service (`ma-scanner-live.service`).
-The AI layer is separate and should be run manually or on a separate cron after the scanner completes.
-
-SSH into the VPS, then:
+After `config/.env` has AI enabled, dry-run off, and an OpenAI key set:
 
 ```bash
-cd /path/to/ma-scanner
-
-# Check scanner health first
-python3 src/live_monitoring/live_scanner_runner.py --status
-
-# Dry run AI layer (safe)
-python3 src/ai_research/run_ai_research.py --latest --dry-run
-
-# Live AI run (requires API key in config/.env)
-python3 src/ai_research/run_ai_research.py --latest --limit 5
-
-# Status
-python3 src/ai_research/run_ai_research.py --status
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --depth fast_gate
 ```
 
-The AI layer does not touch the systemd service and does not modify any live scanner state files.
-It reads from `data/live_monitoring/` (read-only from its perspective) and writes only to
-`data/ai_research/`.
+A real run:
 
-### VPS health scripts
+- requires `AI_RESEARCH_ENABLED=true`
+- requires `OPENAI_API_KEY`
+- requires `AI_RESEARCH_DRY_RUN=false`
+- uses same-day cache entries where available
+- writes an AI summary
+- updates the watchlist
+- fails safely with a clear message if disabled or missing a key
+
+---
+
+## Cache Behavior
+
+The research gate fingerprints each case using ticker, filing date, filing type, trigger phrase, and source excerpt. The cache is stored at:
+
+```text
+data/ai_research/cache/gate_cache_YYYY-MM-DD.json
+```
+
+If the same signal appears again on the same calendar day, the cached decision is reused and the LLM is not called for that case. Cache files rotate daily, so yesterday's results do not automatically control today's analysis.
+
+---
+
+## VPS Checks
+
+Run the readiness check from the repo:
 
 ```bash
-# Check AI layer config and status
 bash deploy/vps/check_ai_research.sh
+```
 
-# Fix permissions, clear stale lock, restart scanner service
-sudo bash deploy/vps/repair_live_scanner.sh
+The check script:
+
+- sources `config/.env` if present
+- never prints secrets
+- compiles AI modules
+- runs status
+- runs dry-run
+- runs plan mode
+- prints the exact first real AI command
+
+Optional one-shot manual runner:
+
+```bash
+bash deploy/vps/run_ai_research_once.sh
+```
+
+Defaults are `limit=5` and `depth=fast_gate`. You can override them:
+
+```bash
+bash deploy/vps/run_ai_research_once.sh 10 fast_gate
+```
+
+The one-shot script runs status and plan first. It only attempts a real AI pass when `AI_RESEARCH_ENABLED=true`, `AI_RESEARCH_DRY_RUN=false`, and `OPENAI_API_KEY` is set.
+
+---
+
+## Keep AI Unscheduled
+
+Do not add the AI layer to `ma-scanner-live.service` or `ma-scanner-live.timer`.
+
+The live scanner systemd units remain scanner-only:
+
+```bash
+systemctl status ma-scanner-live.service
+systemctl status ma-scanner-live.timer
+```
+
+Run AI research manually only:
+
+```bash
+cd /opt/ma-scanner
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --depth fast_gate
+```
+
+---
+
+## Validation Commands
+
+```bash
+python3 -m py_compile src/ai_research/research_case_builder.py
+python3 -m py_compile src/ai_research/llm_client.py
+python3 -m py_compile src/ai_research/investment_gate.py
+python3 -m py_compile src/ai_research/prompts.py
+python3 -m py_compile src/ai_research/watchlist_manager.py
+python3 -m py_compile src/ai_research/run_ai_research.py
+bash -n deploy/vps/check_ai_research.sh
+bash -n deploy/vps/run_ai_research_once.sh
+python3 src/ai_research/run_ai_research.py --status
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --dry-run
+python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan
+git diff --check
+git status --short
 ```

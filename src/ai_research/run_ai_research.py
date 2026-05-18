@@ -3,19 +3,21 @@ run_ai_research.py — Main CLI orchestrator for the AI research layer.
 
 Usage:
   python3 src/ai_research/run_ai_research.py --latest --limit 5
+  python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan
   python3 src/ai_research/run_ai_research.py --latest --dry-run
   python3 src/ai_research/run_ai_research.py --ticker SDGR
   python3 src/ai_research/run_ai_research.py --status
 
 Behavior:
   - Builds research cases from latest scanner outputs.
-  - If AI_RESEARCH_ENABLED=false or key missing: builds cases, skips LLM, prints status.
+  - Dry-run builds cases and validates schema without calling the LLM.
+  - Live runs require AI_RESEARCH_ENABLED=true and OPENAI_API_KEY.
   - If AI enabled and not dry-run: runs investment gate on up to limit cases.
   - Saves JSON decisions into case files.
   - Updates watchlist.
   - Writes data/ai_research/latest_ai_research_summary.md.
 
-No auto-trading. No broker APIs. No BUY/SELL language.
+No auto-trading. No broker APIs. No transaction recommendation language.
 """
 from __future__ import annotations
 
@@ -33,8 +35,12 @@ REPO    = _SRCDIR.parent
 ENV_FILE         = REPO / 'config' / '.env'
 AI_RESEARCH_DIR  = REPO / 'data' / 'ai_research'
 CASES_BASE_DIR   = AI_RESEARCH_DIR / 'cases'
+CACHE_DIR        = AI_RESEARCH_DIR / 'cache'
 WATCHLIST_PATH   = AI_RESEARCH_DIR / 'watchlist.json'
 SUMMARY_PATH     = AI_RESEARCH_DIR / 'latest_ai_research_summary.md'
+LIVE_DATA        = REPO / 'data' / 'live_monitoring'
+LATEST_ALERTS    = LIVE_DATA / 'latest_alerts.json'
+ALERT_LOG        = LIVE_DATA / 'live_alert_log.csv'
 
 # Ensure src/ is on sys.path for direct script execution and relative imports
 if str(_SRCDIR) not in sys.path:
@@ -63,6 +69,77 @@ def _today_utc() -> str:
     return datetime.now(timezone.utc).date().isoformat()
 
 
+def _bool_text(value: bool) -> str:
+    return 'true' if value else 'false'
+
+
+def _load_json_file(path: Path):
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return None
+
+
+def _alert_count_available() -> tuple[int, str]:
+    data = _load_json_file(LATEST_ALERTS)
+    if isinstance(data, dict):
+        return len(data), str(LATEST_ALERTS)
+    if ALERT_LOG.exists():
+        try:
+            with ALERT_LOG.open(encoding='utf-8') as fh:
+                rows = max(sum(1 for _ in fh) - 1, 0)
+            return rows, str(ALERT_LOG)
+        except OSError:
+            return 0, str(ALERT_LOG)
+    return 0, str(LATEST_ALERTS)
+
+
+def _scanner_output_status() -> str:
+    if LATEST_ALERTS.exists():
+        return f'found ({LATEST_ALERTS})'
+    if ALERT_LOG.exists():
+        return f'found fallback ({ALERT_LOG})'
+    return f'missing ({LATEST_ALERTS})'
+
+
+def _live_call_allowed_reason(cfg) -> tuple[bool, str]:
+    if not cfg.enabled:
+        return False, 'AI_RESEARCH_ENABLED=false'
+    if cfg.dry_run:
+        return False, 'AI_RESEARCH_DRY_RUN=true'
+    if not cfg.api_key:
+        return False, 'OPENAI_API_KEY not set'
+    return True, 'enabled, dry-run off, key set'
+
+
+def _case_json_path(run_date: str, ticker: str) -> Path:
+    return CASES_BASE_DIR / run_date / f'{ticker}_research_case.json'
+
+
+def _validate_cases(cases: list[dict]) -> list[str]:
+    from ai_research.research_case_builder import validate_case_schema
+
+    errors: list[str] = []
+    for case in cases:
+        ticker = case.get('ticker', 'UNKNOWN')
+        for err in validate_case_schema(case):
+            errors.append(f'{ticker}: {err}')
+    return errors
+
+
+def _validate_decisions(decisions: list[dict]) -> list[str]:
+    from ai_research.investment_gate import validate_decision_schema
+
+    errors: list[str] = []
+    for decision in decisions:
+        ticker = decision.get('ticker', 'UNKNOWN')
+        for err in validate_decision_schema(decision):
+            errors.append(f'{ticker}: {err}')
+    return errors
+
+
 # ── Summary writer ────────────────────────────────────────────────────────────
 
 def _write_summary(
@@ -75,7 +152,7 @@ def _write_summary(
 ) -> None:
     AI_RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
     lines = [
-        '# AI Research Layer — Latest Run Summary',
+        '# AI Research Layer - Latest Run Summary',
         '',
         f'**Run at:** {run_at}  ',
         f'**AI enabled:** {ai_enabled}  ',
@@ -166,6 +243,7 @@ def run(
     ticker: str | None = None,
     limit: int | None = None,
     dry_run: bool = False,
+    depth: str | None = None,
     run_date: str | None = None,
 ) -> int:
     """
@@ -182,29 +260,58 @@ def run(
     from ai_research.watchlist_manager import WatchlistManager
 
     llm_cfg    = load_llm_config()
-    ai_enabled = llm_cfg.enabled and bool(llm_cfg.api_key)
+    ai_ready   = llm_cfg.ready
 
     # Dry-run override: flag on CLI takes precedence; else use config
     effective_dry_run = dry_run or llm_cfg.dry_run
+    depth = depth or llm_cfg.default_depth
+
+    if not effective_dry_run:
+        blockers: list[str] = []
+        if not llm_cfg.enabled:
+            blockers.append('AI_RESEARCH_ENABLED=false')
+        if not llm_cfg.api_key:
+            blockers.append('OPENAI_API_KEY is not set')
+        if blockers:
+            print('AI Research Layer')
+            print('=================')
+            print('ERROR: Live LLM run is not allowed.')
+            for blocker in blockers:
+                print(f'  - {blocker}')
+            print()
+            print('Safe options:')
+            print('  python3 src/ai_research/run_ai_research.py --status')
+            print('  python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan')
+            print('  python3 src/ai_research/run_ai_research.py --latest --limit 5 --dry-run')
+            return 2
 
     print('AI Research Layer')
     print('=================')
     print(f'Run at      : {run_at}')
-    print(f'AI enabled  : {ai_enabled}')
-    print(f'Dry run     : {effective_dry_run}')
+    print(f'AI ready    : {_bool_text(ai_ready)}')
+    print(f'Dry run     : {_bool_text(effective_dry_run)}')
+    print(f'Depth       : {depth}')
     print(f'Limit       : {limit or "none"}')
     print(f'Ticker      : {ticker or "all (from latest)"}')
     print()
 
     # ── 1. Build research cases ──────────────────────────────────────────────
-    print('Step 1: Building research cases …')
+    print('Step 1: Building research cases ...')
     cases = build_cases(
         ticker   = ticker,
         limit    = limit,
         run_date = run_date,
         dry_run  = False,  # always write case files even if AI is off
+        research_depth = depth,
     )
     print(f'Built {len(cases)} case(s).')
+    case_errors = _validate_cases(cases)
+    if case_errors:
+        print('Case schema validation: FAIL')
+        for err in case_errors:
+            print(f'  - {err}')
+        return 1
+    print(f'Case schema validation: PASS ({len(cases)} case(s))')
     print()
 
     if not cases:
@@ -214,7 +321,7 @@ def run(
             cases             = cases,
             decisions         = [],
             dry_run           = effective_dry_run,
-            ai_enabled        = ai_enabled,
+            ai_enabled        = ai_ready,
             watchlist_summary = {},
         )
         return 0
@@ -223,31 +330,25 @@ def run(
     decisions: list[dict] = []
     wm = WatchlistManager(WATCHLIST_PATH)
 
-    if not ai_enabled:
-        print('Step 2: AI layer disabled — skipping LLM gate.')
-        print(f'  Reason: {LLMClient(llm_cfg).status_message}')
-        print()
-    else:
-        cap = llm_cfg.max_cases_per_run
-        gate_cases = cases[:cap] if limit is None else cases
-        print(f'Step 2: Running investment gate on {len(gate_cases)} case(s) …')
-        if effective_dry_run:
-            print('  (dry-run — LLM will not be called)')
-        print()
+    cap = llm_cfg.max_cases_per_run
+    gate_cases = cases[:cap] if limit is None else cases
+    print(f'Step 2: Running research gate on {len(gate_cases)} case(s) ...')
+    if effective_dry_run:
+        print('  (dry-run: LLM will not be called; watchlist will not be updated)')
+    print()
 
-        client = LLMClient(llm_cfg)
+    client = LLMClient(llm_cfg)
 
-        for case in gate_cases:
-            t = case.get('ticker', 'UNKNOWN')
-            decision = run_gate(case, client=client, dry_run=effective_dry_run)
-            decisions.append(decision)
+    for case in gate_cases:
+        t = case.get('ticker', 'UNKNOWN')
+        decision = run_gate(case, client=client, dry_run=effective_dry_run)
+        decisions.append(decision)
 
-            # Locate case JSON on disk to inject decision
-            case_json_path = CASES_BASE_DIR / run_date / f'{t}_research_case.json'
-            if case_json_path.exists():
-                _inject_decision_into_case_file(case_json_path, decision)
+        case_json_path = _case_json_path(run_date, t)
+        if case_json_path.exists():
+            _inject_decision_into_case_file(case_json_path, decision)
 
-            # Update watchlist
+        if not effective_dry_run:
             wm.update(
                 ticker    = t,
                 decision  = decision,
@@ -255,14 +356,22 @@ def run(
                 case_path = str(case_json_path),
             )
 
-        print()
-        print(f'Gate complete: {len(decisions)} decision(s) made.')
-        print()
+    decision_errors = _validate_decisions(decisions)
+    if decision_errors:
+        print('Decision schema validation: FAIL')
+        for err in decision_errors:
+            print(f'  - {err}')
+        return 1
+    print()
+    print(f'Decision schema validation: PASS ({len(decisions)} decision(s))')
+    print(f'Gate complete: {len(decisions)} decision(s) made.')
+    print()
 
     # ── 3. Mark stale entries ────────────────────────────────────────────────
-    stale = wm.mark_stale(days=14)
-    if stale:
-        print(f'  Marked {len(stale)} watchlist entries as stale: {", ".join(stale)}')
+    if not effective_dry_run:
+        stale = wm.mark_stale(days=14)
+        if stale:
+            print(f'  Marked {len(stale)} watchlist entries as stale: {", ".join(stale)}')
 
     # ── 4. Print watchlist summary ───────────────────────────────────────────
     watchlist_summary = wm.summary()
@@ -276,7 +385,7 @@ def run(
         cases             = cases,
         decisions         = decisions,
         dry_run           = effective_dry_run,
-        ai_enabled        = ai_enabled,
+        ai_enabled        = ai_ready,
         watchlist_summary = watchlist_summary,
     )
 
@@ -285,63 +394,76 @@ def run(
 
 # ── Plan command ─────────────────────────────────────────────────────────────
 
-def print_plan(ticker: str | None = None, limit: int | None = None) -> None:
+def print_plan(ticker: str | None = None, limit: int | None = None, depth: str | None = None) -> None:
     """
     Preview what would run — no files written, no LLM calls.
-    Shows case count, alert sources, and AI gate config.
+    Shows tickers, cache status, and estimated LLM/cache action.
     """
     _load_env()
-    from ai_research.llm_client import LLMClient, load_config as load_llm_config
-    from ai_research.research_case_builder import (
-        _load_alerts_from_json, _load_alerts_from_csv,
-    )
+    from ai_research.llm_client import load_config as load_llm_config
+    from ai_research.research_case_builder import build_cases
+    from ai_research.investment_gate import cache_status
 
     llm_cfg = load_llm_config()
-    ai_enabled = llm_cfg.enabled and bool(llm_cfg.api_key)
+    depth = depth or llm_cfg.default_depth
+    live_allowed, live_reason = _live_call_allowed_reason(llm_cfg)
 
-    # Load alerts (mirrors build_cases logic, no file writes)
-    if ticker:
-        alerts_json = _load_alerts_from_json()
-        alerts = [a for a in alerts_json if str(a.get('ticker', '')).strip() == ticker]
-        if not alerts:
-            alerts = _load_alerts_from_csv(ticker=ticker)
-    else:
-        alerts = _load_alerts_from_json()
-        if not alerts:
-            alerts = _load_alerts_from_csv()
-
-    if limit:
-        alerts = alerts[:limit]
+    cases = build_cases(
+        ticker=ticker,
+        limit=limit,
+        run_date=_today_utc(),
+        dry_run=True,
+        research_depth=depth,
+        verbose=False,
+    )
+    case_errors = _validate_cases(cases)
 
     cap = llm_cfg.max_cases_per_run
-    gate_count = min(len(alerts), cap) if not limit else len(alerts)
+    planned_cases = cases[:cap] if limit is None else cases
 
-    print('AI Research Layer — Plan Preview')
+    print('AI Research Layer - Plan Preview')
     print('=================================')
     print(f'  Ticker filter   : {ticker or "all"}')
-    print(f'  Alerts found    : {len(alerts)}')
+    print(f'  Latest output   : {_scanner_output_status()}')
+    print(f'  Alert count     : {_alert_count_available()[0]}')
+    print(f'  Cases found     : {len(cases)}')
     print(f'  Limit flag      : {limit or "none"}')
-    print(f'  AI enabled      : {ai_enabled}')
+    print(f'  Depth           : {depth}')
+    print(f'  AI enabled      : {_bool_text(llm_cfg.enabled)}')
+    print(f'  API key set     : {_bool_text(bool(llm_cfg.api_key))}')
     print(f'  Model           : {llm_cfg.model}')
     print(f'  Max cases/run   : {cap}')
-    print(f'  Cases to gate   : {gate_count if ai_enabled else 0} ({"AI disabled" if not ai_enabled else "AI enabled"})')
-    print(f'  Dry run config  : {llm_cfg.dry_run}')
+    print(f'  Dry run config  : {_bool_text(llm_cfg.dry_run)}')
+    print(f'  Live LLM allowed: {_bool_text(live_allowed)} ({live_reason})')
+    print(f'  Cases to assess : {len(planned_cases)}')
     print()
 
-    if alerts:
-        print('  Tickers (by priority):')
-        for a in alerts[:20]:
-            t = str(a.get('ticker', '?')).strip()
-            cls = str(a.get('fp_classification', '?')).strip()
-            action = str(a.get('recommended_action', '?')).strip()
-            print(f'    {t:<8} {cls:<30} {action}')
-        if len(alerts) > 20:
-            print(f'    ... and {len(alerts) - 20} more')
+    if case_errors:
+        print('  Case schema validation: FAIL')
+        for err in case_errors:
+            print(f'    - {err}')
+        print()
     else:
-        print('  No alerts found — run scanner first.')
+        print(f'  Case schema validation: PASS ({len(cases)} case(s))')
+        print()
+
+    if planned_cases:
+        print('  Tickers that would be researched:')
+        for case in planned_cases:
+            t = str(case.get('ticker', '?')).strip()
+            fp, status = cache_status(case)
+            estimated_action = 'would_reuse_cache' if status == 'hit' else 'would_call_llm'
+            cls = str(case.get('fp_classification', '?')).strip()
+            action = str(case.get('recommended_scanner_action', '?')).strip()
+            print(
+                f'    {t:<8} cache={status:<4} estimated_action={estimated_action:<17} '
+                f'fingerprint={fp} scanner={cls or "-"} action={action or "-"}'
+            )
+    else:
+        print('  No cases found: run scanner first.')
 
     print()
-    print('  Run with --latest (--limit N) to execute.')
+    print('  Plan mode wrote no files and made no LLM calls.')
 
 
 # ── Status command ────────────────────────────────────────────────────────────
@@ -354,18 +476,25 @@ def print_status() -> None:
     llm_cfg = load_llm_config()
     client  = LLMClient(llm_cfg)
     wm      = WatchlistManager(WATCHLIST_PATH)
+    alert_count, alert_source = _alert_count_available()
+    live_allowed, live_reason = _live_call_allowed_reason(llm_cfg)
 
-    print('AI Research Layer — Status')
+    print('AI Research Layer - Status')
     print('==========================')
-    print(f'  Config .env exists : {ENV_FILE.exists()}')
-    print(f'  AI_RESEARCH_ENABLED: {llm_cfg.enabled}')
-    print(f'  API key set        : {bool(llm_cfg.api_key)}')
-    print(f'  Model              : {llm_cfg.model}')
-    print(f'  Max cases/run      : {llm_cfg.max_cases_per_run}')
-    print(f'  Dry run (config)   : {llm_cfg.dry_run}')
-    print(f'  LLM client status  : {client.status_message}')
-    print(f'  Watchlist path     : {WATCHLIST_PATH}')
-    print(f'  Summary path       : {SUMMARY_PATH}')
+    print(f'  Config .env exists              : {_bool_text(ENV_FILE.exists())}')
+    print(f'  AI_RESEARCH_ENABLED             : {_bool_text(llm_cfg.enabled)}')
+    print(f'  AI_RESEARCH_DRY_RUN             : {_bool_text(llm_cfg.dry_run)}')
+    print(f'  OPENAI_API_KEY set              : {_bool_text(bool(llm_cfg.api_key))}')
+    print(f'  AI_MODEL                        : {llm_cfg.model}')
+    print(f'  AI_RESEARCH_MAX_CASES_PER_RUN   : {llm_cfg.max_cases_per_run}')
+    print(f'  AI_RESEARCH_DEFAULT_DEPTH       : {llm_cfg.default_depth}')
+    print(f'  Latest scanner output           : {_scanner_output_status()}')
+    print(f'  Alert count available           : {alert_count} ({alert_source})')
+    print(f'  Watchlist path                  : {WATCHLIST_PATH}')
+    print(f'  Cache path                      : {CACHE_DIR}')
+    print(f'  Latest AI summary path          : {SUMMARY_PATH}')
+    print(f'  Live LLM call allowed           : {_bool_text(live_allowed)} ({live_reason})')
+    print(f'  LLM client status               : {client.status_message}')
     print()
     wm.print_summary()
 
@@ -378,24 +507,29 @@ def print_status() -> None:
 
 def _parse_args(argv=None):
     p = argparse.ArgumentParser(
-        description='AI research layer orchestrator — research gate, not trading signal.',
+        description='AI research layer orchestrator - research gate, not trading signal.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    mode = p.add_mutually_exclusive_group(required=True)
+    mode = p.add_mutually_exclusive_group(required=False)
     mode.add_argument('--latest', action='store_true',
                       help='Build cases + run gate from latest scanner outputs')
     mode.add_argument('--ticker', metavar='TICKER',
                       help='Run for a single ticker')
     mode.add_argument('--status', action='store_true',
                       help='Print current watchlist + config summary')
-    mode.add_argument('--plan', action='store_true',
-                      help='Preview what would run — no files written, no LLM calls')
 
+    p.add_argument('--plan', action='store_true',
+                   help='Preview what would run - no files written, no LLM calls')
     p.add_argument('--limit',   type=int, default=None,
                    help='Max cases to process (default: AI_RESEARCH_MAX_CASES_PER_RUN)')
+    p.add_argument('--depth', default=None,
+                   help='Research depth preset (default: AI_RESEARCH_DEFAULT_DEPTH)')
     p.add_argument('--dry-run', action='store_true',
                    help='Build cases but do not call LLM')
-    return p.parse_args(argv)
+    args = p.parse_args(argv)
+    if not args.status and not args.plan and not args.latest and not args.ticker:
+        p.error('one of --status, --plan, --latest, or --ticker is required')
+    return args
 
 
 def main(argv=None) -> int:
@@ -405,9 +539,14 @@ def main(argv=None) -> int:
         print_status()
         return 0
 
+    _load_env()
+    from ai_research.llm_client import load_config as load_llm_config
+
+    llm_cfg = load_llm_config()
+    depth = args.depth or llm_cfg.default_depth
     if args.plan:
         ticker = args.ticker.upper() if args.ticker else None
-        print_plan(ticker=ticker, limit=args.limit)
+        print_plan(ticker=ticker, limit=args.limit, depth=depth)
         return 0
 
     ticker = args.ticker.upper() if args.ticker else None
@@ -415,6 +554,7 @@ def main(argv=None) -> int:
         ticker   = ticker,
         limit    = args.limit,
         dry_run  = args.dry_run,
+        depth    = depth,
     )
 
 

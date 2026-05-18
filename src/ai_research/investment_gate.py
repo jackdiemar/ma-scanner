@@ -3,7 +3,7 @@ investment_gate.py — AI investment gate: takes a research case, runs LLM, retu
 
 In dry-run mode: returns a placeholder dict without calling the API.
 In live mode: calls LLMClient, parses JSON, validates schema.
-No trade recommendations, no broker APIs, no BUY/SELL language.
+No transaction recommendations and no broker APIs.
 """
 from __future__ import annotations
 
@@ -61,6 +61,13 @@ def _save_gate_cache(cache: dict) -> None:
         pass  # never fail the gate for a cache write error
 
 
+def cache_status(case: dict) -> tuple[str, str]:
+    """Return (fingerprint, hit|miss) for a case without writing cache files."""
+    fingerprint = _case_fingerprint(case)
+    cache = _load_gate_cache()
+    return fingerprint, 'hit' if fingerprint in cache else 'miss'
+
+
 # ── Schema defaults ───────────────────────────────────────────────────────────
 
 _VALID_CLASSIFICATIONS = frozenset({
@@ -107,6 +114,33 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'note':                    note,
         'ran_at':                  datetime.now(timezone.utc).isoformat(),
     }
+
+
+_REQUIRED_DECISION_FIELDS = frozenset(
+    k for k in _dry_run_decision('SCHEMA_CHECK').keys()
+    if k != 'note'
+)
+
+
+def validate_decision_schema(decision: dict) -> list[str]:
+    """Return schema validation errors for a gate decision dict."""
+    errors: list[str] = []
+    missing = sorted(_REQUIRED_DECISION_FIELDS - set(decision.keys()))
+    if missing:
+        errors.append(f'Missing fields: {", ".join(missing)}')
+    if not isinstance(decision.get('why_interesting', []), list):
+        errors.append('why_interesting must be a list')
+    if not isinstance(decision.get('why_not', []), list):
+        errors.append('why_not must be a list')
+    if not isinstance(decision.get('key_evidence', []), list):
+        errors.append('key_evidence must be a list')
+    if not isinstance(decision.get('missing_information', []), list):
+        errors.append('missing_information must be a list')
+    if not isinstance(decision.get('next_research_steps', []), list):
+        errors.append('next_research_steps must be a list')
+    if not isinstance(decision.get('human_review_questions', []), list):
+        errors.append('human_review_questions must be a list')
+    return errors
 
 
 def _parse_llm_response(raw: str, ticker: str) -> dict:
@@ -248,18 +282,18 @@ def run_gate(
         print(f'  [DRY-RUN] Gate skipped for {ticker} (dry_run=true).')
         return _dry_run_decision(ticker, note='DRY_RUN')
 
-    if not client.available:
-        print(f'  [SKIP] AI not available for {ticker}: {client.status_message}')
-        return _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
-
     # Fingerprint cache — skip LLM if same case signal was processed today
     fingerprint = _case_fingerprint(case)
     cache = _load_gate_cache()
     if fingerprint in cache:
         cached = dict(cache[fingerprint])
         cached['note'] = f'CACHE_HIT (fingerprint={fingerprint})'
-        print(f'  [CACHE] {ticker} — returning cached decision (fingerprint={fingerprint})')
+        print(f'  [CACHE] {ticker}: returning cached decision (fingerprint={fingerprint})')
         return cached
+
+    if not client.available:
+        print(f'  [SKIP] AI not available for {ticker}: {client.status_message}')
+        return _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
 
     from ai_research.prompts import build_investment_gate_prompt
     prompt = build_investment_gate_prompt(case)
