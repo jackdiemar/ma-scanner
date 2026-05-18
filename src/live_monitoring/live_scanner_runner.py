@@ -154,12 +154,46 @@ def _tail(text: str, max_chars: int = 4000) -> str:
     return text[-max_chars:]
 
 
-def _run_v12(timeout_seconds: int = DEFAULT_V12_TIMEOUT_SECONDS) -> V12RunResult:
+def _tail_lines(text: str, max_lines: int = 20) -> str:
+    """Return the last max_lines lines of text."""
+    if not text:
+        return ''
+    lines = text.splitlines()
+    return '\n'.join(lines[-max_lines:])
+
+
+def _last_progress_line(text: str) -> str:
+    """
+    Scan stdout for the most recent LIVE_PROGRESS or PHASE_ line.
+    Returns the line, or empty string if none found.
+    """
+    if not text:
+        return ''
+    for line in reversed(text.splitlines()):
+        if 'LIVE_PROGRESS' in line or 'PHASE_START' in line or 'PHASE_END' in line:
+            return line.strip()
+    return ''
+
+
+def _output_mtime(path: Path) -> str | None:
+    """Return ISO-formatted mtime of path, or None if missing."""
+    if not path.exists():
+        return None
+    import datetime as _dt
+    mtime = _dt.datetime.fromtimestamp(path.stat().st_mtime, tz=_dt.timezone.utc)
+    return mtime.strftime('%Y-%m-%d %H:%M:%S UTC')
+
+
+def _run_v12(timeout_seconds: int = DEFAULT_V12_TIMEOUT_SECONDS,
+             extra_args: list | None = None) -> V12RunResult:
     """Call V12 via subprocess with a hard timeout."""
-    cmd = [sys.executable, str(V12_SCRIPT)]
+    cmd = [sys.executable, str(V12_SCRIPT)] + (extra_args or [])
     env = os.environ.copy()
     start = time.monotonic()
     start_wall = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+
+    # Record output mtime before the run so we can detect if it changed
+    output_mtime_before = _output_mtime(SCAN_LATEST)
 
     log.info('Running V12 scanner subprocess.')
     log.info('V12 command: %s', ' '.join(cmd))
@@ -167,6 +201,7 @@ def _run_v12(timeout_seconds: int = DEFAULT_V12_TIMEOUT_SECONDS) -> V12RunResult
     log.info('V12 timeout seconds: %s', timeout_seconds)
     log.info('V12 start time: %s', start_wall)
     log.info('V12 expected output: %s', SCAN_LATEST)
+    log.info('V12 output mtime before run: %s', output_mtime_before or 'file absent')
 
     proc = subprocess.Popen(
         cmd,
@@ -189,42 +224,68 @@ def _run_v12(timeout_seconds: int = DEFAULT_V12_TIMEOUT_SECONDS) -> V12RunResult
             log.error('V12 did not terminate cleanly. Killing process %s.', proc.pid)
             proc.kill()
             stdout, stderr = proc.communicate()
+
+        stdout = stdout or ''
+        stderr = stderr or ''
         output_exists = SCAN_LATEST.exists()
-        log.error('V12 timeout. output_exists=%s output_path=%s', output_exists, SCAN_LATEST)
+        output_mtime_after = _output_mtime(SCAN_LATEST)
+        output_changed = (output_mtime_before != output_mtime_after)
+        last_progress = _last_progress_line(stdout)
+
+        log.error('V12 timeout diagnostics:')
+        log.error('  command:            %s', ' '.join(cmd))
+        log.error('  timeout_seconds:    %s', timeout_seconds)
+        log.error('  elapsed_seconds:    %.1f', elapsed)
+        log.error('  output_path:        %s', SCAN_LATEST)
+        log.error('  output_exists:      %s', output_exists)
+        log.error('  output_mtime_before: %s', output_mtime_before or 'absent')
+        log.error('  output_mtime_after:  %s', output_mtime_after or 'absent')
+        log.error('  output_changed:     %s', output_changed)
+        if last_progress:
+            log.error('  last_progress_line: %s', last_progress)
         if stdout:
-            log.error('V12 stdout tail on timeout: %s', _tail(stdout))
+            log.error('V12 stdout (last 20 lines):\n%s', _tail_lines(stdout, 20))
         if stderr:
-            log.error('V12 stderr tail on timeout: %s', _tail(stderr))
+            log.error('V12 stderr (last 20 lines):\n%s', _tail_lines(stderr, 20))
+
         return V12RunResult(
             ok=False,
             status='v12_timeout',
             returncode=proc.returncode,
             elapsed_seconds=elapsed,
-            stdout_tail=_tail(stdout),
-            stderr_tail=_tail(stderr),
-            error=f'V12 timed out after {timeout_seconds} seconds',
+            stdout_tail=_tail_lines(stdout, 20),
+            stderr_tail=_tail_lines(stderr, 20),
+            error=(
+                f'V12 timed out after {timeout_seconds}s. '
+                f'Last progress: {last_progress or "none"}. '
+                f'Output changed: {output_changed}.'
+            ),
             output_exists=output_exists,
         )
 
     elapsed = time.monotonic() - start
+    stdout = stdout or ''
+    stderr = stderr or ''
     output_exists = SCAN_LATEST.exists()
+    output_mtime_after = _output_mtime(SCAN_LATEST)
     log.info('V12 elapsed seconds: %.1f', elapsed)
     log.info('V12 return code: %s', proc.returncode)
     log.info('V12 output exists after run: %s (%s)', output_exists, SCAN_LATEST)
+    log.info('V12 output mtime after run: %s', output_mtime_after or 'absent')
 
     if proc.returncode != 0:
         log.error('V12 failed with return code %s.', proc.returncode)
         if stdout:
-            log.error('V12 stdout tail on failure: %s', _tail(stdout))
+            log.error('V12 stdout (last 20 lines):\n%s', _tail_lines(stdout, 20))
         if stderr:
-            log.error('V12 stderr tail on failure: %s', _tail(stderr))
+            log.error('V12 stderr (last 20 lines):\n%s', _tail_lines(stderr, 20))
         return V12RunResult(
             ok=False,
             status='v12_error',
             returncode=proc.returncode,
             elapsed_seconds=elapsed,
-            stdout_tail=_tail(stdout),
-            stderr_tail=_tail(stderr),
+            stdout_tail=_tail_lines(stdout, 20),
+            stderr_tail=_tail_lines(stderr, 20),
             error=f'V12 exited with return code {proc.returncode}',
             output_exists=output_exists,
         )
@@ -235,8 +296,8 @@ def _run_v12(timeout_seconds: int = DEFAULT_V12_TIMEOUT_SECONDS) -> V12RunResult
         status='ok',
         returncode=proc.returncode,
         elapsed_seconds=elapsed,
-        stdout_tail=_tail(stdout),
-        stderr_tail=_tail(stderr),
+        stdout_tail=_tail_lines(stdout, 20),
+        stderr_tail=_tail_lines(stderr, 20),
         output_exists=output_exists,
     )
 
@@ -281,6 +342,10 @@ def _write_run_snapshot(ts: str, alerts: list, stats: dict, dry_run: bool) -> No
 
 def _write_failure_memo(scan_ts: str, run_mode: str, result: V12RunResult) -> None:
     MEMO_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    # Extract last progress line from stdout_tail if available
+    last_progress = _last_progress_line(result.stdout_tail) if result.stdout_tail else ''
+
     lines = [
         '# Biotech Strategic Process Monitor — Run Failure',
         '',
@@ -288,9 +353,14 @@ def _write_failure_memo(scan_ts: str, run_mode: str, result: V12RunResult) -> No
         f'**Run mode:** {run_mode}',
         f'**Status:** {result.status}',
         f'**Elapsed seconds:** {result.elapsed_seconds:.1f}',
+        f'**Timeout setting:** {DEFAULT_V12_TIMEOUT_SECONDS}s',
         f'**V12 return code:** {result.returncode}',
         f'**Expected V12 output:** `{result.output_path}`',
         f'**Output file exists after run:** {result.output_exists}',
+    ]
+    if last_progress:
+        lines.append(f'**Last progress log line:** `{last_progress}`')
+    lines.extend([
         '',
         'No alert processing was performed for this run. The runner did not',
         'process existing `scan_latest.json` as fresh data after the V12 failure.',
@@ -300,14 +370,16 @@ def _write_failure_memo(scan_ts: str, run_mode: str, result: V12RunResult) -> No
         '- Service logs: `journalctl -u ma-scanner-live.service -n 80 --no-pager`',
         f'- Error log: `{ERROR_LOG}`',
         f'- State file: `{STATE_PATH}`',
+        '- Check for hung processes: `pgrep -la PRODUCTION_SCANNER`',
+        '- Clear stale lock (if no scanner running): `python3 src/live_monitoring/live_scanner_runner.py --clear-stale-lock`',
         '',
-    ]
+    ])
     if result.error:
-        lines.extend(['## Error', '', result.error, ''])
+        lines.extend(['## Error Detail', '', result.error, ''])
     if result.stderr_tail:
-        lines.extend(['## stderr Tail', '', '```text', result.stderr_tail, '```', ''])
+        lines.extend(['## stderr (last 20 lines)', '', '```text', result.stderr_tail, '```', ''])
     if result.stdout_tail:
-        lines.extend(['## stdout Tail', '', '```text', result.stdout_tail, '```', ''])
+        lines.extend(['## stdout (last 20 lines)', '', '```text', result.stdout_tail, '```', ''])
     MEMO_PATH.write_text('\n'.join(lines), encoding='utf-8')
     log.info('Failure memo written to %s', MEMO_PATH)
 
@@ -364,6 +436,7 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
         v12_result = _run_v12(timeout_seconds=v12_timeout_seconds)
         if not v12_result.ok:
             log.error('V12 failed with status=%s — skipping alert processing for this run.', v12_result.status)
+            last_progress = _last_progress_line(v12_result.stdout_tail) if v12_result.stdout_tail else ''
             _write_failure_memo(scan_ts, run_mode, v12_result)
             state = _read_state()
             state.update({
@@ -373,8 +446,12 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
                 'last_error':           v12_result.error,
                 'last_v12_returncode':  v12_result.returncode,
                 'last_v12_elapsed_sec': round(v12_result.elapsed_seconds, 1),
+                'last_v12_timeout_sec': v12_timeout_seconds,
                 'last_v12_output_path': str(SCAN_LATEST),
                 'last_v12_output_exists': v12_result.output_exists,
+                'last_v12_last_progress': last_progress,
+                'last_v12_stdout_tail': v12_result.stdout_tail[-500:] if v12_result.stdout_tail else '',
+                'last_v12_stderr_tail': v12_result.stderr_tail[-500:] if v12_result.stderr_tail else '',
                 'last_total_scanned':   0,
                 'total_runs':           state.get('total_runs', 0) + 1,
                 'last_alert_count':     0,
@@ -382,6 +459,8 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
                 'last_investigate_count': 0,
                 'last_watch_count':     0,
                 'state_path':           str(STATE_PATH),
+                'memo_path':            str(MEMO_PATH),
+                'alert_log_path':       str(ALERT_LOG),
             })
             _write_state(state)
             state = _send_email_updates(state)
@@ -427,8 +506,10 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
         'last_error':        '',
         'last_v12_returncode': v12_result.returncode,
         'last_v12_elapsed_sec': round(v12_result.elapsed_seconds, 1),
+        'last_v12_timeout_sec': v12_timeout_seconds,
         'last_v12_output_path': str(SCAN_LATEST),
         'last_v12_output_exists': v12_result.output_exists,
+        'last_v12_last_progress': '',
         'last_total_scanned': total_scanned,
         'total_runs':        state.get('total_runs', 0) + 1,
         'total_alerts_ever': state.get('total_alerts_ever', 0) + len(alerts),
@@ -437,6 +518,8 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
         'last_investigate_count': stats['KEEP_HIGH_PRIORITY'] + stats.get('KEEP_REVIEW', 0),
         'last_watch_count':  stats['DOWNGRADE_WATCH'],
         'state_path':        str(STATE_PATH),
+        'memo_path':         str(MEMO_PATH),
+        'alert_log_path':    str(ALERT_LOG),
     })
     _write_state(state)
     state = _send_email_updates(state)
@@ -445,21 +528,93 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
 
 # ── Status printer ────────────────────────────────────────────────────────────
 
+def _is_scanner_running() -> tuple[bool, int | None]:
+    """Check if any scanner process is running. Returns (is_running, pid_or_None)."""
+    if LOCK_PATH.exists():
+        try:
+            pid = int(LOCK_PATH.read_text().strip())
+            os.kill(pid, 0)
+            return True, pid
+        except (ProcessLookupError, ValueError, OSError):
+            pass
+    return False, None
+
+
 def print_status() -> None:
     state = _read_state()
-    if not state:
-        print('No state file found. Scanner has not run yet.')
-        print(f'State file location: {STATE_PATH}')
-        return
+    running, running_pid = _is_scanner_running()
+
     print('Live Scanner Status')
-    print('-------------------')
-    for k, v in state.items():
-        print(f'  {k}: {v}')
-    print()
-    if LOCK_PATH.exists():
-        print(f'  LOCK FILE: {LOCK_PATH} (PID {LOCK_PATH.read_text().strip()})')
+    print('=' * 50)
+
+    # Running indicator
+    if running:
+        print(f'  Running       : YES (PID {running_pid})')
     else:
-        print('  Lock file: not present (no active run)')
+        print('  Running       : no')
+
+    # Lock file
+    if LOCK_PATH.exists():
+        pid_str = LOCK_PATH.read_text().strip()
+        stale_note = ' (STALE — process not found)' if not running else ''
+        print(f'  Lock file     : present (PID {pid_str}){stale_note}')
+    else:
+        print('  Lock file     : absent')
+
+    if not state:
+        print()
+        print('  No state file found — scanner has not run yet.')
+        print(f'  State file location: {STATE_PATH}')
+        return
+
+    last_run      = state.get('last_run', 'never')
+    last_status   = state.get('last_run_status', 'unknown')
+    last_alerts   = state.get('last_alert_count', 0)
+    last_new      = state.get('last_new_count', 0)
+    last_invst    = state.get('last_investigate_count', 0)
+    last_watch    = state.get('last_watch_count', 0)
+    last_scanned  = state.get('last_total_scanned', 0)
+    total_runs    = state.get('total_runs', 0)
+    elapsed       = state.get('last_v12_elapsed_sec', '')
+    timeout_sec   = state.get('last_v12_timeout_sec', DEFAULT_V12_TIMEOUT_SECONDS)
+    last_error    = state.get('last_error', '')
+    last_progress = state.get('last_v12_last_progress', '')
+    memo_path     = state.get('memo_path', str(MEMO_PATH))
+    alert_log     = state.get('alert_log_path', str(ALERT_LOG))
+
+    print(f'  Last run      : {last_run}')
+    print(f'  Status        : {last_status}')
+    print(f'  Total runs    : {total_runs}')
+    if elapsed:
+        print(f'  V12 elapsed   : {elapsed}s (timeout: {timeout_sec}s)')
+
+    if last_status == 'ok':
+        print(f'  Alerts        : {last_alerts} total | {last_new} new | {last_invst} investigate | {last_watch} watch')
+        print(f'  Names scanned : {last_scanned}')
+    else:
+        print(f'  Last error    : {last_error or "(none recorded)"}')
+        if last_progress:
+            print(f'  Last progress : {last_progress}')
+
+    email_status  = state.get('last_email_status', '')
+    email_sent_at = state.get('last_email_sent_at', '')
+    if email_status:
+        print(f'  Email         : {email_status}  sent_at={email_sent_at or "not sent"}')
+
+    print()
+    print(f'  Latest memo   : {memo_path}')
+    print(f'  Alert log     : {alert_log}')
+    print(f'  State file    : {STATE_PATH}')
+
+    # Recovery suggestions
+    if last_status in ('v12_timeout', 'v12_error'):
+        print()
+        print('  RECOVERY:')
+        print('    journalctl -u ma-scanner-live.service -n 80 --no-pager')
+        print(f'    tail -50 {ERROR_LOG}')
+        if not running:
+            print(f'    python3 {__file__} --clear-stale-lock')
+        print(f'    python3 {__file__} --once --dry-run')
 
 
 # ── Daemon loop ───────────────────────────────────────────────────────────────
@@ -488,6 +643,26 @@ def run_daemon(interval_minutes: int, v12_timeout_seconds: int = DEFAULT_V12_TIM
         time.sleep(interval_minutes * 60)
 
 
+# ── Clear stale lock ──────────────────────────────────────────────────────────
+
+def clear_stale_lock() -> int:
+    """
+    Remove the lock file only if no scanner process is currently running.
+    Returns 0 on success, 1 if a live process was found (lock not removed).
+    """
+    if not LOCK_PATH.exists():
+        print('Lock file not present — nothing to clear.')
+        return 0
+    running, pid = _is_scanner_running()
+    if running:
+        print(f'WARNING: Scanner process IS running (PID {pid}). Lock NOT removed.')
+        print('Only run --clear-stale-lock when no scanner is active.')
+        return 1
+    LOCK_PATH.unlink(missing_ok=True)
+    print(f'Stale lock file removed: {LOCK_PATH}')
+    return 0
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def _parse_args(argv=None):
@@ -496,11 +671,13 @@ def _parse_args(argv=None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     mode = p.add_mutually_exclusive_group(required=True)
-    mode.add_argument('--once',   action='store_true', help='Run one scan cycle and exit')
-    mode.add_argument('--daemon', action='store_true', help='Run continuously')
-    mode.add_argument('--status', action='store_true', help='Print last-run state and exit')
-    mode.add_argument('--smoke-v12', action='store_true',
+    mode.add_argument('--once',             action='store_true', help='Run one scan cycle and exit')
+    mode.add_argument('--daemon',           action='store_true', help='Run continuously')
+    mode.add_argument('--status',           action='store_true', help='Print last-run state and exit')
+    mode.add_argument('--smoke-v12',        action='store_true',
                       help='Compile/check V12 entrypoint without running a live scan')
+    mode.add_argument('--clear-stale-lock', action='store_true',
+                      help='Remove lock file if no scanner process is running')
 
     p.add_argument('--dry-run', action='store_true',
                    help='(--once only) Skip V12 call; use existing scan_latest.json')
@@ -508,6 +685,10 @@ def _parse_args(argv=None):
                    help='(--daemon only) Minutes between scans (default: 60)')
     p.add_argument('--v12-timeout-seconds', type=int, default=DEFAULT_V12_TIMEOUT_SECONDS,
                    help='Hard timeout for the V12 subprocess (default: 900)')
+    # --sample-size is NOT passed to V12 because V12 does not accept --limit or
+    # --ticker-limit arguments. Implementing it cleanly would require V12 changes
+    # that touch the universe logic; the safer approach is --quick in V12 itself
+    # (first 50 tickers). See V12 --quick flag for testing.
     return p.parse_args(argv)
 
 
@@ -519,6 +700,9 @@ def main(argv=None) -> int:
     if args.status:
         print_status()
         return 0
+
+    if args.clear_stale_lock:
+        return clear_stale_lock()
 
     if args.smoke_v12:
         print('V12 smoke check')
@@ -532,7 +716,7 @@ def main(argv=None) -> int:
 
     if args.once:
         if args.dry_run:
-            print('Dry-run: validating directory structure …')
+            print('Dry-run: validating directory structure ...')
             _validate_dirs()
             print()
 

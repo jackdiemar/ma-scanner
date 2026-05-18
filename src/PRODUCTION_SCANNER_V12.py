@@ -78,11 +78,38 @@ import json
 import time
 import os
 import csv
+import logging
 from datetime import datetime, timedelta
 import sys
 
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# ── Module-level logger ───────────────────────────────────────────────────────
+logger = logging.getLogger('v12_scanner')
+if not logger.handlers:
+    _h = logging.StreamHandler(sys.stdout)
+    _h.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+    logger.addHandler(_h)
+logger.setLevel(logging.INFO)
+
+# Scan start time — set at the top of run_scan(); used for elapsed logging.
+_scan_start: float = 0.0
+
+
+def _elapsed() -> float:
+    """Seconds since _scan_start was set (or 0 if not yet set)."""
+    return time.monotonic() - _scan_start if _scan_start else 0.0
+
+
+def _phase_start(name: str) -> float:
+    t = time.monotonic()
+    logger.info('PHASE_START phase=%s elapsed=%.1fs', name, _elapsed())
+    return t
+
+
+def _phase_end(name: str, t0: float) -> None:
+    logger.info('PHASE_END phase=%s elapsed=%.1fs', name, time.monotonic() - t0)
 
 from secure_config import get_env
 from trade_logic import build_trade_rec
@@ -1670,11 +1697,12 @@ def _activist_decay(filing_date_str, base_pts):
         return float(base_pts)   # unparseable date → no decay
 
 
-def _fetch_doc_text(url, max_bytes=400_000, timeout=20):
+def _fetch_doc_text(url, max_bytes=400_000, timeout=(5, 20)):
     """
     Fetch an SEC filing document URL and return lowercase plain text.
     Strips all HTML tags. Caps at max_bytes to avoid reading 10MB filings.
     Returns empty string on any failure. Results cached 72h (SEC filings don't change).
+    timeout: (connect_timeout, read_timeout) — default (5, 20).
     """
     ck = make_key('doc', url, max_bytes)
     cached = cache_get(ck, ttl=DOC_TTL)
@@ -1695,6 +1723,9 @@ def _fetch_doc_text(url, max_bytes=400_000, timeout=20):
         result = re.sub(r'\s+', ' ', text).lower()
         cache_set(ck, result)
         return result
+    except requests.exceptions.Timeout:
+        logger.warning('SLOW_HTTP url=%s reason=timeout', url[:80])
+        return ''
     except Exception:
         return ''
 
@@ -2214,7 +2245,7 @@ def analyze_pipeline(company_name, ticker):
                 'pageSize': 50,
                 'format': 'json'
             }
-            r = requests.get(url, params=params, timeout=15)
+            r = requests.get(url, params=params, timeout=(5, 20))
             if r.status_code != 200:
                 continue
 
@@ -2821,7 +2852,7 @@ def calculate_ma_score(ticker, quote, profile, insider, financial, pipeline,  # 
 
     # 4f. Volume anomaly (2x+ average in recent 5 days)
     try:
-        hist = yf.Ticker(ticker).history(period='3mo')
+        hist = yf.Ticker(ticker).history(period='3mo', timeout=20)
         if not hist.empty and len(hist) > 20:
             recent_vol = hist['Volume'].iloc[-5:].mean()
             avg_vol    = hist['Volume'].mean()
@@ -3162,7 +3193,7 @@ def calculate_ma_score(ticker, quote, profile, insider, financial, pipeline,  # 
 # ─────────────────────────────────────────────────────────────────────────────
 
 def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False,
-                  activist_signal=None, skip_layer7=False):
+                  activist_signal=None, skip_layer7=False, _phase_label=''):
     """
     Full analysis pipeline for one ticker.
     staleness_info: dict from get_staleness_info() — supplies first-seen date, staleness penalty.
@@ -3170,8 +3201,10 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
     activist_signal: dict from preload_activist_signals() for this ticker, or None.
     skip_layer7: if True, skip expensive SEC doc fetches (pass 1 of two-pass scan).
                  All FMP + ClinicalTrials calls still run (cached on pass 2).
+    _phase_label: optional phase name for slow-ticker logging.
     Returns result dict or None if excluded.
     """
+    _ticker_t0 = time.monotonic()
     try:
         # 1. Get quote and profile (fast, always needed)
         quote   = fmp.get_quote(ticker)
@@ -3382,9 +3415,21 @@ def analyze_stock(ticker, fmp, staleness_info=None, earnings_calendar_flag=False
         out['state_first_entered_ts'] = None
         out['state_snapshot_count'] = 0
 
+        _ticker_elapsed = time.monotonic() - _ticker_t0
+        if _ticker_elapsed > 60:
+            logger.warning('VERY_SLOW_TICKER ticker=%s phase=%s elapsed=%.1fs',
+                           ticker, _phase_label or 'analyze_stock', _ticker_elapsed)
+        elif _ticker_elapsed > 30:
+            logger.warning('SLOW_TICKER ticker=%s phase=%s elapsed=%.1fs',
+                           ticker, _phase_label or 'analyze_stock', _ticker_elapsed)
+
         return out
 
     except Exception as e:
+        _ticker_elapsed = time.monotonic() - _ticker_t0
+        if _ticker_elapsed > 30:
+            logger.warning('SLOW_TICKER_ERROR ticker=%s phase=%s elapsed=%.1fs error=%s',
+                           ticker, _phase_label or 'analyze_stock', _ticker_elapsed, str(e)[:80])
         print(f'  {ticker}: Error — {str(e)[:60]}')
         return None
 
@@ -3633,7 +3678,9 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
         save:        save results to disk
         max_workers: ThreadPoolExecutor concurrency (default 4)
     """
+    global _scan_start
     scan_start = datetime.now()
+    _scan_start = time.monotonic()
     scan_id    = scan_start.strftime('%Y%m%d_%H%M%S')
     watchlist  = tickers or UNIVERSE
 
@@ -3643,6 +3690,7 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     print(f'  Universe: {len(watchlist)} stocks  |  Workers: {max_workers}  |  '
           f'Layer7 threshold: {LAYER7_THRESHOLD}')
     print('═'*72)
+    logger.info('PHASE_START phase=scanner_init elapsed=0.0s')
 
     # One FMPClient for pre-load calls (single-threaded phase)
     fmp_main = FMPClient(FMP_API_KEY)
@@ -3651,14 +3699,18 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     cal_from = datetime.now().strftime('%Y-%m-%d')
     cal_to   = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
     print(f'  Pre-loading earnings calendar ({cal_from} → {cal_to})...')
+    _t_cal = _phase_start('earnings_calendar_preload')
     cal_data      = fmp_main.get_earnings_calendar(cal_from, cal_to)
     earnings_soon = {e['symbol'] for e in (cal_data or []) if e.get('symbol')}
+    _phase_end('earnings_calendar_preload', _t_cal)
     print(f'  {len(earnings_soon)} tickers reporting earnings in next 14 days')
 
     # Pre-load SC 13D activist filings (one call, cross-referenced against universe)
     universe_set = set(watchlist)
     print(f'  Pre-loading SC 13D activist filings (last 60 days)...')
+    _t_activist = _phase_start('activist_13d_preload')
     activist_map = preload_activist_signals(fmp_main, universe_set, days=60)
+    _phase_end('activist_13d_preload', _t_activist)
     if activist_map:
         print(f'  ★ ACTIVIST 13D detected on: {", ".join(sorted(activist_map.keys()))}')
     else:
@@ -3669,7 +3721,7 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     print()
 
     # ── Helper: run one ticker in a worker thread ──────────────────────────────
-    def _scan_ticker(ticker, skip_l7):
+    def _scan_ticker(ticker, skip_l7, phase_label=''):
         try:
             fmp          = _get_fmp()
             staleness    = get_staleness_info(tracking, ticker)
@@ -3679,6 +3731,7 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
                 earnings_calendar_flag=(ticker in earnings_soon),
                 activist_signal=activist_map.get(ticker),
                 skip_layer7=skip_l7,
+                _phase_label=phase_label,
             )
         except Exception as e:
             return {'_error': ticker, '_msg': str(e)}
@@ -3695,16 +3748,19 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
 
     # ── PASS 1: all tickers, skip Layer 7 ─────────────────────────────────────
     print(f'  PASS 1 — scoring all {len(watchlist)} tickers (Layers 1-6, no SEC fetches)...')
+    _t_pass1 = _phase_start('pass1_scoring')
     pass1_results = {}   # ticker → result dict
     errors        = []
     completed     = 0
     total         = len(watchlist)
+    _last_progress_ticker = ''
 
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        futures = {ex.submit(_scan_ticker, t, True): t for t in watchlist}
+        futures = {ex.submit(_scan_ticker, t, True, 'pass1'): t for t in watchlist}
         for future in as_completed(futures):
             ticker = futures[future]
             completed += 1
+            _last_progress_ticker = ticker
             sys.stdout.write(f'\r  Pass 1: {completed}/{total}  [{ticker:<8}]  ')
             sys.stdout.flush()
 
@@ -3717,9 +3773,12 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
             pass1_results[ticker] = r
 
             if completed % 25 == 0:
+                logger.info('LIVE_PROGRESS phase=pass1_scoring ticker=%s index=%d/%d elapsed=%.1fs',
+                            ticker, completed, total, _elapsed())
                 _partial_save(list(pass1_results.values()),
                               f'pass1 {completed}/{total}')
 
+    _phase_end('pass1_scoring', _t_pass1)
     print(f'\n  Pass 1 complete — {len(pass1_results)} stocks scored')
 
     # ── PASS 2: Layer 7 for candidates above threshold ─────────────────────────
@@ -3730,16 +3789,18 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     ]
     print(f'  PASS 2 — Layer 7 SEC fetch for {len(candidates)} candidates '
           f'(score ≥{LAYER7_THRESHOLD})...')
+    _t_pass2 = _phase_start('pass2_sec_scan')
 
     pass2_results = {}
     completed2    = 0
+    _n_cand = len(candidates)
 
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        futures2 = {ex.submit(_scan_ticker, t, False): t for t in candidates}
+        futures2 = {ex.submit(_scan_ticker, t, False, 'pass2_sec'): t for t in candidates}
         for future in as_completed(futures2):
             ticker = futures2[future]
             completed2 += 1
-            sys.stdout.write(f'\r  Pass 2: {completed2}/{len(candidates)}  [{ticker:<8}]  ')
+            sys.stdout.write(f'\r  Pass 2: {completed2}/{_n_cand}  [{ticker:<8}]  ')
             sys.stdout.flush()
 
             r = future.result()
@@ -3749,10 +3810,13 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
                 pass2_results[ticker] = r
 
             if completed2 % 25 == 0:
+                logger.info('LIVE_PROGRESS phase=pass2_sec_scan ticker=%s index=%d/%d elapsed=%.1fs',
+                            ticker, completed2, _n_cand, _elapsed())
                 merged = {**pass1_results, **pass2_results}
                 _partial_save(list(merged.values()),
-                              f'pass2 {completed2}/{len(candidates)}')
+                              f'pass2 {completed2}/{_n_cand}')
 
+    _phase_end('pass2_sec_scan', _t_pass2)
     print(f'\n  Pass 2 complete — {len(pass2_results)} tickers upgraded with Layer 7')
 
     # ── Merge: pass2 results override pass1 where available ───────────────────
@@ -3760,6 +3824,7 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
     results   = list(final_map.values())
 
     # ── State history: load, update, attach transition events ─────────────────
+    _t_state = _phase_start('state_history_update')
     from process_history import (
         load_state_history, save_state_history, update_ticker_history,
         get_state_entered_ts,
@@ -3781,9 +3846,11 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
             pass   # history update must never break the scan
 
     save_state_history(state_history, STATE_HISTORY_FILE)
+    _phase_end('state_history_update', _t_state)
     print(f'  State history updated — {len(state_history)} tickers tracked')
 
     # ── Sequence detection: derive compound patterns from state history ────────
+    _t_seq = _phase_start('sequence_detection')
     try:
         from sequence_detector import detect_all_sequences, attach_sequences_to_result
         all_sequences = detect_all_sequences(state_history)
@@ -3806,7 +3873,10 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
             r.setdefault('sequence_window_days', None)
             r.setdefault('compound_signal_quality', None)
 
+    _phase_end('sequence_detection', _t_seq)
+
     # ── Update tracking (single-threaded, after all results collected) ─────────
+    _t_tracking = _phase_start('tracking_update')
     new_picks   = 0
     high_conv   = []
     medium_conv = []
@@ -3831,8 +3901,10 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
         elif tier == 'BANKRUPTCY_RISK':    bankrupt.append(r)
 
     save_tracking(tracking)
+    _phase_end('tracking_update', _t_tracking)
 
     # Log new HIGH/MEDIUM picks to outcomes.json for calibration tracking
+    _t_output = _phase_start('output_write')
     log_picks_from_scan(results)
 
     print('\n')
@@ -3896,6 +3968,7 @@ def run_scan(tickers=None, verbose=True, save=True, max_workers=4):
         print(f'  Saved → {json_path}')
         print(f'  CSV   → {csv_path}')
 
+    _phase_end('output_write', _t_output)
     print('═'*72 + '\n')
 
     return {
