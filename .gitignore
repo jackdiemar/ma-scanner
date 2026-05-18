@@ -33,3 +33,6 @@ data/live_monitoring/source_pull_cache/
 
 # Historical case source text cache (local support material)
 data/historical_cases/source_text_cache/
+
+# AI research layer outputs (local-only; never commit generated research files or watchlist)
+data/ai_research/
