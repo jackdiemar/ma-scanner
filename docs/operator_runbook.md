@@ -270,29 +270,35 @@ sudo bash deploy/vps/run_full_production_cycle.sh --skip-scanner
 
 Push code from your local machine to the VPS in one command.
 
+**Current VPS host:** `root@137.184.133.182`
+
 ### Setup (one-time)
 ```bash
 cp deploy/local/.env.deploy.example deploy/local/.env.deploy
-# Edit .env.deploy — set MA_SCANNER_VPS_HOST=root@your_server_ip
+# .env.deploy.example already contains the correct host — no edit needed
+# (replace if deploying to a different server)
 ```
 
-### Push + run AI email (most common)
+### Common commands
+
 ```bash
+# Health check only — fast sanity test
+bash deploy/local/push_and_deploy_to_vps.sh --run-health-check
+
+# Push + run AI email (most common post-code-change action)
 bash deploy/local/push_and_deploy_to_vps.sh --run-ai-email
-```
 
-### Push + run full production cycle
-```bash
+# Push + run full production cycle (scanner skipped)
 bash deploy/local/push_and_deploy_to_vps.sh --run-full-cycle
 ```
 
-### Push only (no remote action)
-```bash
-bash deploy/local/push_and_deploy_to_vps.sh
-```
+### Other usage
 
-### Push + cleanup runtime noise on VPS first
 ```bash
+# Push only (no remote action)
+bash deploy/local/push_and_deploy_to_vps.sh
+
+# Push + cleanup runtime noise on VPS first
 bash deploy/local/push_and_deploy_to_vps.sh --run-cleanup --run-full-cycle
 ```
 
@@ -310,7 +316,7 @@ bash deploy/local/push_and_deploy_to_vps.sh --run-cleanup --run-full-cycle
 --skip-remote-pull      Skip VPS pull (push only)
 ```
 
-**Safety:** The script aborts if the VPS has uncommitted source changes. It uses `git pull --ff-only` to avoid accidental merge commits on the VPS.
+**Safety:** The script validates the host (rejects placeholders), runs an SSH preflight before pushing, aborts if the VPS has uncommitted source changes, and uses `git pull --ff-only` to prevent merge commits on the VPS.
 
 ---
 

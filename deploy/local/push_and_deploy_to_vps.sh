@@ -5,7 +5,7 @@
 #   bash deploy/local/push_and_deploy_to_vps.sh [OPTIONS]
 #
 # Environment (set in deploy/local/.env.deploy or shell):
-#   MA_SCANNER_VPS_HOST     SSH target, e.g. root@12.34.56.78
+#   MA_SCANNER_VPS_HOST     SSH target, e.g. root@137.184.133.182
 #   MA_SCANNER_REMOTE_DIR   Install dir on VPS (default: /opt/ma-scanner)
 #   MA_SCANNER_BRANCH       Git branch (default: ai-final)
 #
@@ -21,15 +21,24 @@
 #   --skip-push             Skip git push (VPS pull only)
 #   --skip-remote-pull      Skip VPS pull (push only)
 
-set -uo pipefail
+set -euo pipefail
 
-# Load local .env.deploy if it exists next to this script
+# Capture any env-passed values before loading .env.deploy (env vars take priority over file).
+_HOST_FROM_ENV="${MA_SCANNER_VPS_HOST:-}"
+_DIR_FROM_ENV="${MA_SCANNER_REMOTE_DIR:-}"
+_BRANCH_FROM_ENV="${MA_SCANNER_BRANCH:-}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_DEPLOY="${SCRIPT_DIR}/.env.deploy"
 if [[ -f "${ENV_DEPLOY}" ]]; then
   # shellcheck source=/dev/null
   source "${ENV_DEPLOY}"
 fi
+
+# Env vars override .env.deploy
+[[ -n "${_HOST_FROM_ENV}" ]]   && MA_SCANNER_VPS_HOST="${_HOST_FROM_ENV}"
+[[ -n "${_DIR_FROM_ENV}" ]]    && MA_SCANNER_REMOTE_DIR="${_DIR_FROM_ENV}"
+[[ -n "${_BRANCH_FROM_ENV}" ]] && MA_SCANNER_BRANCH="${_BRANCH_FROM_ENV}"
 
 VPS_HOST="${MA_SCANNER_VPS_HOST:-}"
 REMOTE_DIR="${MA_SCANNER_REMOTE_DIR:-/opt/ma-scanner}"
@@ -54,46 +63,58 @@ while [[ $# -gt 0 ]]; do
     --run-health-check) RUN_HEALTH_CHECK=true ;;
     --skip-push)        SKIP_PUSH=true ;;
     --skip-remote-pull) SKIP_REMOTE_PULL=true ;;
-    *) echo "Unknown option: $1"; exit 1 ;;
+    *) echo "ERROR: Unknown option: $1"; exit 1 ;;
   esac
   shift
 done
 
 SEP="────────────────────────────────────────────────────────"
 
-echo "${SEP}"
-echo "  MA Scanner — Push + Deploy to VPS"
-echo "  $(date '+%Y-%m-%d %H:%M:%S %Z')"
-echo "  VPS host    : ${VPS_HOST:-[NOT SET]}"
-echo "  Remote dir  : ${REMOTE_DIR}"
-echo "  Branch      : ${BRANCH}"
-echo "${SEP}"
-
-if [[ -z "${VPS_HOST}" ]]; then
-  echo ""
-  echo "ERROR: VPS host not set."
-  echo ""
-  echo "  Option 1 — set environment variable:"
-  echo "    export MA_SCANNER_VPS_HOST=root@your_server_ip"
-  echo ""
-  echo "  Option 2 — create deploy/local/.env.deploy:"
-  echo "    cp deploy/local/.env.deploy.example deploy/local/.env.deploy"
-  echo "    # edit .env.deploy with your VPS host"
-  echo ""
-  exit 1
-fi
-
 ok()   { echo "  ✓ $1"; }
 warn() { echo "  ⚠  $1"; }
 fail() { echo "  ✗ $1"; }
 
+# ── Host validation ───────────────────────────────────────────────────────────
+# Reject missing or placeholder hosts before doing anything.
+_PLACEHOLDER_RE='(your_server|YOUR_SERVER|SERVER_IP|example\.com|placeholder|localhost$|127\.0\.0\.1$)'
+
+if [[ -z "${VPS_HOST}" ]]; then
+  echo ""
+  echo "ERROR: MA_SCANNER_VPS_HOST is not set."
+  echo ""
+  echo "  Option 1 — set environment variable:"
+  echo "    export MA_SCANNER_VPS_HOST=root@137.184.133.182"
+  echo ""
+  echo "  Option 2 — create deploy/local/.env.deploy:"
+  echo "    cp deploy/local/.env.deploy.example deploy/local/.env.deploy"
+  echo "    # .env.deploy already contains the correct host — no edit needed"
+  echo ""
+  exit 1
+fi
+
+if echo "${VPS_HOST}" | grep -qE "${_PLACEHOLDER_RE}"; then
+  echo ""
+  echo "ERROR: MA_SCANNER_VPS_HOST looks like a placeholder: ${VPS_HOST}"
+  echo "  Set MA_SCANNER_VPS_HOST in deploy/local/.env.deploy or pass --host root@SERVER_IP"
+  exit 1
+fi
+
+echo "${SEP}"
+echo "  MA Scanner — Push + Deploy to VPS"
+echo "  $(date '+%Y-%m-%d %H:%M:%S %Z')"
+echo "  VPS host    : ${VPS_HOST}"
+echo "  Remote dir  : ${REMOTE_DIR}"
+echo "  Branch      : ${BRANCH}"
+echo "${SEP}"
+
+# Wrapper: every SSH call is fatal on failure.
 ssh_run() {
-  ssh -T "${VPS_HOST}" "$@"
+  ssh -T -o BatchMode=yes -o ConnectTimeout=30 "${VPS_HOST}" "$@"
 }
 
 # ── [1] Local pre-flight ──────────────────────────────────────────────────────
 echo ""
-echo "[1/4] Local pre-flight"
+echo "[1/5] Local pre-flight"
 
 SOURCE_DIRTY="$(git status --short -- src/ deploy/ config/ scripts/ requirements.txt 2>/dev/null \
   | grep -v '^?' || true)"
@@ -105,9 +126,25 @@ fi
 ok "Local source tree is clean"
 ok "Branch: $(git log --oneline -1)"
 
-# ── [2] Push to remote ────────────────────────────────────────────────────────
+# ── [2] SSH preflight ─────────────────────────────────────────────────────────
 echo ""
-echo "[2/4] Push to origin"
+echo "[2/5] SSH preflight"
+SSH_TEST_OUT="$(ssh -T -o BatchMode=yes -o ConnectTimeout=10 "${VPS_HOST}" "echo ok" 2>&1)" || {
+  fail "SSH connection failed: ${VPS_HOST}"
+  echo "  Output: ${SSH_TEST_OUT}"
+  echo "  Test manually: ssh ${VPS_HOST}"
+  exit 1
+}
+if [[ "${SSH_TEST_OUT}" != "ok" ]]; then
+  fail "SSH preflight returned unexpected output: ${SSH_TEST_OUT}"
+  echo "  Test manually: ssh ${VPS_HOST}"
+  exit 1
+fi
+ok "SSH connection: ${VPS_HOST}"
+
+# ── [3] Push to remote ────────────────────────────────────────────────────────
+echo ""
+echo "[3/5] Push to origin"
 if [[ "${SKIP_PUSH}" == "true" ]]; then
   warn "Skipped (--skip-push)"
 else
@@ -115,22 +152,23 @@ else
   ok "Pushed ${BRANCH} to origin"
 fi
 
-# ── [3] VPS pull ──────────────────────────────────────────────────────────────
+# ── [4] VPS pull ──────────────────────────────────────────────────────────────
 echo ""
-echo "[3/4] VPS git pull"
+echo "[4/5] VPS git pull"
 if [[ "${SKIP_REMOTE_PULL}" == "true" ]]; then
   warn "Skipped (--skip-remote-pull)"
 else
-  # Check VPS for uncommitted source changes
-  VPS_DIRTY="$(ssh_run "cd ${REMOTE_DIR} && git status --short -- src/ deploy/ config/ scripts/ requirements.txt 2>/dev/null | grep -v '^?'" || true)"
+  # Check VPS for uncommitted source changes.
+  # grep exits 1 on no matches — use || true so set -e doesn't fire on clean tree.
+  VPS_STATUS_RAW="$(ssh_run "cd ${REMOTE_DIR} && git status --short -- src/ deploy/ config/ scripts/ requirements.txt 2>/dev/null")"
+  VPS_DIRTY="$(echo "${VPS_STATUS_RAW}" | grep -v '^?' || true)"
   if [[ -n "${VPS_DIRTY}" ]]; then
-    fail "VPS has uncommitted source changes — cannot pull without risk of conflict:"
+    fail "VPS has uncommitted source changes — cannot pull without conflict risk:"
     echo "${VPS_DIRTY}" | sed 's/^/        /'
     echo ""
     echo "  Resolve on VPS:"
     echo "    ssh ${VPS_HOST}"
-    echo "    cd ${REMOTE_DIR}"
-    echo "    git status"
+    echo "    cd ${REMOTE_DIR} && git status"
     exit 1
   fi
   ok "VPS source tree is clean"
@@ -145,9 +183,9 @@ else
   ok "VPS updated: ${VPS_HEAD}"
 fi
 
-# ── [4] Post-deploy action ────────────────────────────────────────────────────
+# ── [5] Post-deploy action ────────────────────────────────────────────────────
 echo ""
-echo "[4/4] Post-deploy action"
+echo "[5/5] Post-deploy action"
 if [[ "${RUN_FULL_CYCLE}" == "true" ]]; then
   echo "  Running full production cycle (--skip-scanner) on VPS..."
   ssh_run "sudo bash ${REMOTE_DIR}/deploy/vps/run_full_production_cycle.sh --skip-scanner"
@@ -170,7 +208,7 @@ echo "${SEP}"
 echo "  Deploy complete. $(date '+%Y-%m-%d %H:%M:%S %Z')"
 echo ""
 echo "  Common next steps:"
-echo "    Full cycle  : --run-full-cycle"
-echo "    AI email    : --run-ai-email"
-echo "    Health check: --run-health-check"
+echo "    Health check: bash deploy/local/push_and_deploy_to_vps.sh --run-health-check"
+echo "    AI email    : bash deploy/local/push_and_deploy_to_vps.sh --run-ai-email"
+echo "    Full cycle  : bash deploy/local/push_and_deploy_to_vps.sh --run-full-cycle"
 echo "${SEP}"
