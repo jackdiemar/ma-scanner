@@ -173,21 +173,42 @@ else
   fi
   ok "VPS source tree is clean"
 
-  # Auto-untrack runtime files before pull to prevent ff-merge failure when
-  # the scanner has modified git-tracked cache files since last commit.
-  RUNTIME_TRACKED="$(ssh_run "cd ${REMOTE_DIR} && git ls-files data/cache data/ai_research data/legacy-scans data/predictions data/tracking 2>/dev/null | wc -l | tr -d ' '")"
-  if [[ "${RUNTIME_TRACKED}" -gt 0 ]]; then
-    echo "  Pre-pull: untracking ${RUNTIME_TRACKED} runtime file(s) on VPS..."
-    ssh_run "cd ${REMOTE_DIR} && git ls-files data/cache data/ai_research data/legacy-scans data/predictions data/tracking 2>/dev/null | xargs --no-run-if-empty git rm --cached --quiet"
-    ok "Runtime files untracked (local copies preserved)"
-  fi
-
   if [[ "${RUN_CLEANUP}" == "true" ]]; then
     echo "  Running full git index cleanup on VPS..."
     ssh_run "bash ${REMOTE_DIR}/deploy/vps/clean_runtime_git_noise.sh ${REMOTE_DIR}" || true
   fi
 
-  ssh_run "cd ${REMOTE_DIR} && git fetch origin ${BRANCH} && git checkout ${BRANCH} && git pull --ff-only origin ${BRANCH}"
+  # Use a runtime-safe pull that:
+  # 1. Checks out source files from remote (no ff-merge conflict)
+  # 2. Removes all data/ from the git index (preserves files on disk)
+  # 3. Advances the branch pointer without touching the working tree
+  # This handles the case where prior commits removed large tracked data dirs
+  # (which would cause ff-merge to fail with "local changes / untracked files" errors).
+  echo "  Updating VPS..."
+  ssh_run "$(cat <<SSHEOF
+set -euo pipefail
+cd ${REMOTE_DIR}
+git fetch origin ${BRANCH}
+git checkout ${BRANCH}
+
+# Checkout source files from remote into working tree + index
+# (git ls-tree shows only what the new commit tracks — no data/ after cleanup commits)
+NEW_FILES=\$(git ls-tree -r --name-only origin/${BRANCH} 2>/dev/null)
+if [[ -n "\${NEW_FILES}" ]]; then
+  echo "\${NEW_FILES}" | xargs git checkout origin/${BRANCH} -- 2>/dev/null || true
+fi
+
+# Remove all data/ from index without touching working tree
+TRACKED_DATA=\$(git ls-files data/ 2>/dev/null | wc -l | tr -d ' ')
+if [[ "\${TRACKED_DATA}" -gt 0 ]]; then
+  git ls-files data/ | xargs git rm --cached --quiet 2>/dev/null || true
+  echo "  Untracked \${TRACKED_DATA} runtime file(s) from index"
+fi
+
+# Advance branch pointer to remote commit (no working tree changes)
+git update-ref refs/heads/${BRANCH} origin/${BRANCH}
+SSHEOF
+)"
   VPS_HEAD="$(ssh_run "cd ${REMOTE_DIR} && git log --oneline -1")"
   ok "VPS updated: ${VPS_HEAD}"
 fi
