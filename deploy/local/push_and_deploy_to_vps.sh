@@ -173,8 +173,17 @@ else
   fi
   ok "VPS source tree is clean"
 
+  # Auto-untrack runtime files before pull to prevent ff-merge failure when
+  # the scanner has modified git-tracked cache files since last commit.
+  RUNTIME_TRACKED="$(ssh_run "cd ${REMOTE_DIR} && git ls-files data/cache data/ai_research data/legacy-scans data/predictions data/tracking 2>/dev/null | wc -l | tr -d ' '")"
+  if [[ "${RUNTIME_TRACKED}" -gt 0 ]]; then
+    echo "  Pre-pull: untracking ${RUNTIME_TRACKED} runtime file(s) on VPS..."
+    ssh_run "cd ${REMOTE_DIR} && git ls-files data/cache data/ai_research data/legacy-scans data/predictions data/tracking 2>/dev/null | xargs --no-run-if-empty git rm --cached --quiet"
+    ok "Runtime files untracked (local copies preserved)"
+  fi
+
   if [[ "${RUN_CLEANUP}" == "true" ]]; then
-    echo "  Running git index cleanup on VPS..."
+    echo "  Running full git index cleanup on VPS..."
     ssh_run "bash ${REMOTE_DIR}/deploy/vps/clean_runtime_git_noise.sh ${REMOTE_DIR}" || true
   fi
 
