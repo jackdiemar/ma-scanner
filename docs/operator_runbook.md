@@ -244,10 +244,13 @@ python3 src/ai_research/run_ai_research.py --inspect-source-fields --limit 5
 ```
 
 ### Deploy new code from local machine
+See **Section 10** for the one-command local deploy script.
+
+Manual VPS steps:
 ```bash
 # On VPS:
 cd /opt/ma-scanner
-git pull origin ai-final
+git pull --ff-only origin ai-final
 sudo bash deploy/vps/run_full_production_cycle.sh --skip-scanner
 ```
 
@@ -260,3 +263,77 @@ sudo bash deploy/vps/run_full_production_cycle.sh --skip-scanner
 - Do not run auto-trading. This system outputs research classifications, not trade signals.
 - Do not act on AI output without independent human analyst review of source filings.
 - Do not use `--no-verify` on git commits without checking why hooks fail.
+
+---
+
+## 10. Local Deploy
+
+Push code from your local machine to the VPS in one command.
+
+### Setup (one-time)
+```bash
+cp deploy/local/.env.deploy.example deploy/local/.env.deploy
+# Edit .env.deploy — set MA_SCANNER_VPS_HOST=root@your_server_ip
+```
+
+### Push + run AI email (most common)
+```bash
+bash deploy/local/push_and_deploy_to_vps.sh --run-ai-email
+```
+
+### Push + run full production cycle
+```bash
+bash deploy/local/push_and_deploy_to_vps.sh --run-full-cycle
+```
+
+### Push only (no remote action)
+```bash
+bash deploy/local/push_and_deploy_to_vps.sh
+```
+
+### Push + cleanup runtime noise on VPS first
+```bash
+bash deploy/local/push_and_deploy_to_vps.sh --run-cleanup --run-full-cycle
+```
+
+### All options
+```
+--host HOST             VPS SSH target (overrides .env.deploy)
+--remote-dir DIR        Install dir on VPS (default: /opt/ma-scanner)
+--branch BRANCH         Git branch (default: ai-final)
+--run-full-cycle        Run full production cycle on VPS after pull
+--run-ai-email          Run AI email only on VPS after pull
+--run-scanner           Run scanner only on VPS after pull
+--run-cleanup           Run clean_runtime_git_noise.sh on VPS before pull
+--run-health-check      Run health check on VPS after deploy
+--skip-push             Skip git push (VPS pull only)
+--skip-remote-pull      Skip VPS pull (push only)
+```
+
+**Safety:** The script aborts if the VPS has uncommitted source changes. It uses `git pull --ff-only` to avoid accidental merge commits on the VPS.
+
+---
+
+## 11. Repo Hygiene
+
+### Check for tracked runtime artifacts
+```bash
+bash deploy/vps/check_repo_clean.sh
+```
+
+Checks: `config/.env` not tracked, no runtime data files tracked, source tree clean. Exits non-zero on any failure.
+
+### Untrack runtime artifacts (without deleting local files)
+```bash
+bash deploy/vps/clean_runtime_git_noise.sh
+git add .gitignore
+git commit -m "chore: untrack runtime artifacts from git index"
+```
+
+**What gets untracked:**
+- `data/cache/` — FMP/EDGAR API response cache
+- `data/ai_research/` — generated research outputs
+- `data/live_monitoring/` runtime files (alerts, state, logs)
+- `data/scans/scan_v12_*.json` — timestamped scan files
+- `data/legacy-scans/`, `data/predictions/`, `data/tracking/`
+- `.DS_Store` files everywhere
