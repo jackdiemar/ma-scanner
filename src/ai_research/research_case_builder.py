@@ -34,6 +34,7 @@ LIVE_DATA      = REPO / 'data' / 'live_monitoring'
 MEMO_PATH      = LIVE_DATA / 'latest_review_memo.md'
 ALERTS_PATH    = LIVE_DATA / 'latest_alerts.json'
 ALERT_LOG      = LIVE_DATA / 'live_alert_log.csv'
+RUNS_DIR       = LIVE_DATA / 'runs'
 CASES_BASE_DIR = REPO / 'data' / 'ai_research' / 'cases'
 
 _PRIORITY_ORDER = {
@@ -43,6 +44,48 @@ _PRIORITY_ORDER = {
     'DOWNGRADE_WATCH': 1,
     'SUPPRESS_FALSE_POSITIVE': 2,
 }
+
+# EDGAR URL pattern for company filings (ticker-based)
+_EDGAR_COMPANY_URL = (
+    'https://www.sec.gov/cgi-bin/browse-edgar'
+    '?action=getcompany&CIK={ticker}&type={form_type}'
+    '&dateb=&owner=include&count=10'
+)
+# EDGAR full-text search (returns JSON with filing list)
+_EDGAR_SEARCH_URL = (
+    'https://efts.sec.gov/LATEST/search-index'
+    '?q=%22{phrase}%22&forms={form}&dateRange=custom&startdt={start}&entity={ticker}'
+)
+
+_SIGNAL_TYPE_TO_EDGAR_FORM = {
+    'merger_agreement':              '8-K',
+    'strategic_alternatives_affirm': '8-K',
+    'strategic_alternatives':        '8-K',
+    'rofn':                          '8-K',
+    'rofr':                          '8-K',
+    'activist_13d':                  'SC+13D',
+    'activist_13g':                  'SC+13G',
+    'unsolicited_proposal':          '8-K',
+    'banker_retained':               '8-K',
+}
+
+_SIGNAL_TYPE_TO_TRIGGER_PHRASE = {
+    'merger_agreement':              'merger agreement',
+    'strategic_alternatives_affirm': 'strategic alternatives',
+    'strategic_alternatives':        'strategic alternatives',
+    'rofn':                          'right of first negotiation',
+    'rofr':                          'right of first refusal',
+    'activist_13d':                  'acquisition',
+    'unsolicited_proposal':          'acquisition proposal',
+    'banker_retained':               'strategic alternatives',
+}
+
+# Regex for extracting filing dates (YYYY-MM-DD) from flags text
+_DATE_RE   = re.compile(r'\((\d{4}-\d{2}-\d{2})')
+# Regex for recognizing SEC form type names
+_FORM_RE   = re.compile(
+    r'\b(8-K|DEF 14A|DEFM14A|SC TO-T|SC 13D|SC 13G|13D|13G|S-4|10-K|10-Q|DEF14A)\b'
+)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -59,6 +102,81 @@ def _load_json(path: Path) -> Any:
     except Exception as exc:
         print(f'  [WARN] Could not parse {path.name}: {exc}', file=sys.stderr)
         return None
+
+
+def _parse_flags_for_evidence(flags_str: str) -> dict:
+    """
+    Extract filing type, date, and context from the pipe-delimited flags string.
+
+    Examples:
+      "ACTIVIST 13D: Unknown (2026-04-28 00:00:00)|Change-of-control provisions in DEF 14A"
+        → {filing_type: "SC 13D", filing_date: "2026-04-28", context_hints: [...]}
+
+      "STRATEGIC ALTERNATIVES in 8-K — board hired a banker"
+        → {filing_type: "8-K", filing_date: "", context_hints: [...]}
+    """
+    if not flags_str:
+        return {'filing_type': '', 'filing_date': '', 'context_hints': []}
+
+    parts = [p.strip() for p in flags_str.split('|') if p.strip()]
+    dates = _DATE_RE.findall(flags_str)
+    forms = _FORM_RE.findall(flags_str)
+
+    # Normalise: prefer "8-K" over "DEF 14A" as primary filing_type for M&A signals
+    # because DEF 14A is almost always a secondary flag
+    primary_forms = [f for f in forms if '14A' not in f and '10-' not in f]
+    secondary_forms = [f for f in forms if f not in primary_forms]
+    filing_type = primary_forms[0] if primary_forms else (secondary_forms[0] if secondary_forms else '')
+    # Normalise "13D" → "SC 13D" for EDGAR URL construction
+    if filing_type in ('13D', 'SC 13D'):
+        filing_type = 'SC+13D'
+    elif filing_type in ('13G', 'SC 13G'):
+        filing_type = 'SC+13G'
+
+    return {
+        'filing_type':    filing_type,
+        'filing_date':    dates[0] if dates else '',
+        'context_hints':  parts,
+    }
+
+
+def _construct_edgar_url(ticker: str, signal_type: str, filing_type: str, trigger_phrase: str) -> str:
+    """
+    Build a best-effort EDGAR company filings URL for this ticker + signal combination.
+    Used when signal_source_url is empty (e.g. scanner ran in dry-run mode).
+    The returned URL points to EDGAR's company filing page — source_fetcher can fetch it.
+    """
+    form = filing_type or _SIGNAL_TYPE_TO_EDGAR_FORM.get(signal_type, '8-K')
+    # EDGAR uses SC+13D in URLs
+    if form in ('13D', 'SC 13D'):
+        form = 'SC+13D'
+    elif form in ('13G', 'SC 13G'):
+        form = 'SC+13G'
+    return _EDGAR_COMPANY_URL.format(ticker=ticker, form_type=form)
+
+
+def _is_scanner_dry_run() -> bool:
+    """
+    Detect whether the scanner ran in dry-run mode (no live EDGAR fetches).
+    Checks latest review memo header and most recent run snapshot.
+    """
+    if MEMO_PATH.exists():
+        try:
+            header = MEMO_PATH.read_text(encoding='utf-8', errors='replace')[:500]
+            if 'DRY RUN' in header.upper():
+                return True
+        except OSError:
+            pass
+    # Check the most recent run snapshot
+    try:
+        runs = sorted(RUNS_DIR.glob('run_*.json')) if RUNS_DIR.exists() else []
+        if runs:
+            data = json.loads(runs[-1].read_text(encoding='utf-8'))
+            if data.get('dry_run') is True:
+                return True
+    except Exception:
+        pass
+    return False
 
 
 def _load_csv_log(path: Path) -> list[dict]:
@@ -129,9 +247,30 @@ def _build_case_from_alert(
             raw = re.sub(r'^_(.*)_$', r'\1', raw, flags=re.DOTALL).strip()
             source_excerpt = raw if raw != 'No excerpt available — re-run scanner with Gate 1 patches active.' else ''
 
+    # ── Extract source fields — prefer explicit scanner fields, enrich from flags ──
+    signal_type   = str(alert.get('signal_type', '')).strip()
+    filing_type   = str(alert.get('signal_source_form', '')).strip()
+    filing_date   = str(alert.get('signal_source_date', '')).strip()
+    source_url    = str(alert.get('signal_source_url', '')).strip()
+    accession     = str(alert.get('signal_source_accession', '')).strip()
+    source_excerpt_raw = str(alert.get('signal_source_excerpt', '')).strip()
+
+    # Fallback: parse flags for filing type and date hints
+    flags_raw = str(alert.get('flags', '')).strip()
+    flags_evidence = _parse_flags_for_evidence(flags_raw)
+    if not filing_type and flags_evidence['filing_type']:
+        filing_type = flags_evidence['filing_type']
+    if not filing_date and flags_evidence['filing_date']:
+        filing_date = flags_evidence['filing_date']
+
+    # Fallback: construct EDGAR URL when scanner didn't populate source_url
+    scanner_dry_run = _is_scanner_dry_run()
+    constructed_edgar_url = ''
+    if not source_url and ticker:
+        constructed_edgar_url = _construct_edgar_url(ticker, signal_type, filing_type, trigger_phrase)
+
     # False positive flags
     fp_flags: list[str] = []
-    flags_raw = str(alert.get('flags', '')).strip()
     if flags_raw:
         fp_flags = [f.strip() for f in flags_raw.split('|') if f.strip()]
 
@@ -149,13 +288,17 @@ def _build_case_from_alert(
         'company_name':             company_name,
         'run_date':                 run_date,
         'signal_quality':           str(alert.get('signal_quality', '')).strip(),
-        'signal_type':              str(alert.get('signal_type', '')).strip(),
+        'signal_type':              signal_type,
         'recommended_scanner_action': str(alert.get('recommended_action', '')).strip(),
-        'filing_type':              str(alert.get('signal_source_form', '')).strip(),
-        'filing_date':              str(alert.get('signal_source_date', '')).strip(),
-        'source_url':               str(alert.get('signal_source_url', '')).strip(),
-        'source_excerpt':           source_excerpt,
+        'filing_type':              filing_type,
+        'filing_date':              filing_date,
+        'source_url':               source_url or constructed_edgar_url,
+        'source_url_constructed':   bool(constructed_edgar_url and not source_url),
+        'accession':                accession,
+        'source_excerpt':           source_excerpt or source_excerpt_raw,
         'trigger_phrase':           trigger_phrase,
+        'flags_context':            flags_evidence['context_hints'],
+        'scanner_dry_run':          scanner_dry_run,
         'market_cap':               alert.get('market_cap'),
         'price':                    alert.get('price'),
         'priced_in_flag':           str(alert.get('priced_in_flag', '')).strip(),
@@ -305,6 +448,87 @@ def _write_case_files(case: dict, cases_dir: Path) -> tuple[Path, Path]:
 
     md_path.write_text('\n'.join(lines), encoding='utf-8')
     return json_path, md_path
+
+
+# ── Source field inspector ────────────────────────────────────────────────────
+
+def inspect_source_fields(
+    ticker: str | None = None,
+    limit: int | None = None,
+) -> list[dict]:
+    """
+    For each alert, report what raw source fields are available in each data source.
+    Used by --inspect-source-fields CLI command.
+
+    Returns list of inspection dicts — one per ticker.
+    """
+    # Load from JSON (authoritative)
+    alerts_json = _load_alerts_from_json() if not ticker else [
+        a for a in _load_alerts_from_json() if str(a.get('ticker', '')).strip() == ticker
+    ]
+    # Load from CSV for cross-reference
+    csv_rows_by_ticker: dict[str, dict] = {}
+    for row in _load_csv_log(ALERT_LOG):
+        t = str(row.get('ticker', '')).strip()
+        if t:
+            csv_rows_by_ticker[t] = row  # last wins
+
+    scanner_dry_run = _is_scanner_dry_run()
+    alerts = alerts_json[:limit] if limit else alerts_json
+
+    results: list[dict] = []
+    for alert in alerts:
+        t = str(alert.get('ticker', '')).strip()
+        if not t:
+            continue
+
+        # JSON source fields
+        j_url     = str(alert.get('signal_source_url', '')).strip()
+        j_excerpt = str(alert.get('signal_source_excerpt', '')).strip()
+        j_date    = str(alert.get('signal_source_date', '')).strip()
+        j_form    = str(alert.get('signal_source_form', '')).strip()
+        j_acc     = str(alert.get('signal_source_accession', '')).strip()
+
+        # CSV source fields
+        csv_row   = csv_rows_by_ticker.get(t, {})
+        c_url     = str(csv_row.get('signal_source_url', '')).strip()
+        c_excerpt = str(csv_row.get('signal_source_excerpt', '')).strip()
+        c_date    = str(csv_row.get('signal_source_date', '')).strip()
+        c_form    = str(csv_row.get('signal_source_form', '')).strip()
+
+        # Enriched from flags
+        flags_evidence = _parse_flags_for_evidence(str(alert.get('flags', '')).strip())
+        signal_type    = str(alert.get('signal_type', '')).strip()
+        trigger        = str(alert.get('top_8k_phrase', '')).strip()
+        e_form   = flags_evidence['filing_type']
+        e_date   = flags_evidence['filing_date']
+        e_url    = _construct_edgar_url(t, signal_type, e_form, trigger) if not j_url else j_url
+
+        results.append({
+            'ticker':              t,
+            'signal_type':         signal_type,
+            'in_latest_alerts':    True,
+            'in_csv':              t in csv_rows_by_ticker,
+            'scanner_dry_run':     scanner_dry_run,
+            # Raw latest_alerts fields
+            'json_source_url':     j_url,
+            'json_excerpt_len':    len(j_excerpt),
+            'json_filing_date':    j_date,
+            'json_filing_form':    j_form,
+            'json_accession':      j_acc,
+            # Raw CSV fields
+            'csv_source_url':      c_url,
+            'csv_excerpt_len':     len(c_excerpt),
+            'csv_filing_date':     c_date,
+            'csv_filing_form':     c_form,
+            # After enrichment
+            'enriched_filing_type': e_form or j_form or c_form,
+            'enriched_filing_date': e_date or j_date or c_date,
+            'enriched_source_url':  e_url,
+            'source_url_is_constructed': bool(not j_url and not c_url),
+        })
+
+    return results
 
 
 # ── Alert loading ─────────────────────────────────────────────────────────────

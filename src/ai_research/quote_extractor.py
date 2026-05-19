@@ -178,7 +178,12 @@ def compute_evidence_quality(
     filing_date    = str(case.get('filing_date', '')).strip()
     trigger_phrase = str(case.get('trigger_phrase', '')).strip()
 
+    # A constructed EDGAR URL (company filing page) is lower value than a direct filing URL
+    url_is_constructed = bool(case.get('source_url_constructed', False))
+    scanner_dry_run    = bool(case.get('scanner_dry_run', False))
+
     has_source_url     = bool(source_url)
+    has_real_source_url = has_source_url and not url_is_constructed
     has_filing_type    = bool(filing_type)
     has_filing_date    = bool(filing_date)
     has_trigger_phrase = bool(trigger_phrase)
@@ -190,8 +195,13 @@ def compute_evidence_quality(
     full_text_length = len(filing_text) if filing_text else 0
 
     evidence_gaps: list[str] = []
-    if not has_source_url:
-        evidence_gaps.append('no source URL')
+    if scanner_dry_run:
+        evidence_gaps.append('scanner ran in dry-run mode — Gate 1 EDGAR fetch skipped; re-run scanner live to populate source fields')
+    if not has_real_source_url:
+        if url_is_constructed:
+            evidence_gaps.append('source URL is a constructed EDGAR search URL (not a direct filing link)')
+        else:
+            evidence_gaps.append('no source URL')
     if not has_exact_excerpt:
         evidence_gaps.append('source excerpt absent or < 50 chars')
     if not has_full_text:
@@ -204,13 +214,14 @@ def compute_evidence_quality(
         evidence_gaps.append('no trigger phrase identified')
 
     # ── Grade ─────────────────────────────────────────────────────────────────
-    if has_full_text and has_exact_excerpt and source_is_sec:
+    # Constructed EDGAR URLs cap at D — they're search pages, not direct filing text
+    if has_full_text and has_exact_excerpt and source_is_sec and has_real_source_url:
         grade = 'A'
-    elif has_exact_excerpt and source_is_sec:
+    elif has_exact_excerpt and source_is_sec and has_real_source_url:
         grade = 'B'
-    elif has_exact_excerpt and has_source_url:
+    elif has_exact_excerpt and has_real_source_url:
         grade = 'C'
-    elif has_source_url or len(source_excerpt) > 20:
+    elif has_real_source_url or url_is_constructed or len(source_excerpt) > 20:
         grade = 'D'
     else:
         grade = 'F'
@@ -219,7 +230,8 @@ def compute_evidence_quality(
 
     # Numeric score for sorting / display
     score = 0
-    if has_source_url:      score += 20
+    if has_real_source_url: score += 20
+    elif url_is_constructed: score += 8  # partial credit
     if has_filing_type:     score += 10
     if has_filing_date:     score += 10
     if has_exact_excerpt:   score += 25

@@ -534,16 +534,21 @@ def run_evidence_audit(
 
 def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
     """
-    Print full evidence detail for a single ticker: metadata, source URL,
-    excerpt, evidence quality, and extracted quotes.
+    Print full evidence detail for a single ticker: raw source fields from each
+    data source, enriched case fields, evidence quality, and extracted quotes.
     No LLM calls. No email.
     """
     _load_env()
-    from ai_research.research_case_builder import build_cases
+    from ai_research.research_case_builder import build_cases, inspect_source_fields
     from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
 
+    t = ticker.upper()
+
+    # Show raw source inspection first
+    raw_rows = inspect_source_fields(ticker=t, limit=1)
+
     cases = build_cases(
-        ticker=ticker.upper(),
+        ticker=t,
         limit=1,
         run_date=_today_utc(),
         dry_run=True,
@@ -557,27 +562,57 @@ def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
     case = cases[0]
 
     filing_text: str | None = None
+    fetch_status = 'not attempted'
     if fetch_text:
         from ai_research.source_fetcher import fetch_sec_filing_text_for_case
-        result = fetch_sec_filing_text_for_case(case)
-        filing_text = result.get('text') or None
-        if result.get('error'):
-            print(f'  [WARN] Fetch error: {result["error"]}')
+        fetch_result = fetch_sec_filing_text_for_case(case)
+        filing_text  = fetch_result.get('text') or None
+        fetch_status = 'cached' if fetch_result.get('cached') else (
+            f'FAIL: {fetch_result["error"]}' if fetch_result.get('error') else
+            f'ok ({len(filing_text or "")} chars)'
+        )
 
     quotes = extract_quotes(case, filing_text)
     eq     = compute_evidence_quality(case, filing_text, quotes)
 
     print(f'Evidence Detail: {ticker}')
     print('=' * 60)
+
+    # Raw fields per data source
+    if raw_rows:
+        r = raw_rows[0]
+        print('Raw source fields:')
+        print(f'  latest_alerts.json  : url={"yes" if r["json_source_url"] else "no"}'
+              f'  excerpt={r["json_excerpt_len"]}chars'
+              f'  date={r["json_filing_date"] or "—"}'
+              f'  form={r["json_filing_form"] or "—"}'
+              f'  accession={"yes" if r["json_accession"] else "no"}')
+        print(f'  live_alert_log.csv  : url={"yes" if r["csv_source_url"] else "no"}'
+              f'  excerpt={r["csv_excerpt_len"]}chars'
+              f'  date={r["csv_filing_date"] or "—"}'
+              f'  form={r["csv_filing_form"] or "—"}')
+        print(f'  Scanner dry-run     : {r["scanner_dry_run"]}')
+        print()
+
+    print('Enriched case fields:')
     print(f'  Ticker          : {case.get("ticker")}')
     print(f'  Company         : {case.get("company_name")}')
     print(f'  Signal quality  : {case.get("signal_quality")}')
     print(f'  Signal type     : {case.get("signal_type")}')
-    print(f'  Filing type     : {case.get("filing_type") or "—"}')
-    print(f'  Filing date     : {case.get("filing_date") or "—"}')
+    print(f'  Filing type     : {case.get("filing_type") or "—"} (enriched from flags)')
+    print(f'  Filing date     : {case.get("filing_date") or "—"} (enriched from flags)')
     print(f'  Source URL      : {case.get("source_url") or "—"}')
+    print(f'  URL constructed : {case.get("source_url_constructed", False)}')
+    print(f'  Accession       : {case.get("accession") or "—"}')
     print(f'  Trigger phrase  : {case.get("trigger_phrase") or "—"}')
+    if case.get('flags_context'):
+        print(f'  Flags context   :')
+        for fc in case['flags_context'][:5]:
+            print(f'    - {fc}')
+    if fetch_text:
+        print(f'  Fetch status    : {fetch_status}')
     print()
+
     print('Evidence Quality:')
     print(f'  Grade                 : {eq["evidence_grade"]}')
     print(f'  Score                 : {eq["evidence_completeness_score"]}/100')
@@ -726,7 +761,22 @@ def _parse_args(argv=None):
     p = argparse.ArgumentParser(
         description='AI research layer orchestrator - research gate, not trading signal.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            'Examples:\n'
+            '  --latest --limit 10\n'
+            '  --latest --limit 10 --evidence-audit\n'
+            '  --latest --limit 5  --evidence-audit --fetch-text\n'
+            '  --latest --limit 3  --dry-run\n'
+            '  --latest --limit 3  --plan\n'
+            '  --show-evidence APLS\n'
+            '  --inspect-source-fields --limit 10\n'
+            '  --status\n'
+            '  --email-latest-summary\n'
+        ),
     )
+    # Primary mode flags — ONLY --status, --show-evidence, --inspect-source-fields,
+    # and --email-latest-summary are truly standalone.
+    # --latest and --ticker can be combined with --evidence-audit, --plan, --dry-run.
     mode = p.add_mutually_exclusive_group(required=False)
     mode.add_argument('--latest', action='store_true',
                       help='Build cases + run gate from latest scanner outputs')
@@ -734,11 +784,16 @@ def _parse_args(argv=None):
                       help='Run for a single ticker')
     mode.add_argument('--status', action='store_true',
                       help='Print current watchlist + config summary')
-    mode.add_argument('--evidence-audit', action='store_true',
-                      help='Print evidence grade table for all cases — no LLM, no email')
     mode.add_argument('--show-evidence', metavar='TICKER',
                       help='Print full evidence detail for a single ticker — no LLM, no email')
+    mode.add_argument('--inspect-source-fields', action='store_true',
+                      help='Print source field availability table — no LLM, no email')
+    mode.add_argument('--email-latest-summary', action='store_true',
+                      help='Send latest AI summary email without rerunning LLM')
 
+    # Modifiers — can combine with --latest or --ticker
+    p.add_argument('--evidence-audit', action='store_true',
+                   help='Print evidence grade table (combine with --latest or --ticker)')
     p.add_argument('--plan', action='store_true',
                    help='Preview what would run - no files written, no LLM calls')
     p.add_argument('--limit',   type=int, default=None,
@@ -754,17 +809,68 @@ def _parse_args(argv=None):
                    help='Fetch full filing text from source URL (used with --evidence-audit, --show-evidence)')
     p.add_argument('--email', action='store_true',
                    help='Send branded AI research email after run')
-    p.add_argument('--email-latest-summary', action='store_true',
-                   help='Send latest AI summary email without rerunning LLM')
     args = p.parse_args(argv)
-    if (not args.status and not args.plan and not args.latest and not args.ticker
-            and not args.email_latest_summary and not args.evidence_audit
-            and not args.show_evidence):
+
+    has_primary = (args.latest or args.ticker or args.status or args.show_evidence
+                   or args.inspect_source_fields or args.email_latest_summary)
+    has_modifier = args.evidence_audit or args.plan or args.dry_run
+
+    if not has_primary and not has_modifier:
         p.error(
-            'one of --status, --plan, --latest, --ticker, --evidence-audit, '
-            '--show-evidence, or --email-latest-summary is required'
+            'specify a mode: --latest, --ticker TICKER, --status, --show-evidence TICKER, '
+            '--inspect-source-fields, or --email-latest-summary'
         )
+    if has_modifier and not (args.latest or args.ticker):
+        p.error('--evidence-audit, --plan, and --dry-run require --latest or --ticker')
+
     return args
+
+
+def run_inspect_source_fields(limit: int | None = None) -> int:
+    """
+    Print source field availability for each alert — shows raw fields from every
+    data source and whether enrichment (flags parsing, EDGAR URL construction) improved them.
+    No LLM calls. No email.
+    """
+    _load_env()
+    from ai_research.research_case_builder import inspect_source_fields
+
+    rows = inspect_source_fields(limit=limit)
+    if not rows:
+        print('[INFO] No alerts found. Run scanner first.')
+        return 0
+
+    print('Source Field Inspection')
+    print('=======================')
+    print(f'{"Ticker":<8}  {"Signal type":<30}  {"JSON URL":>7}  {"Exc":>4}  {"Date":>10}  {"Form":>8}  {"Constructed":>11}  {"DryRun":>6}')
+    print('-' * 105)
+    for r in rows:
+        print(
+            f'{r["ticker"]:<8}  {r["signal_type"]:<30}  '
+            f'{"yes" if r["json_source_url"] else "no":>7}  '
+            f'{r["json_excerpt_len"]:>4}  '
+            f'{(r["enriched_filing_date"] or "—"):>10}  '
+            f'{(r["enriched_filing_type"] or "—"):>8}  '
+            f'{"constructed" if r["source_url_is_constructed"] else "direct":>11}  '
+            f'{"yes" if r["scanner_dry_run"] else "no":>6}'
+        )
+
+    print()
+    # Show constructed URLs for each ticker
+    for r in rows:
+        if r['source_url_is_constructed']:
+            print(f'  {r["ticker"]} → {r["enriched_source_url"]}')
+
+    if rows and rows[0]['scanner_dry_run']:
+        print()
+        print(
+            'NOTE: Scanner has been running in dry-run mode. Gate 1 (EDGAR filing fetch)\n'
+            'was skipped for all runs. To populate source fields, re-run the live scanner\n'
+            'with LIVE_SCANNER_DRY_RUN=false on the VPS:\n'
+            '  systemctl start ma-scanner-live.service\n'
+            '  python3 src/live_monitoring/live_scanner_runner.py --once'
+        )
+    return 0
 
 
 def main(argv=None) -> int:
@@ -774,14 +880,13 @@ def main(argv=None) -> int:
         print_status()
         return 0
 
-    if args.evidence_audit:
-        ticker = None  # --evidence-audit has no --ticker; use --limit to filter
-        return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
-
     if args.show_evidence:
         return run_show_evidence(args.show_evidence.upper(), fetch_text=args.fetch_text)
 
-    # --email-latest-summary is independent of the main run modes
+    if args.inspect_source_fields:
+        return run_inspect_source_fields(limit=args.limit)
+
+    # --email-latest-summary is standalone
     if args.email_latest_summary:
         _load_env()
         from ai_research.ai_emailer import send_latest_summary_email
@@ -793,12 +898,17 @@ def main(argv=None) -> int:
 
     llm_cfg = load_llm_config()
     depth = args.depth or llm_cfg.default_depth
+    ticker = args.ticker.upper() if args.ticker else None
+
+    # --plan is a preview modifier for --latest / --ticker
     if args.plan:
-        ticker = args.ticker.upper() if args.ticker else None
         print_plan(ticker=ticker, limit=args.limit, depth=depth)
         return 0
 
-    ticker = args.ticker.upper() if args.ticker else None
+    # --evidence-audit is a modifier for --latest / --ticker
+    if args.evidence_audit:
+        return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
+
     return run(
         ticker        = ticker,
         limit         = args.limit,
