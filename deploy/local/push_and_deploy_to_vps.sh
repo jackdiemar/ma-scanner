@@ -191,16 +191,21 @@ cd ${REMOTE_DIR}
 git fetch origin ${BRANCH}
 git checkout ${BRANCH}
 
-# Get list of source files in remote commit (excludes data/ since cleanup commits
-# removed them from tracking, so ls-tree only returns source files now)
-SOURCE_FILES=\$(git ls-tree -r --name-only "origin/${BRANCH}" 2>/dev/null | grep -v '^config/\.env')
-if [[ -n "\${SOURCE_FILES}" ]]; then
-  echo "\${SOURCE_FILES}" | xargs git checkout "origin/${BRANCH}" -- 2>/dev/null || true
+# Get only files that CHANGED between VPS HEAD and remote (excludes data/ and config/.env).
+# Using diff instead of ls-tree keeps the file list small and avoids large xargs batches.
+CHANGED=\$(git diff --name-only HEAD "origin/${BRANCH}" 2>/dev/null \
+  | grep -v '^data/' | grep -v '^config/\.env$' || true)
+if [[ -n "\${CHANGED}" ]]; then
+  # Checkout changed source files from remote into working tree + index.
+  # xargs -r: skip if CHANGED is empty. Single-file (-I{}) avoids batch parse issues.
+  printf '%s\n' \${CHANGED} | xargs -r -I{} git checkout "origin/${BRANCH}" -- "{}" 2>&1 || true
 fi
 
-# Advance HEAD to remote commit + sync index to match (no working tree changes).
-# This handles any remaining index/HEAD divergence from our checkout operations.
+# Advance HEAD to remote commit + sync index to match exactly.
+# git reset --mixed: moves HEAD, updates index, leaves working tree untouched.
+# Runtime data on disk is fully preserved; tracked data/ files just become untracked.
 git reset --mixed "origin/${BRANCH}"
+echo "HEAD: \$(git log --oneline -1)"
 SSHEOF
 )"
   VPS_HEAD="$(ssh_run "cd ${REMOTE_DIR} && git log --oneline -1")"
