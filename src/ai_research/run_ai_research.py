@@ -442,6 +442,173 @@ def run(
     return 0
 
 
+# ── Evidence audit command ───────────────────────────────────────────────────
+
+def run_evidence_audit(
+    ticker: str | None = None,
+    limit: int | None = None,
+    fetch_text: bool = False,
+) -> int:
+    """
+    Build cases, compute evidence quality, optionally fetch filing text.
+    Prints evidence grade table. No LLM calls. No email.
+    """
+    _load_env()
+    from ai_research.research_case_builder import build_cases
+    from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
+
+    print('AI Research Layer — Evidence Audit')
+    print('===================================')
+    print(f'Ticker filter : {ticker or "all"}')
+    print(f'Limit         : {limit or "none"}')
+    print(f'Fetch text    : {_bool_text(fetch_text)}')
+    print()
+
+    cases = build_cases(
+        ticker=ticker,
+        limit=limit,
+        run_date=_today_utc(),
+        dry_run=True,
+        verbose=False,
+    )
+
+    if not cases:
+        print('[INFO] No cases found. Run scanner first.')
+        return 0
+
+    if fetch_text:
+        from ai_research.source_fetcher import fetch_sec_filing_text_for_case
+
+    rows: list[dict] = []
+    for case in cases:
+        t = case.get('ticker', '?')
+
+        filing_text: str | None = None
+        fetch_error: str | None = None
+        if fetch_text:
+            print(f'  Fetching {t} ...', end=' ', flush=True)
+            result = fetch_sec_filing_text_for_case(case)
+            filing_text = result.get('text') or None
+            fetch_error = result.get('error')
+            cached      = result.get('cached', False)
+            status      = 'cached' if cached else ('ok' if not fetch_error else f'FAIL: {fetch_error}')
+            print(status)
+
+        quotes = extract_quotes(case, filing_text)
+        eq     = compute_evidence_quality(case, filing_text, quotes)
+
+        # Update case evidence_quality with fetched-text results
+        case['evidence_quality'] = eq
+        rows.append({
+            'ticker':  t,
+            'grade':   eq['evidence_grade'],
+            'score':   eq['evidence_completeness_score'],
+            'excerpt': eq['excerpt_length'],
+            'full':    eq['full_text_length'],
+            'gaps':    len(eq['evidence_gaps']),
+            'quotes':  len(quotes),
+            'gaps_list': eq['evidence_gaps'],
+        })
+
+    print()
+    print(f'{"Ticker":<8}  {"Grade":>5}  {"Score":>5}  {"Excerpt":>7}  {"FullText":>8}  {"Gaps":>4}  {"Quotes":>6}')
+    print('-' * 60)
+    for r in rows:
+        print(
+            f'{r["ticker"]:<8}  {r["grade"]:>5}  {r["score"]:>5}  '
+            f'{r["excerpt"]:>7}  {r["full"]:>8}  {r["gaps"]:>4}  {r["quotes"]:>6}'
+        )
+
+    print()
+    for r in rows:
+        if r['gaps_list']:
+            print(f'  {r["ticker"]} gaps: {" | ".join(r["gaps_list"])}')
+
+    grade_counts: dict[str, int] = {}
+    for r in rows:
+        grade_counts[r['grade']] = grade_counts.get(r['grade'], 0) + 1
+    print()
+    print('Grade summary: ' + '  '.join(f'{g}={c}' for g, c in sorted(grade_counts.items())))
+    return 0
+
+
+def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
+    """
+    Print full evidence detail for a single ticker: metadata, source URL,
+    excerpt, evidence quality, and extracted quotes.
+    No LLM calls. No email.
+    """
+    _load_env()
+    from ai_research.research_case_builder import build_cases
+    from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
+
+    cases = build_cases(
+        ticker=ticker.upper(),
+        limit=1,
+        run_date=_today_utc(),
+        dry_run=True,
+        verbose=False,
+    )
+
+    if not cases:
+        print(f'[WARN] No case found for {ticker}. Run scanner first.')
+        return 1
+
+    case = cases[0]
+
+    filing_text: str | None = None
+    if fetch_text:
+        from ai_research.source_fetcher import fetch_sec_filing_text_for_case
+        result = fetch_sec_filing_text_for_case(case)
+        filing_text = result.get('text') or None
+        if result.get('error'):
+            print(f'  [WARN] Fetch error: {result["error"]}')
+
+    quotes = extract_quotes(case, filing_text)
+    eq     = compute_evidence_quality(case, filing_text, quotes)
+
+    print(f'Evidence Detail: {ticker}')
+    print('=' * 60)
+    print(f'  Ticker          : {case.get("ticker")}')
+    print(f'  Company         : {case.get("company_name")}')
+    print(f'  Signal quality  : {case.get("signal_quality")}')
+    print(f'  Signal type     : {case.get("signal_type")}')
+    print(f'  Filing type     : {case.get("filing_type") or "—"}')
+    print(f'  Filing date     : {case.get("filing_date") or "—"}')
+    print(f'  Source URL      : {case.get("source_url") or "—"}')
+    print(f'  Trigger phrase  : {case.get("trigger_phrase") or "—"}')
+    print()
+    print('Evidence Quality:')
+    print(f'  Grade                 : {eq["evidence_grade"]}')
+    print(f'  Score                 : {eq["evidence_completeness_score"]}/100')
+    print(f'  Can be confident      : {eq["can_make_confident_decision"]}')
+    print(f'  Source is SEC         : {eq["source_is_sec"]}')
+    print(f'  Excerpt length        : {eq["excerpt_length"]} chars')
+    print(f'  Full text length      : {eq["full_text_length"]} chars')
+    if eq['evidence_gaps']:
+        print('  Gaps:')
+        for g in eq['evidence_gaps']:
+            print(f'    - {g}')
+    print()
+
+    src_excerpt = case.get('source_excerpt', '') or ''
+    print('Source Excerpt:')
+    print(f'  {src_excerpt[:600] or "(none)"}')
+    print()
+
+    if quotes:
+        print(f'Extracted Quotes ({len(quotes)}):')
+        for i, q in enumerate(quotes, 1):
+            print(f'  [{i}] phrase="{q["phrase"]}" source={q["source"]}')
+            print(f'      reason : {q["reason"]}')
+            print(f'      context: {q["context"][:300]}')
+            print()
+    else:
+        print('No quotes extracted.')
+
+    return 0
+
+
 # ── Plan command ─────────────────────────────────────────────────────────────
 
 def print_plan(ticker: str | None = None, limit: int | None = None, depth: str | None = None) -> None:
@@ -567,6 +734,10 @@ def _parse_args(argv=None):
                       help='Run for a single ticker')
     mode.add_argument('--status', action='store_true',
                       help='Print current watchlist + config summary')
+    mode.add_argument('--evidence-audit', action='store_true',
+                      help='Print evidence grade table for all cases — no LLM, no email')
+    mode.add_argument('--show-evidence', metavar='TICKER',
+                      help='Print full evidence detail for a single ticker — no LLM, no email')
 
     p.add_argument('--plan', action='store_true',
                    help='Preview what would run - no files written, no LLM calls')
@@ -579,14 +750,20 @@ def _parse_args(argv=None):
                    help='Build cases but do not call LLM')
     p.add_argument('--force-refresh', action='store_true',
                    help='Bypass cache and rerun LLM for all cases')
+    p.add_argument('--fetch-text', action='store_true',
+                   help='Fetch full filing text from source URL (used with --evidence-audit, --show-evidence)')
     p.add_argument('--email', action='store_true',
                    help='Send branded AI research email after run')
     p.add_argument('--email-latest-summary', action='store_true',
                    help='Send latest AI summary email without rerunning LLM')
     args = p.parse_args(argv)
-    if (not args.status and not args.plan and not args.latest
-            and not args.ticker and not args.email_latest_summary):
-        p.error('one of --status, --plan, --latest, --ticker, or --email-latest-summary is required')
+    if (not args.status and not args.plan and not args.latest and not args.ticker
+            and not args.email_latest_summary and not args.evidence_audit
+            and not args.show_evidence):
+        p.error(
+            'one of --status, --plan, --latest, --ticker, --evidence-audit, '
+            '--show-evidence, or --email-latest-summary is required'
+        )
     return args
 
 
@@ -596,6 +773,13 @@ def main(argv=None) -> int:
     if args.status:
         print_status()
         return 0
+
+    if args.evidence_audit:
+        ticker = None  # --evidence-audit has no --ticker; use --limit to filter
+        return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
+
+    if args.show_evidence:
+        return run_show_evidence(args.show_evidence.upper(), fetch_text=args.fetch_text)
 
     # --email-latest-summary is independent of the main run modes
     if args.email_latest_summary:

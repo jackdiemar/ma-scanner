@@ -175,6 +175,24 @@ def _badge_html(action: str, label: str | None = None) -> str:
     )
 
 
+_EVIDENCE_GRADE_STYLES: dict[str, str] = {
+    'A': 'background:#166534;color:#bbf7d0',  # green
+    'B': 'background:#1e3a5f;color:#93c5fd',  # blue
+    'C': 'background:#713f12;color:#fde68a',  # amber
+    'D': 'background:#7f1d1d;color:#fca5a5',  # red-dim
+    'F': 'background:#1c1917;color:#78716c',  # stone
+}
+
+
+def _evidence_badge_html(grade: str) -> str:
+    style = _EVIDENCE_GRADE_STYLES.get(grade.upper(), _EVIDENCE_GRADE_STYLES['F'])
+    return (
+        f'<span style="display:inline-block;padding:2px 6px;border-radius:4px;'
+        f'font-size:10px;font-weight:700;letter-spacing:0.08em;{style}">'
+        f'EVIDENCE {_esc(grade.upper())}</span>'
+    )
+
+
 def _card_html(d: dict) -> str:
     ticker       = _esc(d.get('ticker', '?'))
     company      = _esc(d.get('company_name', ''))
@@ -190,8 +208,9 @@ def _card_html(d: dict) -> str:
     escalation_r = d.get('escalation_reason', '')
     human_r      = d.get('human_review_reason', '')
     change_dec   = d.get('what_would_change_the_decision', '')
+    ev_grade     = str(d.get('evidence_grade', 'F')).strip().upper() or 'F'
+    ev_gaps      = d.get('evidence_gaps', []) or []
 
-    # Pick the most relevant action-specific reason
     action_note = escalation_r or discard_r or human_r
 
     header_name = f'{ticker}'
@@ -204,6 +223,7 @@ def _card_html(d: dict) -> str:
         f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">'
         f'<span style="font-size:16px;font-weight:700;color:#e2e8f0;">{header_name}</span>'
         f'{_badge_html(action)}'
+        f'{_evidence_badge_html(ev_grade)}'
         f'<span style="font-size:11px;color:#64748b;margin-left:4px;">{_esc(cls)}</span>'
         f'</div>'
         # Confidence + score row
@@ -212,6 +232,18 @@ def _card_html(d: dict) -> str:
         f' &nbsp;|&nbsp; Score: <strong style="color:#cbd5e1;">{score}/100</strong>'
         f'</div>'
     )
+
+    # Evidence gaps warning (show only if D or F)
+    if ev_grade in ('D', 'F') and ev_gaps:
+        gaps_text = ' · '.join(_esc(g) for g in ev_gaps[:4])
+        html += (
+            f'<div style="background:#1c1917;border-left:3px solid #78716c;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:10px;">'
+            f'<span style="font-size:10px;color:#78716c;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">Evidence gaps</span><br>'
+            f'<span style="font-size:11px;color:#a8a29e;">{gaps_text}</span>'
+            f'</div>'
+        )
 
     # Short thesis
     if short_thesis:

@@ -144,7 +144,7 @@ def _build_case_from_alert(
     # Memo section snippet (first 1200 chars)
     memo_excerpt = (memo_section[:1200].strip() + ' ...') if len(memo_section) > 1200 else memo_section.strip()
 
-    return {
+    case: dict = {
         'ticker':                   ticker,
         'company_name':             company_name,
         'run_date':                 run_date,
@@ -178,6 +178,16 @@ def _build_case_from_alert(
         'ai_decision':              None,
         'ai_run_at':                None,
     }
+
+    # Evidence quality — computed from available metadata (no HTTP fetch at build time)
+    try:
+        from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
+        quotes = extract_quotes(case, filing_text=None)
+        case['evidence_quality'] = compute_evidence_quality(case, filing_text=None, quotes=quotes)
+    except Exception:
+        case['evidence_quality'] = {}
+
+    return case
 
 
 _REQUIRED_CASE_FIELDS = frozenset({

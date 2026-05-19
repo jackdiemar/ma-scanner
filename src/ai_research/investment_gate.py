@@ -111,7 +111,6 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'missing_information':             [],
         'next_research_steps':             [],
         'human_review_questions':          [],
-        # New fields
         'short_thesis':                    '',
         'why_this_matters':                '',
         'why_now':                         '',
@@ -127,6 +126,12 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'discard_reason':                  '',
         'escalation_reason':               '',
         'human_review_reason':             '',
+        # Evidence provenance fields (populated from case, not LLM)
+        'evidence_grade':                  'F',
+        'evidence_completeness_score':     0,
+        'evidence_gaps':                   [],
+        'filing_text_available':           False,
+        'primary_source_quotes':           [],
         'note':                            note,
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
@@ -249,7 +254,6 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         return []
 
     result = {
-        # ── Existing fields ─────────────────────────────────────────────────
         'ticker':                          ticker,
         'classification':                  classification,
         'research_action':                 research_action,
@@ -264,7 +268,6 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         'missing_information':             _list_of_str('missing_information'),
         'next_research_steps':             _list_of_str('next_research_steps'),
         'human_review_questions':          _list_of_str('human_review_questions'),
-        # ── New narrative fields ────────────────────────────────────────────
         'short_thesis':                    str(data.get('short_thesis', '')).strip(),
         'why_this_matters':                str(data.get('why_this_matters', '')).strip(),
         'why_now':                         str(data.get('why_now', '')).strip(),
@@ -280,6 +283,12 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         'discard_reason':                  str(data.get('discard_reason', '')).strip(),
         'escalation_reason':               str(data.get('escalation_reason', '')).strip(),
         'human_review_reason':             str(data.get('human_review_reason', '')).strip(),
+        # Evidence provenance — populated from case in run_gate, not from LLM
+        'evidence_grade':                  'F',
+        'evidence_completeness_score':     0,
+        'evidence_gaps':                   [],
+        'filing_text_available':           False,
+        'primary_source_quotes':           [],
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
 
@@ -358,6 +367,45 @@ def run_gate(
         }
 
     decision = _parse_llm_response(raw, ticker)
+
+    # ── Inject evidence provenance from case (not from LLM) ──────────────────
+    eq = case.get('evidence_quality', {}) or {}
+    eq_grade = str(eq.get('evidence_grade', 'F')).strip().upper() or 'F'
+    decision['evidence_grade']              = eq_grade
+    decision['evidence_completeness_score'] = int(eq.get('evidence_completeness_score', 0) or 0)
+    decision['evidence_gaps']               = list(eq.get('evidence_gaps', []) or [])
+    decision['filing_text_available']       = bool(eq.get('has_full_filing_text', False))
+    decision['primary_source_quotes']       = [
+        str(q.get('context', ''))[:300]
+        for q in (eq.get('top_evidence_quotes', []) or [])[:3]
+    ]
+
+    # ── Evidence gate enforcement ─────────────────────────────────────────────
+    # D or F grade: cap confidence and override actionable classifications
+    _ACTIONABLE = frozenset({'PRE_PROCESS_OPPORTUNITY', 'REAL_STRATEGIC_REVIEW'})
+    _SAFE_WITHOUT_EVIDENCE = frozenset({
+        'ALREADY_ANNOUNCED_DEAL', 'GENERIC_PARTNERSHIP_LANGUAGE',
+        'ASSET_SPECIFIC_ONLY', 'FALSE_POSITIVE', 'DISCARD',
+    })
+    if eq_grade in ('D', 'F'):
+        decision['confidence'] = min(decision['confidence'], 0.40)
+        if (decision['classification'] in _ACTIONABLE
+                or decision['research_action'] == 'ESCALATE'):
+            original_cls    = decision['classification']
+            original_action = decision['research_action']
+            decision['classification']  = 'NEEDS_HUMAN_REVIEW'
+            decision['research_action'] = 'NEEDS_HUMAN_REVIEW'
+            if not decision['human_review_reason']:
+                decision['human_review_reason'] = (
+                    f'Evidence grade {eq_grade}: insufficient source evidence to support '
+                    f'{original_cls}/{original_action}. Fetch and review the source filing '
+                    f'before escalating. Gaps: {", ".join(decision["evidence_gaps"]) or "see case file"}.'
+                )
+            print(
+                f'  [EVIDENCE GATE] {ticker}: {original_cls}/{original_action} → '
+                f'NEEDS_HUMAN_REVIEW (evidence_grade={eq_grade})'
+            )
+
     decision['fingerprint'] = fingerprint
     cache[fingerprint] = decision
     _save_gate_cache(cache)
@@ -365,6 +413,7 @@ def run_gate(
         f'  [GATE] {ticker} → {decision["classification"]} | '
         f'action={decision["research_action"]} | '
         f'confidence={decision["confidence"]:.2f} | '
-        f'score={decision["investability_score"]}'
+        f'score={decision["investability_score"]} | '
+        f'evidence={eq_grade}'
     )
     return decision

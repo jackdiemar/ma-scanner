@@ -211,6 +211,37 @@ def build_investment_gate_prompt(case: dict) -> str:
     )
     schema_json = json.dumps(_OUTPUT_SCHEMA, indent=2)
 
+    # Build evidence quality block
+    eq = case.get('evidence_quality', {})
+    eq_grade    = eq.get('evidence_grade', 'F') if eq else 'F'
+    eq_score    = eq.get('evidence_completeness_score', 0) if eq else 0
+    eq_gaps     = eq.get('evidence_gaps', []) if eq else []
+    eq_quotes   = eq.get('top_evidence_quotes', []) if eq else []
+    eq_can      = eq.get('can_make_confident_decision', False) if eq else False
+    eq_sec      = eq.get('source_is_sec', False) if eq else False
+
+    gaps_block = '\n'.join(f'  - {g}' for g in eq_gaps) if eq_gaps else '  None.'
+    quotes_block_lines: list[str] = []
+    for q in eq_quotes[:5]:
+        phrase  = q.get('phrase', '')
+        context = q.get('context', '')
+        reason  = q.get('reason', '')
+        src     = q.get('source', '')
+        quotes_block_lines.append(
+            f'  [{src}] phrase="{phrase}" reason="{reason}"\n  context: {context[:300]}'
+        )
+    quotes_block = '\n\n'.join(quotes_block_lines) if quotes_block_lines else '  No quotes extracted.'
+
+    d_or_f_warning = ''
+    if eq_grade in ('D', 'F'):
+        d_or_f_warning = (
+            '\nEVIDENCE WARNING: Evidence grade is ' + eq_grade + '. '
+            'Source excerpt is absent or very short. Full filing text was not fetched. '
+            'You MUST return NEEDS_HUMAN_REVIEW for any actionable classification (PRE_PROCESS_OPPORTUNITY, '
+            'REAL_STRATEGIC_REVIEW, ESCALATE) unless the signal is clearly already a signed merger agreement '
+            'or obviously a false positive. Set confidence <= 0.40.'
+        )
+
     prompt = f"""You are a biotech M&A research analyst reviewing scanner alerts for potential strategic activity.
 
 IMPORTANT INSTRUCTIONS:
@@ -223,8 +254,10 @@ IMPORTANT INSTRUCTIONS:
 - Elevate only: explicit company-level strategic review, banker retention confirmed, unsolicited acquisition proposal, superior proposal clause, formal sale process, board committee language suggesting real process underway.
 - A signed "merger agreement" in a filing usually means the deal is ALREADY ANNOUNCED — classify as ALREADY_ANNOUNCED_DEAL unless you have specific evidence otherwise.
 - Separate facts from inference. Every claim in your output must cite the source excerpt or a specific scanner flag.
+- You may ONLY reference evidence that appears in the source excerpt, extracted quotes, or scanner flags below.
+- Do NOT infer or hallucinate details not present in the provided evidence.
 - If the source excerpt is unavailable, acknowledge this limitation and lower your confidence accordingly.
-- Output ONLY valid JSON. No markdown code fences. No preamble. No explanation outside the JSON.
+- Output ONLY valid JSON. No markdown code fences. No preamble. No explanation outside the JSON.{d_or_f_warning}
 
 ---
 
@@ -244,6 +277,20 @@ Source excerpt (verbatim from filing or scanner, may be empty):
 
 Scanner memo section (context):
 {memo_block}
+
+---
+
+EVIDENCE QUALITY ASSESSMENT:
+  Grade          : {eq_grade}  (A=best, F=worst — determines confidence ceiling)
+  Score          : {eq_score}/100
+  Source is SEC  : {eq_sec}
+  Can be confident: {eq_can}
+
+Evidence gaps (what is missing):
+{gaps_block}
+
+Extracted evidence quotes (from excerpt and/or full filing text):
+{quotes_block}
 
 ---
 
