@@ -169,37 +169,68 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
     }
 
 
-_REQUIRED_DECISION_FIELDS = frozenset(
-    k for k in _dry_run_decision('SCHEMA_CHECK').keys()
-    if k != 'note'
-)
+# Core fields required for every decision (hard error if missing)
+_CORE_DECISION_FIELDS = frozenset({
+    'ticker', 'classification', 'research_action', 'confidence',
+    'investability_score', 'evidence_strength', 'priced_in_assessment',
+    'time_sensitivity', 'why_interesting', 'why_not', 'key_evidence',
+    'missing_information', 'next_research_steps', 'human_review_questions',
+    'short_thesis', 'evidence_summary', 'source_timing_analysis',
+    'signal_quality_analysis', 'key_reasons', 'operator_next_steps',
+    'what_would_change_the_decision', 'watch_triggers',
+    'discard_reason', 'escalation_reason', 'human_review_reason',
+    'evidence_grade', 'evidence_completeness_score', 'evidence_gaps',
+    'filing_text_available', 'primary_source_quotes', 'ran_at',
+})
+
+# Strategy enhancement fields — warn-only if missing (cached pre-upgrade decisions lack them)
+_STRATEGY_DECISION_FIELDS = frozenset({
+    'strategy_bucket', 'matched_true_signal_archetypes',
+    'matched_false_positive_archetypes', 'historical_analogue',
+    'true_signal_similarity_score', 'false_positive_similarity_score',
+    'timing_edge_score', 'company_level_process_score',
+    'process_specificity_score', 'investability_setup_score',
+    'deterministic_strategy_summary', 'why_this_fired',
+    'why_this_is_or_is_not_actionable', 'why_not_like_true_signal_examples',
+    'how_it_compares_to_mdvn_dmtx_tsro', 'what_market_may_already_know',
+    'what_operator_should_check_next', 'monitoring_plan', 'kill_criteria',
+    'escalation_criteria', 'next_filing_or_news_to_watch',
+    'suggested_follow_up_queries',
+})
+
+_REQUIRED_DECISION_FIELDS = _CORE_DECISION_FIELDS | _STRATEGY_DECISION_FIELDS
 
 _REQUIRED_NARRATIVE_FIELDS = frozenset({
     'short_thesis',
     'evidence_summary',
     'source_timing_analysis',
     'signal_quality_analysis',
-    'why_this_fired',
-    'how_it_compares_to_mdvn_dmtx_tsro',
 })
 
 
 def validate_decision_schema(decision: dict) -> list[str]:
     """Return schema validation errors for a gate decision dict."""
     errors: list[str] = []
-    missing = sorted(_REQUIRED_DECISION_FIELDS - set(decision.keys()))
-    if missing:
-        errors.append(f'Missing fields: {", ".join(missing)}')
+
+    # Hard errors: missing core fields
+    missing_core = sorted(_CORE_DECISION_FIELDS - set(decision.keys()))
+    if missing_core:
+        errors.append(f'Missing core fields: {", ".join(missing_core)}')
+
+    # Warnings: missing strategy fields (non-fatal — cached pre-upgrade decisions lack them)
+    missing_strategy = sorted(_STRATEGY_DECISION_FIELDS - set(decision.keys()))
+    if missing_strategy:
+        errors.append(f'WARNING: Missing strategy fields (stale cache — run with --force-refresh): {", ".join(missing_strategy)}')
+
     # Validate list fields
     for list_field in (
         'why_interesting', 'why_not', 'key_evidence', 'missing_information',
         'next_research_steps', 'human_review_questions',
         'key_reasons', 'operator_next_steps', 'watch_triggers',
-        'matched_true_signal_archetypes', 'matched_false_positive_archetypes',
-        'suggested_follow_up_queries',
     ):
         if not isinstance(decision.get(list_field, []), list):
             errors.append(f'{list_field} must be a list')
+
     # Warn if key narrative fields are empty (non-fatal)
     for field in _REQUIRED_NARRATIVE_FIELDS:
         if not str(decision.get(field, '')).strip():
