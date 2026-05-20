@@ -4,6 +4,11 @@ investment_gate.py — AI investment gate: takes a research case, runs LLM, retu
 In dry-run mode: returns a placeholder dict without calling the API.
 In live mode: calls LLMClient, parses JSON, validates schema.
 No transaction recommendations and no broker APIs.
+
+New in strategy upgrade:
+- Runs deterministic strategy_classifier before LLM
+- Injects strategy features into prompt
+- Adds strategy intelligence fields to decision dict
 """
 from __future__ import annotations
 
@@ -97,6 +102,7 @@ _VALID_TIME_SENSITIVITY  = frozenset({'HIGH', 'MEDIUM', 'LOW'})
 
 def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
     return {
+        # Core classification
         'ticker':                          ticker,
         'classification':                  'NEEDS_HUMAN_REVIEW',
         'research_action':                 'NEEDS_HUMAN_REVIEW',
@@ -105,12 +111,14 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'evidence_strength':               'LOW',
         'priced_in_assessment':            'UNKNOWN',
         'time_sensitivity':                'LOW',
+        # Existing list fields
         'why_interesting':                 [],
         'why_not':                         [],
         'key_evidence':                    [],
         'missing_information':             [],
         'next_research_steps':             [],
         'human_review_questions':          [],
+        # Narrative fields
         'short_thesis':                    '',
         'why_this_matters':                '',
         'why_now':                         '',
@@ -132,6 +140,30 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'evidence_gaps':                   [],
         'filing_text_available':           False,
         'primary_source_quotes':           [],
+        # Strategy intelligence fields
+        'strategy_bucket':                 '',
+        'matched_true_signal_archetypes':  [],
+        'matched_false_positive_archetypes': [],
+        'historical_analogue':             '',
+        'true_signal_similarity_score':    0,
+        'false_positive_similarity_score': 0,
+        'timing_edge_score':               0,
+        'company_level_process_score':     0,
+        'process_specificity_score':       0,
+        'investability_setup_score':       0,
+        'deterministic_strategy_summary':  '',
+        # Practical analysis fields
+        'why_this_fired':                  '',
+        'why_this_is_or_is_not_actionable': '',
+        'why_not_like_true_signal_examples': '',
+        'how_it_compares_to_mdvn_dmtx_tsro': '',
+        'what_market_may_already_know':    '',
+        'what_operator_should_check_next': '',
+        'monitoring_plan':                 '',
+        'kill_criteria':                   '',
+        'escalation_criteria':             '',
+        'next_filing_or_news_to_watch':    '',
+        'suggested_follow_up_queries':     [],
         'note':                            note,
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
@@ -142,12 +174,13 @@ _REQUIRED_DECISION_FIELDS = frozenset(
     if k != 'note'
 )
 
-
 _REQUIRED_NARRATIVE_FIELDS = frozenset({
     'short_thesis',
     'evidence_summary',
     'source_timing_analysis',
     'signal_quality_analysis',
+    'why_this_fired',
+    'how_it_compares_to_mdvn_dmtx_tsro',
 })
 
 
@@ -162,6 +195,8 @@ def validate_decision_schema(decision: dict) -> list[str]:
         'why_interesting', 'why_not', 'key_evidence', 'missing_information',
         'next_research_steps', 'human_review_questions',
         'key_reasons', 'operator_next_steps', 'watch_triggers',
+        'matched_true_signal_archetypes', 'matched_false_positive_archetypes',
+        'suggested_follow_up_queries',
     ):
         if not isinstance(decision.get(list_field, []), list):
             errors.append(f'{list_field} must be a list')
@@ -182,7 +217,6 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
     # Strip markdown fences if model produces them despite instructions
     if raw.startswith('```'):
         lines = raw.splitlines()
-        # Drop first and last fence lines
         inner = []
         fence_seen = False
         for line in lines:
@@ -210,7 +244,6 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
             'parse_error': 'LLM response was not a JSON object.',
         }
 
-    # Validate and coerce fields
     errors: list[str] = []
 
     classification = str(data.get('classification', '')).strip().upper()
@@ -253,7 +286,14 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
             return [str(v) for v in val if v]
         return []
 
+    def _int_score(key: str, default: int = 0) -> int:
+        try:
+            return max(0, min(100, int(data.get(key, default))))
+        except (TypeError, ValueError):
+            return default
+
     result = {
+        # Core classification
         'ticker':                          ticker,
         'classification':                  classification,
         'research_action':                 research_action,
@@ -262,12 +302,14 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         'evidence_strength':               evidence_strength,
         'priced_in_assessment':            priced_in,
         'time_sensitivity':                time_sensitivity,
+        # Existing list fields
         'why_interesting':                 _list_of_str('why_interesting'),
         'why_not':                         _list_of_str('why_not'),
         'key_evidence':                    _list_of_str('key_evidence'),
         'missing_information':             _list_of_str('missing_information'),
         'next_research_steps':             _list_of_str('next_research_steps'),
         'human_review_questions':          _list_of_str('human_review_questions'),
+        # Narrative fields
         'short_thesis':                    str(data.get('short_thesis', '')).strip(),
         'why_this_matters':                str(data.get('why_this_matters', '')).strip(),
         'why_now':                         str(data.get('why_now', '')).strip(),
@@ -289,6 +331,30 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         'evidence_gaps':                   [],
         'filing_text_available':           False,
         'primary_source_quotes':           [],
+        # Strategy intelligence fields
+        'strategy_bucket':                 str(data.get('strategy_bucket', '')).strip(),
+        'matched_true_signal_archetypes':  _list_of_str('matched_true_signal_archetypes'),
+        'matched_false_positive_archetypes': _list_of_str('matched_false_positive_archetypes'),
+        'historical_analogue':             str(data.get('historical_analogue', '')).strip(),
+        'true_signal_similarity_score':    _int_score('true_signal_similarity_score'),
+        'false_positive_similarity_score': _int_score('false_positive_similarity_score'),
+        'timing_edge_score':               _int_score('timing_edge_score'),
+        'company_level_process_score':     _int_score('company_level_process_score'),
+        'process_specificity_score':       _int_score('process_specificity_score'),
+        'investability_setup_score':       _int_score('investability_setup_score'),
+        'deterministic_strategy_summary':  str(data.get('deterministic_strategy_summary', '')).strip(),
+        # Practical analysis fields
+        'why_this_fired':                  str(data.get('why_this_fired', '')).strip(),
+        'why_this_is_or_is_not_actionable': str(data.get('why_this_is_or_is_not_actionable', '')).strip(),
+        'why_not_like_true_signal_examples': str(data.get('why_not_like_true_signal_examples', '')).strip(),
+        'how_it_compares_to_mdvn_dmtx_tsro': str(data.get('how_it_compares_to_mdvn_dmtx_tsro', '')).strip(),
+        'what_market_may_already_know':    str(data.get('what_market_may_already_know', '')).strip(),
+        'what_operator_should_check_next': str(data.get('what_operator_should_check_next', '')).strip(),
+        'monitoring_plan':                 str(data.get('monitoring_plan', '')).strip(),
+        'kill_criteria':                   str(data.get('kill_criteria', '')).strip(),
+        'escalation_criteria':             str(data.get('escalation_criteria', '')).strip(),
+        'next_filing_or_news_to_watch':    str(data.get('next_filing_or_news_to_watch', '')).strip(),
+        'suggested_follow_up_queries':     _list_of_str('suggested_follow_up_queries'),
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
     }
 
@@ -330,12 +396,24 @@ def run_gate(
     if dry_run is None:
         dry_run = client.config.dry_run
 
+    # ── Run deterministic strategy classifier (always, even in dry-run) ────────
+    strategy_features: dict | None = None
+    try:
+        from ai_research.strategy_classifier import run_strategy_classification
+        strategy_features = run_strategy_classification(case)
+    except Exception as exc:
+        print(f'  [WARN] Strategy classifier failed for {ticker}: {exc}', file=sys.stderr)
+        strategy_features = None
+
     if dry_run:
         print(f'  [DRY-RUN] Gate skipped for {ticker} (dry_run=true).')
-        return _dry_run_decision(ticker, note='DRY_RUN')
+        result = _dry_run_decision(ticker, note='DRY_RUN')
+        # Inject deterministic strategy features even in dry-run
+        if strategy_features:
+            result = _inject_strategy_features(result, strategy_features)
+        return result
 
     # Fingerprint cache — skip LLM if same case signal was processed today
-    # force_refresh=True bypasses cache and reruns the LLM
     fingerprint = _case_fingerprint(case)
     cache = _load_gate_cache()
     if fingerprint in cache and not force_refresh:
@@ -348,10 +426,13 @@ def run_gate(
 
     if not client.available:
         print(f'  [SKIP] AI not available for {ticker}: {client.status_message}')
-        return _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
+        result = _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
+        if strategy_features:
+            result = _inject_strategy_features(result, strategy_features)
+        return result
 
     from ai_research.prompts import build_investment_gate_prompt
-    prompt = build_investment_gate_prompt(case)
+    prompt = build_investment_gate_prompt(case, strategy_features=strategy_features)
 
     try:
         raw = client.complete(prompt)
@@ -368,6 +449,10 @@ def run_gate(
 
     decision = _parse_llm_response(raw, ticker)
 
+    # ── Merge deterministic strategy features (prefer LLM values, fallback to deterministic) ──
+    if strategy_features:
+        decision = _merge_strategy_features(decision, strategy_features)
+
     # ── Inject evidence provenance from case (not from LLM) ──────────────────
     eq = case.get('evidence_quality', {}) or {}
     eq_grade = str(eq.get('evidence_grade', 'F')).strip().upper() or 'F'
@@ -381,7 +466,6 @@ def run_gate(
     ]
 
     # ── Evidence gate enforcement ─────────────────────────────────────────────
-    # D or F grade: cap confidence and override actionable classifications
     _ACTIONABLE = frozenset({'PRE_PROCESS_OPPORTUNITY', 'REAL_STRATEGIC_REVIEW'})
     _SAFE_WITHOUT_EVIDENCE = frozenset({
         'ALREADY_ANNOUNCED_DEAL', 'GENERIC_PARTNERSHIP_LANGUAGE',
@@ -414,6 +498,57 @@ def run_gate(
         f'action={decision["research_action"]} | '
         f'confidence={decision["confidence"]:.2f} | '
         f'score={decision["investability_score"]} | '
-        f'evidence={eq_grade}'
+        f'evidence={eq_grade} | '
+        f'bucket={decision.get("strategy_bucket", "?")}'
     )
+    return decision
+
+
+# ── Strategy feature helpers ──────────────────────────────────────────────────
+
+def _inject_strategy_features(decision: dict, sf: dict) -> dict:
+    """Inject deterministic strategy features into a decision (dry-run / unavailable path)."""
+    decision['strategy_bucket']                  = sf.get('primary_strategy_bucket', '')
+    decision['matched_true_signal_archetypes']   = sf.get('matched_true_signal_archetypes', [])
+    decision['matched_false_positive_archetypes'] = sf.get('matched_false_positive_archetypes', [])
+    decision['historical_analogue']              = ', '.join(sf.get('historical_analogues', []))[:200]
+    decision['true_signal_similarity_score']     = 0
+    decision['false_positive_similarity_score']  = sf.get('false_positive_score', 0)
+    decision['timing_edge_score']                = sf.get('timing_edge_score', 0)
+    decision['company_level_process_score']      = sf.get('company_level_process_score', 0)
+    decision['process_specificity_score']        = sf.get('process_specificity_score', 0)
+    decision['investability_setup_score']        = sf.get('investability_setup_score', 0)
+    decision['deterministic_strategy_summary']   = sf.get('deterministic_reasoning', '')
+    return decision
+
+
+def _merge_strategy_features(decision: dict, sf: dict) -> dict:
+    """
+    Merge deterministic strategy features into LLM decision.
+    LLM values take precedence if non-empty; fallback to deterministic values.
+    """
+    # Always overwrite with deterministic archetype matches (more reliable than LLM)
+    if not decision.get('matched_true_signal_archetypes'):
+        decision['matched_true_signal_archetypes'] = sf.get('matched_true_signal_archetypes', [])
+    if not decision.get('matched_false_positive_archetypes'):
+        decision['matched_false_positive_archetypes'] = sf.get('matched_false_positive_archetypes', [])
+    if not decision.get('strategy_bucket'):
+        decision['strategy_bucket'] = sf.get('primary_strategy_bucket', '')
+    if not decision.get('historical_analogue'):
+        decision['historical_analogue'] = ', '.join(sf.get('historical_analogues', []))[:200]
+    if not decision.get('deterministic_strategy_summary'):
+        decision['deterministic_strategy_summary'] = sf.get('deterministic_reasoning', '')
+
+    # Fill numeric scores if LLM left them at zero
+    for field, sf_key in [
+        ('timing_edge_score',           'timing_edge_score'),
+        ('company_level_process_score', 'company_level_process_score'),
+        ('process_specificity_score',   'process_specificity_score'),
+        ('investability_setup_score',   'investability_setup_score'),
+    ]:
+        if not decision.get(field):
+            decision[field] = sf.get(sf_key, 0)
+    if not decision.get('false_positive_similarity_score'):
+        decision['false_positive_similarity_score'] = sf.get('false_positive_score', 0)
+
     return decision

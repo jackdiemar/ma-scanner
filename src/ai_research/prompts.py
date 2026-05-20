@@ -1,13 +1,13 @@
 """
 prompts.py — Prompt construction for the AI investment gate.
 
-build_investment_gate_prompt(case: dict) -> str
+build_investment_gate_prompt(case: dict, strategy_features: dict | None) -> str
 
-Returns a prompt that instructs the model to:
-  - Classify whether the alert deserves deeper human research
-  - Be skeptical and identify false positives
-  - Cite the source excerpt provided
-  - Separate facts from inference
+Returns a strategy-calibrated prompt that instructs the model to:
+  - Apply our historical base rates and true-signal taxonomy
+  - Explicitly compare the case to MDVN, DMTX, TSRO
+  - Identify which false-positive archetype applies
+  - Use deterministic pre-LLM strategy features
   - Fill every field in the expanded output schema
   - Output ONLY valid JSON matching the gate schema
 """
@@ -86,7 +86,7 @@ _RESEARCH_ACTION_DESCRIPTIONS = {
 }
 
 _OUTPUT_SCHEMA = {
-    # ── Existing fields ─────────────────────────────────────────────────────
+    # ── Core classification ────────────────────────────────────────────────
     'ticker': 'string',
     'classification': ' | '.join(_CLASSIFICATION_DESCRIPTIONS.keys()),
     'research_action': ' | '.join(_RESEARCH_ACTION_DESCRIPTIONS.keys()),
@@ -95,13 +95,14 @@ _OUTPUT_SCHEMA = {
     'evidence_strength': 'HIGH | MEDIUM | LOW',
     'priced_in_assessment': 'NOT_PRICED_IN | PARTLY_REPRICED | LIKELY_PRICED_IN | UNKNOWN',
     'time_sensitivity': 'HIGH | MEDIUM | LOW',
+    # ── Existing list fields ───────────────────────────────────────────────
     'why_interesting': ['list of strings — facts supporting research value'],
     'why_not': ['list of strings — facts reducing research value or signalling FP'],
     'key_evidence': ['list of strings — specific phrases or facts cited from the source'],
     'missing_information': ['list of strings — what would confirm or deny the thesis'],
     'next_research_steps': ['list of strings — concrete analyst actions'],
     'human_review_questions': ['list of strings — specific questions for a human reviewer'],
-    # ── New fields ──────────────────────────────────────────────────────────
+    # ── Narrative fields ───────────────────────────────────────────────────
     'short_thesis': '1-2 sentence direct statement of what this case is and whether it is actionable',
     'why_this_matters': 'Why this signal type is or is not strategically significant',
     'why_now': 'Timing context — is the signal fresh, stale, post-announcement?',
@@ -117,20 +118,93 @@ _OUTPUT_SCHEMA = {
     'discard_reason': 'Required if action=DISCARD — single clearest reason to discard. Else empty string.',
     'escalation_reason': 'Required if action=ESCALATE — what makes this urgent. Else empty string.',
     'human_review_reason': 'Required if action=NEEDS_HUMAN_REVIEW — what human should look for. Else empty string.',
+    # ── Strategy intelligence fields (NEW) ────────────────────────────────
+    'strategy_bucket': 'Which strategy category this falls into — e.g. ALREADY_ANNOUNCED_DEAL, POTENTIAL_TRUE_SIGNAL, etc.',
+    'matched_true_signal_archetypes': ['list — which of PUBLIC_UNSOLICITED_PROPOSAL, SUPERIOR_PROPOSAL_OR_COMPETING_BID, CREDIBLE_MEDIA_SALE_PROCESS_REPORT apply'],
+    'matched_false_positive_archetypes': ['list — which FP archetypes apply (ALREADY_ANNOUNCED_MERGER, POST_ANNOUNCEMENT_PROXY_BACKGROUND, etc.)'],
+    'historical_analogue': 'Which historical case this most resembles — MDVN, DMTX, TSRO, or none',
+    'true_signal_similarity_score': 'integer 0–100 — how similar to MDVN/DMTX/TSRO true signal archetypes',
+    'false_positive_similarity_score': 'integer 0–100 — how similar to known false-positive archetypes',
+    'timing_edge_score': 'integer 0–100 — likelihood pre-announcement timing edge is still open',
+    'company_level_process_score': 'integer 0–100 — probability this reflects a company-level strategic process',
+    'process_specificity_score': 'integer 0–100 — how specific and credible is the process language',
+    'investability_setup_score': 'integer 0–100 — composite research-priority score',
+    'deterministic_strategy_summary': 'One paragraph summarizing what the deterministic classifier found and why',
+    # ── Practical analysis fields (NEW) ───────────────────────────────────
+    'why_this_fired': 'Exact trigger phrase and scanner mechanism that caused this alert',
+    'why_this_is_or_is_not_actionable': 'Direct explanation of actionability — do not hedge',
+    'why_not_like_true_signal_examples': 'Explicit comparison: why this is or is not like MDVN/DMTX/TSRO',
+    'how_it_compares_to_mdvn_dmtx_tsro': 'Named comparison to MDVN (unsolicited), DMTX (superior proposal), TSRO (media report)',
+    'what_market_may_already_know': 'What market participants likely already know or have priced in',
+    'what_operator_should_check_next': 'Single most important next check for the operator',
+    'monitoring_plan': 'What to watch after this — specific filings, dates, or events',
+    'kill_criteria': 'What evidence would definitively close this case',
+    'escalation_criteria': 'What additional evidence would warrant escalation to ESCALATE',
+    'next_filing_or_news_to_watch': 'Specific filing type or news category to monitor',
+    'suggested_follow_up_queries': ['list — specific search terms or filing queries for follow-up'],
 }
 
 
-# ── Strategy context ──────────────────────────────────────────────────────────
+# ── Historical context block ──────────────────────────────────────────────────
+
+_HISTORICAL_CONTEXT = """HISTORICAL BASE RATES (from 50-case and 86-case reviews):
+- Only 3 of 50 small-cap biotech acquisitions (2015-2022) had true public prior process signals.
+- Base rate: ~6% in 50-case review, ~3.5% in expanded 86-case review.
+- Batch 71-100 found ZERO true public prior signals.
+- 70% of cases: DEAL_ANNOUNCEMENT_BASELINE — deal already announced when scanner fires.
+- 16% of cases: PRIVATE_BACKGROUND_ONLY — process was entirely private before announcement.
+- 6%  of cases: TRUE_PUBLIC_PRIOR_SIGNAL — what we are looking for.
+
+IMPLICATION: Default to skepticism. Most alerts are classifiable false positives.
+The edge is not predicting every deal. The edge is the rare case with SOURCE-BACKED
+PUBLIC process evidence BEFORE the market fully prices it.
+
+TRUE SIGNAL ARCHETYPES (the only 3 historical examples):
+
+1. MDVN (Medivation) — PUBLIC_UNSOLICITED_PROPOSAL:
+   - Sanofi made a public unsolicited proposal disclosed April 28, 2016
+   - 116 days before Pfizer's final acquisition announcement (August 22, 2016)
+   - Key features: named acquirer, public board response, company-level pressure, EDGAR-catchable
+   - Signal type: explicit public unsolicited acquisition proposal in 8-K or press release
+
+2. DMTX (Dimension Therapeutics) — SUPERIOR_PROPOSAL_OR_COMPETING_BID:
+   - Public superior proposal / competing-bid activity began August 25, 2017
+   - 39 days before Ultragenyx announcement (October 3, 2017)
+   - Key features: superior proposal clause triggered, competing bid, fiduciary process public
+   - Signal type: superior proposal / fiduciary out language publicly disclosed before definitive deal
+
+3. TSRO (Tesaro) — CREDIBLE_MEDIA_SALE_PROCESS_REPORT:
+   - External media report of sale process published November 16, 2018
+   - 17 days before GSK announcement (December 3, 2018)
+   - Key features: credible media outlet, named potential acquirers, before definitive agreement
+   - IMPORTANT CAVEAT: EDGAR-only workflow would NOT catch this — requires news integration
+   - Shortest lead time of the three examples
+
+FALSE POSITIVE TAXONOMY (what to name explicitly in your analysis):
+- ALREADY_ANNOUNCED_MERGER: definitive agreement already signed — no pre-announcement edge
+- POST_ANNOUNCEMENT_PROXY_BACKGROUND: proxy/SC 14D-9 background section — process is historical
+- ASSET_SPECIFIC_RIGHTS_ONLY: ROFR/ROFN on a specific asset — not company-level
+- GENERIC_RIGHTS_LANGUAGE: rights plan, poison pill, change-of-control clause — standard boilerplate
+- OFFERING_PROSPECTUS_RISK_FACTOR: S-1/424B risk factor language — required disclosure boilerplate
+- S8_EQUITY_PLAN_BOILERPLATE: S-8 vesting / change-of-control acceleration — compensation boilerplate
+- DIRECTOR_BIO_PRIOR_DEAL: director biography referencing a historical deal — not current process
+- WRONG_DIRECTION_ACQUISITION: this company is the acquirer, not the target
+- PRIVATE_BACKGROUND_ONLY: process was private; public evidence only appeared post-announcement
+- EQUITY_INVESTMENT_NO_ACQUISITION_OPTION: equity stake without company-level option
+- NEGATED_ACQUISITION_LANGUAGE: filing explicitly denies M&A activity
+- GENERIC_PARTNERSHIP_OR_LICENSE: collaboration/license deal — commercial, not M&A"""
+
 
 _STRATEGY_CONTEXT = """OUR RESEARCH STRATEGY:
 We are NOT trying to predict every biotech M&A deal.
-We ARE trying to identify public, pre-announcement process evidence suggesting a company may be in or near a strategic process — BEFORE the market fully prices it.
+We ARE trying to identify public, pre-announcement process evidence suggesting a company may be
+in or near a strategic process — BEFORE the market fully prices it.
 
 HIGH-VALUE signals (escalate or watch):
 - Explicit "strategic alternatives review" or "sale process" language in 8-K before a deal is announced
 - Company-level banker or financial advisor retention for strategic alternatives
 - Unsolicited acquisition proposal disclosed in 8-K or proxy
-- Superior proposal / competing bid language in merger proxy
+- Superior proposal / competing bid language in merger proxy BEFORE definitive deal
 - Credible activist 13D Item 4 acquisition pressure citing company-level strategic value
 - Board committee specifically formed to evaluate strategic alternatives
 
@@ -143,26 +217,40 @@ LOW-VALUE / DISCARD signals:
 - Stale signal (filing is months or years old)
 - Offering prospectus boilerplate change-of-control risk factor language
 - Negated language: "no acquisition proposal has been received"
+- S-8 equity plan change-of-control vesting provisions
+- Director biography references to prior deals
 
 CALIBRATION:
 - "merger agreement" in a filing almost always = ALREADY ANNOUNCED → ALREADY_ANNOUNCED_DEAL → DISCARD
-- "change of control" in executive comp = standard boilerplate → FALSE_POSITIVE unless tied to actual process
-- "strategic alternatives" in 10-K risk factor = boilerplate → FALSE_POSITIVE unless it's an 8-K disclosure of an actual review"""
+- "change of control" in executive comp = standard boilerplate → FALSE_POSITIVE
+- "strategic alternatives" in 10-K risk factor = boilerplate → FALSE_POSITIVE
+- "strategic alternatives" in 8-K with banker retention = HIGH VALUE → PRE_PROCESS_OPPORTUNITY
+
+REQUIRED ANALYSIS FORMAT:
+You MUST NOT simply say "ALREADY_ANNOUNCED_DEAL → DISCARD" without:
+1. Quoting the exact phrase from the filing that proves this
+2. Naming which FP archetype applies (e.g., ALREADY_ANNOUNCED_MERGER)
+3. Explaining why this kills the pre-process edge
+4. Stating what would change the decision
+5. Stating what (if anything) to monitor next
+6. Explicitly comparing to MDVN/DMTX/TSRO — even if the answer is "unlike all three"
+This requirement applies even when the answer is clearly DISCARD."""
 
 
 # ── Prompt builder ────────────────────────────────────────────────────────────
 
-def build_investment_gate_prompt(case: dict) -> str:
+def build_investment_gate_prompt(case: dict, strategy_features: dict | None = None) -> str:
     """
-    Build a structured diligence prompt for the investment gate.
+    Build a strategy-calibrated diligence prompt for the investment gate.
 
-    The model is instructed to classify whether the alert warrants deeper
-    human research. It is NOT asked to make transaction recommendations.
+    Args:
+        case:              Research case dict.
+        strategy_features: Output of strategy_classifier.run_strategy_classification(case).
+                           If None, prompt runs without deterministic pre-analysis.
     """
     ticker       = case.get('ticker', 'UNKNOWN')
     company_name = case.get('company_name', 'Unknown Company')
 
-    # Build the case summary block
     case_summary_fields = {
         'Ticker':              ticker,
         'Company':             company_name,
@@ -184,25 +272,22 @@ def build_investment_gate_prompt(case: dict) -> str:
         'First seen':          case.get('first_seen', ''),
         'Last seen':           case.get('last_seen', ''),
     }
-    scanner_flags = case.get('scanner_flags', [])
+    scanner_flags  = case.get('scanner_flags', [])
     source_excerpt = case.get('source_excerpt', '')
-    memo_excerpt = case.get('memo_section_excerpt', '')
+    memo_excerpt   = case.get('memo_section_excerpt', '')
 
     case_block = '\n'.join(
         f'  {k}: {v}' for k, v in case_summary_fields.items() if str(v).strip()
     )
-
     flags_block = (
         '\n'.join(f'  - {f}' for f in scanner_flags)
         if scanner_flags else '  None.'
     )
-
     excerpt_block = (
         source_excerpt.strip()
         if source_excerpt
         else 'No source excerpt available. The scanner did not retrieve filing text for this alert.'
     )
-
     memo_block = memo_excerpt.strip() if memo_excerpt else 'No memo section available.'
 
     classifications_ref = '\n'.join(
@@ -211,8 +296,8 @@ def build_investment_gate_prompt(case: dict) -> str:
     )
     schema_json = json.dumps(_OUTPUT_SCHEMA, indent=2)
 
-    # Build evidence quality block
-    eq = case.get('evidence_quality', {})
+    # Evidence quality block
+    eq          = case.get('evidence_quality', {})
     eq_grade    = eq.get('evidence_grade', 'F') if eq else 'F'
     eq_score    = eq.get('evidence_completeness_score', 0) if eq else 0
     eq_gaps     = eq.get('evidence_gaps', []) if eq else []
@@ -242,6 +327,13 @@ def build_investment_gate_prompt(case: dict) -> str:
             'or obviously a false positive. Set confidence <= 0.40.'
         )
 
+    # Strategy features block
+    if strategy_features:
+        from ai_research.strategy_classifier import format_strategy_features_for_prompt
+        strategy_block = format_strategy_features_for_prompt(strategy_features)
+    else:
+        strategy_block = 'DETERMINISTIC STRATEGY ANALYSIS: Not available (run strategy_classifier first).'
+
     prompt = f"""You are a biotech M&A research analyst reviewing scanner alerts for potential strategic activity.
 
 IMPORTANT INSTRUCTIONS:
@@ -249,6 +341,7 @@ IMPORTANT INSTRUCTIONS:
 - You are NOT advising anyone to transact in any security.
 - Your sole task is to classify whether this scanner alert warrants deeper human research.
 - Be skeptical. Most scanner alerts are false positives, already-announced deals, or low-signal noise.
+- Base rate: only ~3.5% of scanner hits are true public prior process signals.
 - Do not hype vague or aspirational language in filings.
 - Penalize heavily: signed merger agreements (already public, no edge), generic strategic partnership language, asset-specific ROFR/licensing unless company-level process is evidenced.
 - Elevate only: explicit company-level strategic review, banker retention confirmed, unsolicited acquisition proposal, superior proposal clause, formal sale process, board committee language suggesting real process underway.
@@ -261,7 +354,15 @@ IMPORTANT INSTRUCTIONS:
 
 ---
 
+{_HISTORICAL_CONTEXT}
+
+---
+
 {_STRATEGY_CONTEXT}
+
+---
+
+{strategy_block}
 
 ---
 
@@ -305,47 +406,67 @@ FIELD-BY-FIELD INSTRUCTIONS (fill every field — do not skip any):
    FALSE_POSITIVE, or GENERIC_PARTNERSHIP_LANGUAGE. Default to skepticism.
 
 2. short_thesis: Write 1-2 direct sentences saying what this case is and whether it is actionable.
-   Example: "APLS has a signed merger agreement with Apellis Pharmaceuticals announced publicly.
-   This is a completed deal; there is no pre-announcement edge."
 
-3. evidence_summary: Quote or paraphrase the actual trigger phrase or evidence from the source excerpt.
-   If excerpt is empty, say so explicitly: "No source excerpt was provided."
+3. evidence_summary: Quote the EXACT trigger phrase or key phrase from the source excerpt.
+   If excerpt is empty, say so explicitly.
 
-4. source_timing_analysis: State the filing date and today's approximate date. Assess whether the
-   opportunity window (if any) is still open. A filing from months ago with a signed merger agreement
-   means the window closed long ago.
+4. source_timing_analysis: State the filing date and assess whether the opportunity window is still open.
 
 5. signal_quality_analysis: Be specific. Name the trigger phrase. Explain whether it is strong
-   pre-announcement evidence (e.g., an actual 8-K disclosing a strategic review) or generic boilerplate
-   (e.g., a change-of-control clause in an employment agreement or a 10-K risk factor).
+   pre-announcement evidence or generic boilerplate.
 
-6. operator_next_steps: Be concrete. If action=DISCARD, write "Discard — [specific reason]."
-   If action=ESCALATE, write specific analyst actions. If action=WATCH, write what to monitor.
+6. why_this_fired: Name the exact scanner trigger and why the phrase matched.
 
-7. key_reasons: Each item is a standalone fact starting with a verb. 3-5 items.
-   Example: ["Contains signed merger agreement dated X", "Deal publicly announced on Y", "No pre-announcement edge remains"]
+7. how_it_compares_to_mdvn_dmtx_tsro: Write 2-3 sentences comparing this case to each of:
+   - MDVN (public unsolicited proposal, 116 days edge)
+   - DMTX (superior proposal/competing bid, 39 days edge)
+   - TSRO (credible media sale process report, 17 days edge)
+   Be explicit about whether it resembles any of them and why or why not.
 
-8. discard_reason: Fill if action=DISCARD. Leave as "" otherwise.
-   escalation_reason: Fill if action=ESCALATE. Leave as "" otherwise.
-   human_review_reason: Fill if action=NEEDS_HUMAN_REVIEW. Leave as "" otherwise.
+8. why_not_like_true_signal_examples: Explain specifically why this does or does not meet
+   the true-signal criteria. Quote the specific phrase that proves your conclusion.
 
-9. investability_score: Use these ranges:
+9. historical_analogue: State which historical case this most resembles (MDVN, DMTX, TSRO,
+   DEAL_ANNOUNCEMENT_BASELINE, PRIVATE_BACKGROUND_ONLY, ASSET_SPECIFIC_RIGHTS_ONLY) and why.
+
+10. matched_false_positive_archetypes: List all applicable FP archetypes from:
+    ALREADY_ANNOUNCED_MERGER | POST_ANNOUNCEMENT_PROXY_BACKGROUND | ASSET_SPECIFIC_RIGHTS_ONLY |
+    GENERIC_RIGHTS_LANGUAGE | OFFERING_PROSPECTUS_RISK_FACTOR | S8_EQUITY_PLAN_BOILERPLATE |
+    DIRECTOR_BIO_PRIOR_DEAL | WRONG_DIRECTION_ACQUISITION | PRIVATE_BACKGROUND_ONLY |
+    EQUITY_INVESTMENT_NO_ACQUISITION_OPTION | NEGATED_ACQUISITION_LANGUAGE | GENERIC_PARTNERSHIP_OR_LICENSE
+
+11. operator_next_steps: Be concrete. If action=DISCARD, write "Discard — [specific reason]."
+    If action=ESCALATE, write specific analyst actions. If action=WATCH, write what to monitor.
+
+12. kill_criteria: What evidence would definitively close this case (e.g., "Deal closes and delisted",
+    "Company confirms no process in 8-K").
+
+13. escalation_criteria: What additional evidence would upgrade this to ESCALATE.
+
+14. monitoring_plan: Specific next filing type, date, or event to watch.
+
+15. key_reasons: Each item is a standalone fact starting with a verb. 3-5 items.
+
+16. discard_reason / escalation_reason / human_review_reason: Fill the appropriate one.
+
+17. investability_score scoring:
    - 0-10: DISCARD or FALSE_POSITIVE (no research value)
    - 10-40: WATCH_ONLY (weak signal, monitor only)
    - 40-70: WATCH (real signal, monitor actively)
    - 70-100: ESCALATE or PRE_PROCESS_OPPORTUNITY (high priority, read filing now)
 
-10. watch_triggers: Only fill if action=WATCH. List specific events that would trigger escalation.
-    Example: ["Follow-on 8-K disclosing banker retention", "Price movement >15% without news"]
-
-11. what_would_change_the_decision: What new evidence or event would change your classification?
+18. Strategy score fields (true_signal_similarity_score, false_positive_similarity_score,
+    timing_edge_score, company_level_process_score, process_specificity_score,
+    investability_setup_score): Use the deterministic analysis above as your starting point,
+    then adjust based on the source excerpt content. Do not just copy the deterministic scores —
+    adjust if the excerpt shows different evidence.
 
 OUTPUT SCHEMA (output ONLY this JSON, no other text):
 {schema_json}
 
-Fill every field. For list fields, provide at least one item if relevant evidence exists; use [] only if truly nothing applies.
+Fill every field. For list fields, provide at least one item if relevant evidence exists.
 Set confidence based on how certain you are of your classification (0.0 = no idea, 1.0 = certain).
-Cite specific phrases from the source excerpt in key_evidence and evidence_summary where available.
+Cite specific phrases from the source excerpt in key_evidence and evidence_summary.
 
 Produce your JSON assessment now:"""
 

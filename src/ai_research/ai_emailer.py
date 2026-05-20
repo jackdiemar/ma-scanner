@@ -193,7 +193,18 @@ def _evidence_badge_html(grade: str) -> str:
     )
 
 
-def _card_html(d: dict) -> str:
+def _score_bar(score: int, label: str) -> str:
+    """Compact score bar for strategy scores."""
+    if not score:
+        return ''
+    color = '#16a34a' if score >= 60 else ('#d97706' if score >= 35 else '#dc2626')
+    return (
+        f'<span style="font-size:10px;color:#64748b;">{_esc(label)}: </span>'
+        f'<span style="font-size:10px;font-weight:700;color:{color};">{score}</span>'
+    )
+
+
+def _card_html(d: dict, strategic_brief: bool = False) -> str:
     ticker       = _esc(d.get('ticker', '?'))
     company      = _esc(d.get('company_name', ''))
     cls          = d.get('classification', '')
@@ -211,9 +222,25 @@ def _card_html(d: dict) -> str:
     ev_grade     = str(d.get('evidence_grade', 'F')).strip().upper() or 'F'
     ev_gaps      = d.get('evidence_gaps', []) or []
 
+    # Strategy fields
+    bucket       = d.get('strategy_bucket', '')
+    analogue     = d.get('historical_analogue', '')
+    ts_archetypes = d.get('matched_true_signal_archetypes', []) or []
+    fp_archetypes = d.get('matched_false_positive_archetypes', []) or []
+    why_fired    = d.get('why_this_fired', '')
+    mdvn_compare = d.get('how_it_compares_to_mdvn_dmtx_tsro', '')
+    kill_crit    = d.get('kill_criteria', '')
+    escalation_crit = d.get('escalation_criteria', '')
+    monitoring   = d.get('monitoring_plan', '')
+
+    company_score  = d.get('company_level_process_score', 0)
+    fp_score       = d.get('false_positive_similarity_score', 0)
+    timing_score   = d.get('timing_edge_score', 0)
+    process_score  = d.get('process_specificity_score', 0)
+
     action_note = escalation_r or discard_r or human_r
 
-    header_name = f'{ticker}'
+    header_name = ticker
     if company and company != ticker:
         header_name += f' — {company}'
 
@@ -227,11 +254,54 @@ def _card_html(d: dict) -> str:
         f'<span style="font-size:11px;color:#64748b;margin-left:4px;">{_esc(cls)}</span>'
         f'</div>'
         # Confidence + score row
-        f'<div style="font-size:12px;color:#94a3b8;margin-bottom:10px;">'
+        f'<div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">'
         f'Confidence: <strong style="color:#cbd5e1;">{int(confidence * 100)}%</strong>'
         f' &nbsp;|&nbsp; Score: <strong style="color:#cbd5e1;">{score}/100</strong>'
         f'</div>'
     )
+
+    # Strategy bucket + analogue (strategic brief only)
+    if strategic_brief and (bucket or analogue):
+        html += (
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:8px;">'
+        )
+        if bucket:
+            html += f'Bucket: <span style="color:#94a3b8;">{_esc(bucket)}</span>'
+        if analogue:
+            html += f'&nbsp; Analogue: <span style="color:#94a3b8;">{_esc(analogue[:80])}</span>'
+        html += '</div>'
+
+    # Strategy score row (strategic brief only)
+    if strategic_brief and any([company_score, fp_score, timing_score, process_score]):
+        scores_html = '&nbsp;&nbsp;'.join(filter(None, [
+            _score_bar(company_score, 'company'),
+            _score_bar(process_score, 'process'),
+            _score_bar(timing_score, 'timing'),
+            _score_bar(fp_score, 'fp-risk') if fp_score else '',
+        ]))
+        if scores_html:
+            html += (
+                f'<div style="margin-bottom:8px;">{scores_html}</div>'
+            )
+
+    # FP/TS archetype tags (strategic brief only)
+    if strategic_brief and fp_archetypes:
+        tags = ' '.join(
+            f'<span style="display:inline-block;padding:1px 6px;border-radius:3px;'
+            f'font-size:10px;background:#374151;color:#9ca3af;margin:2px;">'
+            f'{_esc(fp)}</span>'
+            for fp in fp_archetypes[:4]
+        )
+        html += f'<div style="margin-bottom:8px;">{tags}</div>'
+
+    if strategic_brief and ts_archetypes:
+        tags = ' '.join(
+            f'<span style="display:inline-block;padding:1px 6px;border-radius:3px;'
+            f'font-size:10px;background:#166534;color:#bbf7d0;margin:2px;">'
+            f'{_esc(ts)}</span>'
+            for ts in ts_archetypes[:3]
+        )
+        html += f'<div style="margin-bottom:8px;">{tags}</div>'
 
     # Evidence gaps warning (show only if D or F)
     if ev_grade in ('D', 'F') and ev_gaps:
@@ -242,6 +312,17 @@ def _card_html(d: dict) -> str:
             f'<span style="font-size:10px;color:#78716c;text-transform:uppercase;'
             f'letter-spacing:0.08em;">Evidence gaps</span><br>'
             f'<span style="font-size:11px;color:#a8a29e;">{gaps_text}</span>'
+            f'</div>'
+        )
+
+    # Why this fired (strategic brief only)
+    if strategic_brief and why_fired:
+        html += (
+            f'<div style="background:#0f1117;border-left:3px solid #1e3a5f;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:8px;">'
+            f'<span style="font-size:10px;color:#4a7fbf;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">Why this fired</span><br>'
+            f'<span style="font-size:11px;color:#94a3b8;">{_esc(why_fired[:300])}</span>'
             f'</div>'
         )
 
@@ -260,7 +341,18 @@ def _card_html(d: dict) -> str:
             f'<span style="font-size:11px;color:#64748b;text-transform:uppercase;'
             f'letter-spacing:0.08em;">Evidence</span><br>'
             f'<span style="font-size:12px;color:#94a3b8;line-height:1.5;">'
-            f'{_esc(evidence_sum)}</span>'
+            f'{_esc(evidence_sum[:400])}</span>'
+            f'</div>'
+        )
+
+    # MDVN/DMTX/TSRO comparison (strategic brief only)
+    if strategic_brief and mdvn_compare:
+        html += (
+            f'<div style="background:#0f1117;border-left:3px solid #3f3f3f;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:8px;">'
+            f'<span style="font-size:10px;color:#64748b;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">vs MDVN / DMTX / TSRO</span><br>'
+            f'<span style="font-size:11px;color:#94a3b8;">{_esc(mdvn_compare[:400])}</span>'
             f'</div>'
         )
 
@@ -298,21 +390,43 @@ def _card_html(d: dict) -> str:
     if action_note:
         html += (
             f'<div style="font-size:12px;color:#f59e0b;margin-bottom:8px;">'
-            f'{_esc(action_note)}</div>'
+            f'{_esc(action_note[:300])}</div>'
         )
+
+    # Kill / escalation criteria (strategic brief only)
+    if strategic_brief:
+        if kill_crit:
+            html += (
+                f'<div style="font-size:11px;color:#475569;margin-top:4px;">'
+                f'Kill: {_esc(kill_crit[:200])}</div>'
+            )
+        if escalation_crit:
+            html += (
+                f'<div style="font-size:11px;color:#475569;margin-top:4px;">'
+                f'Escalate if: {_esc(escalation_crit[:200])}</div>'
+            )
+        if monitoring:
+            html += (
+                f'<div style="font-size:11px;color:#475569;margin-top:4px;">'
+                f'Monitor: {_esc(monitoring[:200])}</div>'
+            )
 
     # What would change the decision
     if change_dec:
         html += (
             f'<div style="font-size:11px;color:#475569;font-style:italic;margin-top:8px;">'
-            f'Would change if: {_esc(change_dec)}</div>'
+            f'Would change if: {_esc(change_dec[:200])}</div>'
         )
 
     html += '</div>'
     return html
 
 
-def build_ai_email_html(decisions: list[dict], run_metadata: dict) -> str:
+def build_ai_email_html(
+    decisions: list[dict],
+    run_metadata: dict,
+    strategic_brief: bool = False,
+) -> str:
     """
     Build the full branded HTML email body. Uses inline styles throughout —
     email clients strip <style> blocks.
@@ -325,13 +439,30 @@ def build_ai_email_html(decisions: list[dict], run_metadata: dict) -> str:
     dry_run    = run_metadata.get('dry_run', False)
 
     # Count by action
-    escalate = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
-    watch    = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE'))
-    discard  = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
-    review   = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
+    escalate   = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
+    watch      = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE'))
+    discard    = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
+    review     = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
     watch_only = sum(1 for d in decisions if d.get('research_action') == 'WATCH_ONLY')
 
-    cards_html = ''.join(_card_html(d) for d in decisions) if decisions else (
+    # Strategy analysis (strategic brief only)
+    fp_counts: dict[str, int] = {}
+    ts_candidates: list[str] = []
+    already_announced = 0
+    for d in decisions:
+        for fp in (d.get('matched_false_positive_archetypes', []) or []):
+            fp_counts[fp] = fp_counts.get(fp, 0) + 1
+        if (d.get('matched_true_signal_archetypes')
+                and d.get('research_action') not in ('DISCARD',)):
+            ts_candidates.append(d.get('ticker', '?'))
+        if 'ALREADY_ANNOUNCED_MERGER' in (d.get('matched_false_positive_archetypes', []) or []):
+            already_announced += 1
+
+    dominant_fp = max(fp_counts, key=lambda k: fp_counts[k]) if fp_counts else None
+
+    cards_html = ''.join(
+        _card_html(d, strategic_brief=strategic_brief) for d in decisions
+    ) if decisions else (
         '<p style="color:#64748b;font-size:13px;">No decisions were made this run.</p>'
     )
 
@@ -342,6 +473,55 @@ def build_ai_email_html(decisions: list[dict], run_metadata: dict) -> str:
             'padding:10px 14px;margin-bottom:16px;">'
             '<span style="color:#f59e0b;font-size:12px;font-weight:600;">DRY RUN — LLM was not called. '
             'Decisions shown are placeholders.</span></div>'
+        )
+
+    # Strategy summary section (strategic brief only)
+    strategy_summary_html = ''
+    if strategic_brief and decisions:
+        if escalate == 0 and not ts_candidates:
+            strategy_read = (
+                f'Run reviewed {case_count} alerts. '
+                f'No MDVN/DMTX/TSRO-like signal detected. '
+                + (f'Dominant false-positive pattern: {_esc(dominant_fp)}. '
+                   if dominant_fp else '')
+                + 'Source-backed evidence shows no open company-level strategic process in this batch. '
+                'False positives filtered correctly. Continue monitoring for new process filings.'
+            )
+        elif escalate > 0:
+            strategy_read = (
+                f'{escalate} alert(s) escalated for immediate review. '
+                + (f'True-signal candidates: {_esc(", ".join(ts_candidates))}. '
+                   if ts_candidates else '')
+                + 'Verify source filings and corroborate with independent news sources before acting.'
+            )
+        else:
+            strategy_read = (
+                f'Partial signal(s) detected but insufficient for ESCALATE. '
+                + (f'True-signal candidates: {_esc(", ".join(ts_candidates))}. '
+                   if ts_candidates else '')
+                + 'Monitor for follow-on filings.'
+            )
+
+        dominant_fp_html = (
+            f'<div style="font-size:11px;color:#64748b;margin-top:4px;">'
+            f'Dominant FP: <span style="color:#94a3b8;">{_esc(dominant_fp)}</span>'
+            f' ({fp_counts.get(dominant_fp, 0)} of {len(decisions)} cases)</div>'
+        ) if dominant_fp else ''
+
+        ts_html = (
+            f'<div style="font-size:11px;color:#16a34a;margin-top:4px;">'
+            f'True-signal candidates: {_esc(", ".join(ts_candidates))}</div>'
+        ) if ts_candidates else ''
+
+        strategy_summary_html = (
+            f'<div style="background:#111827;border:1px solid #1f2937;border-radius:6px;'
+            f'padding:14px 16px;margin-bottom:16px;">'
+            f'<div style="font-size:11px;color:#c9a84c;text-transform:uppercase;'
+            f'letter-spacing:0.1em;margin-bottom:8px;">Strategy Read</div>'
+            f'<p style="font-size:12px;color:#94a3b8;line-height:1.6;margin:0 0 8px 0;">'
+            f'{strategy_read}</p>'
+            f'{dominant_fp_html}{ts_html}'
+            f'</div>'
         )
 
     html = f"""<!DOCTYPE html>
@@ -392,6 +572,7 @@ def build_ai_email_html(decisions: list[dict], run_metadata: dict) -> str:
 <!-- BODY -->
 <tr><td style="padding:16px 24px;">
   {dry_run_banner}
+  {strategy_summary_html}
   {cards_html}
 </td></tr>
 
@@ -417,12 +598,16 @@ def build_ai_email_html(decisions: list[dict], run_metadata: dict) -> str:
 
 # ── Plain text builder ────────────────────────────────────────────────────────
 
-def build_ai_email_plain(decisions: list[dict], run_metadata: dict) -> str:
+def build_ai_email_plain(
+    decisions: list[dict],
+    run_metadata: dict,
+    strategic_brief: bool = False,
+) -> str:
     """Plain text fallback. Clean and readable."""
-    run_at    = run_metadata.get('run_at', _utc_now())
-    model     = run_metadata.get('model', 'unknown')
+    run_at     = run_metadata.get('run_at', _utc_now())
+    model      = run_metadata.get('model', 'unknown')
     case_count = run_metadata.get('case_count', len(decisions))
-    dry_run   = run_metadata.get('dry_run', False)
+    dry_run    = run_metadata.get('dry_run', False)
 
     lines: list[str] = [
         'BLACK STARLIGHT CAPITAL',
@@ -436,22 +621,58 @@ def build_ai_email_plain(decisions: list[dict], run_metadata: dict) -> str:
     ]
 
     if decisions:
+        # Decision distribution
+        counts: dict[str, int] = {}
         for d in decisions:
-            ticker      = d.get('ticker', '?')
-            cls         = d.get('classification', '?')
-            action      = d.get('research_action', '?')
-            confidence  = d.get('confidence', 0.0)
+            a = d.get('research_action', '?')
+            counts[a] = counts.get(a, 0) + 1
+        lines.append('Decision distribution:')
+        for a, c in sorted(counts.items()):
+            lines.append(f'  {a}: {c}')
+        lines.append('')
+
+        # FP summary if strategic
+        if strategic_brief:
+            fp_all: dict[str, int] = {}
+            for d in decisions:
+                for fp in (d.get('matched_false_positive_archetypes', []) or []):
+                    fp_all[fp] = fp_all.get(fp, 0) + 1
+            if fp_all:
+                dominant = max(fp_all, key=lambda k: fp_all[k])
+                lines.append(f'Dominant false-positive pattern: {dominant}')
+                lines.append('')
+
+        for d in decisions:
+            ticker       = d.get('ticker', '?')
+            cls          = d.get('classification', '?')
+            action       = d.get('research_action', '?')
+            confidence   = d.get('confidence', 0.0)
+            ev_grade     = d.get('evidence_grade', 'F')
             short_thesis = d.get('short_thesis', '')
             key_reasons  = d.get('key_reasons', []) or []
             op_steps     = d.get('operator_next_steps', []) or []
+            bucket       = d.get('strategy_bucket', '')
+            analogue     = d.get('historical_analogue', '')
+            why_fired    = d.get('why_this_fired', '')
+            mdvn_cmp     = d.get('how_it_compares_to_mdvn_dmtx_tsro', '')
+            kill_crit    = d.get('kill_criteria', '')
 
             lines.append(f'── {ticker} ──')
             lines.append(f'Classification : {cls}')
             lines.append(f'Action         : {action}')
             lines.append(f'Confidence     : {int(confidence * 100)}%')
+            lines.append(f'Evidence grade : {ev_grade}')
+
+            if bucket:
+                lines.append(f'Strategy bucket: {bucket}')
+            if analogue:
+                lines.append(f'Analogue       : {analogue[:100]}')
 
             if short_thesis:
                 lines.append(f'Thesis         : {short_thesis}')
+
+            if strategic_brief and why_fired:
+                lines.append(f'Why fired      : {why_fired}')
 
             if key_reasons:
                 lines.append('Reasons:')
@@ -462,6 +683,12 @@ def build_ai_email_plain(decisions: list[dict], run_metadata: dict) -> str:
                 lines.append('Next steps:')
                 for i, s in enumerate(op_steps, 1):
                     lines.append(f'  {i}. {s}')
+
+            if strategic_brief and mdvn_cmp:
+                lines.append(f'vs MDVN/DMTX/TSRO: {mdvn_cmp[:300]}')
+
+            if strategic_brief and kill_crit:
+                lines.append(f'Kill criteria  : {kill_crit}')
 
             lines.append('')
     else:
@@ -585,6 +812,7 @@ def send_ai_research_email(
     decisions: list[dict],
     run_metadata: dict,
     force: bool = False,
+    strategic_brief: bool = False,
 ) -> dict[str, Any]:
     """
     Build and send the branded AI research email.
@@ -604,8 +832,8 @@ def send_ai_research_email(
         return {'sent': False, 'status': 'missing_config', 'error': msg, 'subject': ''}
 
     subject    = build_ai_email_subject(decisions, cfg['subject_prefix'])
-    body_html  = build_ai_email_html(decisions, run_metadata)
-    body_plain = build_ai_email_plain(decisions, run_metadata)
+    body_html  = build_ai_email_html(decisions, run_metadata, strategic_brief=strategic_brief)
+    body_plain = build_ai_email_plain(decisions, run_metadata, strategic_brief=strategic_brief)
 
     if cfg['provider'] == 'resend':
         result = _send_resend_html(subject, body_plain, body_html, cfg)

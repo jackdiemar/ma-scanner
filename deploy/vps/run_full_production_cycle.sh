@@ -256,7 +256,8 @@ else
     --latest \
     --limit "${LIMIT}" \
     --depth "${DEPTH}" \
-    --email
+    --email \
+    --strategic-brief
   AI_RC=$?
   set -e
 

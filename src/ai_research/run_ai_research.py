@@ -145,6 +145,134 @@ def _validate_decisions(decisions: list[dict]) -> list[str]:
     return errors
 
 
+# ── Operator action queue ─────────────────────────────────────────────────────
+
+OPERATOR_QUEUE_JSON = AI_RESEARCH_DIR / 'operator_action_queue.json'
+OPERATOR_QUEUE_MD   = AI_RESEARCH_DIR / 'operator_action_queue.md'
+
+
+def _write_operator_action_queue(decisions: list[dict], run_at: str) -> None:
+    """Write operator action queue JSON and markdown."""
+    AI_RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
+
+    _PRIORITY = {
+        'ESCALATE':          0,
+        'NEEDS_HUMAN_REVIEW': 1,
+        'WATCH':             2,
+        'WAIT_FOR_PRICE':    2,
+        'DISCARD':           3,
+        'WATCH_ONLY':        3,
+    }
+
+    entries: list[dict] = []
+    for d in decisions:
+        action   = d.get('research_action', 'DISCARD')
+        priority = _PRIORITY.get(action, 3)
+        eq_grade = str(d.get('evidence_grade', 'F')).upper()
+
+        # Downgrade NEEDS_HUMAN_REVIEW to P2 if evidence is F
+        if action == 'NEEDS_HUMAN_REVIEW' and eq_grade == 'F':
+            priority = 2
+
+        entries.append({
+            'ticker':         d.get('ticker', '?'),
+            'action':         action,
+            'priority':       f'P{priority}',
+            'why':            d.get('short_thesis', '') or d.get('discard_reason', ''),
+            'next_step':      (d.get('operator_next_steps', []) or [''])[0],
+            'evidence_grade': eq_grade,
+            'strategy_bucket': d.get('strategy_bucket', ''),
+            'watch_trigger':  (d.get('watch_triggers', []) or [''])[0],
+            'historical_analogue': d.get('historical_analogue', ''),
+        })
+
+    # Sort by priority then ticker
+    entries.sort(key=lambda e: (int(e['priority'][1:]), e['ticker']))
+
+    queue_data = {
+        'run_at':  run_at,
+        'count':   len(entries),
+        'entries': entries,
+    }
+
+    try:
+        OPERATOR_QUEUE_JSON.write_text(
+            json.dumps(queue_data, indent=2, default=str), encoding='utf-8'
+        )
+    except OSError:
+        pass
+
+    # Write markdown
+    lines = [
+        '# Operator Action Queue',
+        '',
+        f'**Run at:** {run_at}',
+        f'**Total entries:** {len(entries)}',
+        '',
+    ]
+
+    p0 = [e for e in entries if e['priority'] == 'P0']
+    p1 = [e for e in entries if e['priority'] == 'P1']
+    p2 = [e for e in entries if e['priority'] == 'P2']
+    p3 = [e for e in entries if e['priority'] == 'P3']
+
+    if p0:
+        lines += ['## P0 — ESCALATE (Immediate)', '']
+        for e in p0:
+            lines.append(f'### {e["ticker"]} — {e["action"]}')
+            lines.append(f'- **Evidence grade:** {e["evidence_grade"]}')
+            lines.append(f'- **Strategy bucket:** {e["strategy_bucket"]}')
+            lines.append(f'- **Why:** {e["why"]}')
+            lines.append(f'- **Next step:** {e["next_step"]}')
+            lines.append('')
+
+    if p1:
+        lines += ['## P1 — Human Review Required', '']
+        for e in p1:
+            lines.append(f'### {e["ticker"]} — {e["action"]}')
+            lines.append(f'- **Evidence grade:** {e["evidence_grade"]}')
+            lines.append(f'- **Why:** {e["why"]}')
+            lines.append(f'- **Next step:** {e["next_step"]}')
+            lines.append('')
+
+    if p2:
+        lines += ['## P2 — Watch', '']
+        for e in p2:
+            lines.append(
+                f'- **{e["ticker"]}** | {e["strategy_bucket"] or e["action"]} | '
+                f'evidence={e["evidence_grade"]} | {e["next_step"]}'
+            )
+        lines.append('')
+
+    if p3:
+        lines += ['## P3 — Monitor / Discard', '']
+        for e in p3:
+            wt = f' | watch: {e["watch_trigger"]}' if e.get('watch_trigger') else ''
+            lines.append(f'- **{e["ticker"]}** | {e["strategy_bucket"] or e["action"]}{wt}')
+        lines.append('')
+
+    if not any([p0, p1, p2]):
+        lines += [
+            '',
+            '_No immediate operator actions. '
+            'Continue monitoring for new company-level process evidence._',
+            '',
+        ]
+
+    lines += [
+        '---',
+        '_Queue is for internal research tracking only. Not investment advice._',
+    ]
+
+    try:
+        OPERATOR_QUEUE_MD.write_text('\n'.join(lines), encoding='utf-8')
+    except OSError:
+        pass
+
+    print(f'  [WROTE] {OPERATOR_QUEUE_JSON.relative_to(REPO)}')
+    print(f'  [WROTE] {OPERATOR_QUEUE_MD.relative_to(REPO)}')
+
+
 # ── Summary writer ────────────────────────────────────────────────────────────
 
 def _write_summary(
@@ -154,20 +282,101 @@ def _write_summary(
     dry_run: bool,
     ai_enabled: bool,
     watchlist_summary: dict,
+    strategic_brief: bool = False,
 ) -> None:
     AI_RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Counts
+    n_escalate = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
+    n_watch    = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE', 'WATCH_ONLY'))
+    n_discard  = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
+    n_review   = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
+
+    grade_counts: dict[str, int] = {}
+    for d in decisions:
+        g = str(d.get('evidence_grade', 'F')).upper()
+        grade_counts[g] = grade_counts.get(g, 0) + 1
+
+    fp_counts: dict[str, int] = {}
+    for d in decisions:
+        for fp in (d.get('matched_false_positive_archetypes', []) or []):
+            fp_counts[fp] = fp_counts.get(fp, 0) + 1
+
+    dominant_fp = max(fp_counts, key=lambda k: fp_counts[k]) if fp_counts else None
+    true_signal_candidates = [
+        d for d in decisions
+        if d.get('matched_true_signal_archetypes')
+        and d.get('research_action') not in ('DISCARD',)
+    ]
+    already_announced = sum(
+        1 for d in decisions
+        if 'ALREADY_ANNOUNCED_MERGER' in (d.get('matched_false_positive_archetypes', []) or [])
+        or d.get('classification') == 'ALREADY_ANNOUNCED_DEAL'
+    )
+
     lines = [
-        '# AI Research Layer - Latest Run Summary',
+        '# MA Scanner AI Research Brief',
         '',
-        f'**Run at:** {run_at}  ',
-        f'**AI enabled:** {ai_enabled}  ',
-        f'**Dry run:** {dry_run}  ',
-        f'**Cases built:** {len(cases)}  ',
-        f'**Decisions made:** {len(decisions)}  ',
+        f'**Run at:** {run_at}',
+        f'**AI enabled:** {ai_enabled}  |  **Dry run:** {dry_run}',
+        f'**Cases reviewed:** {len(cases)}  |  **Decisions:** {len(decisions)}',
         '',
         '---',
         '',
-        '## Watchlist Summary',
+        '## Executive Summary',
+        '',
+        f'| Decision | Count |',
+        f'|---|---|',
+        f'| ESCALATE | {n_escalate} |',
+        f'| WATCH | {n_watch} |',
+        f'| DISCARD | {n_discard} |',
+        f'| NEEDS_HUMAN_REVIEW | {n_review} |',
+        '',
+        '**Evidence grade distribution:** '
+        + '  '.join(f'{g}={c}' for g, c in sorted(grade_counts.items())),
+        '',
+        f'**True-signal candidates:** {len(true_signal_candidates)}',
+        f'**Resembling already-announced merger:** {already_announced}',
+        f'**Dominant false-positive archetype:** {dominant_fp or "none detected"}',
+        '',
+    ]
+
+    # Strategy read
+    if strategic_brief or decisions:
+        lines += ['## Strategy Read', '']
+        if not decisions:
+            lines.append('_No AI decisions this run._')
+        elif n_escalate == 0 and len(true_signal_candidates) == 0:
+            lines.append(
+                f'Run found {len(decisions)} alerts. '
+                f'No MDVN/DMTX/TSRO-like signal detected. '
+                f'All top cases were discarded or require human review. '
+                + (f'Dominant false-positive pattern: {dominant_fp}. '
+                   if dominant_fp else '')
+                + 'Source-backed evidence shows no open strategic process in this batch. '
+                'This is the expected outcome — the system correctly filtered noise. '
+                'Continue monitoring for new company-level process filings.'
+            )
+        else:
+            escalated = [d for d in decisions if d.get('research_action') == 'ESCALATE']
+            if escalated:
+                lines.append(
+                    f'{len(escalated)} case(s) escalated for immediate review. '
+                    f'True-signal candidates: {", ".join(d["ticker"] for d in true_signal_candidates)}. '
+                    'Review source filings and corroborate with independent news sources before acting.'
+                )
+            else:
+                lines.append(
+                    f'{len(true_signal_candidates)} case(s) matched partial true-signal criteria '
+                    f'but did not meet full ESCALATE threshold. Monitor for follow-on filings.'
+                )
+        lines.append('')
+
+    # Watchlist summary
+    lines += [
+        '---',
+        '',
+        '## Watchlist',
         '',
         f'| Status | Count |',
         f'|---|---|',
@@ -183,20 +392,84 @@ def _write_summary(
     ]
 
     if decisions:
-        lines += ['## Decisions This Run', '']
-        for d in decisions:
-            ticker = d.get('ticker', '?')
-            cls    = d.get('classification', '?')
-            action = d.get('research_action', '?')
-            conf   = d.get('confidence', 0.0)
-            score  = d.get('investability_score', 0)
-            note   = d.get('note', '')
-            lines.append(
-                f'- **{ticker}** → {cls} | action={action} | '
-                f'confidence={conf:.2f} | score={score}'
-                + (f' _{note}_' if note else '')
-            )
-        lines.append('')
+        if strategic_brief:
+            lines += ['## Detailed Case Analysis', '']
+            for d in decisions:
+                ticker  = d.get('ticker', '?')
+                cls     = d.get('classification', '?')
+                action  = d.get('research_action', '?')
+                conf    = d.get('confidence', 0.0)
+                score   = d.get('investability_score', 0)
+                grade   = d.get('evidence_grade', 'F')
+                bucket  = d.get('strategy_bucket', '')
+                analogue = d.get('historical_analogue', '')
+
+                lines.append(f'### {ticker} — {action} | {grade} evidence')
+                lines.append(f'**Classification:** {cls}  |  **Confidence:** {int(conf*100)}%  |  **Score:** {score}/100')
+                if bucket:
+                    lines.append(f'**Strategy bucket:** {bucket}')
+                if analogue:
+                    lines.append(f'**Historical analogue:** {analogue}')
+                lines.append('')
+
+                if d.get('short_thesis'):
+                    lines.append(f'**Thesis:** {d["short_thesis"]}')
+                    lines.append('')
+
+                if d.get('why_this_fired'):
+                    lines.append(f'**Why this fired:** {d["why_this_fired"]}')
+
+                if d.get('evidence_summary'):
+                    lines.append(f'**Evidence:** {d["evidence_summary"]}')
+
+                if d.get('how_it_compares_to_mdvn_dmtx_tsro'):
+                    lines.append(f'**vs MDVN/DMTX/TSRO:** {d["how_it_compares_to_mdvn_dmtx_tsro"]}')
+
+                fps = d.get('matched_false_positive_archetypes', [])
+                if fps:
+                    lines.append(f'**False-positive archetypes:** {", ".join(fps)}')
+
+                ts = d.get('matched_true_signal_archetypes', [])
+                if ts:
+                    lines.append(f'**True-signal archetypes matched:** {", ".join(ts)}')
+
+                op_steps = d.get('operator_next_steps', [])
+                if op_steps:
+                    lines.append('**Operator next steps:**')
+                    for s in op_steps:
+                        lines.append(f'  - {s}')
+
+                if d.get('kill_criteria'):
+                    lines.append(f'**Kill criteria:** {d["kill_criteria"]}')
+
+                if d.get('escalation_criteria'):
+                    lines.append(f'**Escalation criteria:** {d["escalation_criteria"]}')
+
+                if d.get('monitoring_plan'):
+                    lines.append(f'**Monitoring plan:** {d["monitoring_plan"]}')
+
+                note = d.get('note', '')
+                if note:
+                    lines.append(f'_Note: {note}_')
+
+                lines.append('')
+        else:
+            lines += ['## Decisions This Run', '']
+            for d in decisions:
+                ticker = d.get('ticker', '?')
+                cls    = d.get('classification', '?')
+                action = d.get('research_action', '?')
+                conf   = d.get('confidence', 0.0)
+                score  = d.get('investability_score', 0)
+                bucket = d.get('strategy_bucket', '')
+                note   = d.get('note', '')
+                lines.append(
+                    f'- **{ticker}** → {cls} | action={action} | '
+                    f'confidence={conf:.2f} | score={score}'
+                    + (f' | bucket={bucket}' if bucket else '')
+                    + (f' _{note}_' if note else '')
+                )
+            lines.append('')
     elif cases:
         lines += [
             '## Cases Built (No AI Run)',
@@ -252,18 +525,20 @@ def run(
     run_date: str | None = None,
     force_refresh: bool = False,
     send_email: bool = False,
+    strategic_brief: bool = False,
 ) -> int:
     """
     Main execution: build cases, optionally run gate, update watchlist, write summary.
 
     Args:
-        ticker:        Run for a single ticker instead of latest alerts.
-        limit:         Max cases to process.
-        dry_run:       Skip LLM calls; return placeholder decisions.
-        depth:         Research depth preset (fast_gate, deep).
-        run_date:      Override the run date (YYYY-MM-DD).
-        force_refresh: Bypass cache and rerun LLM for every case.
-        send_email:    Send branded AI research email after run completes.
+        ticker:          Run for a single ticker instead of latest alerts.
+        limit:           Max cases to process.
+        dry_run:         Skip LLM calls; return placeholder decisions.
+        depth:           Research depth preset (fast_gate, deep).
+        run_date:        Override the run date (YYYY-MM-DD).
+        force_refresh:   Bypass cache and rerun LLM for every case.
+        send_email:      Send branded AI research email after run completes.
+        strategic_brief: Include full strategy analysis in summary and email.
 
     Returns:
         Exit code (0 = success).
@@ -311,8 +586,9 @@ def run(
     print(f'Depth         : {depth}')
     print(f'Limit         : {limit or "none"}')
     print(f'Ticker        : {ticker or "all (from latest)"}')
-    print(f'Force refresh : {_bool_text(force_refresh)}')
-    print(f'Send email    : {_bool_text(send_email)}')
+    print(f'Force refresh    : {_bool_text(force_refresh)}')
+    print(f'Send email       : {_bool_text(send_email)}')
+    print(f'Strategic brief  : {_bool_text(strategic_brief)}')
     print()
 
     # ── 1. Build research cases ──────────────────────────────────────────────
@@ -343,6 +619,7 @@ def run(
             dry_run           = effective_dry_run,
             ai_enabled        = ai_ready,
             watchlist_summary = {},
+            strategic_brief   = strategic_brief,
         )
         return 0
 
@@ -419,7 +696,12 @@ def run(
         dry_run           = effective_dry_run,
         ai_enabled        = ai_ready,
         watchlist_summary = watchlist_summary,
+        strategic_brief   = strategic_brief,
     )
+
+    # ── 5b. Write operator action queue ─────────────────────────────────────
+    if decisions and not effective_dry_run:
+        _write_operator_action_queue(decisions, run_at)
 
     # ── 6. Send email (optional) ─────────────────────────────────────────────
     if send_email:
@@ -428,16 +710,17 @@ def run(
             if 'CACHE_HIT' in str(d.get('note', ''))
         )
         run_metadata = {
-            'run_at':       run_at,
-            'model':        getattr(llm_cfg, 'model', 'unknown'),
-            'ai_enabled':   ai_ready,
-            'dry_run':      effective_dry_run,
-            'case_count':   len(cases),
-            'decision_count': len(decisions),
-            'cache_hits':   cache_hits,
+            'run_at':          run_at,
+            'model':           getattr(llm_cfg, 'model', 'unknown'),
+            'ai_enabled':      ai_ready,
+            'dry_run':         effective_dry_run,
+            'case_count':      len(cases),
+            'decision_count':  len(decisions),
+            'cache_hits':      cache_hits,
+            'strategic_brief': strategic_brief,
         }
         from ai_research.ai_emailer import send_ai_research_email
-        send_ai_research_email(decisions, run_metadata)
+        send_ai_research_email(decisions, run_metadata, strategic_brief=strategic_brief)
 
     return 0
 
@@ -809,6 +1092,8 @@ def _parse_args(argv=None):
                    help='Fetch full filing text from source URL (used with --evidence-audit, --show-evidence)')
     p.add_argument('--email', action='store_true',
                    help='Send branded AI research email after run')
+    p.add_argument('--strategic-brief', action='store_true',
+                   help='Include full strategy analysis, historical analogues, and operator queue in summary and email')
     args = p.parse_args(argv)
 
     has_primary = (args.latest or args.ticker or args.status or args.show_evidence
@@ -910,12 +1195,13 @@ def main(argv=None) -> int:
         return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
 
     return run(
-        ticker        = ticker,
-        limit         = args.limit,
-        dry_run       = args.dry_run,
-        depth         = depth,
-        force_refresh = args.force_refresh,
-        send_email    = args.email,
+        ticker          = ticker,
+        limit           = args.limit,
+        dry_run         = args.dry_run,
+        depth           = depth,
+        force_refresh   = args.force_refresh,
+        send_email      = args.email,
+        strategic_brief = args.strategic_brief,
     )
 
 
