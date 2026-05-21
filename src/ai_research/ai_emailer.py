@@ -118,18 +118,51 @@ def load_ai_email_config() -> dict:
 
 # ── Subject builder ───────────────────────────────────────────────────────────
 
-def build_ai_email_subject(decisions: list[dict], prefix: str) -> str:
+def build_ai_email_subject(
+    decisions: list[dict],
+    prefix: str,
+    opportunity_queue: dict | None = None,
+) -> str:
     """
-    Build a descriptive subject line from the decision counts.
+    Build subject line. If opportunity_queue provided, reflects opportunity state.
 
-    Example: "MA Scanner AI Research Brief — 2 ESCALATE / 3 WATCH / 5 DISCARD"
+    Examples:
+      "MA Scanner AI Brief — 1 Escalate / 3 Watch"
+      "MA Scanner AI Brief — No New Opportunities / 10 Suppressed"
+      "MA Scanner AI Brief — 2 Watch / 1 Review"
     """
+    if opportunity_queue is not None:
+        no_opp     = opportunity_queue.get('no_opportunity', False)
+        suppressed = opportunity_queue.get('total_suppressed_full', 0)
+        p0 = len(opportunity_queue.get('P0_ESCALATE_NOW', []))
+        p1 = len(opportunity_queue.get('P1_HUMAN_REVIEW', []))
+        p2 = len(opportunity_queue.get('P2_WATCHLIST_SETUP', []))
+        p3 = len(opportunity_queue.get('P3_MONITOR_CHANGE', []))
+
+        if no_opp:
+            return f'{prefix} — No New Opportunities / {suppressed} Suppressed'
+
+        parts: list[str] = []
+        if p0:
+            parts.append(f'{p0} Escalate')
+        if p1:
+            parts.append(f'{p1} Review')
+        if p2:
+            parts.append(f'{p2} Watch')
+        if p3:
+            parts.append(f'{p3} Monitor')
+        if suppressed:
+            parts.append(f'{suppressed} Suppressed')
+        suffix = ' / '.join(parts) if parts else 'No Active Opportunities'
+        return f'{prefix} — {suffix}'
+
+    # Legacy path (no opportunity queue)
     escalate = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
     watch    = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE', 'WATCH_ONLY'))
     discard  = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
     review   = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
 
-    parts: list[str] = []
+    parts = []
     if escalate:
         parts.append(f'{escalate} ESCALATE')
     if watch:
@@ -509,14 +542,74 @@ def _card_html(d: dict, strategic_brief: bool = False) -> str:
     return html
 
 
+def _suppressed_archive_html(suppressed_decisions: list[dict], total_suppressed: int) -> str:
+    """Compact archive section for suppressed discards. Not shown as full cards."""
+    if not suppressed_decisions and not total_suppressed:
+        return ''
+
+    rows = ''
+    for d in suppressed_decisions[:5]:
+        ticker = _esc(d.get('ticker', '?'))
+        cls    = _esc(d.get('classification', '?'))
+        note   = _esc(str(d.get('note', '') or d.get('discard_reason', ''))[:80])
+        rows += (
+            f'<tr>'
+            f'<td style="font-size:11px;color:#94a3b8;padding:3px 8px;">{ticker}</td>'
+            f'<td style="font-size:11px;color:#64748b;padding:3px 8px;">{cls}</td>'
+            f'<td style="font-size:11px;color:#4b5563;padding:3px 8px;">{note}</td>'
+            f'</tr>'
+        )
+
+    shown    = len(suppressed_decisions)
+    hidden   = max(total_suppressed - shown, 0)
+    more_txt = f' (+{hidden} more)' if hidden else ''
+
+    return (
+        f'<div style="background:#111827;border:1px solid #1f2937;border-radius:6px;'
+        f'padding:12px 16px;margin-bottom:16px;">'
+        f'<div style="font-size:11px;color:#374151;text-transform:uppercase;'
+        f'letter-spacing:0.1em;margin-bottom:8px;">'
+        f'Suppressed Repeated Discards — {total_suppressed} total{more_txt}</div>'
+        f'<table cellpadding="0" cellspacing="0" width="100%">'
+        f'<tr>'
+        f'<th style="font-size:10px;color:#374151;text-align:left;padding:2px 8px;">Ticker</th>'
+        f'<th style="font-size:10px;color:#374151;text-align:left;padding:2px 8px;">Classification</th>'
+        f'<th style="font-size:10px;color:#374151;text-align:left;padding:2px 8px;">Reason</th>'
+        f'</tr>'
+        f'{rows}'
+        f'</table>'
+        f'<div style="font-size:10px;color:#374151;margin-top:8px;">'
+        f'These cases are suppressed because they are already-announced or repeated false-positive '
+        f'discards with no evidence change. They will reappear automatically if evidence changes.</div>'
+        f'</div>'
+    )
+
+
+def _no_opportunity_html(total_suppressed: int) -> str:
+    return (
+        f'<div style="background:#1e293b;border:1px solid #c9a84c;border-radius:6px;'
+        f'padding:14px 16px;margin-bottom:16px;">'
+        f'<div style="font-size:11px;color:#c9a84c;text-transform:uppercase;'
+        f'letter-spacing:0.1em;margin-bottom:8px;">No New Actionable Opportunities</div>'
+        f'<p style="font-size:12px;color:#94a3b8;line-height:1.6;margin:0;">'
+        f'{total_suppressed} repeated already-announced / false-positive discard case(s) were '
+        f'suppressed. No new process evidence, changed cases, or watchlist setups detected in '
+        f'this batch. Continue monitoring for new company-level process filings.</p>'
+        f'</div>'
+    )
+
+
 def build_ai_email_html(
     decisions: list[dict],
     run_metadata: dict,
     strategic_brief: bool = False,
+    opportunity_queue: dict | None = None,
 ) -> str:
     """
     Build the full branded HTML email body. Uses inline styles throughout —
     email clients strip <style> blocks.
+
+    opportunity_queue: if provided, splits decisions into active/suppressed sections.
     """
     run_at    = _esc(run_metadata.get('run_at', _utc_now()))
     model     = _esc(run_metadata.get('model', 'unknown'))
@@ -524,13 +617,32 @@ def build_ai_email_html(
     cache_hits = int(run_metadata.get('cache_hits', 0))
     ai_enabled = run_metadata.get('ai_enabled', False)
     dry_run    = run_metadata.get('dry_run', False)
+    opp_mode   = run_metadata.get('opportunity_mode', False)
+    suppressed_count = int(run_metadata.get('suppressed_count', 0))
 
-    # Count by action
-    escalate   = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
-    watch      = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE'))
-    discard    = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
-    review     = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
-    watch_only = sum(1 for d in decisions if d.get('research_action') == 'WATCH_ONLY')
+    # Split decisions for opportunity mode
+    active_decisions     = decisions
+    suppressed_decisions = []
+    total_suppressed     = 0
+    no_opportunity       = False
+
+    if opportunity_queue is not None:
+        total_suppressed = opportunity_queue.get('total_suppressed_full', 0)
+        no_opportunity   = opportunity_queue.get('no_opportunity', False)
+        # Build sets of active tickers from P0-P3
+        active_tickers: set[str] = set()
+        for tier in ('P0_ESCALATE_NOW', 'P1_HUMAN_REVIEW', 'P2_WATCHLIST_SETUP', 'P3_MONITOR_CHANGE'):
+            for e in opportunity_queue.get(tier, []):
+                active_tickers.add(str(e.get('ticker', '')).upper())
+        active_decisions     = [d for d in decisions if str(d.get('ticker', '')).upper() in active_tickers]
+        suppressed_decisions = [d for d in decisions if str(d.get('ticker', '')).upper() not in active_tickers]
+
+    # Count by action (active only)
+    escalate   = sum(1 for d in active_decisions if d.get('research_action') == 'ESCALATE')
+    watch      = sum(1 for d in active_decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE'))
+    discard    = sum(1 for d in active_decisions if d.get('research_action') == 'DISCARD')
+    review     = sum(1 for d in active_decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
+    watch_only = sum(1 for d in active_decisions if d.get('research_action') == 'WATCH_ONLY')
 
     # Strategy analysis (strategic brief only)
     fp_counts: dict[str, int] = {}
@@ -547,15 +659,29 @@ def build_ai_email_html(
 
     dominant_fp = max(fp_counts, key=lambda k: fp_counts[k]) if fp_counts else None
 
+    # In opportunity mode: render only active decisions as full cards
+    decisions_to_render = active_decisions if opportunity_queue is not None else decisions
     cards_html = ''.join(
-        _card_html(d, strategic_brief=strategic_brief) for d in decisions
-    ) if decisions else (
+        _card_html(d, strategic_brief=strategic_brief) for d in decisions_to_render
+    ) if decisions_to_render else (
+        '' if no_opportunity else
         '<p style="color:#64748b;font-size:13px;">No decisions were made this run.</p>'
     )
 
-    # Check if all top cases are already-announced
+    # No-opportunity notice (opportunity mode)
+    no_opportunity_html = _no_opportunity_html(total_suppressed) if no_opportunity else ''
+
+    # Suppressed archive (opportunity mode)
+    suppressed_archive_html = (
+        _suppressed_archive_html(suppressed_decisions, total_suppressed)
+        if (opportunity_queue is not None and total_suppressed > 0 and not no_opportunity)
+        else ''
+    )
+
+    # Legacy: check if all top cases are already-announced (non-opportunity mode)
     all_already_announced = (
-        decisions
+        opportunity_queue is None
+        and decisions
         and all(
             d.get('classification') == 'ALREADY_ANNOUNCED_DEAL'
             or 'ALREADY_ANNOUNCED_MERGER' in (d.get('matched_false_positive_archetypes', []) or [])
@@ -679,7 +805,8 @@ def build_ai_email_html(
     {_badge_html('WATCH', f'{watch} WATCH') if watch else ''}
     {_badge_html('WATCH_ONLY', f'{watch_only} WATCH ONLY') if watch_only else ''}
     {_badge_html('NEEDS_HUMAN_REVIEW', f'{review} REVIEW') if review else ''}
-    {_badge_html('DISCARD', f'{discard} DISCARD') if discard else ''}
+    {_badge_html('DISCARD', f'{discard} DISCARD') if discard and opportunity_queue is None else ''}
+    {f'<span style="font-size:11px;color:#374151;">{total_suppressed} suppressed</span>' if total_suppressed and opportunity_queue is not None else ''}
   </div>
 </td></tr>
 
@@ -688,7 +815,9 @@ def build_ai_email_html(
   {dry_run_banner}
   {strategy_summary_html}
   {already_announced_advisory_html}
+  {no_opportunity_html}
   {cards_html}
+  {suppressed_archive_html}
 </td></tr>
 
 <!-- FOOTER -->
@@ -717,39 +846,67 @@ def build_ai_email_plain(
     decisions: list[dict],
     run_metadata: dict,
     strategic_brief: bool = False,
+    opportunity_queue: dict | None = None,
 ) -> str:
     """Plain text fallback. Clean and readable."""
     run_at     = run_metadata.get('run_at', _utc_now())
     model      = run_metadata.get('model', 'unknown')
     case_count = run_metadata.get('case_count', len(decisions))
     dry_run    = run_metadata.get('dry_run', False)
+    opp_mode   = run_metadata.get('opportunity_mode', False)
+
+    # For plain text, filter to active decisions in opportunity mode
+    render_decisions = decisions
+    total_suppressed = 0
+    no_opportunity   = False
+    if opportunity_queue is not None:
+        total_suppressed = opportunity_queue.get('total_suppressed_full', 0)
+        no_opportunity   = opportunity_queue.get('no_opportunity', False)
+        active_tickers: set[str] = set()
+        for tier in ('P0_ESCALATE_NOW', 'P1_HUMAN_REVIEW', 'P2_WATCHLIST_SETUP', 'P3_MONITOR_CHANGE'):
+            for e in opportunity_queue.get(tier, []):
+                active_tickers.add(str(e.get('ticker', '')).upper())
+        render_decisions = [d for d in decisions if str(d.get('ticker', '')).upper() in active_tickers]
 
     lines: list[str] = [
         'BLACK STARLIGHT CAPITAL',
-        'MA Scanner — AI Research Brief',
+        'MA Scanner — AI Opportunity Brief',
         '=' * 48,
         f'Run: {run_at}',
         f'Model: {model}',
         f'Cases reviewed: {case_count}',
         f'Dry run: {dry_run}',
-        '',
+        f'Opportunity mode: {opp_mode}',
     ]
+    if opportunity_queue is not None:
+        lines.append(f'Active cases (P0-P3): {len(render_decisions)}')
+        lines.append(f'Suppressed discards : {total_suppressed}')
+    lines.append('')
 
-    if decisions:
-        # Decision distribution
+    if no_opportunity:
+        lines += [
+            '*** NO NEW ACTIONABLE OPPORTUNITIES ***',
+            f'{total_suppressed} repeated already-announced/false-positive cases suppressed.',
+            'Continue monitoring for new company-level process filings.',
+            '',
+        ]
+    elif render_decisions:
+        # Decision distribution (active decisions only)
         counts: dict[str, int] = {}
-        for d in decisions:
+        for d in render_decisions:
             a = d.get('research_action', '?')
             counts[a] = counts.get(a, 0) + 1
-        lines.append('Decision distribution:')
+        lines.append('Decision distribution (active):')
         for a, c in sorted(counts.items()):
             lines.append(f'  {a}: {c}')
+        if total_suppressed:
+            lines.append(f'  DISCARD (suppressed): {total_suppressed}')
         lines.append('')
 
         # FP summary if strategic
         if strategic_brief:
             fp_all: dict[str, int] = {}
-            for d in decisions:
+            for d in render_decisions:
                 for fp in (d.get('matched_false_positive_archetypes', []) or []):
                     fp_all[fp] = fp_all.get(fp, 0) + 1
             if fp_all:
@@ -757,7 +914,7 @@ def build_ai_email_plain(
                 lines.append(f'Dominant false-positive pattern: {dominant}')
                 lines.append('')
 
-        for d in decisions:
+        for d in render_decisions:
             ticker       = d.get('ticker', '?')
             cls          = d.get('classification', '?')
             action       = d.get('research_action', '?')
@@ -806,8 +963,15 @@ def build_ai_email_plain(
                 lines.append(f'Kill criteria  : {kill_crit}')
 
             lines.append('')
+
+        if total_suppressed and not no_opportunity:
+            lines += [
+                '─' * 48,
+                f'Suppressed archive ({total_suppressed} repeated DISCARD cases — not shown above):',
+            ]
     else:
-        lines.append('No decisions were made this run.')
+        if not no_opportunity:
+            lines.append('No decisions were made this run.')
         lines.append('')
 
     lines += [
@@ -928,13 +1092,24 @@ def send_ai_research_email(
     run_metadata: dict,
     force: bool = False,
     strategic_brief: bool = False,
+    opportunity_queue: dict | None = None,
 ) -> dict[str, Any]:
     """
     Build and send the branded AI research email.
 
+    opportunity_queue: if provided, email shows P0-P3 in main cards,
+    P4 in compact archive, and uses opportunity-aware subject line.
+
     Returns: {sent, status, error, subject, provider}
     """
     cfg = load_ai_email_config()
+
+    # Check no-opportunity skip behavior
+    no_opportunity = opportunity_queue is not None and opportunity_queue.get('no_opportunity', False)
+    send_no_opp = _truthy(os.environ.get('AI_EMAIL_SEND_NO_OPPORTUNITY_DIGEST', 'true'), default=True)
+    if no_opportunity and not send_no_opp and not force:
+        print('  [AI EMAIL] Skipped — no opportunity + AI_EMAIL_SEND_NO_OPPORTUNITY_DIGEST=false')
+        return {'sent': False, 'status': 'no_opportunity_skipped', 'error': '', 'subject': ''}
 
     if not cfg['enabled'] and not force:
         print('  [AI EMAIL] Skipped — AI_EMAILS_ENABLED=false (use force=True to override)')
@@ -946,9 +1121,14 @@ def send_ai_research_email(
         print(f'  [AI EMAIL] Cannot send — {msg}')
         return {'sent': False, 'status': 'missing_config', 'error': msg, 'subject': ''}
 
-    subject    = build_ai_email_subject(decisions, cfg['subject_prefix'])
-    body_html  = build_ai_email_html(decisions, run_metadata, strategic_brief=strategic_brief)
-    body_plain = build_ai_email_plain(decisions, run_metadata, strategic_brief=strategic_brief)
+    subject    = build_ai_email_subject(decisions, cfg['subject_prefix'],
+                                        opportunity_queue=opportunity_queue)
+    body_html  = build_ai_email_html(decisions, run_metadata,
+                                     strategic_brief=strategic_brief,
+                                     opportunity_queue=opportunity_queue)
+    body_plain = build_ai_email_plain(decisions, run_metadata,
+                                      strategic_brief=strategic_brief,
+                                      opportunity_queue=opportunity_queue)
 
     if cfg['provider'] == 'resend':
         result = _send_resend_html(subject, body_plain, body_html, cfg)

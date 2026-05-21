@@ -68,7 +68,8 @@ set +e
   --email \
   --strategic-brief \
   --include-completed-analogues \
-  --probability-analysis
+  --probability-analysis \
+  --opportunity-mode
 AI_RC=$?
 set -e
 

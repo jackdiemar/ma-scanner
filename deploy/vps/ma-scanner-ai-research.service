@@ -9,7 +9,7 @@ User=root
 WorkingDirectory=/opt/ma-scanner
 ExecStart=/opt/ma-scanner/.venv/bin/python \
     /opt/ma-scanner/src/ai_research/run_ai_research.py \
-    --latest --limit 10 --depth fast_gate --email --strategic-brief
+    --latest --limit 10 --depth fast_gate --email --strategic-brief --opportunity-mode
 StandardOutput=journal
 StandardError=journal
 TimeoutStartSec=600

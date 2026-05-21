@@ -4,12 +4,16 @@ run_ai_research.py — Main CLI orchestrator for the AI research layer.
 Usage:
   python3 src/ai_research/run_ai_research.py --latest --limit 5
   python3 src/ai_research/run_ai_research.py --latest --limit 5 --plan
+  python3 src/ai_research/run_ai_research.py --latest --limit 5 --opportunity-plan
   python3 src/ai_research/run_ai_research.py --latest --dry-run
-  python3 src/ai_research/run_ai_research.py --latest --limit 10 --depth fast_gate --email
+  python3 src/ai_research/run_ai_research.py --latest --limit 10 --depth fast_gate --email --opportunity-mode
   python3 src/ai_research/run_ai_research.py --latest --limit 5 --force-refresh
   python3 src/ai_research/run_ai_research.py --ticker SDGR
   python3 src/ai_research/run_ai_research.py --status
+  python3 src/ai_research/run_ai_research.py --suppression-status
   python3 src/ai_research/run_ai_research.py --email-latest-summary
+  python3 src/ai_research/run_ai_research.py --force-unsuppress TICKER
+  python3 src/ai_research/run_ai_research.py --clear-suppression TICKER
 
 Behavior:
   - Builds research cases from latest scanner outputs.
@@ -20,6 +24,8 @@ Behavior:
   - Updates watchlist.
   - Writes data/ai_research/latest_ai_research_summary.md.
   - Optionally sends branded HTML research email via --email.
+  - --opportunity-mode: suppresses repeated DISCARD cases and sends
+    opportunity-focused emails. Default for scheduled runs.
   - --force-refresh bypasses the fingerprint cache and reruns LLM.
 
 No auto-trading. No broker APIs. No transaction recommendation language.
@@ -37,17 +43,18 @@ _HERE   = Path(__file__).resolve().parent
 _SRCDIR = _HERE.parent
 REPO    = _SRCDIR.parent
 
-ENV_FILE         = REPO / 'config' / '.env'
-AI_RESEARCH_DIR  = REPO / 'data' / 'ai_research'
-CASES_BASE_DIR   = AI_RESEARCH_DIR / 'cases'
-CACHE_DIR        = AI_RESEARCH_DIR / 'cache'
-WATCHLIST_PATH   = AI_RESEARCH_DIR / 'watchlist.json'
-SUMMARY_PATH     = AI_RESEARCH_DIR / 'latest_ai_research_summary.md'
-LIVE_DATA        = REPO / 'data' / 'live_monitoring'
-LATEST_ALERTS    = LIVE_DATA / 'latest_alerts.json'
-ALERT_LOG        = LIVE_DATA / 'live_alert_log.csv'
+ENV_FILE             = REPO / 'config' / '.env'
+AI_RESEARCH_DIR      = REPO / 'data' / 'ai_research'
+CASES_BASE_DIR       = AI_RESEARCH_DIR / 'cases'
+CACHE_DIR            = AI_RESEARCH_DIR / 'cache'
+WATCHLIST_PATH       = AI_RESEARCH_DIR / 'watchlist.json'
+SUMMARY_PATH         = AI_RESEARCH_DIR / 'latest_ai_research_summary.md'
+SUPPRESSION_PATH     = AI_RESEARCH_DIR / 'suppression_registry.json'
+QUEUE_JSON_PATH      = AI_RESEARCH_DIR / 'latest_opportunity_queue.json'
+LIVE_DATA            = REPO / 'data' / 'live_monitoring'
+LATEST_ALERTS        = LIVE_DATA / 'latest_alerts.json'
+ALERT_LOG            = LIVE_DATA / 'live_alert_log.csv'
 
-# Ensure src/ is on sys.path for direct script execution and relative imports
 if str(_SRCDIR) not in sys.path:
     sys.path.insert(0, str(_SRCDIR))
 
@@ -125,7 +132,6 @@ def _case_json_path(run_date: str, ticker: str) -> Path:
 
 def _validate_cases(cases: list[dict]) -> list[str]:
     from ai_research.research_case_builder import validate_case_schema
-
     errors: list[str] = []
     for case in cases:
         ticker = case.get('ticker', 'UNKNOWN')
@@ -136,7 +142,6 @@ def _validate_cases(cases: list[dict]) -> list[str]:
 
 def _validate_decisions(decisions: list[dict]) -> list[str]:
     from ai_research.investment_gate import validate_decision_schema
-
     errors: list[str] = []
     for decision in decisions:
         ticker = decision.get('ticker', 'UNKNOWN')
@@ -145,132 +150,96 @@ def _validate_decisions(decisions: list[dict]) -> list[str]:
     return errors
 
 
-# ── Operator action queue ─────────────────────────────────────────────────────
+# ── Suppressed case stub ──────────────────────────────────────────────────────
 
-OPERATOR_QUEUE_JSON = AI_RESEARCH_DIR / 'operator_action_queue.json'
-OPERATOR_QUEUE_MD   = AI_RESEARCH_DIR / 'operator_action_queue.md'
-
-
-def _write_operator_action_queue(decisions: list[dict], run_at: str) -> None:
-    """Write operator action queue JSON and markdown."""
-    AI_RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
-
-    _PRIORITY = {
-        'ESCALATE':          0,
-        'NEEDS_HUMAN_REVIEW': 1,
-        'WATCH':             2,
-        'WAIT_FOR_PRICE':    2,
-        'DISCARD':           3,
-        'WATCH_ONLY':        3,
+def _make_suppressed_stub(case: dict, suppress_reason: str) -> dict:
+    """
+    Minimal decision dict for a case that is suppressed and unchanged.
+    Does not call the LLM. Goes into P4 suppressed queue only.
+    """
+    ticker = str(case.get('ticker', 'UNKNOWN')).upper()
+    return {
+        'ticker':                             ticker,
+        'company_name':                       case.get('company_name', ''),
+        'classification':                     'ALREADY_ANNOUNCED_DEAL',
+        'research_action':                    'DISCARD',
+        'confidence':                         0.0,
+        'investability_score':                0,
+        'evidence_strength':                  'LOW',
+        'priced_in_assessment':               'UNKNOWN',
+        'time_sensitivity':                   'LOW',
+        'why_interesting':                    [],
+        'why_not':                            ['Suppressed: unchanged from prior run'],
+        'key_evidence':                       [],
+        'missing_information':                [],
+        'next_research_steps':                [],
+        'human_review_questions':             [],
+        'short_thesis':                       f'Suppressed: {suppress_reason}',
+        'why_this_matters':                   '',
+        'why_now':                            '',
+        'evidence_summary':                   'No change detected vs. prior run.',
+        'source_timing_analysis':             '',
+        'signal_quality_analysis':            '',
+        'priced_in_analysis':                 '',
+        'false_positive_risk':                '',
+        'key_reasons':                        [f'Suppressed: {suppress_reason}'],
+        'operator_next_steps':                [],
+        'what_would_change_the_decision':     'New filing date, source URL, or signal type',
+        'watch_triggers':                     [],
+        'discard_reason':                     suppress_reason,
+        'escalation_reason':                  '',
+        'human_review_reason':                '',
+        'evidence_grade':                     case.get('evidence_grade', 'F'),
+        'evidence_completeness_score':        0,
+        'evidence_gaps':                      [],
+        'filing_text_available':              False,
+        'primary_source_quotes':              [],
+        'strategy_bucket':                    '',
+        'matched_true_signal_archetypes':     [],
+        'matched_false_positive_archetypes':  ['ALREADY_ANNOUNCED_MERGER'],
+        'historical_analogue':                '',
+        'true_signal_similarity_score':       0,
+        'false_positive_similarity_score':    100,
+        'timing_edge_score':                  0,
+        'company_level_process_score':        0,
+        'process_specificity_score':          0,
+        'investability_setup_score':          0,
+        'deterministic_strategy_summary':     '',
+        'why_this_fired':                     'Scanner detected M&A language in filing',
+        'why_this_is_or_is_not_actionable':   'Suppressed: repeated DISCARD, no change',
+        'why_not_like_true_signal_examples':  '',
+        'how_it_compares_to_mdvn_dmtx_tsro':  '',
+        'what_market_may_already_know':       '',
+        'what_operator_should_check_next':    '',
+        'monitoring_plan':                    '',
+        'kill_criteria':                      '',
+        'escalation_criteria':                '',
+        'next_filing_or_news_to_watch':       '',
+        'suggested_follow_up_queries':        [],
+        'note':                               f'SUPPRESSED_UNCHANGED: {suppress_reason}',
+        'ran_at':                             datetime.now(timezone.utc).isoformat(),
+        'primary_acquisition_situation':              '',
+        'possible_acquisition_situations':            [],
+        'completed_deal_analogues':                   [],
+        'closest_completed_deal_analogue':            None,
+        'acquisition_research_probability_score':     0,
+        'probability_bucket':                         'P1_DISCARD_ALREADY_ANNOUNCED',
+        'probability_components':                     {},
+        'base_rate_anchor':                           4.0,
+        'upward_probability_factors':                 [],
+        'downward_probability_factors':               [],
+        'successful_deal_traits_present':             [],
+        'successful_deal_traits_missing':             [],
+        'external_research_status':                   {},
+        'external_sources_reviewed':                  [],
+        'online_research_gaps':                       [],
+        'is_explicit_process_signal':                 False,
+        'is_setup_signal_only':                       False,
+        'is_probabilistic_watch_case':                False,
+        'why_probability_not_higher':                 '',
+        'evidence_needed_to_upgrade':                 [],
+        'next_source_queries':                        [],
     }
-
-    entries: list[dict] = []
-    for d in decisions:
-        action   = d.get('research_action', 'DISCARD')
-        priority = _PRIORITY.get(action, 3)
-        eq_grade = str(d.get('evidence_grade', 'F')).upper()
-
-        # Downgrade NEEDS_HUMAN_REVIEW to P2 if evidence is F
-        if action == 'NEEDS_HUMAN_REVIEW' and eq_grade == 'F':
-            priority = 2
-
-        entries.append({
-            'ticker':         d.get('ticker', '?'),
-            'action':         action,
-            'priority':       f'P{priority}',
-            'why':            d.get('short_thesis', '') or d.get('discard_reason', ''),
-            'next_step':      (d.get('operator_next_steps', []) or [''])[0],
-            'evidence_grade': eq_grade,
-            'strategy_bucket': d.get('strategy_bucket', ''),
-            'watch_trigger':  (d.get('watch_triggers', []) or [''])[0],
-            'historical_analogue': d.get('historical_analogue', ''),
-        })
-
-    # Sort by priority then ticker
-    entries.sort(key=lambda e: (int(e['priority'][1:]), e['ticker']))
-
-    queue_data = {
-        'run_at':  run_at,
-        'count':   len(entries),
-        'entries': entries,
-    }
-
-    try:
-        OPERATOR_QUEUE_JSON.write_text(
-            json.dumps(queue_data, indent=2, default=str), encoding='utf-8'
-        )
-    except OSError:
-        pass
-
-    # Write markdown
-    lines = [
-        '# Operator Action Queue',
-        '',
-        f'**Run at:** {run_at}',
-        f'**Total entries:** {len(entries)}',
-        '',
-    ]
-
-    p0 = [e for e in entries if e['priority'] == 'P0']
-    p1 = [e for e in entries if e['priority'] == 'P1']
-    p2 = [e for e in entries if e['priority'] == 'P2']
-    p3 = [e for e in entries if e['priority'] == 'P3']
-
-    if p0:
-        lines += ['## P0 — ESCALATE (Immediate)', '']
-        for e in p0:
-            lines.append(f'### {e["ticker"]} — {e["action"]}')
-            lines.append(f'- **Evidence grade:** {e["evidence_grade"]}')
-            lines.append(f'- **Strategy bucket:** {e["strategy_bucket"]}')
-            lines.append(f'- **Why:** {e["why"]}')
-            lines.append(f'- **Next step:** {e["next_step"]}')
-            lines.append('')
-
-    if p1:
-        lines += ['## P1 — Human Review Required', '']
-        for e in p1:
-            lines.append(f'### {e["ticker"]} — {e["action"]}')
-            lines.append(f'- **Evidence grade:** {e["evidence_grade"]}')
-            lines.append(f'- **Why:** {e["why"]}')
-            lines.append(f'- **Next step:** {e["next_step"]}')
-            lines.append('')
-
-    if p2:
-        lines += ['## P2 — Watch', '']
-        for e in p2:
-            lines.append(
-                f'- **{e["ticker"]}** | {e["strategy_bucket"] or e["action"]} | '
-                f'evidence={e["evidence_grade"]} | {e["next_step"]}'
-            )
-        lines.append('')
-
-    if p3:
-        lines += ['## P3 — Monitor / Discard', '']
-        for e in p3:
-            wt = f' | watch: {e["watch_trigger"]}' if e.get('watch_trigger') else ''
-            lines.append(f'- **{e["ticker"]}** | {e["strategy_bucket"] or e["action"]}{wt}')
-        lines.append('')
-
-    if not any([p0, p1, p2]):
-        lines += [
-            '',
-            '_No immediate operator actions. '
-            'Continue monitoring for new company-level process evidence._',
-            '',
-        ]
-
-    lines += [
-        '---',
-        '_Queue is for internal research tracking only. Not investment advice._',
-    ]
-
-    try:
-        OPERATOR_QUEUE_MD.write_text('\n'.join(lines), encoding='utf-8')
-    except OSError:
-        pass
-
-    print(f'  [WROTE] {OPERATOR_QUEUE_JSON.relative_to(REPO)}')
-    print(f'  [WROTE] {OPERATOR_QUEUE_MD.relative_to(REPO)}')
 
 
 # ── Summary writer ────────────────────────────────────────────────────────────
@@ -282,200 +251,57 @@ def _write_summary(
     dry_run: bool,
     ai_enabled: bool,
     watchlist_summary: dict,
-    strategic_brief: bool = False,
+    opportunity_mode: bool = False,
+    queue: dict | None = None,
 ) -> None:
     AI_RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
-
-    # Counts
-    n_escalate = sum(1 for d in decisions if d.get('research_action') == 'ESCALATE')
-    n_watch    = sum(1 for d in decisions if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE', 'WATCH_ONLY'))
-    n_discard  = sum(1 for d in decisions if d.get('research_action') == 'DISCARD')
-    n_review   = sum(1 for d in decisions if d.get('research_action') == 'NEEDS_HUMAN_REVIEW')
-
-    grade_counts: dict[str, int] = {}
-    for d in decisions:
-        g = str(d.get('evidence_grade', 'F')).upper()
-        grade_counts[g] = grade_counts.get(g, 0) + 1
-
-    fp_counts: dict[str, int] = {}
-    for d in decisions:
-        for fp in (d.get('matched_false_positive_archetypes', []) or []):
-            fp_counts[fp] = fp_counts.get(fp, 0) + 1
-
-    dominant_fp = max(fp_counts, key=lambda k: fp_counts[k]) if fp_counts else None
-    true_signal_candidates = [
-        d for d in decisions
-        if d.get('matched_true_signal_archetypes')
-        and d.get('research_action') not in ('DISCARD',)
-    ]
-    already_announced = sum(
-        1 for d in decisions
-        if 'ALREADY_ANNOUNCED_MERGER' in (d.get('matched_false_positive_archetypes', []) or [])
-        or d.get('classification') == 'ALREADY_ANNOUNCED_DEAL'
-    )
-
     lines = [
-        '# MA Scanner AI Research Brief',
+        '# AI Research Layer - Latest Run Summary',
         '',
-        f'**Run at:** {run_at}',
-        f'**AI enabled:** {ai_enabled}  |  **Dry run:** {dry_run}',
-        f'**Cases reviewed:** {len(cases)}  |  **Decisions:** {len(decisions)}',
-        '',
-        '---',
-        '',
-        '## Executive Summary',
-        '',
-        f'| Decision | Count |',
-        f'|---|---|',
-        f'| ESCALATE | {n_escalate} |',
-        f'| WATCH | {n_watch} |',
-        f'| DISCARD | {n_discard} |',
-        f'| NEEDS_HUMAN_REVIEW | {n_review} |',
-        '',
-        '**Evidence grade distribution:** '
-        + '  '.join(f'{g}={c}' for g, c in sorted(grade_counts.items())),
-        '',
-        f'**True-signal candidates:** {len(true_signal_candidates)}',
-        f'**Resembling already-announced merger:** {already_announced}',
-        f'**Dominant false-positive archetype:** {dominant_fp or "none detected"}',
-        '',
+        f'**Run at:** {run_at}  ',
+        f'**AI enabled:** {ai_enabled}  ',
+        f'**Dry run:** {dry_run}  ',
+        f'**Opportunity mode:** {opportunity_mode}  ',
+        f'**Cases built:** {len(cases)}  ',
+        f'**Decisions made:** {len(decisions)}  ',
     ]
 
-    # Strategy read
-    if strategic_brief or decisions:
-        lines += ['## Strategy Read', '']
-        if not decisions:
-            lines.append('_No AI decisions this run._')
-        elif n_escalate == 0 and len(true_signal_candidates) == 0:
-            lines.append(
-                f'Run found {len(decisions)} alerts. '
-                f'No MDVN/DMTX/TSRO-like signal detected. '
-                f'All top cases were discarded or require human review. '
-                + (f'Dominant false-positive pattern: {dominant_fp}. '
-                   if dominant_fp else '')
-                + 'Source-backed evidence shows no open strategic process in this batch. '
-                'This is the expected outcome — the system correctly filtered noise. '
-                'Continue monitoring for new company-level process filings.'
-            )
-        else:
-            escalated = [d for d in decisions if d.get('research_action') == 'ESCALATE']
-            if escalated:
-                lines.append(
-                    f'{len(escalated)} case(s) escalated for immediate review. '
-                    f'True-signal candidates: {", ".join(d["ticker"] for d in true_signal_candidates)}. '
-                    'Review source filings and corroborate with independent news sources before acting.'
-                )
-            else:
-                lines.append(
-                    f'{len(true_signal_candidates)} case(s) matched partial true-signal criteria '
-                    f'but did not meet full ESCALATE threshold. Monitor for follow-on filings.'
-                )
-        lines.append('')
+    if queue:
+        lines += [
+            f'**Active (P0–P3):** {queue.get("total_active", 0)}  ',
+            f'**Suppressed:** {queue.get("total_suppressed_full", 0)}  ',
+            f'**No opportunity:** {queue.get("no_opportunity", False)}  ',
+        ]
 
-    # Watchlist summary
-    lines += [
-        '---',
-        '',
-        '## Watchlist',
-        '',
-        f'| Status | Count |',
-        f'|---|---|',
-        f'| Total | {watchlist_summary.get("total", 0)} |',
-        f'| Escalated | {watchlist_summary.get("escalated", 0)} |',
-        f'| Active watch | {watchlist_summary.get("active_watch", 0)} |',
-        f'| Needs review | {watchlist_summary.get("needs_review", 0)} |',
-        f'| Discarded | {watchlist_summary.get("discarded", 0)} |',
-        f'| Stale | {watchlist_summary.get("stale", 0)} |',
-        '',
-        '---',
-        '',
-    ]
+    lines += ['', '---', '', '## Watchlist Summary', '',
+              '| Status | Count |', '|---|---|',
+              f'| Total | {watchlist_summary.get("total", 0)} |',
+              f'| Escalated | {watchlist_summary.get("escalated", 0)} |',
+              f'| Active watch | {watchlist_summary.get("active_watch", 0)} |',
+              f'| Needs review | {watchlist_summary.get("needs_review", 0)} |',
+              f'| Discarded | {watchlist_summary.get("discarded", 0)} |',
+              f'| Stale | {watchlist_summary.get("stale", 0)} |',
+              '', '---', '']
 
     if decisions:
-        if strategic_brief:
-            lines += ['## Detailed Case Analysis', '']
-            for d in decisions:
-                ticker  = d.get('ticker', '?')
-                cls     = d.get('classification', '?')
-                action  = d.get('research_action', '?')
-                conf    = d.get('confidence', 0.0)
-                score   = d.get('investability_score', 0)
-                grade   = d.get('evidence_grade', 'F')
-                bucket  = d.get('strategy_bucket', '')
-                analogue = d.get('historical_analogue', '')
-
-                lines.append(f'### {ticker} — {action} | {grade} evidence')
-                lines.append(f'**Classification:** {cls}  |  **Confidence:** {int(conf*100)}%  |  **Score:** {score}/100')
-                if bucket:
-                    lines.append(f'**Strategy bucket:** {bucket}')
-                if analogue:
-                    lines.append(f'**Historical analogue:** {analogue}')
-                lines.append('')
-
-                if d.get('short_thesis'):
-                    lines.append(f'**Thesis:** {d["short_thesis"]}')
-                    lines.append('')
-
-                if d.get('why_this_fired'):
-                    lines.append(f'**Why this fired:** {d["why_this_fired"]}')
-
-                if d.get('evidence_summary'):
-                    lines.append(f'**Evidence:** {d["evidence_summary"]}')
-
-                if d.get('how_it_compares_to_mdvn_dmtx_tsro'):
-                    lines.append(f'**vs MDVN/DMTX/TSRO:** {d["how_it_compares_to_mdvn_dmtx_tsro"]}')
-
-                fps = d.get('matched_false_positive_archetypes', [])
-                if fps:
-                    lines.append(f'**False-positive archetypes:** {", ".join(fps)}')
-
-                ts = d.get('matched_true_signal_archetypes', [])
-                if ts:
-                    lines.append(f'**True-signal archetypes matched:** {", ".join(ts)}')
-
-                op_steps = d.get('operator_next_steps', [])
-                if op_steps:
-                    lines.append('**Operator next steps:**')
-                    for s in op_steps:
-                        lines.append(f'  - {s}')
-
-                if d.get('kill_criteria'):
-                    lines.append(f'**Kill criteria:** {d["kill_criteria"]}')
-
-                if d.get('escalation_criteria'):
-                    lines.append(f'**Escalation criteria:** {d["escalation_criteria"]}')
-
-                if d.get('monitoring_plan'):
-                    lines.append(f'**Monitoring plan:** {d["monitoring_plan"]}')
-
-                note = d.get('note', '')
-                if note:
-                    lines.append(f'_Note: {note}_')
-
-                lines.append('')
-        else:
-            lines += ['## Decisions This Run', '']
-            for d in decisions:
-                ticker = d.get('ticker', '?')
-                cls    = d.get('classification', '?')
-                action = d.get('research_action', '?')
-                conf   = d.get('confidence', 0.0)
-                score  = d.get('investability_score', 0)
-                bucket = d.get('strategy_bucket', '')
-                note   = d.get('note', '')
-                lines.append(
-                    f'- **{ticker}** → {cls} | action={action} | '
-                    f'confidence={conf:.2f} | score={score}'
-                    + (f' | bucket={bucket}' if bucket else '')
-                    + (f' _{note}_' if note else '')
-                )
-            lines.append('')
+        lines += ['## Decisions This Run', '']
+        for d in decisions:
+            ticker = d.get('ticker', '?')
+            cls    = d.get('classification', '?')
+            action = d.get('research_action', '?')
+            conf   = d.get('confidence', 0.0)
+            score  = d.get('investability_score', 0)
+            note   = d.get('note', '')
+            lines.append(
+                f'- **{ticker}** → {cls} | action={action} | '
+                f'confidence={conf:.2f} | score={score}'
+                + (f' _{note}_' if note else '')
+            )
+        lines.append('')
     elif cases:
         lines += [
-            '## Cases Built (No AI Run)',
-            '',
-            '_AI research was disabled or dry-run active. Cases were built but LLM gate was not run._',
-            '',
+            '## Cases Built (No AI Run)', '',
+            '_AI research was disabled or dry-run active._', '',
         ]
         for c in cases:
             ticker = c.get('ticker', '?')
@@ -487,8 +313,7 @@ def _write_summary(
         lines += ['_No cases built this run._', '']
 
     lines += [
-        '---',
-        '',
+        '---', '',
         '_This summary is for research tracking only. '
         'Nothing here constitutes investment advice or a recommendation to trade any security._',
     ]
@@ -499,11 +324,6 @@ def _write_summary(
 # ── Case file updater ─────────────────────────────────────────────────────────
 
 def _inject_decision_into_case_file(case_path: Path, decision: dict) -> None:
-    """
-    Write the AI decision into the case JSON file.
-    Only updates ai_decision and ai_run_at fields — does not mutate the original case data.
-    Historical case files are never mutated (only today's run date cases are updated).
-    """
     if not case_path.exists():
         return
     try:
@@ -526,22 +346,15 @@ def run(
     force_refresh: bool = False,
     send_email: bool = False,
     strategic_brief: bool = False,
+    opportunity_mode: bool = False,
+    include_suppressed: bool = False,
+    max_suppressed_summary: int = 5,
 ) -> int:
     """
     Main execution: build cases, optionally run gate, update watchlist, write summary.
 
-    Args:
-        ticker:          Run for a single ticker instead of latest alerts.
-        limit:           Max cases to process.
-        dry_run:         Skip LLM calls; return placeholder decisions.
-        depth:           Research depth preset (fast_gate, deep).
-        run_date:        Override the run date (YYYY-MM-DD).
-        force_refresh:   Bypass cache and rerun LLM for every case.
-        send_email:      Send branded AI research email after run completes.
-        strategic_brief: Include full strategy analysis in summary and email.
-
-    Returns:
-        Exit code (0 = success).
+    opportunity_mode: applies suppression registry — skips LLM for unchanged suppressed
+    cases, sends email focused on P0/P1/P2/P3 priority cases only.
     """
     _load_env()
     run_at   = _utc_now()
@@ -552,12 +365,10 @@ def run(
     from ai_research.investment_gate import run_gate
     from ai_research.watchlist_manager import WatchlistManager
 
-    llm_cfg    = load_llm_config()
-    ai_ready   = llm_cfg.ready
-
-    # Dry-run override: flag on CLI takes precedence; else use config
+    llm_cfg           = load_llm_config()
+    ai_ready          = llm_cfg.ready
     effective_dry_run = dry_run or llm_cfg.dry_run
-    depth = depth or llm_cfg.default_depth
+    depth             = depth or llm_cfg.default_depth
 
     if not effective_dry_run:
         blockers: list[str] = []
@@ -569,8 +380,8 @@ def run(
             print('AI Research Layer')
             print('=================')
             print('ERROR: Live LLM run is not allowed.')
-            for blocker in blockers:
-                print(f'  - {blocker}')
+            for b in blockers:
+                print(f'  - {b}')
             print()
             print('Safe options:')
             print('  python3 src/ai_research/run_ai_research.py --status')
@@ -580,24 +391,25 @@ def run(
 
     print('AI Research Layer')
     print('=================')
-    print(f'Run at        : {run_at}')
-    print(f'AI ready      : {_bool_text(ai_ready)}')
-    print(f'Dry run       : {_bool_text(effective_dry_run)}')
-    print(f'Depth         : {depth}')
-    print(f'Limit         : {limit or "none"}')
-    print(f'Ticker        : {ticker or "all (from latest)"}')
-    print(f'Force refresh    : {_bool_text(force_refresh)}')
-    print(f'Send email       : {_bool_text(send_email)}')
-    print(f'Strategic brief  : {_bool_text(strategic_brief)}')
+    print(f'Run at          : {run_at}')
+    print(f'AI ready        : {_bool_text(ai_ready)}')
+    print(f'Dry run         : {_bool_text(effective_dry_run)}')
+    print(f'Depth           : {depth}')
+    print(f'Limit           : {limit or "none"}')
+    print(f'Ticker          : {ticker or "all (from latest)"}')
+    print(f'Force refresh   : {_bool_text(force_refresh)}')
+    print(f'Send email      : {_bool_text(send_email)}')
+    print(f'Opportunity mode: {_bool_text(opportunity_mode)}')
+    print(f'Strategic brief : {_bool_text(strategic_brief)}')
     print()
 
     # ── 1. Build research cases ──────────────────────────────────────────────
     print('Step 1: Building research cases ...')
     cases = build_cases(
-        ticker   = ticker,
-        limit    = limit,
-        run_date = run_date,
-        dry_run  = False,  # always write case files even if AI is off
+        ticker         = ticker,
+        limit          = limit,
+        run_date       = run_date,
+        dry_run        = False,
         research_depth = depth,
     )
     print(f'Built {len(cases)} case(s).')
@@ -612,55 +424,85 @@ def run(
 
     if not cases:
         print('[INFO] No cases to process. Exiting.')
-        _write_summary(
-            run_at            = run_at,
-            cases             = cases,
-            decisions         = [],
-            dry_run           = effective_dry_run,
-            ai_enabled        = ai_ready,
-            watchlist_summary = {},
-            strategic_brief   = strategic_brief,
-        )
+        _write_summary(run_at=run_at, cases=cases, decisions=[], dry_run=effective_dry_run,
+                       ai_enabled=ai_ready, watchlist_summary={})
         return 0
 
-    # ── 2. Run investment gate ───────────────────────────────────────────────
-    decisions: list[dict] = []
-    wm = WatchlistManager(WATCHLIST_PATH)
+    # ── 2. Load suppression registry + change detection ──────────────────────
+    from ai_research.suppression_registry import (
+        load_registry, save_registry, check_suppressed, update_registry,
+    )
+    from ai_research.change_detector import classify_change
+    from ai_research.opportunity_selector import (
+        build_opportunity_queue, save_opportunity_queue, split_decisions_by_queue,
+    )
 
-    cap = llm_cfg.max_cases_per_run
+    registry = load_registry() if opportunity_mode else {}
+    wm       = WatchlistManager(WATCHLIST_PATH)
+    watchlist = {}
+    try:
+        watchlist = wm._load() if hasattr(wm, '_load') else {}
+    except Exception:
+        try:
+            raw = _load_json_file(WATCHLIST_PATH)
+            watchlist = raw if isinstance(raw, dict) else {}
+        except Exception:
+            watchlist = {}
+
+    # ── 3. Run investment gate ────────────────────────────────────────────────
+    decisions: list[dict] = []
+
+    cap        = llm_cfg.max_cases_per_run
     gate_cases = cases[:cap] if limit is None else cases
     print(f'Step 2: Running research gate on {len(gate_cases)} case(s) ...')
     if effective_dry_run:
         print('  (dry-run: LLM will not be called; watchlist will not be updated)')
+    if opportunity_mode:
+        print('  (opportunity mode: suppressed+unchanged cases will skip LLM)')
     print()
 
     client = LLMClient(llm_cfg)
+    suppressed_count = 0
+    llm_called_count = 0
 
     for case in gate_cases:
-        t = case.get('ticker', 'UNKNOWN')
+        t = str(case.get('ticker', 'UNKNOWN')).upper()
+
+        if opportunity_mode and not effective_dry_run:
+            is_supp, supp_reason = check_suppressed(t, case, registry)
+            if is_supp:
+                from ai_research.change_detector import classify_change, UNCHANGED_SUPPRESSED
+                change_status, _ = classify_change(case, registry, watchlist)
+                if change_status == UNCHANGED_SUPPRESSED:
+                    stub = _make_suppressed_stub(case, supp_reason)
+                    decisions.append(stub)
+                    suppressed_count += 1
+                    continue
+
         decision = run_gate(
             case,
-            client=client,
-            dry_run=effective_dry_run,
-            force_refresh=force_refresh,
+            client       = client,
+            dry_run      = effective_dry_run,
+            force_refresh = force_refresh,
         )
         decisions.append(decision)
+        llm_called_count += 1
 
         case_json_path = _case_json_path(run_date, t)
         if case_json_path.exists():
             _inject_decision_into_case_file(case_json_path, decision)
 
         if not effective_dry_run:
-            wm.update(
-                ticker    = t,
-                decision  = decision,
-                case      = case,
-                case_path = str(case_json_path),
-            )
+            wm.update(ticker=t, decision=decision, case=case,
+                      case_path=str(case_json_path))
 
-    decision_errors = _validate_decisions(decisions)
-    # Warnings (empty narrative fields) are non-fatal — filter real errors.
-    # Format from _validate_decisions is "TICKER: WARNING: <msg>" or "TICKER: <msg>"
+    if opportunity_mode:
+        print(f'  LLM calls made  : {llm_called_count}')
+        print(f'  Suppressed stubs: {suppressed_count}')
+
+    decision_errors  = _validate_decisions(
+        [d for d in decisions if 'SUPPRESSED_UNCHANGED' not in str(d.get('note', ''))]
+    )
     warnings    = [e for e in decision_errors if 'WARNING:' in e]
     hard_errors = [e for e in decision_errors if 'WARNING:' not in e]
     if hard_errors:
@@ -668,27 +510,57 @@ def run(
         for err in hard_errors:
             print(f'  - {err}')
         return 1
-    if warnings:
-        for w in warnings:
-            print(f'  {w}')
+    for w in warnings:
+        print(f'  {w}')
     print()
     print(f'Decision schema validation: PASS ({len(decisions)} decision(s))')
     print(f'Gate complete: {len(decisions)} decision(s) made.')
     print()
 
-    # ── 3. Mark stale entries ────────────────────────────────────────────────
+    # ── 4. Update suppression registry ───────────────────────────────────────
+    queue: dict | None = None
+    if opportunity_mode and not effective_dry_run:
+        for decision in decisions:
+            if 'SUPPRESSED_UNCHANGED' in str(decision.get('note', '')):
+                continue
+            t    = str(decision.get('ticker', '')).upper()
+            case = next((c for c in cases if str(c.get('ticker', '')).upper() == t), {})
+            update_registry(t, decision, case, registry)
+        save_registry(registry)
+        print(f'  [SUPPRESS] Registry saved: {len(registry)} entries')
+
+        queue = build_opportunity_queue(
+            decisions               = decisions,
+            cases                   = cases,
+            registry                = registry,
+            watchlist               = watchlist,
+            max_suppressed_summary  = max_suppressed_summary,
+            include_suppressed      = include_suppressed,
+        )
+        save_opportunity_queue(queue)
+
+        print()
+        print('Opportunity queue:')
+        print(f'  P0 Escalate    : {len(queue.get("P0_ESCALATE_NOW", []))}')
+        print(f'  P1 Human review: {len(queue.get("P1_HUMAN_REVIEW", []))}')
+        print(f'  P2 Watchlist   : {len(queue.get("P2_WATCHLIST_SETUP", []))}')
+        print(f'  P3 Monitor     : {len(queue.get("P3_MONITOR_CHANGE", []))}')
+        print(f'  P4 Suppressed  : {queue.get("total_suppressed_full", 0)}')
+        print(f'  No opportunity : {queue.get("no_opportunity", False)}')
+        print()
+
+    # ── 5. Mark stale watchlist entries ──────────────────────────────────────
     if not effective_dry_run:
         stale = wm.mark_stale(days=14)
         if stale:
             print(f'  Marked {len(stale)} watchlist entries as stale: {", ".join(stale)}')
 
-    # ── 4. Print watchlist summary ───────────────────────────────────────────
     watchlist_summary = wm.summary()
     print('Watchlist after this run:')
     wm.print_summary()
     print()
 
-    # ── 5. Write summary markdown ────────────────────────────────────────────
+    # ── 6. Write summary markdown ─────────────────────────────────────────────
     _write_summary(
         run_at            = run_at,
         cases             = cases,
@@ -696,46 +568,42 @@ def run(
         dry_run           = effective_dry_run,
         ai_enabled        = ai_ready,
         watchlist_summary = watchlist_summary,
-        strategic_brief   = strategic_brief,
+        opportunity_mode  = opportunity_mode,
+        queue             = queue,
     )
 
-    # ── 5b. Write operator action queue ─────────────────────────────────────
-    if decisions and not effective_dry_run:
-        _write_operator_action_queue(decisions, run_at)
-
-    # ── 6. Send email (optional) ─────────────────────────────────────────────
+    # ── 7. Send email ─────────────────────────────────────────────────────────
     if send_email:
-        cache_hits = sum(
-            1 for d in decisions
-            if 'CACHE_HIT' in str(d.get('note', ''))
-        )
+        cache_hits = sum(1 for d in decisions if 'CACHE_HIT' in str(d.get('note', '')))
         run_metadata = {
-            'run_at':          run_at,
-            'model':           getattr(llm_cfg, 'model', 'unknown'),
-            'ai_enabled':      ai_ready,
-            'dry_run':         effective_dry_run,
-            'case_count':      len(cases),
-            'decision_count':  len(decisions),
-            'cache_hits':      cache_hits,
-            'strategic_brief': strategic_brief,
+            'run_at':            run_at,
+            'model':             getattr(llm_cfg, 'model', 'unknown'),
+            'ai_enabled':        ai_ready,
+            'dry_run':           effective_dry_run,
+            'case_count':        len(cases),
+            'decision_count':    len(decisions),
+            'cache_hits':        cache_hits,
+            'opportunity_mode':  opportunity_mode,
+            'suppressed_count':  suppressed_count,
         }
         from ai_research.ai_emailer import send_ai_research_email
-        send_ai_research_email(decisions, run_metadata, strategic_brief=strategic_brief)
+        send_ai_research_email(
+            decisions       = decisions,
+            run_metadata    = run_metadata,
+            strategic_brief = strategic_brief,
+            opportunity_queue = queue,
+        )
 
     return 0
 
 
-# ── Evidence audit command ───────────────────────────────────────────────────
+# ── Evidence audit command ────────────────────────────────────────────────────
 
 def run_evidence_audit(
     ticker: str | None = None,
     limit: int | None = None,
     fetch_text: bool = False,
 ) -> int:
-    """
-    Build cases, compute evidence quality, optionally fetch filing text.
-    Prints evidence grade table. No LLM calls. No email.
-    """
     _load_env()
     from ai_research.research_case_builder import build_cases
     from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
@@ -747,28 +615,20 @@ def run_evidence_audit(
     print(f'Fetch text    : {_bool_text(fetch_text)}')
     print()
 
-    cases = build_cases(
-        ticker=ticker,
-        limit=limit,
-        run_date=_today_utc(),
-        dry_run=True,
-        verbose=False,
-    )
+    cases = build_cases(ticker=ticker, limit=limit, run_date=_today_utc(),
+                        dry_run=True, verbose=False)
 
     if not cases:
         print('[INFO] No cases found. Run scanner first.')
         return 0
-
-    if fetch_text:
-        from ai_research.source_fetcher import fetch_sec_filing_text_for_case
 
     rows: list[dict] = []
     for case in cases:
         t = case.get('ticker', '?')
 
         filing_text: str | None = None
-        fetch_error: str | None = None
         if fetch_text:
+            from ai_research.source_fetcher import fetch_sec_filing_text_for_case
             print(f'  Fetching {t} ...', end=' ', flush=True)
             result = fetch_sec_filing_text_for_case(case)
             filing_text = result.get('text') or None
@@ -779,17 +639,15 @@ def run_evidence_audit(
 
         quotes = extract_quotes(case, filing_text)
         eq     = compute_evidence_quality(case, filing_text, quotes)
-
-        # Update case evidence_quality with fetched-text results
         case['evidence_quality'] = eq
         rows.append({
-            'ticker':  t,
-            'grade':   eq['evidence_grade'],
-            'score':   eq['evidence_completeness_score'],
-            'excerpt': eq['excerpt_length'],
-            'full':    eq['full_text_length'],
-            'gaps':    len(eq['evidence_gaps']),
-            'quotes':  len(quotes),
+            'ticker':    t,
+            'grade':     eq['evidence_grade'],
+            'score':     eq['evidence_completeness_score'],
+            'excerpt':   eq['excerpt_length'],
+            'full':      eq['full_text_length'],
+            'gaps':      len(eq['evidence_gaps']),
+            'quotes':    len(quotes),
             'gaps_list': eq['evidence_gaps'],
         })
 
@@ -816,27 +674,12 @@ def run_evidence_audit(
 
 
 def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
-    """
-    Print full evidence detail for a single ticker: raw source fields from each
-    data source, enriched case fields, evidence quality, and extracted quotes.
-    No LLM calls. No email.
-    """
     _load_env()
-    from ai_research.research_case_builder import build_cases, inspect_source_fields
+    from ai_research.research_case_builder import build_cases
     from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
 
-    t = ticker.upper()
-
-    # Show raw source inspection first
-    raw_rows = inspect_source_fields(ticker=t, limit=1)
-
-    cases = build_cases(
-        ticker=t,
-        limit=1,
-        run_date=_today_utc(),
-        dry_run=True,
-        verbose=False,
-    )
+    cases = build_cases(ticker=ticker.upper(), limit=1, run_date=_today_utc(),
+                        dry_run=True, verbose=False)
 
     if not cases:
         print(f'[WARN] No case found for {ticker}. Run scanner first.')
@@ -845,57 +688,27 @@ def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
     case = cases[0]
 
     filing_text: str | None = None
-    fetch_status = 'not attempted'
     if fetch_text:
         from ai_research.source_fetcher import fetch_sec_filing_text_for_case
-        fetch_result = fetch_sec_filing_text_for_case(case)
-        filing_text  = fetch_result.get('text') or None
-        fetch_status = 'cached' if fetch_result.get('cached') else (
-            f'FAIL: {fetch_result["error"]}' if fetch_result.get('error') else
-            f'ok ({len(filing_text or "")} chars)'
-        )
+        result = fetch_sec_filing_text_for_case(case)
+        filing_text = result.get('text') or None
+        if result.get('error'):
+            print(f'  [WARN] Fetch error: {result["error"]}')
 
     quotes = extract_quotes(case, filing_text)
     eq     = compute_evidence_quality(case, filing_text, quotes)
 
     print(f'Evidence Detail: {ticker}')
     print('=' * 60)
-
-    # Raw fields per data source
-    if raw_rows:
-        r = raw_rows[0]
-        print('Raw source fields:')
-        print(f'  latest_alerts.json  : url={"yes" if r["json_source_url"] else "no"}'
-              f'  excerpt={r["json_excerpt_len"]}chars'
-              f'  date={r["json_filing_date"] or "—"}'
-              f'  form={r["json_filing_form"] or "—"}'
-              f'  accession={"yes" if r["json_accession"] else "no"}')
-        print(f'  live_alert_log.csv  : url={"yes" if r["csv_source_url"] else "no"}'
-              f'  excerpt={r["csv_excerpt_len"]}chars'
-              f'  date={r["csv_filing_date"] or "—"}'
-              f'  form={r["csv_filing_form"] or "—"}')
-        print(f'  Scanner dry-run     : {r["scanner_dry_run"]}')
-        print()
-
-    print('Enriched case fields:')
     print(f'  Ticker          : {case.get("ticker")}')
     print(f'  Company         : {case.get("company_name")}')
     print(f'  Signal quality  : {case.get("signal_quality")}')
     print(f'  Signal type     : {case.get("signal_type")}')
-    print(f'  Filing type     : {case.get("filing_type") or "—"} (enriched from flags)')
-    print(f'  Filing date     : {case.get("filing_date") or "—"} (enriched from flags)')
+    print(f'  Filing type     : {case.get("filing_type") or "—"}')
+    print(f'  Filing date     : {case.get("filing_date") or "—"}')
     print(f'  Source URL      : {case.get("source_url") or "—"}')
-    print(f'  URL constructed : {case.get("source_url_constructed", False)}')
-    print(f'  Accession       : {case.get("accession") or "—"}')
     print(f'  Trigger phrase  : {case.get("trigger_phrase") or "—"}')
-    if case.get('flags_context'):
-        print(f'  Flags context   :')
-        for fc in case['flags_context'][:5]:
-            print(f'    - {fc}')
-    if fetch_text:
-        print(f'  Fetch status    : {fetch_status}')
     print()
-
     print('Evidence Quality:')
     print(f'  Grade                 : {eq["evidence_grade"]}')
     print(f'  Score                 : {eq["evidence_completeness_score"]}/100')
@@ -923,37 +736,29 @@ def run_show_evidence(ticker: str, fetch_text: bool = False) -> int:
             print()
     else:
         print('No quotes extracted.')
-
     return 0
 
 
-# ── Plan command ─────────────────────────────────────────────────────────────
+# ── Plan command ──────────────────────────────────────────────────────────────
 
-def print_plan(ticker: str | None = None, limit: int | None = None, depth: str | None = None) -> None:
-    """
-    Preview what would run — no files written, no LLM calls.
-    Shows tickers, cache status, and estimated LLM/cache action.
-    """
+def print_plan(
+    ticker: str | None = None,
+    limit: int | None = None,
+    depth: str | None = None,
+) -> None:
     _load_env()
     from ai_research.llm_client import load_config as load_llm_config
     from ai_research.research_case_builder import build_cases
     from ai_research.investment_gate import cache_status
 
     llm_cfg = load_llm_config()
-    depth = depth or llm_cfg.default_depth
+    depth   = depth or llm_cfg.default_depth
     live_allowed, live_reason = _live_call_allowed_reason(llm_cfg)
 
-    cases = build_cases(
-        ticker=ticker,
-        limit=limit,
-        run_date=_today_utc(),
-        dry_run=True,
-        research_depth=depth,
-        verbose=False,
-    )
-    case_errors = _validate_cases(cases)
-
-    cap = llm_cfg.max_cases_per_run
+    cases = build_cases(ticker=ticker, limit=limit, run_date=_today_utc(),
+                        dry_run=True, research_depth=depth, verbose=False)
+    case_errors  = _validate_cases(cases)
+    cap          = llm_cfg.max_cases_per_run
     planned_cases = cases[:cap] if limit is None else cases
 
     print('AI Research Layer - Plan Preview')
@@ -985,10 +790,10 @@ def print_plan(ticker: str | None = None, limit: int | None = None, depth: str |
     if planned_cases:
         print('  Tickers that would be researched:')
         for case in planned_cases:
-            t = str(case.get('ticker', '?')).strip()
+            t  = str(case.get('ticker', '?')).strip()
             fp, status = cache_status(case)
             estimated_action = 'would_reuse_cache' if status == 'hit' else 'would_call_llm'
-            cls = str(case.get('fp_classification', '?')).strip()
+            cls    = str(case.get('fp_classification', '?')).strip()
             action = str(case.get('recommended_scanner_action', '?')).strip()
             print(
                 f'    {t:<8} cache={status:<4} estimated_action={estimated_action:<17} '
@@ -1001,16 +806,103 @@ def print_plan(ticker: str | None = None, limit: int | None = None, depth: str |
     print('  Plan mode wrote no files and made no LLM calls.')
 
 
+def print_opportunity_plan(
+    ticker: str | None = None,
+    limit: int | None = None,
+    depth: str | None = None,
+) -> None:
+    """Preview what opportunity mode would select — no LLM calls, no files written."""
+    _load_env()
+    from ai_research.llm_client import load_config as load_llm_config
+    from ai_research.research_case_builder import build_cases
+    from ai_research.opportunity_selector import print_opportunity_plan as _opp_plan
+
+    llm_cfg = load_llm_config()
+    depth   = depth or llm_cfg.default_depth
+
+    cases = build_cases(ticker=ticker, limit=limit, run_date=_today_utc(),
+                        dry_run=True, research_depth=depth, verbose=False)
+
+    from ai_research.suppression_registry import load_registry
+    registry  = load_registry()
+    watchlist = _load_json_file(WATCHLIST_PATH) or {}
+
+    print('AI Research Layer — Opportunity Plan')
+    print('=====================================')
+    print(f'  Cases available   : {len(cases)}')
+    print(f'  Registry entries  : {len(registry)}')
+    print()
+    _opp_plan(cases, registry, watchlist)
+    print('  No files written. No LLM calls made.')
+
+
+# ── Suppression status command ────────────────────────────────────────────────
+
+def print_suppression_status() -> None:
+    _load_env()
+    from ai_research.suppression_registry import load_registry, get_suppression_summary
+
+    registry = load_registry()
+    summary  = get_suppression_summary(registry)
+
+    print('AI Research Layer — Suppression Registry Status')
+    print('================================================')
+    print(f'  Registry path     : {SUPPRESSION_PATH}')
+    print(f'  Total suppressed  : {summary["total_suppressed"]}')
+    print()
+
+    if summary['by_reason']:
+        print('  By reason:')
+        for reason, count in sorted(summary['by_reason'].items()):
+            print(f'    {reason:<30} {count}')
+        print()
+
+    if summary['by_classification']:
+        print('  By classification:')
+        for cls, count in sorted(summary['by_classification'].items()):
+            print(f'    {cls:<40} {count}')
+        print()
+
+    if summary['top_repeated']:
+        print('  Top repeated (by times_seen):')
+        for rec in summary['top_repeated']:
+            ticker     = rec.get('ticker', '?')
+            times      = rec.get('times_seen', 0)
+            cls        = rec.get('classification', '?')
+            last_seen  = rec.get('last_seen_at', '')[:10]
+            reason     = rec.get('suppression_reason', '')[:60]
+            print(f'    {ticker:<8} seen={times:<4} cls={cls:<30} last={last_seen}')
+            print(f'           reason: {reason}')
+        print()
+
+    if summary['last_suppressed_date']:
+        print(f'  Last suppressed   : {summary["last_suppressed_date"][:10]}')
+
+    print()
+    print('  Unsuppression rules:')
+    print('    - New source URL for the ticker')
+    print('    - New filing date for the ticker')
+    print('    - New signal type for the ticker')
+    print('    - Action changes from DISCARD to WATCH/ESCALATE/NEEDS_HUMAN_REVIEW')
+    print('    - force_unsuppress flag set manually')
+    print()
+    print('  Management commands:')
+    print('    --force-unsuppress TICKER   Set force_unsuppress flag (re-analyze next run)')
+    print('    --clear-suppression TICKER  Remove ticker entirely from registry')
+
+
 # ── Status command ────────────────────────────────────────────────────────────
 
 def print_status() -> None:
     _load_env()
     from ai_research.llm_client import LLMClient, load_config as load_llm_config
     from ai_research.watchlist_manager import WatchlistManager
+    from ai_research.suppression_registry import load_registry
 
     llm_cfg = load_llm_config()
     client  = LLMClient(llm_cfg)
     wm      = WatchlistManager(WATCHLIST_PATH)
+    registry       = load_registry()
     alert_count, alert_source = _alert_count_available()
     live_allowed, live_reason = _live_call_allowed_reason(llm_cfg)
 
@@ -1026,6 +918,7 @@ def print_status() -> None:
     print(f'  Latest scanner output           : {_scanner_output_status()}')
     print(f'  Alert count available           : {alert_count} ({alert_source})')
     print(f'  Watchlist path                  : {WATCHLIST_PATH}')
+    print(f'  Suppression registry            : {len(registry)} entries ({SUPPRESSION_PATH})')
     print(f'  Cache path                      : {CACHE_DIR}')
     print(f'  Latest AI summary path          : {SUMMARY_PATH}')
     print(f'  Live LLM call allowed           : {_bool_text(live_allowed)} ({live_reason})')
@@ -1048,18 +941,16 @@ def _parse_args(argv=None):
             'Examples:\n'
             '  --latest --limit 10\n'
             '  --latest --limit 10 --evidence-audit\n'
-            '  --latest --limit 5  --evidence-audit --fetch-text\n'
-            '  --latest --limit 3  --dry-run\n'
-            '  --latest --limit 3  --plan\n'
-            '  --show-evidence APLS\n'
-            '  --inspect-source-fields --limit 10\n'
+            '  --latest --limit 10 --opportunity-mode --email\n'
+            '  --latest --limit 20 --opportunity-plan\n'
+            '  --latest --limit 20 --opportunity-mode --dry-run\n'
+            '  --suppression-status\n'
+            '  --force-unsuppress AAPL\n'
+            '  --clear-suppression AAPL\n'
             '  --status\n'
             '  --email-latest-summary\n'
         ),
     )
-    # Primary mode flags — ONLY --status, --show-evidence, --inspect-source-fields,
-    # and --email-latest-summary are truly standalone.
-    # --latest and --ticker can be combined with --evidence-audit, --plan, --dry-run.
     mode = p.add_mutually_exclusive_group(required=False)
     mode.add_argument('--latest', action='store_true',
                       help='Build cases + run gate from latest scanner outputs')
@@ -1067,30 +958,28 @@ def _parse_args(argv=None):
                       help='Run for a single ticker')
     mode.add_argument('--status', action='store_true',
                       help='Print current watchlist + config summary')
+    mode.add_argument('--suppression-status', action='store_true',
+                      help='Print suppression registry status')
     mode.add_argument('--show-evidence', metavar='TICKER',
-                      help='Print full evidence detail for a single ticker — no LLM, no email')
+                      help='Print full evidence detail for a single ticker')
     mode.add_argument('--inspect-source-fields', action='store_true',
-                      help='Print source field availability table — no LLM, no email')
+                      help='Print source field availability table')
     mode.add_argument('--email-latest-summary', action='store_true',
                       help='Send latest AI summary email without rerunning LLM')
-    mode.add_argument('--completed-acquisition-status', action='store_true',
-                      help='Print completed acquisition library stats — no LLM, no email')
-    mode.add_argument('--compare-completed-deals', metavar='TICKER',
-                      help='Show closest analogues + probability bucket for a ticker — no LLM')
+    mode.add_argument('--force-unsuppress', metavar='TICKER',
+                      help='Set force_unsuppress flag for a ticker in the registry')
+    mode.add_argument('--clear-suppression', metavar='TICKER',
+                      help='Remove a ticker completely from the suppression registry')
 
-    # Modifiers — can combine with --latest or --ticker
+    # Modifiers
     p.add_argument('--evidence-audit', action='store_true',
-                   help='Print evidence grade table (combine with --latest or --ticker)')
+                   help='Print evidence grade table')
     p.add_argument('--plan', action='store_true',
-                   help='Preview what would run - no files written, no LLM calls')
-    p.add_argument('--probability-audit', action='store_true',
-                   help='Print situation type, probability score, bucket for latest cases — no LLM')
-    p.add_argument('--include-completed-analogues', action='store_true', default=True,
-                   help='Include completed deal analogues in analysis (default: True)')
-    p.add_argument('--probability-analysis', action='store_true', default=True,
-                   help='Include probability analysis in output (default: True)')
+                   help='Preview what would run — no LLM calls, no files written')
+    p.add_argument('--opportunity-plan', action='store_true',
+                   help='Preview opportunity selector decisions — no LLM, no files written')
     p.add_argument('--limit',   type=int, default=None,
-                   help='Max cases to process (default: AI_RESEARCH_MAX_CASES_PER_RUN)')
+                   help='Max cases to process')
     p.add_argument('--depth', default='fast_gate',
                    choices=['fast_gate', 'deep'],
                    help='Research depth preset (default: fast_gate)')
@@ -1099,214 +988,41 @@ def _parse_args(argv=None):
     p.add_argument('--force-refresh', action='store_true',
                    help='Bypass cache and rerun LLM for all cases')
     p.add_argument('--fetch-text', action='store_true',
-                   help='Fetch full filing text from source URL (used with --evidence-audit, --show-evidence)')
+                   help='Fetch full filing text from source URL')
     p.add_argument('--email', action='store_true',
                    help='Send branded AI research email after run')
     p.add_argument('--strategic-brief', action='store_true',
-                   help='Include full strategy analysis, historical analogues, and operator queue in summary and email')
+                   help='Include strategic analysis fields in email')
+    p.add_argument('--include-completed-analogues', action='store_true',
+                   help='Include completed deal analogues in research (no-op: wired in prompts)')
+    p.add_argument('--probability-analysis', action='store_true',
+                   help='Include acquisition probability analysis (no-op: wired in gate)')
+    p.add_argument('--opportunity-mode', action='store_true',
+                   help='Apply suppression registry; email focuses on P0-P3 only')
+    p.add_argument('--include-suppressed', action='store_true',
+                   help='Include all suppressed cases in output (with --opportunity-mode)')
+    p.add_argument('--max-suppressed-summary', type=int, default=5,
+                   help='Max suppressed cases shown in email archive (default: 5)')
+
     args = p.parse_args(argv)
 
-    has_primary = (args.latest or args.ticker or args.status or args.show_evidence
-                   or args.inspect_source_fields or args.email_latest_summary
-                   or args.completed_acquisition_status or args.compare_completed_deals)
-    has_modifier = args.evidence_audit or args.plan or args.dry_run
+    has_primary = (
+        args.latest or args.ticker or args.status or args.suppression_status
+        or args.show_evidence or args.inspect_source_fields or args.email_latest_summary
+        or args.force_unsuppress or args.clear_suppression
+    )
+    has_modifier = args.evidence_audit or args.plan or args.opportunity_plan or args.dry_run
 
     if not has_primary and not has_modifier:
         p.error(
-            'specify a mode: --latest, --ticker TICKER, --status, --show-evidence TICKER, '
-            '--inspect-source-fields, or --email-latest-summary'
+            'specify a mode: --latest, --ticker TICKER, --status, --suppression-status, '
+            '--show-evidence TICKER, --email-latest-summary, '
+            '--force-unsuppress TICKER, --clear-suppression TICKER'
         )
     if has_modifier and not (args.latest or args.ticker):
-        # Allow --probability-audit as a standalone modifier (it reads existing case data)
-        if args.probability_audit:
-            pass
-        else:
-            p.error('--evidence-audit, --plan, and --dry-run require --latest or --ticker')
+        p.error('--evidence-audit, --plan, --opportunity-plan, and --dry-run require --latest or --ticker')
 
     return args
-
-
-def run_inspect_source_fields(limit: int | None = None) -> int:
-    """
-    Print source field availability for each alert — shows raw fields from every
-    data source and whether enrichment (flags parsing, EDGAR URL construction) improved them.
-    No LLM calls. No email.
-    """
-    _load_env()
-    from ai_research.research_case_builder import inspect_source_fields
-
-    rows = inspect_source_fields(limit=limit)
-    if not rows:
-        print('[INFO] No alerts found. Run scanner first.')
-        return 0
-
-    print('Source Field Inspection')
-    print('=======================')
-    print(f'{"Ticker":<8}  {"Signal type":<30}  {"JSON URL":>7}  {"Exc":>4}  {"Date":>10}  {"Form":>8}  {"Constructed":>11}  {"DryRun":>6}')
-    print('-' * 105)
-    for r in rows:
-        print(
-            f'{r["ticker"]:<8}  {r["signal_type"]:<30}  '
-            f'{"yes" if r["json_source_url"] else "no":>7}  '
-            f'{r["json_excerpt_len"]:>4}  '
-            f'{(r["enriched_filing_date"] or "—"):>10}  '
-            f'{(r["enriched_filing_type"] or "—"):>8}  '
-            f'{"constructed" if r["source_url_is_constructed"] else "direct":>11}  '
-            f'{"yes" if r["scanner_dry_run"] else "no":>6}'
-        )
-
-    print()
-    # Show constructed URLs for each ticker
-    for r in rows:
-        if r['source_url_is_constructed']:
-            print(f'  {r["ticker"]} → {r["enriched_source_url"]}')
-
-    if rows and rows[0]['scanner_dry_run']:
-        print()
-        print(
-            'NOTE: Scanner has been running in dry-run mode. Gate 1 (EDGAR filing fetch)\n'
-            'was skipped for all runs. To populate source fields, re-run the live scanner\n'
-            'with LIVE_SCANNER_DRY_RUN=false on the VPS:\n'
-            '  systemctl start ma-scanner-live.service\n'
-            '  python3 src/live_monitoring/live_scanner_runner.py --once'
-        )
-    return 0
-
-
-def run_completed_acquisition_status() -> int:
-    """Print completed acquisition library stats. No LLM calls."""
-    _load_env()
-    from ai_research.acquisition_case_library import print_library_status, load_completed_acquisition_cases, validate_completed_acquisition_cases
-    print_library_status()
-    return 0
-
-
-def run_compare_completed_deals(ticker: str, limit: int | None = None) -> int:
-    """
-    For a live ticker, show closest analogues, probability bucket, situation type, traits.
-    No LLM calls.
-    """
-    _load_env()
-    from ai_research.research_case_builder import build_cases
-    from ai_research.acquisition_situation_classifier import classify_acquisition_situation
-    from ai_research.acquisition_probability_engine import compute_acquisition_probability, format_probability_summary
-    from ai_research.acquisition_case_library import (
-        load_completed_acquisition_cases,
-        retrieve_completed_deal_analogues,
-    )
-
-    t = ticker.upper()
-    cases = build_cases(ticker=t, limit=1, run_date=_today_utc(), dry_run=True, verbose=False)
-
-    if not cases:
-        print(f'[WARN] No case found for {t}. Run scanner first.')
-        return 1
-
-    case = cases[0]
-    print(f'Completed Deal Comparison: {t}')
-    print('=' * 60)
-
-    situation_result = classify_acquisition_situation(case)
-    prob_result      = compute_acquisition_probability(case)
-
-    print(f'Primary situation   : {situation_result.get("primary_acquisition_situation", "?")}')
-    print(f'Probability bucket  : {prob_result.get("probability_bucket", "?")}')
-    print(f'Research score      : {prob_result.get("acquisition_research_probability_score", 0)}/100')
-    print(f'Explicit process    : {situation_result.get("is_explicit_process_signal", False)}')
-    print(f'Setup signal only   : {situation_result.get("is_setup_signal_only", False)}')
-    print()
-
-    print('Situation scores:')
-    for sit, score in sorted(
-        situation_result.get('situation_scores', {}).items(),
-        key=lambda x: x[1], reverse=True,
-    )[:5]:
-        print(f'  {sit:<45} {score:>5.0f}')
-    print()
-
-    print('Reasoning:')
-    print(f'  {situation_result.get("deterministic_reasoning", "")}')
-    print()
-
-    completed_cases = load_completed_acquisition_cases()
-    analogues = retrieve_completed_deal_analogues(case, completed_cases, max_cases=5)
-    if analogues:
-        print(f'Top {len(analogues)} completed deal analogues:')
-        for i, a in enumerate(analogues, 1):
-            print(f'  [{i}] {a.get("ticker", "?")} — {a.get("company_name", "")}')
-            print(f'       Situation: {a.get("acquisition_situation_type", "?")}')
-            print(f'       Signal   : {a.get("public_signal_category", "?")}')
-            print(f'       Catchable: {a.get("public_catchability", "?")}')
-            print(f'       Relevance: {a.get("_relevance_score", 0.0):.2f}')
-            lesson = a.get('operator_lesson', '')
-            if lesson:
-                print(f'       Lesson   : {lesson[:150]}')
-            print()
-
-    traits_present = prob_result.get('successful_deal_traits_present', [])
-    traits_missing = prob_result.get('successful_deal_traits_missing', [])
-    if traits_present:
-        print('Successful deal traits PRESENT:')
-        for t_item in traits_present:
-            print(f'  + {t_item}')
-        print()
-    if traits_missing:
-        print('Successful deal traits MISSING:')
-        for t_item in traits_missing[:4]:
-            print(f'  - {t_item}')
-        print()
-
-    why_not = prob_result.get('why_probability_not_higher', '')
-    if why_not:
-        print(f'Why not higher: {why_not}')
-        print()
-
-    return 0
-
-
-def run_probability_audit(ticker: str | None = None, limit: int | None = None) -> int:
-    """
-    For the latest N cases, print situation type, probability score, bucket, top reasons.
-    No LLM calls. Uses existing case data from today.
-    """
-    _load_env()
-    from ai_research.research_case_builder import build_cases
-    from ai_research.acquisition_situation_classifier import classify_acquisition_situation
-    from ai_research.acquisition_probability_engine import compute_acquisition_probability
-
-    cases = build_cases(
-        ticker=ticker,
-        limit=limit,
-        run_date=_today_utc(),
-        dry_run=True,
-        verbose=False,
-    )
-
-    if not cases:
-        print('[INFO] No cases found. Run scanner first.')
-        return 0
-
-    print('Probability Audit')
-    print('=================')
-    print(f'{"Ticker":<8}  {"Bucket":<35}  {"Score":>5}  {"Situation":<40}  {"Confidence"}')
-    print('-' * 110)
-
-    for case in cases:
-        t = case.get('ticker', '?')
-        try:
-            sit_result = classify_acquisition_situation(case)
-            prob_result = compute_acquisition_probability(case)
-            bucket     = prob_result.get('probability_bucket', '?')
-            score      = prob_result.get('acquisition_research_probability_score', 0)
-            situation  = sit_result.get('primary_acquisition_situation', '?')
-            confidence = prob_result.get('confidence_level', '?')
-            print(f'{t:<8}  {bucket:<35}  {score:>5.0f}  {situation:<40}  {confidence}')
-        except Exception as exc:
-            print(f'{t:<8}  ERROR: {exc}')
-
-    print()
-    print('Probability audit complete. No LLM calls were made.')
-    return 0
 
 
 def main(argv=None) -> int:
@@ -1316,19 +1032,41 @@ def main(argv=None) -> int:
         print_status()
         return 0
 
+    if args.suppression_status:
+        print_suppression_status()
+        return 0
+
+    if args.force_unsuppress:
+        _load_env()
+        from ai_research.suppression_registry import load_registry, save_registry, force_unsuppress
+        registry = load_registry()
+        ticker   = args.force_unsuppress.upper()
+        if force_unsuppress(ticker, registry):
+            save_registry(registry)
+            print(f'[SUPPRESS] force_unsuppress set for {ticker}. '
+                  f'Will re-analyze on next --opportunity-mode run.')
+        else:
+            print(f'[SUPPRESS] {ticker} not found in suppression registry.')
+        return 0
+
+    if args.clear_suppression:
+        _load_env()
+        from ai_research.suppression_registry import load_registry, save_registry, clear_suppression
+        registry = load_registry()
+        ticker   = args.clear_suppression.upper()
+        if clear_suppression(ticker, registry):
+            save_registry(registry)
+            print(f'[SUPPRESS] {ticker} removed from suppression registry.')
+        else:
+            print(f'[SUPPRESS] {ticker} was not in suppression registry.')
+        return 0
+
+    if args.evidence_audit:
+        return run_evidence_audit(ticker=None, limit=args.limit, fetch_text=args.fetch_text)
+
     if args.show_evidence:
         return run_show_evidence(args.show_evidence.upper(), fetch_text=args.fetch_text)
 
-    if args.inspect_source_fields:
-        return run_inspect_source_fields(limit=args.limit)
-
-    if args.completed_acquisition_status:
-        return run_completed_acquisition_status()
-
-    if args.compare_completed_deals:
-        return run_compare_completed_deals(args.compare_completed_deals.upper(), limit=args.limit)
-
-    # --email-latest-summary is standalone
     if args.email_latest_summary:
         _load_env()
         from ai_research.ai_emailer import send_latest_summary_email
@@ -1337,32 +1075,51 @@ def main(argv=None) -> int:
 
     _load_env()
     from ai_research.llm_client import load_config as load_llm_config
-
     llm_cfg = load_llm_config()
-    depth = args.depth or llm_cfg.default_depth
-    ticker = args.ticker.upper() if args.ticker else None
+    depth   = args.depth or llm_cfg.default_depth
 
-    # --plan is a preview modifier for --latest / --ticker
+    if args.opportunity_plan:
+        ticker = args.ticker.upper() if args.ticker else None
+        print_opportunity_plan(ticker=ticker, limit=args.limit, depth=depth)
+        return 0
+
     if args.plan:
+        ticker = args.ticker.upper() if args.ticker else None
         print_plan(ticker=ticker, limit=args.limit, depth=depth)
         return 0
 
-    # --evidence-audit is a modifier for --latest / --ticker
-    if args.evidence_audit:
-        return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
+    if args.inspect_source_fields:
+        from ai_research.research_case_builder import build_cases
+        cases = build_cases(ticker=None, limit=args.limit, run_date=_today_utc(),
+                            dry_run=True, verbose=False)
+        if not cases:
+            print('[INFO] No cases found.')
+            return 0
+        fields_to_check = ['source_url', 'accession', 'filing_date', 'filing_type',
+                           'source_excerpt', 'trigger_phrase', 'signal_type', 'signal_quality']
+        print(f'{"Ticker":<10}' + ''.join(f'  {f[:12]:<12}' for f in fields_to_check))
+        print('-' * (10 + len(fields_to_check) * 14))
+        for c in cases[:args.limit or 20]:
+            t = c.get('ticker', '?')
+            row = f'{t:<10}'
+            for f in fields_to_check:
+                val = c.get(f)
+                row += f'  {"Y" if val else ".":<12}'
+            print(row)
+        return 0
 
-    # --probability-audit is a modifier (can be standalone or with --latest/--ticker)
-    if args.probability_audit:
-        return run_probability_audit(ticker=ticker, limit=args.limit)
-
+    ticker = args.ticker.upper() if args.ticker else None
     return run(
-        ticker          = ticker,
-        limit           = args.limit,
-        dry_run         = args.dry_run,
-        depth           = depth,
-        force_refresh   = args.force_refresh,
-        send_email      = args.email,
-        strategic_brief = args.strategic_brief,
+        ticker                  = ticker,
+        limit                   = args.limit,
+        dry_run                 = args.dry_run,
+        depth                   = depth,
+        force_refresh           = args.force_refresh,
+        send_email              = args.email,
+        strategic_brief         = args.strategic_brief,
+        opportunity_mode        = args.opportunity_mode,
+        include_suppressed      = args.include_suppressed,
+        max_suppressed_summary  = args.max_suppressed_summary,
     )
 
 
