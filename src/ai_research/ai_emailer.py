@@ -225,6 +225,19 @@ def _card_html(d: dict, strategic_brief: bool = False) -> str:
     # Strategy fields
     bucket       = d.get('strategy_bucket', '')
     analogue     = d.get('historical_analogue', '')
+
+    # Acquisition intelligence fields
+    acq_situation   = d.get('primary_acquisition_situation', '')
+    prob_bucket     = d.get('probability_bucket', '')
+    prob_score      = d.get('acquisition_research_probability_score', 0)
+    closest_analogue = d.get('closest_completed_deal_analogue') or {}
+    traits_present  = d.get('successful_deal_traits_present', []) or []
+    traits_missing  = d.get('successful_deal_traits_missing', []) or []
+    why_not_higher  = d.get('why_probability_not_higher', '')
+    evidence_needed = d.get('evidence_needed_to_upgrade', []) or []
+    ext_status      = d.get('external_research_status', {}) or {}
+    is_explicit     = d.get('is_explicit_process_signal', False)
+    is_setup        = d.get('is_setup_signal_only', False)
     ts_archetypes = d.get('matched_true_signal_archetypes', []) or []
     fp_archetypes = d.get('matched_false_positive_archetypes', []) or []
     why_fired    = d.get('why_this_fired', '')
@@ -411,6 +424,80 @@ def _card_html(d: dict, strategic_brief: bool = False) -> str:
                 f'Monitor: {_esc(monitoring[:200])}</div>'
             )
 
+    # Acquisition situation + probability bucket (always show if present)
+    if acq_situation or prob_bucket:
+        html += (
+            f'<div style="background:#0f1117;border-left:3px solid #c9a84c;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:8px;">'
+            f'<span style="font-size:10px;color:#c9a84c;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">Acquisition Situation</span><br>'
+        )
+        if acq_situation:
+            html += f'<span style="font-size:11px;color:#94a3b8;">{_esc(acq_situation)}</span>'
+        if prob_bucket:
+            bucket_color = '#dc2626' if 'P5' in prob_bucket else (
+                '#d97706' if 'P4' in prob_bucket else (
+                '#2563eb' if 'P3' in prob_bucket else '#374151'
+            ))
+            html += (
+                f' &nbsp;<span style="display:inline-block;padding:1px 6px;border-radius:3px;'
+                f'font-size:10px;font-weight:700;background:{bucket_color};color:#fff;">'
+                f'{_esc(prob_bucket.split("_")[0])}</span>'
+            )
+        if prob_score:
+            html += f' &nbsp;<span style="font-size:10px;color:#64748b;">score {prob_score}/100</span>'
+        if is_explicit:
+            html += f' &nbsp;<span style="font-size:10px;color:#16a34a;">EXPLICIT PROCESS</span>'
+        elif is_setup:
+            html += f' &nbsp;<span style="font-size:10px;color:#d97706;">SETUP ONLY</span>'
+        html += '</div>'
+
+    # Closest completed deal analogue
+    if closest_analogue and closest_analogue.get('ticker'):
+        html += (
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:6px;">'
+            f'Closest analogue: <span style="color:#94a3b8;">{_esc(closest_analogue.get("ticker", "?"))} '
+            f'({_esc(closest_analogue.get("acquisition_situation_type", "?"))})</span>'
+        )
+        lesson = closest_analogue.get('operator_lesson', '')
+        if lesson:
+            html += (
+                f'<br><span style="font-size:10px;color:#475569;">{_esc(lesson[:200])}</span>'
+            )
+        html += '</div>'
+
+    # Successful deal traits (strategic brief only)
+    if strategic_brief and (traits_present or traits_missing):
+        if traits_present:
+            html += '<div style="font-size:11px;color:#16a34a;margin-bottom:4px;">Traits present: '
+            html += '; '.join(_esc(t[:80]) for t in traits_present[:2])
+            html += '</div>'
+        if traits_missing:
+            html += '<div style="font-size:11px;color:#dc2626;margin-bottom:4px;">Traits missing: '
+            html += '; '.join(_esc(t[:80]) for t in traits_missing[:2])
+            html += '</div>'
+
+    # Why probability not higher (strategic brief only)
+    if strategic_brief and why_not_higher:
+        html += (
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:6px;">'
+            f'Why not higher: {_esc(why_not_higher[:200])}</div>'
+        )
+
+    # Evidence needed to upgrade (strategic brief only)
+    if strategic_brief and evidence_needed:
+        html += (
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:6px;">'
+            f'To upgrade: {_esc(evidence_needed[0][:150])}</div>'
+        )
+
+    # External research status (compact, strategic brief only)
+    if strategic_brief and not ext_status.get('enabled', False):
+        html += (
+            f'<div style="font-size:10px;color:#374151;margin-bottom:4px;">'
+            f'External research: DISABLED — TSRO-type signals not detectable</div>'
+        )
+
     # What would change the decision
     if change_dec:
         html += (
@@ -465,6 +552,33 @@ def build_ai_email_html(
     ) if decisions else (
         '<p style="color:#64748b;font-size:13px;">No decisions were made this run.</p>'
     )
+
+    # Check if all top cases are already-announced
+    all_already_announced = (
+        decisions
+        and all(
+            d.get('classification') == 'ALREADY_ANNOUNCED_DEAL'
+            or 'ALREADY_ANNOUNCED_MERGER' in (d.get('matched_false_positive_archetypes', []) or [])
+            or (d.get('probability_bucket', '') == 'P1_DISCARD_ALREADY_ANNOUNCED')
+            for d in decisions
+        )
+    )
+    already_announced_advisory_html = ''
+    if all_already_announced and strategic_brief:
+        already_announced_advisory_html = (
+            '<div style="background:#1e293b;border:1px solid #d97706;border-radius:6px;'
+            'padding:14px 16px;margin-bottom:16px;">'
+            '<div style="font-size:11px;color:#d97706;text-transform:uppercase;'
+            'letter-spacing:0.1em;margin-bottom:8px;">System Note — Useful Negatives</div>'
+            '<p style="font-size:12px;color:#94a3b8;line-height:1.6;margin:0;">'
+            'All top cases in this batch are already-announced transactions. '
+            'This is a useful negative result: the system is correctly identifying already-announced '
+            'transaction language, but no current case resembles a pre-announcement setup signal. '
+            'Next best improvement is external news/media integration for TSRO-like signals '
+            'and training on additional completed acquisition setups. '
+            'Continue monitoring for new company-level process filings.</p>'
+            '</div>'
+        )
 
     dry_run_banner = ''
     if dry_run:
@@ -573,6 +687,7 @@ def build_ai_email_html(
 <tr><td style="padding:16px 24px;">
   {dry_run_banner}
   {strategy_summary_html}
+  {already_announced_advisory_html}
   {cards_html}
 </td></tr>
 

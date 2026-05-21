@@ -257,7 +257,9 @@ else
     --limit "${LIMIT}" \
     --depth "${DEPTH}" \
     --email \
-    --strategic-brief
+    --strategic-brief \
+    --include-completed-analogues \
+    --probability-analysis
   AI_RC=$?
   set -e
 

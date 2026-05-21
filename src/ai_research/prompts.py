@@ -239,7 +239,56 @@ This requirement applies even when the answer is clearly DISCARD."""
 
 # ── Prompt builder ────────────────────────────────────────────────────────────
 
-def build_investment_gate_prompt(case: dict, strategy_features: dict | None = None) -> str:
+def build_acquisition_intelligence_prompt(
+    case: dict,
+    situation_result: dict | None = None,
+    prob_result: dict | None = None,
+    analogues_context: str = '',
+    external_research_context: str = '',
+) -> str:
+    """
+    Assemble a standalone acquisition intelligence context block for LLM injection.
+    Can be called independently or used within build_investment_gate_prompt.
+    """
+    ticker = case.get('ticker', 'UNKNOWN')
+    blocks: list[str] = []
+
+    # Situation classification block
+    if situation_result:
+        try:
+            from ai_research.acquisition_situation_classifier import format_situation_classification_for_prompt
+            blocks.append(format_situation_classification_for_prompt(situation_result))
+        except Exception:
+            blocks.append(f'ACQUISITION SITUATION: {situation_result.get("primary_acquisition_situation", "UNKNOWN")}')
+
+    # Probability engine block
+    if prob_result:
+        try:
+            from ai_research.acquisition_probability_engine import format_probability_for_prompt
+            blocks.append(format_probability_for_prompt(prob_result))
+        except Exception:
+            score = prob_result.get('acquisition_research_probability_score', 0)
+            bucket = prob_result.get('probability_bucket', '')
+            blocks.append(f'PROBABILITY ENGINE: Score={score}/100 | Bucket={bucket}')
+
+    # Completed deal analogues block
+    if analogues_context:
+        blocks.append(analogues_context)
+
+    # External research block
+    if external_research_context:
+        blocks.append(external_research_context)
+
+    return '\n\n---\n\n'.join(blocks) if blocks else ''
+
+
+def build_investment_gate_prompt(
+    case: dict,
+    strategy_features: dict | None = None,
+    situation_result: dict | None = None,
+    prob_result: dict | None = None,
+    analogues_context: str = '',
+) -> str:
     """
     Build a strategy-calibrated diligence prompt for the investment gate.
 
@@ -334,6 +383,34 @@ def build_investment_gate_prompt(case: dict, strategy_features: dict | None = No
     else:
         strategy_block = 'DETERMINISTIC STRATEGY ANALYSIS: Not available (run strategy_classifier first).'
 
+    # Acquisition intelligence block (situation classifier + probability engine + analogues)
+    acq_intel_block = ''
+    if situation_result or prob_result or analogues_context:
+        acq_intel_block = build_acquisition_intelligence_prompt(
+            case,
+            situation_result=situation_result,
+            prob_result=prob_result,
+            analogues_context=analogues_context,
+        )
+
+    # Build extra instructions for acquisition intelligence fields
+    acq_intel_instructions = ''
+    if situation_result or prob_result:
+        acq_intel_instructions = """
+19. ACQUISITION INTELLIGENCE FIELDS (use the pre-computed values above as your starting point):
+    - primary_acquisition_situation: The primary situation type from the deterministic classifier.
+    - completed_deal_analogues (in output): Pick at most 2 ticker names from the analogues block.
+    - acquisition_research_probability_score: You may adjust ±10 from the engine score based on excerpt context.
+    - probability_bucket: Confirm or adjust the pre-computed bucket based on excerpt evidence.
+    - is_explicit_process_signal: True only if excerpt contains explicit process language (8-K strategic alternatives, unsolicited proposal, superior proposal, active sale process — NOT catalyst-only or boilerplate).
+    - is_setup_signal_only: True if only setup signals (catalyst, distress, ROFR) — no explicit process.
+    - why_probability_not_higher: 1-2 sentences explaining what evidence is missing.
+    - evidence_needed_to_upgrade: 2-3 specific pieces of evidence that would upgrade the bucket.
+    - successful_deal_traits_present: What does this case share with MDVN/DMTX/TSRO?
+    - successful_deal_traits_missing: What key traits are absent compared to true-signal examples?
+    - what_operator_should_check_next: Most important next action (specific filing or search).
+"""
+
     prompt = f"""You are a biotech M&A research analyst reviewing scanner alerts for potential strategic activity.
 
 IMPORTANT INSTRUCTIONS:
@@ -363,6 +440,10 @@ IMPORTANT INSTRUCTIONS:
 ---
 
 {strategy_block}
+
+---
+
+{acq_intel_block}
 
 ---
 
@@ -460,6 +541,8 @@ FIELD-BY-FIELD INSTRUCTIONS (fill every field — do not skip any):
     investability_setup_score): Use the deterministic analysis above as your starting point,
     then adjust based on the source excerpt content. Do not just copy the deterministic scores —
     adjust if the excerpt shows different evidence.
+
+{acq_intel_instructions}
 
 OUTPUT SCHEMA (output ONLY this JSON, no other text):
 {schema_json}

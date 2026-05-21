@@ -19,6 +19,23 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
+# ── New acquisition intelligence imports ──────────────────────────────────────
+try:
+    from .acquisition_situation_classifier import classify_acquisition_situation
+    from .acquisition_probability_engine import (
+        compute_acquisition_probability,
+        format_probability_for_prompt,
+    )
+    from .acquisition_case_library import (
+        load_completed_acquisition_cases,
+        retrieve_completed_deal_analogues,
+        build_completed_deal_context_for_prompt,
+    )
+    from .external_source_provider import get_external_research_status
+    _ACQ_INTELLIGENCE_AVAILABLE = True
+except ImportError:
+    _ACQ_INTELLIGENCE_AVAILABLE = False
+
 _HERE   = Path(__file__).resolve().parent
 _SRCDIR = _HERE.parent
 REPO    = _SRCDIR.parent
@@ -166,6 +183,28 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'suggested_follow_up_queries':     [],
         'note':                            note,
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
+        # Acquisition intelligence fields (new)
+        'primary_acquisition_situation':            '',
+        'possible_acquisition_situations':          [],
+        'completed_deal_analogues':                 [],
+        'closest_completed_deal_analogue':          None,
+        'acquisition_research_probability_score':   0,
+        'probability_bucket':                       '',
+        'probability_components':                   {},
+        'base_rate_anchor':                         4.0,
+        'upward_probability_factors':               [],
+        'downward_probability_factors':             [],
+        'successful_deal_traits_present':           [],
+        'successful_deal_traits_missing':           [],
+        'external_research_status':                 {},
+        'external_sources_reviewed':                [],
+        'online_research_gaps':                     [],
+        'is_explicit_process_signal':               False,
+        'is_setup_signal_only':                     False,
+        'is_probabilistic_watch_case':              False,
+        'why_probability_not_higher':               '',
+        'evidence_needed_to_upgrade':               [],
+        'next_source_queries':                      [],
     }
 
 
@@ -436,12 +475,27 @@ def run_gate(
         print(f'  [WARN] Strategy classifier failed for {ticker}: {exc}', file=sys.stderr)
         strategy_features = None
 
+    # ── Run acquisition intelligence (situation classifier + probability engine) ─
+    prob_result: dict | None = None
+    situation_result: dict | None = None
+    analogues_context: str = ''
+    if _ACQ_INTELLIGENCE_AVAILABLE:
+        try:
+            situation_result = classify_acquisition_situation(case)
+            prob_result      = compute_acquisition_probability(case)
+            analogues_context = build_completed_deal_context_for_prompt(case, max_cases=4)
+        except Exception as exc:
+            print(f'  [WARN] Acquisition intelligence failed for {ticker}: {exc}', file=sys.stderr)
+
     if dry_run:
         print(f'  [DRY-RUN] Gate skipped for {ticker} (dry_run=true).')
         result = _dry_run_decision(ticker, note='DRY_RUN')
         # Inject deterministic strategy features even in dry-run
         if strategy_features:
             result = _inject_strategy_features(result, strategy_features)
+        # Inject acquisition intelligence even in dry-run
+        if prob_result:
+            result = _inject_acquisition_intelligence(result, prob_result)
         return result
 
     # Fingerprint cache — skip LLM if same case signal was processed today
@@ -460,10 +514,18 @@ def run_gate(
         result = _dry_run_decision(ticker, note=f'AI_UNAVAILABLE: {client.status_message}')
         if strategy_features:
             result = _inject_strategy_features(result, strategy_features)
+        if prob_result:
+            result = _inject_acquisition_intelligence(result, prob_result)
         return result
 
     from ai_research.prompts import build_investment_gate_prompt
-    prompt = build_investment_gate_prompt(case, strategy_features=strategy_features)
+    prompt = build_investment_gate_prompt(
+        case,
+        strategy_features=strategy_features,
+        situation_result=situation_result,
+        prob_result=prob_result,
+        analogues_context=analogues_context,
+    )
 
     try:
         raw = client.complete(prompt)
@@ -483,6 +545,10 @@ def run_gate(
     # ── Merge deterministic strategy features (prefer LLM values, fallback to deterministic) ──
     if strategy_features:
         decision = _merge_strategy_features(decision, strategy_features)
+
+    # ── Inject acquisition intelligence (always from deterministic engine) ─────
+    if prob_result:
+        decision = _inject_acquisition_intelligence(decision, prob_result)
 
     # ── Inject evidence provenance from case (not from LLM) ──────────────────
     eq = case.get('evidence_quality', {}) or {}
@@ -550,6 +616,64 @@ def _inject_strategy_features(decision: dict, sf: dict) -> dict:
     decision['process_specificity_score']        = sf.get('process_specificity_score', 0)
     decision['investability_setup_score']        = sf.get('investability_setup_score', 0)
     decision['deterministic_strategy_summary']   = sf.get('deterministic_reasoning', '')
+    return decision
+
+
+def _inject_acquisition_intelligence(decision: dict, prob_result: dict) -> dict:
+    """
+    Inject acquisition probability engine results into a decision dict.
+    These fields are always sourced from the deterministic engine, not the LLM.
+    """
+    analogues = prob_result.get('completed_deal_analogues', []) or []
+    # Trim analogues to max 3 for email/output (full list is in prob_result)
+    analogues_trimmed = [
+        {
+            'ticker':                    a.get('ticker', ''),
+            'company_name':              a.get('company_name', ''),
+            'acquisition_situation_type': a.get('acquisition_situation_type', ''),
+            'public_signal_category':    a.get('public_signal_category', ''),
+            'public_catchability':       a.get('public_catchability', ''),
+            'verification_status':       a.get('verification_status', ''),
+            'days_before_announcement':  a.get('days_before_announcement'),
+            'operator_lesson':           a.get('operator_lesson', ''),
+            '_relevance_score':          a.get('_relevance_score', 0.0),
+            '_relevance_reason':         a.get('_relevance_reason', ''),
+        }
+        for a in analogues[:3]
+    ]
+
+    closest = prob_result.get('closest_analogue')
+    closest_trimmed = None
+    if closest:
+        closest_trimmed = {
+            'ticker':                    closest.get('ticker', ''),
+            'company_name':              closest.get('company_name', ''),
+            'acquisition_situation_type': closest.get('acquisition_situation_type', ''),
+            'public_signal_category':    closest.get('public_signal_category', ''),
+            'operator_lesson':           closest.get('operator_lesson', ''),
+        }
+
+    decision['primary_acquisition_situation']           = prob_result.get('primary_acquisition_situation', '')
+    decision['possible_acquisition_situations']         = prob_result.get('possible_acquisition_situations', [])
+    decision['completed_deal_analogues']                = analogues_trimmed
+    decision['closest_completed_deal_analogue']         = closest_trimmed
+    decision['acquisition_research_probability_score']  = prob_result.get('acquisition_research_probability_score', 0)
+    decision['probability_bucket']                      = prob_result.get('probability_bucket', '')
+    decision['probability_components']                  = prob_result.get('probability_components', {})
+    decision['base_rate_anchor']                        = prob_result.get('base_rate_anchor', 4.0)
+    decision['upward_probability_factors']              = [a['reason'] for a in (prob_result.get('upward_adjustments', []) or [])]
+    decision['downward_probability_factors']            = [a['reason'] for a in (prob_result.get('downward_adjustments', []) or [])]
+    decision['successful_deal_traits_present']          = prob_result.get('successful_deal_traits_present', [])
+    decision['successful_deal_traits_missing']          = prob_result.get('successful_deal_traits_missing', [])
+    decision['external_research_status']                = prob_result.get('external_research_status', {})
+    decision['external_sources_reviewed']               = prob_result.get('external_sources_reviewed', [])
+    decision['online_research_gaps']                    = prob_result.get('online_research_gaps', [])
+    decision['is_explicit_process_signal']              = prob_result.get('is_explicit_process_signal', False)
+    decision['is_setup_signal_only']                    = prob_result.get('is_setup_signal_only', False)
+    decision['is_probabilistic_watch_case']             = prob_result.get('is_probabilistic_watch_case', False)
+    decision['why_probability_not_higher']              = prob_result.get('why_probability_not_higher', '')
+    decision['evidence_needed_to_upgrade']              = prob_result.get('evidence_needed_to_upgrade', [])
+    decision['next_source_queries']                     = prob_result.get('next_source_queries', [])
     return decision
 
 

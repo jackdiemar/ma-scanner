@@ -1073,12 +1073,22 @@ def _parse_args(argv=None):
                       help='Print source field availability table — no LLM, no email')
     mode.add_argument('--email-latest-summary', action='store_true',
                       help='Send latest AI summary email without rerunning LLM')
+    mode.add_argument('--completed-acquisition-status', action='store_true',
+                      help='Print completed acquisition library stats — no LLM, no email')
+    mode.add_argument('--compare-completed-deals', metavar='TICKER',
+                      help='Show closest analogues + probability bucket for a ticker — no LLM')
 
     # Modifiers — can combine with --latest or --ticker
     p.add_argument('--evidence-audit', action='store_true',
                    help='Print evidence grade table (combine with --latest or --ticker)')
     p.add_argument('--plan', action='store_true',
                    help='Preview what would run - no files written, no LLM calls')
+    p.add_argument('--probability-audit', action='store_true',
+                   help='Print situation type, probability score, bucket for latest cases — no LLM')
+    p.add_argument('--include-completed-analogues', action='store_true', default=True,
+                   help='Include completed deal analogues in analysis (default: True)')
+    p.add_argument('--probability-analysis', action='store_true', default=True,
+                   help='Include probability analysis in output (default: True)')
     p.add_argument('--limit',   type=int, default=None,
                    help='Max cases to process (default: AI_RESEARCH_MAX_CASES_PER_RUN)')
     p.add_argument('--depth', default='fast_gate',
@@ -1097,7 +1107,8 @@ def _parse_args(argv=None):
     args = p.parse_args(argv)
 
     has_primary = (args.latest or args.ticker or args.status or args.show_evidence
-                   or args.inspect_source_fields or args.email_latest_summary)
+                   or args.inspect_source_fields or args.email_latest_summary
+                   or args.completed_acquisition_status or args.compare_completed_deals)
     has_modifier = args.evidence_audit or args.plan or args.dry_run
 
     if not has_primary and not has_modifier:
@@ -1106,7 +1117,11 @@ def _parse_args(argv=None):
             '--inspect-source-fields, or --email-latest-summary'
         )
     if has_modifier and not (args.latest or args.ticker):
-        p.error('--evidence-audit, --plan, and --dry-run require --latest or --ticker')
+        # Allow --probability-audit as a standalone modifier (it reads existing case data)
+        if args.probability_audit:
+            pass
+        else:
+            p.error('--evidence-audit, --plan, and --dry-run require --latest or --ticker')
 
     return args
 
@@ -1158,6 +1173,142 @@ def run_inspect_source_fields(limit: int | None = None) -> int:
     return 0
 
 
+def run_completed_acquisition_status() -> int:
+    """Print completed acquisition library stats. No LLM calls."""
+    _load_env()
+    from ai_research.acquisition_case_library import print_library_status, load_completed_acquisition_cases, validate_completed_acquisition_cases
+    print_library_status()
+    return 0
+
+
+def run_compare_completed_deals(ticker: str, limit: int | None = None) -> int:
+    """
+    For a live ticker, show closest analogues, probability bucket, situation type, traits.
+    No LLM calls.
+    """
+    _load_env()
+    from ai_research.research_case_builder import build_cases
+    from ai_research.acquisition_situation_classifier import classify_acquisition_situation
+    from ai_research.acquisition_probability_engine import compute_acquisition_probability, format_probability_summary
+    from ai_research.acquisition_case_library import (
+        load_completed_acquisition_cases,
+        retrieve_completed_deal_analogues,
+    )
+
+    t = ticker.upper()
+    cases = build_cases(ticker=t, limit=1, run_date=_today_utc(), dry_run=True, verbose=False)
+
+    if not cases:
+        print(f'[WARN] No case found for {t}. Run scanner first.')
+        return 1
+
+    case = cases[0]
+    print(f'Completed Deal Comparison: {t}')
+    print('=' * 60)
+
+    situation_result = classify_acquisition_situation(case)
+    prob_result      = compute_acquisition_probability(case)
+
+    print(f'Primary situation   : {situation_result.get("primary_acquisition_situation", "?")}')
+    print(f'Probability bucket  : {prob_result.get("probability_bucket", "?")}')
+    print(f'Research score      : {prob_result.get("acquisition_research_probability_score", 0)}/100')
+    print(f'Explicit process    : {situation_result.get("is_explicit_process_signal", False)}')
+    print(f'Setup signal only   : {situation_result.get("is_setup_signal_only", False)}')
+    print()
+
+    print('Situation scores:')
+    for sit, score in sorted(
+        situation_result.get('situation_scores', {}).items(),
+        key=lambda x: x[1], reverse=True,
+    )[:5]:
+        print(f'  {sit:<45} {score:>5.0f}')
+    print()
+
+    print('Reasoning:')
+    print(f'  {situation_result.get("deterministic_reasoning", "")}')
+    print()
+
+    completed_cases = load_completed_acquisition_cases()
+    analogues = retrieve_completed_deal_analogues(case, completed_cases, max_cases=5)
+    if analogues:
+        print(f'Top {len(analogues)} completed deal analogues:')
+        for i, a in enumerate(analogues, 1):
+            print(f'  [{i}] {a.get("ticker", "?")} — {a.get("company_name", "")}')
+            print(f'       Situation: {a.get("acquisition_situation_type", "?")}')
+            print(f'       Signal   : {a.get("public_signal_category", "?")}')
+            print(f'       Catchable: {a.get("public_catchability", "?")}')
+            print(f'       Relevance: {a.get("_relevance_score", 0.0):.2f}')
+            lesson = a.get('operator_lesson', '')
+            if lesson:
+                print(f'       Lesson   : {lesson[:150]}')
+            print()
+
+    traits_present = prob_result.get('successful_deal_traits_present', [])
+    traits_missing = prob_result.get('successful_deal_traits_missing', [])
+    if traits_present:
+        print('Successful deal traits PRESENT:')
+        for t_item in traits_present:
+            print(f'  + {t_item}')
+        print()
+    if traits_missing:
+        print('Successful deal traits MISSING:')
+        for t_item in traits_missing[:4]:
+            print(f'  - {t_item}')
+        print()
+
+    why_not = prob_result.get('why_probability_not_higher', '')
+    if why_not:
+        print(f'Why not higher: {why_not}')
+        print()
+
+    return 0
+
+
+def run_probability_audit(ticker: str | None = None, limit: int | None = None) -> int:
+    """
+    For the latest N cases, print situation type, probability score, bucket, top reasons.
+    No LLM calls. Uses existing case data from today.
+    """
+    _load_env()
+    from ai_research.research_case_builder import build_cases
+    from ai_research.acquisition_situation_classifier import classify_acquisition_situation
+    from ai_research.acquisition_probability_engine import compute_acquisition_probability
+
+    cases = build_cases(
+        ticker=ticker,
+        limit=limit,
+        run_date=_today_utc(),
+        dry_run=True,
+        verbose=False,
+    )
+
+    if not cases:
+        print('[INFO] No cases found. Run scanner first.')
+        return 0
+
+    print('Probability Audit')
+    print('=================')
+    print(f'{"Ticker":<8}  {"Bucket":<35}  {"Score":>5}  {"Situation":<40}  {"Confidence"}')
+    print('-' * 110)
+
+    for case in cases:
+        t = case.get('ticker', '?')
+        try:
+            sit_result = classify_acquisition_situation(case)
+            prob_result = compute_acquisition_probability(case)
+            bucket     = prob_result.get('probability_bucket', '?')
+            score      = prob_result.get('acquisition_research_probability_score', 0)
+            situation  = sit_result.get('primary_acquisition_situation', '?')
+            confidence = prob_result.get('confidence_level', '?')
+            print(f'{t:<8}  {bucket:<35}  {score:>5.0f}  {situation:<40}  {confidence}')
+        except Exception as exc:
+            print(f'{t:<8}  ERROR: {exc}')
+
+    print()
+    print('Probability audit complete. No LLM calls were made.')
+    return 0
+
+
 def main(argv=None) -> int:
     args = _parse_args(argv)
 
@@ -1170,6 +1321,12 @@ def main(argv=None) -> int:
 
     if args.inspect_source_fields:
         return run_inspect_source_fields(limit=args.limit)
+
+    if args.completed_acquisition_status:
+        return run_completed_acquisition_status()
+
+    if args.compare_completed_deals:
+        return run_compare_completed_deals(args.compare_completed_deals.upper(), limit=args.limit)
 
     # --email-latest-summary is standalone
     if args.email_latest_summary:
@@ -1193,6 +1350,10 @@ def main(argv=None) -> int:
     # --evidence-audit is a modifier for --latest / --ticker
     if args.evidence_audit:
         return run_evidence_audit(ticker=ticker, limit=args.limit, fetch_text=args.fetch_text)
+
+    # --probability-audit is a modifier (can be standalone or with --latest/--ticker)
+    if args.probability_audit:
+        return run_probability_audit(ticker=ticker, limit=args.limit)
 
     return run(
         ticker          = ticker,
