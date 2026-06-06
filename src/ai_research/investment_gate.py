@@ -205,6 +205,23 @@ def _dry_run_decision(ticker: str, note: str = 'DRY_RUN') -> dict:
         'why_probability_not_higher':               '',
         'evidence_needed_to_upgrade':               [],
         'next_source_queries':                      [],
+        # Diligence memo fields
+        'one_sentence_bottom_line':                 '',
+        'executive_case_takeaway':                  '',
+        'why_this_case_matters_now':                '',
+        'source_evidence_read':                     '',
+        'exact_quotes_used':                        [],
+        'acquisition_situation_read':               '',
+        'completed_deal_analogue_read':             '',
+        'probability_bucket_read':                  '',
+        'what_is_already_known_by_market':          '',
+        'what_is_not_yet_answered':                 '',
+        'operator_decision':                        '',
+        'immediate_next_steps':                     [],
+        'next_sources_to_check':                    [],
+        'what_would_upgrade':                       '',
+        'what_would_downgrade':                     '',
+        'why_this_is_not_actionable_yet':           '',
     }
 
 
@@ -426,6 +443,23 @@ def _parse_llm_response(raw: str, ticker: str) -> dict:
         'next_filing_or_news_to_watch':    str(data.get('next_filing_or_news_to_watch', '')).strip(),
         'suggested_follow_up_queries':     _list_of_str('suggested_follow_up_queries'),
         'ran_at':                          datetime.now(timezone.utc).isoformat(),
+        # Diligence memo fields
+        'one_sentence_bottom_line':                 str(data.get('one_sentence_bottom_line', '')).strip(),
+        'executive_case_takeaway':                  str(data.get('executive_case_takeaway', '')).strip(),
+        'why_this_case_matters_now':                str(data.get('why_this_case_matters_now', '')).strip(),
+        'source_evidence_read':                     str(data.get('source_evidence_read', '')).strip(),
+        'exact_quotes_used':                        _list_of_str('exact_quotes_used'),
+        'acquisition_situation_read':               str(data.get('acquisition_situation_read', '')).strip(),
+        'completed_deal_analogue_read':             str(data.get('completed_deal_analogue_read', '')).strip(),
+        'probability_bucket_read':                  str(data.get('probability_bucket_read', '')).strip(),
+        'what_is_already_known_by_market':          str(data.get('what_is_already_known_by_market', '')).strip(),
+        'what_is_not_yet_answered':                 str(data.get('what_is_not_yet_answered', '')).strip(),
+        'operator_decision':                        str(data.get('operator_decision', '')).strip(),
+        'immediate_next_steps':                     _list_of_str('immediate_next_steps'),
+        'next_sources_to_check':                    _list_of_str('next_sources_to_check'),
+        'what_would_upgrade':                       str(data.get('what_would_upgrade', '')).strip(),
+        'what_would_downgrade':                     str(data.get('what_would_downgrade', '')).strip(),
+        'why_this_is_not_actionable_yet':           str(data.get('why_this_is_not_actionable_yet', '')).strip(),
     }
 
     if errors:
@@ -441,6 +475,7 @@ def run_gate(
     client=None,
     dry_run: bool | None = None,
     force_refresh: bool = False,
+    depth: str = 'fast_gate',
 ) -> dict:
     """
     Run the investment gate on a research case dict.
@@ -450,6 +485,7 @@ def run_gate(
         client:        LLMClient instance. If None, one is created from config.
         dry_run:       Override dry_run config. If None, uses client config.
         force_refresh: If True, bypass cache and rerun LLM even if fingerprint exists.
+        depth:         'fast_gate' (default) or 'diligence_memo' (fetches filing text, richer analysis).
 
     Returns:
         Decision dict matching the gate output schema.
@@ -486,6 +522,33 @@ def run_gate(
             analogues_context = build_completed_deal_context_for_prompt(case, max_cases=4)
         except Exception as exc:
             print(f'  [WARN] Acquisition intelligence failed for {ticker}: {exc}', file=sys.stderr)
+
+    # ── Fetch filing text for diligence_memo depth ───────────────────────────
+    if depth == 'diligence_memo' and not dry_run:
+        try:
+            from ai_research.source_fetcher import fetch_sec_filing_text_for_case
+            from ai_research.quote_extractor import compute_evidence_quality, extract_quotes
+            source_url = case.get('source_url', '')
+            if source_url:
+                print(f'  [DILIGENCE] Fetching filing text for {ticker} ...', end=' ', flush=True)
+                fetch_result = fetch_sec_filing_text_for_case(case)
+                filing_text = fetch_result.get('text') or ''
+                fetch_error = fetch_result.get('error', '')
+                cached = fetch_result.get('cached', False)
+                if filing_text:
+                    case = dict(case)  # don't mutate original
+                    case['_filing_text'] = filing_text[:8000]
+                    quotes = extract_quotes(case, filing_text)
+                    eq = compute_evidence_quality(case, filing_text, quotes)
+                    case['evidence_quality'] = eq
+                    status = 'cached' if cached else 'fetched'
+                    print(f'{status} ({len(filing_text)} chars)')
+                else:
+                    print(f'no text ({fetch_error or "empty response"})')
+            else:
+                print(f'  [DILIGENCE] {ticker}: no source_url — skipping text fetch')
+        except Exception as exc:
+            print(f'  [WARN] diligence_memo text fetch failed for {ticker}: {exc}')
 
     if dry_run:
         print(f'  [DRY-RUN] Gate skipped for {ticker} (dry_run=true).')
@@ -525,6 +588,7 @@ def run_gate(
         situation_result=situation_result,
         prob_result=prob_result,
         analogues_context=analogues_context,
+        depth=depth,
     )
 
     try:

@@ -216,6 +216,23 @@ def _make_suppressed_stub(case: dict, suppress_reason: str) -> dict:
         'escalation_criteria':                '',
         'next_filing_or_news_to_watch':       '',
         'suggested_follow_up_queries':        [],
+        # Diligence memo fields
+        'one_sentence_bottom_line':           f'Suppressed: {suppress_reason}',
+        'executive_case_takeaway':            '',
+        'why_this_case_matters_now':          '',
+        'source_evidence_read':               '',
+        'exact_quotes_used':                  [],
+        'acquisition_situation_read':         '',
+        'completed_deal_analogue_read':       '',
+        'probability_bucket_read':            '',
+        'what_is_already_known_by_market':    '',
+        'what_is_not_yet_answered':           '',
+        'operator_decision':                  'DISCARD',
+        'immediate_next_steps':               [],
+        'next_sources_to_check':              [],
+        'what_would_upgrade':                 'New filing date, source URL, or signal type for this ticker',
+        'what_would_downgrade':               '',
+        'why_this_is_not_actionable_yet':     suppress_reason,
         'note':                               f'SUPPRESSED_UNCHANGED: {suppress_reason}',
         'ran_at':                             datetime.now(timezone.utc).isoformat(),
         'primary_acquisition_situation':              '',
@@ -481,9 +498,10 @@ def run(
 
         decision = run_gate(
             case,
-            client       = client,
-            dry_run      = effective_dry_run,
+            client        = client,
+            dry_run       = effective_dry_run,
             force_refresh = force_refresh,
+            depth         = depth,
         )
         decisions.append(decision)
         llm_called_count += 1
@@ -576,15 +594,16 @@ def run(
     if send_email:
         cache_hits = sum(1 for d in decisions if 'CACHE_HIT' in str(d.get('note', '')))
         run_metadata = {
-            'run_at':            run_at,
-            'model':             getattr(llm_cfg, 'model', 'unknown'),
-            'ai_enabled':        ai_ready,
-            'dry_run':           effective_dry_run,
-            'case_count':        len(cases),
-            'decision_count':    len(decisions),
-            'cache_hits':        cache_hits,
-            'opportunity_mode':  opportunity_mode,
-            'suppressed_count':  suppressed_count,
+            'run_at':             run_at,
+            'model':              getattr(llm_cfg, 'model', 'unknown'),
+            'ai_enabled':         ai_ready,
+            'dry_run':            effective_dry_run,
+            'case_count':         len(cases),
+            'decision_count':     len(decisions),
+            'cache_hits':         cache_hits,
+            'opportunity_mode':   opportunity_mode,
+            'suppressed_count':   suppressed_count,
+            'llm_called_count':   llm_called_count,
         }
         from ai_research.ai_emailer import send_ai_research_email
         send_ai_research_email(
@@ -931,6 +950,134 @@ def print_status() -> None:
         print(f'Last summary: {SUMMARY_PATH}')
 
 
+EMAIL_PREVIEW_DIR = AI_RESEARCH_DIR / 'email_preview'
+
+
+def run_email_preview(
+    ticker: str | None = None,
+    limit: int | None = None,
+    depth: str | None = None,
+    strategic_brief: bool = False,
+    opportunity_mode: bool = False,
+) -> int:
+    """
+    Generate email preview to data/ai_research/email_preview/ without sending.
+    Uses cached AI decisions from case files; dry-run placeholders for uncached cases.
+    Does NOT call the LLM unless explicitly configured otherwise.
+    """
+    _load_env()
+    from ai_research.llm_client import load_config as load_llm_config
+    from ai_research.research_case_builder import build_cases
+    from ai_research.investment_gate import _dry_run_decision
+
+    llm_cfg = load_llm_config()
+    run_at  = _utc_now()
+    run_date = _today_utc()
+    preview_depth = depth or 'diligence_memo'
+
+    print('AI Research Layer — Email Preview')
+    print('===================================')
+    print(f'  Run at      : {run_at}')
+    print(f'  Depth       : {preview_depth}')
+    print(f'  Ticker      : {ticker or "all (latest)"}')
+    print(f'  Limit       : {limit or "none"}')
+    print()
+
+    EMAIL_PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+    html_path = EMAIL_PREVIEW_DIR / 'latest_ai_email_preview.html'
+    txt_path  = EMAIL_PREVIEW_DIR / 'latest_ai_email_preview.txt'
+
+    cases = build_cases(ticker=ticker, limit=limit, run_date=run_date,
+                        dry_run=True, research_depth=preview_depth, verbose=False)
+    if not cases:
+        print('[INFO] No cases found. Run scanner first.')
+        return 0
+
+    print(f'  Cases found : {len(cases)}')
+
+    # Load cached decisions from case JSON files
+    decisions: list[dict] = []
+    covered: set[str] = set()
+    for case in cases:
+        t = str(case.get('ticker', '')).upper()
+        case_path = _case_json_path(run_date, t)
+        if case_path.exists():
+            try:
+                case_data = json.loads(case_path.read_text(encoding='utf-8'))
+                ai_dec = case_data.get('ai_decision')
+                if ai_dec and isinstance(ai_dec, dict):
+                    ai_dec.setdefault('company_name', case.get('company_name', ''))
+                    decisions.append(ai_dec)
+                    covered.add(t)
+            except Exception:
+                pass
+
+    # Fill uncached cases with dry-run placeholders
+    placeholder_count = 0
+    for case in cases:
+        t = str(case.get('ticker', '')).upper()
+        if t not in covered:
+            stub = _dry_run_decision(t, note='EMAIL_PREVIEW_PLACEHOLDER')
+            stub['company_name'] = case.get('company_name', '')
+            decisions.append(stub)
+            placeholder_count += 1
+
+    if placeholder_count:
+        print(f'  [NOTE] {placeholder_count} case(s) have no cached decisions — '
+              f'using dry-run placeholders. Run with --latest --depth diligence_memo for live analysis.')
+        print(f'  [NOTE] LLM was NOT called for this preview.')
+    else:
+        print(f'  [NOTE] All {len(decisions)} case(s) loaded from cache. LLM not called.')
+
+    # Build opportunity queue if opportunity_mode
+    queue: dict | None = None
+    if opportunity_mode:
+        from ai_research.suppression_registry import load_registry
+        from ai_research.opportunity_selector import build_opportunity_queue
+        registry = load_registry()
+        watchlist = _load_json_file(WATCHLIST_PATH) or {}
+        queue = build_opportunity_queue(
+            decisions=decisions,
+            cases=cases,
+            registry=registry,
+            watchlist=watchlist,
+        )
+
+    run_metadata = {
+        'run_at':           run_at,
+        'model':            llm_cfg.model,
+        'ai_enabled':       llm_cfg.enabled,
+        'dry_run':          True,
+        'case_count':       len(cases),
+        'decision_count':   len(decisions),
+        'cache_hits':       len(decisions) - placeholder_count,
+        'opportunity_mode': opportunity_mode,
+        'suppressed_count': 0,
+        'llm_called_count': 0,
+    }
+
+    from ai_research.ai_emailer import (
+        build_ai_email_html, build_ai_email_plain,
+        build_ai_email_subject, load_ai_email_config,
+    )
+    cfg     = load_ai_email_config()
+    subject = build_ai_email_subject(decisions, cfg['subject_prefix'], opportunity_queue=queue)
+    body_html  = build_ai_email_html(decisions, run_metadata, strategic_brief=strategic_brief,
+                                      opportunity_queue=queue)
+    body_plain = build_ai_email_plain(decisions, run_metadata, strategic_brief=strategic_brief,
+                                       opportunity_queue=queue)
+
+    html_path.write_text(body_html,  encoding='utf-8')
+    txt_path.write_text(body_plain,  encoding='utf-8')
+
+    print()
+    print(f'  [PREVIEW] Subject   : {subject}')
+    print(f'  [PREVIEW] HTML file : {html_path.relative_to(REPO)}')
+    print(f'  [PREVIEW] Text file : {txt_path.relative_to(REPO)}')
+    print(f'  [PREVIEW] Email NOT sent.')
+    return 0
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def _parse_args(argv=None):
@@ -981,12 +1128,16 @@ def _parse_args(argv=None):
     p.add_argument('--limit',   type=int, default=None,
                    help='Max cases to process')
     p.add_argument('--depth', default='fast_gate',
-                   choices=['fast_gate', 'deep'],
-                   help='Research depth preset (default: fast_gate)')
+                   choices=['fast_gate', 'deep', 'diligence_memo'],
+                   help='Research depth preset (default: fast_gate; diligence_memo fetches filing text + produces full research memo)')
     p.add_argument('--dry-run', action='store_true',
                    help='Build cases but do not call LLM')
     p.add_argument('--force-refresh', action='store_true',
                    help='Bypass cache and rerun LLM for all cases')
+    p.add_argument('--force-refresh-email-analysis', action='store_true',
+                   help='Force richer email synthesis: bypass LLM cache for active cases while respecting suppression rules')
+    p.add_argument('--email-preview', action='store_true',
+                   help='Generate email HTML/text preview to file without sending (uses cached decisions, no LLM)')
     p.add_argument('--fetch-text', action='store_true',
                    help='Fetch full filing text from source URL')
     p.add_argument('--email', action='store_true',
@@ -1013,13 +1164,14 @@ def _parse_args(argv=None):
     )
     has_modifier = args.evidence_audit or args.plan or args.opportunity_plan or args.dry_run
 
-    if not has_primary and not has_modifier:
+    if not has_primary and not has_modifier and not args.email_preview:
         p.error(
             'specify a mode: --latest, --ticker TICKER, --status, --suppression-status, '
             '--show-evidence TICKER, --email-latest-summary, '
-            '--force-unsuppress TICKER, --clear-suppression TICKER'
+            '--force-unsuppress TICKER, --clear-suppression TICKER; '
+            'or use --email-preview [--latest] [--limit N] for preview'
         )
-    if has_modifier and not (args.latest or args.ticker):
+    if has_modifier and not args.email_preview and not (args.latest or args.ticker):
         p.error('--evidence-audit, --plan, --opportunity-plan, and --dry-run require --latest or --ticker')
 
     return args
@@ -1027,6 +1179,20 @@ def _parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = _parse_args(argv)
+
+    if args.email_preview:
+        ticker = args.ticker.upper() if args.ticker else None
+        _load_env()
+        from ai_research.llm_client import load_config as load_llm_config
+        llm_cfg = load_llm_config()
+        depth   = args.depth or llm_cfg.default_depth
+        return run_email_preview(
+            ticker           = ticker,
+            limit            = args.limit,
+            depth            = depth,
+            strategic_brief  = args.strategic_brief,
+            opportunity_mode = args.opportunity_mode,
+        )
 
     if args.status:
         print_status()
@@ -1109,12 +1275,14 @@ def main(argv=None) -> int:
         return 0
 
     ticker = args.ticker.upper() if args.ticker else None
+    # --force-refresh-email-analysis: bypass LLM cache for active cases (suppression respected)
+    effective_force_refresh = args.force_refresh or getattr(args, 'force_refresh_email_analysis', False)
     return run(
         ticker                  = ticker,
         limit                   = args.limit,
         dry_run                 = args.dry_run,
         depth                   = depth,
-        force_refresh           = args.force_refresh,
+        force_refresh           = effective_force_refresh,
         send_email              = args.email,
         strategic_brief         = args.strategic_brief,
         opportunity_mode        = args.opportunity_mode,

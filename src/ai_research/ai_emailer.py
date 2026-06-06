@@ -102,8 +102,8 @@ def load_ai_email_config() -> dict:
     return {
         'enabled':         _truthy(os.environ.get('AI_EMAILS_ENABLED'), default=False),
         'on_every_run':    _truthy(os.environ.get('AI_EMAIL_ON_EVERY_RUN'), default=False),
-        'subject_prefix':  os.environ.get('AI_EMAIL_SUBJECT_PREFIX', 'MA Scanner AI Research Brief').strip()
-                           or 'MA Scanner AI Research Brief',
+        'subject_prefix':  os.environ.get('AI_EMAIL_SUBJECT_PREFIX', 'Black Starlight MA Scanner').strip()
+                           or 'Black Starlight MA Scanner',
         'provider':        provider,
         'resend_api_key':  os.environ.get('RESEND_API_KEY', '').strip(),
         'resend_from':     os.environ.get('RESEND_FROM', '').strip(),
@@ -146,9 +146,9 @@ def build_ai_email_subject(
         if p0:
             parts.append(f'{p0} Escalate')
         if p1:
-            parts.append(f'{p1} Review')
+            parts.append(f'{p1} Human Review')
         if p2:
-            parts.append(f'{p2} Watch')
+            parts.append(f'{p2} Watch Setups')
         if p3:
             parts.append(f'{p3} Monitor')
         if suppressed:
@@ -538,8 +538,363 @@ def _card_html(d: dict, strategic_brief: bool = False) -> str:
             f'Would change if: {_esc(change_dec[:200])}</div>'
         )
 
+    # ── Diligence memo deep fields ────────────────────────────────────────────
+    one_liner     = d.get('one_sentence_bottom_line', '')
+    exec_takeaway = d.get('executive_case_takeaway', '')
+    exact_quotes  = d.get('exact_quotes_used', []) or []
+    what_matters  = d.get('why_this_case_matters_now', '')
+    not_answered  = d.get('what_is_not_yet_answered', '')
+    imm_steps     = d.get('immediate_next_steps', []) or []
+    next_sources  = d.get('next_sources_to_check', []) or []
+    what_upgrade  = d.get('what_would_upgrade', '')
+    what_downgrade = d.get('what_would_downgrade', '')
+    not_actionable = d.get('why_this_is_not_actionable_yet', '')
+    sugg_queries   = d.get('suggested_follow_up_queries', []) or []
+
+    if strategic_brief and one_liner:
+        html += (
+            f'<div style="background:#0f1629;border-left:3px solid #c9a84c;'
+            f'padding:7px 11px;border-radius:4px;margin-top:8px;margin-bottom:6px;">'
+            f'<span style="font-size:12px;font-weight:700;color:#e2e8f0;">{_esc(one_liner[:200])}</span>'
+            f'</div>'
+        )
+
+    if strategic_brief and exec_takeaway:
+        html += (
+            f'<div style="background:#0f1117;border-left:3px solid #1e3a5f;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:6px;">'
+            f'<span style="font-size:10px;color:#4a7fbf;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">Analyst Takeaway</span><br>'
+            f'<span style="font-size:12px;color:#94a3b8;line-height:1.5;">'
+            f'{_esc(exec_takeaway[:400])}</span>'
+            f'</div>'
+        )
+
+    if strategic_brief and exact_quotes:
+        q_html = ''.join(
+            f'<div style="font-size:11px;color:#64748b;font-style:italic;margin:2px 0;">'
+            f'&ldquo;{_esc(str(q)[:200])}&rdquo;</div>'
+            for q in exact_quotes[:3]
+        )
+        html += (
+            f'<div style="background:#0a0f1a;border-left:3px solid #374151;'
+            f'padding:6px 10px;border-radius:4px;margin-bottom:6px;">'
+            f'<span style="font-size:10px;color:#374151;text-transform:uppercase;'
+            f'letter-spacing:0.08em;">Source Quotes Used</span><br>'
+            + q_html
+            + '</div>'
+        )
+
+    if strategic_brief and not_answered:
+        html += (
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:5px;">'
+            f'<span style="color:#4b5563;">Open questions: </span>{_esc(not_answered[:250])}</div>'
+        )
+
+    if strategic_brief and not_actionable and action not in ('ESCALATE',):
+        html += (
+            f'<div style="font-size:11px;color:#dc2626;margin-bottom:5px;">'
+            f'Not actionable: {_esc(not_actionable[:200])}</div>'
+        )
+
+    if strategic_brief and imm_steps:
+        html += (
+            f'<div style="margin-bottom:8px;">'
+            f'<div style="font-size:11px;color:#64748b;text-transform:uppercase;'
+            f'letter-spacing:0.08em;margin-bottom:3px;">Immediate Steps (24-48h)</div>'
+            f'<ol style="margin:0;padding-left:16px;">'
+            + ''.join(
+                f'<li style="font-size:11px;color:#94a3b8;line-height:1.6;">{_esc(str(s)[:150])}</li>'
+                for s in imm_steps
+            )
+            + '</ol></div>'
+        )
+
+    if strategic_brief and (what_upgrade or what_downgrade):
+        html += '<div style="margin-bottom:6px;">'
+        if what_upgrade:
+            html += (
+                f'<div style="font-size:11px;color:#16a34a;margin-bottom:2px;">'
+                f'Upgrade if: {_esc(what_upgrade[:180])}</div>'
+            )
+        if what_downgrade:
+            html += (
+                f'<div style="font-size:11px;color:#dc2626;margin-bottom:2px;">'
+                f'Kill if: {_esc(what_downgrade[:180])}</div>'
+            )
+        html += '</div>'
+
+    if strategic_brief and next_sources:
+        html += (
+            f'<div style="font-size:11px;color:#374151;margin-bottom:5px;">'
+            f'Next sources: '
+            + ' &bull; '.join(_esc(str(s)[:80]) for s in next_sources[:3])
+            + '</div>'
+        )
+
+    if strategic_brief and sugg_queries:
+        q_items = ' &nbsp;|&nbsp; '.join(
+            f'<span style="font-family:monospace;color:#374151;">{_esc(str(q)[:60])}</span>'
+            for q in sugg_queries[:4]
+        )
+        html += (
+            f'<div style="font-size:10px;color:#374151;margin-top:4px;">'
+            f'Queries: {q_items}</div>'
+        )
+
     html += '</div>'
     return html
+
+
+def _build_synthesis_html(
+    active_decisions: list[dict],
+    all_decisions: list[dict],
+    run_metadata: dict,
+    opportunity_queue: dict | None,
+    dominant_fp: str | None,
+    escalate: int,
+    watch: int,
+    review: int,
+    total_suppressed: int,
+    no_opportunity: bool,
+) -> str:
+    """
+    Research analyst synthesis section — 5 parts:
+    A. Executive Read
+    B. Changes This Run
+    C. Operator Action Queue
+    D. Best Research Leads
+    E. System Learning
+    """
+    case_count    = run_metadata.get('case_count', len(all_decisions))
+    llm_called    = run_metadata.get('llm_called_count', 0)
+    suppressed_ct = run_metadata.get('suppressed_count', total_suppressed)
+
+    # ── A. Executive Read ────────────────────────────────────────────────────
+    fp_str = _esc(dominant_fp) if dominant_fp else 'repeated false-positive patterns'
+    if no_opportunity:
+        exec_read = (
+            f'No new acquisition opportunities this run. '
+            f'All {_esc(str(case_count))} scanner hits are {fp_str} discards — '
+            f'no new process evidence, changed cases, or watchlist setups detected. '
+            f'The system is correctly filtering known false-positive noise. '
+            f'No operator action required today.'
+        )
+    elif escalate > 0:
+        esc_tickers = _esc(', '.join(
+            d.get('ticker', '?') for d in active_decisions
+            if d.get('research_action') == 'ESCALATE'
+        ))
+        exec_read = (
+            f'{escalate} alert(s) escalated for immediate review: <strong>{esc_tickers}</strong>. '
+            f'{watch + review} additional active case(s) in WATCH/HUMAN_REVIEW. '
+            f'{suppressed_ct} repeated discards suppressed. '
+            f'Read source filings and corroborate with independent news before any action.'
+        )
+    elif watch > 0 or review > 0:
+        active = watch + review
+        exec_read = (
+            f'No escalations. {active} active case(s) in WATCH/HUMAN_REVIEW. '
+            + (f'{suppressed_ct} repeated discards suppressed. ' if suppressed_ct else '')
+            + (f'Dominant false-positive: {fp_str}. ' if dominant_fp else '')
+            + 'Monitor for follow-on filings. No immediate action required.'
+        )
+    else:
+        exec_read = (
+            f'No actionable opportunities this run. '
+            + (f'{suppressed_ct} repeated discards suppressed. ' if suppressed_ct else '')
+            + (f'Dominant false-positive: {fp_str}. ' if dominant_fp else '')
+            + 'Continue monitoring for new company-level process filings.'
+        )
+
+    # ── B. Changes This Run ──────────────────────────────────────────────────
+    new_analyzed = llm_called if llm_called else len(active_decisions)
+    change_items: list[str] = []
+    if new_analyzed:
+        change_items.append(
+            f'<strong>{new_analyzed}</strong> case(s) analyzed by AI (new or changed evidence)'
+        )
+    if suppressed_ct:
+        change_items.append(
+            f'<strong>{suppressed_ct}</strong> suppressed (unchanged repeated discards — skipped LLM)'
+        )
+    if opportunity_queue is not None:
+        p0 = len(opportunity_queue.get('P0_ESCALATE_NOW', []))
+        p1 = len(opportunity_queue.get('P1_HUMAN_REVIEW', []))
+        p2 = len(opportunity_queue.get('P2_WATCHLIST_SETUP', []))
+        p3 = len(opportunity_queue.get('P3_MONITOR_CHANGE', []))
+        active_total = p0 + p1 + p2 + p3
+        if active_total:
+            change_items.append(
+                f'{active_total} active case(s) across P0-P3 queues'
+            )
+    if not change_items:
+        change_items.append('No changes detected vs. prior run')
+
+    change_html = ''.join(
+        f'<li style="font-size:12px;color:#94a3b8;line-height:1.8;">{item}</li>'
+        for item in change_items
+    )
+
+    # ── C. Operator Action Queue ─────────────────────────────────────────────
+    queue_rows: list[str] = []
+    if opportunity_queue is not None:
+        tier_labels = [
+            ('P0_ESCALATE_NOW',    'P0 — ESCALATE NOW',  '#dc2626'),
+            ('P1_HUMAN_REVIEW',    'P1 — HUMAN REVIEW',  '#7c3aed'),
+            ('P2_WATCHLIST_SETUP', 'P2 — WATCH SETUP',   '#d97706'),
+            ('P3_MONITOR_CHANGE',  'P3 — MONITOR',       '#2563eb'),
+        ]
+        for tier_key, label, color in tier_labels:
+            entries = opportunity_queue.get(tier_key, [])
+            if entries:
+                tickers_str = _esc(', '.join(
+                    str(e.get('ticker', '?')) for e in entries
+                ))
+                queue_rows.append(
+                    f'<div style="margin-bottom:4px;">'
+                    f'<span style="display:inline-block;min-width:120px;font-size:11px;'
+                    f'font-weight:700;color:{color};">{_esc(label)}</span>'
+                    f'<span style="font-size:11px;color:#94a3b8;">'
+                    f'({len(entries)}) {tickers_str}</span>'
+                    f'</div>'
+                )
+        if total_suppressed:
+            queue_rows.append(
+                f'<div style="margin-bottom:4px;">'
+                f'<span style="display:inline-block;min-width:120px;font-size:11px;'
+                f'font-weight:700;color:#374151;">P4 — SUPPRESSED</span>'
+                f'<span style="font-size:11px;color:#374151;">'
+                f'({total_suppressed}) archived — no action</span>'
+                f'</div>'
+            )
+    else:
+        for d in all_decisions:
+            action = d.get('research_action', '')
+            ticker = _esc(d.get('ticker', '?'))
+            queue_rows.append(
+                f'<div style="font-size:11px;color:#94a3b8;margin-bottom:2px;">'
+                f'{ticker}: {_esc(action)}</div>'
+            )
+
+    queue_html = ''.join(queue_rows) if queue_rows else (
+        '<div style="font-size:11px;color:#374151;">No active queue items.</div>'
+    )
+
+    # ── D. Best Research Leads ───────────────────────────────────────────────
+    actionable = [
+        d for d in active_decisions
+        if d.get('research_action') in ('WATCH', 'WAIT_FOR_PRICE', 'NEEDS_HUMAN_REVIEW', 'ESCALATE')
+        and 'SUPPRESSED_UNCHANGED' not in str(d.get('note', ''))
+    ]
+    actionable_sorted = sorted(actionable, key=lambda d: d.get('investability_score', 0), reverse=True)
+
+    if no_opportunity or not actionable_sorted:
+        # Surface best even among discards
+        best_discards = sorted(
+            [d for d in all_decisions if 'SUPPRESSED_UNCHANGED' not in str(d.get('note', ''))],
+            key=lambda d: d.get('investability_score', 0), reverse=True
+        )[:3]
+        if best_discards:
+            fp_note = f'Top scanner hits are {fp_str} false positives.' if dominant_fp else 'All scanner hits are discards.'
+            leads_html = (
+                f'<div style="font-size:12px;color:#64748b;margin-bottom:6px;">'
+                f'No research leads today. {fp_note}</div>'
+            )
+            for d in best_discards[:3]:
+                t = _esc(d.get('ticker', '?'))
+                reason = _esc(str(d.get('discard_reason', '') or d.get('why_this_is_not_actionable_yet', '') or d.get('short_thesis', ''))[:120])
+                leads_html += (
+                    f'<div style="font-size:11px;color:#374151;margin-bottom:2px;">'
+                    f'<strong style="color:#4b5563;">{t}</strong>: {reason}</div>'
+                )
+        else:
+            leads_html = '<div style="font-size:12px;color:#64748b;">No cases to analyze this run.</div>'
+    else:
+        leads_html = ''
+        for d in actionable_sorted[:3]:
+            t         = _esc(d.get('ticker', '?'))
+            company   = _esc(d.get('company_name', ''))
+            action    = d.get('research_action', '')
+            score     = d.get('investability_score', 0)
+            bottom    = _esc(str(d.get('one_sentence_bottom_line', '') or d.get('short_thesis', ''))[:140])
+            what_next = _esc(str((d.get('immediate_next_steps') or d.get('operator_next_steps') or [''])[0])[:120])
+            header = f'{t}' + (f' — {company}' if company and company != t else '')
+            leads_html += (
+                f'<div style="background:#0d1520;border-left:3px solid #2563eb;'
+                f'padding:6px 10px;border-radius:4px;margin-bottom:6px;">'
+                f'<div style="font-size:12px;font-weight:700;color:#e2e8f0;">{header} '
+                f'{_badge_html(action)}</div>'
+                + (f'<div style="font-size:11px;color:#94a3b8;margin-top:3px;">{bottom}</div>' if bottom else '')
+                + (f'<div style="font-size:11px;color:#64748b;margin-top:2px;">Next: {what_next}</div>' if what_next else '')
+                + f'<div style="font-size:10px;color:#374151;margin-top:2px;">Score: {score}/100</div>'
+                f'</div>'
+            )
+
+    # ── E. System Learning ───────────────────────────────────────────────────
+    fp_counts: dict[str, int] = {}
+    for d in all_decisions:
+        for fp in (d.get('matched_false_positive_archetypes', []) or []):
+            fp_counts[fp] = fp_counts.get(fp, 0) + 1
+    filing_text_available = sum(1 for d in all_decisions if d.get('filing_text_available'))
+
+    learning_parts: list[str] = []
+    if dominant_fp:
+        dom_count = fp_counts.get(dominant_fp, 0)
+        learning_parts.append(
+            f'Dominant pattern: {_esc(dominant_fp)} ({dom_count} of {case_count} cases).'
+        )
+    if filing_text_available:
+        learning_parts.append(f'Filing text fetched for {filing_text_available} case(s).')
+    else:
+        learning_parts.append(
+            'No filing text retrieved this run. '
+            'TSRO-type media signals not detectable without external news integration.'
+        )
+    ts_candidates = [
+        d.get('ticker', '') for d in active_decisions
+        if d.get('matched_true_signal_archetypes') and d.get('research_action') != 'DISCARD'
+    ]
+    if ts_candidates:
+        learning_parts.append(
+            f'True-signal pattern candidates: {_esc(", ".join(ts_candidates))}. Verify with primary source.'
+        )
+    else:
+        learning_parts.append('No MDVN/DMTX/TSRO-like signals detected this run.')
+
+    sys_learning = ' '.join(learning_parts)
+
+    # ── Assemble section ─────────────────────────────────────────────────────
+    section_label = (
+        lambda letter, text:
+        f'<div style="font-size:11px;color:#c9a84c;text-transform:uppercase;'
+        f'letter-spacing:0.1em;margin-bottom:5px;margin-top:14px;">{letter}. {_esc(text)}</div>'
+    )
+
+    return (
+        f'<div style="background:#0a101e;border:1px solid #1e3a5f;border-radius:8px;'
+        f'padding:16px 20px;margin-bottom:16px;">'
+        f'<div style="font-size:12px;color:#c9a84c;text-transform:uppercase;'
+        f'letter-spacing:0.12em;margin-bottom:12px;border-bottom:1px solid #1e3a5f;'
+        f'padding-bottom:8px;">Research Analyst Synthesis</div>'
+
+        + section_label('A', 'Executive Read')
+        + f'<p style="font-size:12px;color:#e2e8f0;line-height:1.6;margin:0;">{exec_read}</p>'
+
+        + section_label('B', 'Changes This Run')
+        + f'<ul style="margin:0;padding-left:18px;">{change_html}</ul>'
+
+        + section_label('C', 'Operator Action Queue')
+        + f'<div>{queue_html}</div>'
+
+        + section_label('D', 'Best Research Leads')
+        + f'<div>{leads_html}</div>'
+
+        + section_label('E', 'System Learning')
+        + f'<p style="font-size:12px;color:#64748b;line-height:1.6;margin:0;">{sys_learning}</p>'
+
+        + '</div>'
+    )
 
 
 def _suppressed_archive_html(suppressed_decisions: list[dict], total_suppressed: int) -> str:
@@ -585,16 +940,77 @@ def _suppressed_archive_html(suppressed_decisions: list[dict], total_suppressed:
     )
 
 
-def _no_opportunity_html(total_suppressed: int) -> str:
+def _no_opportunity_html(
+    total_suppressed: int,
+    dominant_fp: str | None = None,
+    sample_discards: list[dict] | None = None,
+    suggested_queries: list[str] | None = None,
+) -> str:
+    dom_fp_html = ''
+    if dominant_fp:
+        dom_fp_html = (
+            f'<div style="font-size:11px;color:#64748b;margin-top:6px;">'
+            f'Dominant false-positive: <span style="color:#94a3b8;">{_esc(dominant_fp)}</span>'
+            f'</div>'
+        )
+
+    examples_html = ''
+    if sample_discards:
+        rows = ''
+        for d in sample_discards[:3]:
+            t      = _esc(d.get('ticker', '?'))
+            reason = _esc(str(
+                d.get('discard_reason', '') or
+                d.get('why_this_is_not_actionable_yet', '') or
+                d.get('short_thesis', '') or
+                d.get('note', '')
+            )[:110])
+            what_would = _esc(str(d.get('what_would_upgrade', '') or d.get('what_would_change_the_decision', ''))[:100])
+            rows += (
+                f'<div style="border-top:1px solid #1f2937;padding:6px 0;">'
+                f'<div style="font-size:11px;color:#64748b;font-weight:600;">{t}</div>'
+                f'<div style="font-size:11px;color:#4b5563;">{reason}</div>'
+                + (f'<div style="font-size:10px;color:#374151;">Reopen if: {what_would}</div>' if what_would else '')
+                + '</div>'
+            )
+        examples_html = (
+            f'<div style="margin-top:10px;">'
+            f'<div style="font-size:10px;color:#374151;text-transform:uppercase;'
+            f'letter-spacing:0.08em;margin-bottom:4px;">Top suppressed examples</div>'
+            + rows
+            + '</div>'
+        )
+
+    queries_html = ''
+    if suggested_queries:
+        q_items = ''.join(
+            f'<div style="font-size:11px;color:#374151;font-family:monospace;margin:2px 0;">'
+            f'&#8250; {_esc(q)}</div>'
+            for q in suggested_queries[:6]
+        )
+        queries_html = (
+            f'<div style="margin-top:10px;">'
+            f'<div style="font-size:10px;color:#374151;text-transform:uppercase;'
+            f'letter-spacing:0.08em;margin-bottom:4px;">Suggested next research queries</div>'
+            + q_items
+            + '</div>'
+        )
+
     return (
         f'<div style="background:#1e293b;border:1px solid #c9a84c;border-radius:6px;'
         f'padding:14px 16px;margin-bottom:16px;">'
         f'<div style="font-size:11px;color:#c9a84c;text-transform:uppercase;'
-        f'letter-spacing:0.1em;margin-bottom:8px;">No New Actionable Opportunities</div>'
+        f'letter-spacing:0.1em;margin-bottom:8px;">No New Acquisition Opportunities</div>'
         f'<p style="font-size:12px;color:#94a3b8;line-height:1.6;margin:0;">'
-        f'{total_suppressed} repeated already-announced / false-positive discard case(s) were '
-        f'suppressed. No new process evidence, changed cases, or watchlist setups detected in '
-        f'this batch. Continue monitoring for new company-level process filings.</p>'
+        f'<strong>{_esc(str(total_suppressed))}</strong> repeated already-announced / '
+        f'false-positive cases suppressed. No new process evidence, changed evidence, '
+        f'or watchlist setups detected this run.</p>'
+        + dom_fp_html
+        + examples_html
+        + queries_html
+        + f'<div style="font-size:11px;color:#374151;margin-top:10px;">'
+        f'System will reopen suppressed cases automatically if source URL, filing date, '
+        f'or signal type changes. Continue monitoring for new company-level process filings.</div>'
         f'</div>'
     )
 
@@ -668,8 +1084,37 @@ def build_ai_email_html(
         '<p style="color:#64748b;font-size:13px;">No decisions were made this run.</p>'
     )
 
-    # No-opportunity notice (opportunity mode)
-    no_opportunity_html = _no_opportunity_html(total_suppressed) if no_opportunity else ''
+    # Sample discards for richer no-opportunity display
+    sample_discards = [
+        d for d in decisions
+        if d.get('research_action') == 'DISCARD'
+        and 'SUPPRESSED_UNCHANGED' not in str(d.get('note', ''))
+    ][:3] if no_opportunity else []
+
+    # Aggregate suggested queries for no-opportunity display
+    all_suggested_queries: list[str] = []
+    for d in decisions[:5]:
+        for q in (d.get('suggested_follow_up_queries', []) or []):
+            if q and q not in all_suggested_queries:
+                all_suggested_queries.append(str(q))
+    if not all_suggested_queries:
+        # Build generic queries from tickers
+        for d in decisions[:3]:
+            ticker_q = d.get('ticker', '')
+            company_q = d.get('company_name', '') or ticker_q
+            if company_q:
+                all_suggested_queries.append(f'"{company_q}" strategic alternatives')
+                all_suggested_queries.append(f'"{company_q}" acquisition proposal')
+
+    no_opportunity_html = (
+        _no_opportunity_html(
+            total_suppressed,
+            dominant_fp=dominant_fp,
+            sample_discards=sample_discards,
+            suggested_queries=all_suggested_queries[:6],
+        )
+        if no_opportunity else ''
+    )
 
     # Suppressed archive (opportunity mode)
     suppressed_archive_html = (
@@ -713,6 +1158,22 @@ def build_ai_email_html(
             'padding:10px 14px;margin-bottom:16px;">'
             '<span style="color:#f59e0b;font-size:12px;font-weight:600;">DRY RUN — LLM was not called. '
             'Decisions shown are placeholders.</span></div>'
+        )
+
+    # Research analyst synthesis section (always shown when opportunity_mode or strategic_brief)
+    synthesis_html = ''
+    if (strategic_brief or opportunity_queue is not None) and decisions:
+        synthesis_html = _build_synthesis_html(
+            active_decisions=active_decisions,
+            all_decisions=decisions,
+            run_metadata=run_metadata,
+            opportunity_queue=opportunity_queue,
+            dominant_fp=dominant_fp,
+            escalate=escalate,
+            watch=watch,
+            review=review,
+            total_suppressed=total_suppressed,
+            no_opportunity=no_opportunity,
         )
 
     # Strategy summary section (strategic brief only)
@@ -813,6 +1274,7 @@ def build_ai_email_html(
 <!-- BODY -->
 <tr><td style="padding:16px 24px;">
   {dry_run_banner}
+  {synthesis_html}
   {strategy_summary_html}
   {already_announced_advisory_html}
   {no_opportunity_html}

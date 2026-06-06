@@ -142,6 +142,23 @@ _OUTPUT_SCHEMA = {
     'escalation_criteria': 'What additional evidence would warrant escalation to ESCALATE',
     'next_filing_or_news_to_watch': 'Specific filing type or news category to monitor',
     'suggested_follow_up_queries': ['list — specific search terms or filing queries for follow-up'],
+    # ── Diligence memo fields (depth=diligence_memo) ──────────────────────────
+    'one_sentence_bottom_line': 'Single sentence research verdict. No hedging. E.g.: "XXXX is already-announced — no edge." or "XXXX has credible 8-K process signal — read now."',
+    'executive_case_takeaway': '2-3 sentence executive summary: what happened, what the evidence shows, the research verdict.',
+    'why_this_case_matters_now': 'Timing and freshness context. Is this fresh (<30 days), stale (>90 days), or recurring noise? Does timing create any edge?',
+    'source_evidence_read': 'Precise paraphrase or direct quote of the key filing language driving this decision.',
+    'exact_quotes_used': ['list of 1-3 exact quotes from source excerpt or full filing text — the specific strings you relied on. If unavailable, say so explicitly.'],
+    'acquisition_situation_read': 'Acquisition situation pattern. E.g.: ALREADY_ANNOUNCED_DEAL, PRE_PROCESS_SETUP, SALE_PROCESS_ACTIVE, CATALYST_ONLY, BOILERPLATE_FP.',
+    'completed_deal_analogue_read': 'Which completed deal (MDVN/DMTX/TSRO or other) does this most resemble? State the specific similarity or dissimilarity.',
+    'probability_bucket_read': 'Probability bucket with 1-2 sentence justification. Reference the ~3.5% base rate.',
+    'what_is_already_known_by_market': 'What market participants likely already know: announcements, proxies, press releases already public.',
+    'what_is_not_yet_answered': '2-3 key unanswered questions a diligence analyst would need to resolve before acting.',
+    'operator_decision': 'ESCALATE | WATCH | WAIT_FOR_PRICE | DISCARD | NEEDS_HUMAN_REVIEW — restate research_action explicitly here.',
+    'immediate_next_steps': ['list of 2-4 specific concrete actions for the next 24-48 hours'],
+    'next_sources_to_check': ['list of 2-4 specific sources to check: e.g., "EDGAR 8-K filings for XXXX", "CapIQ advisor retention search", "SEC EDGAR full-text XXXX strategic alternatives"'],
+    'what_would_upgrade': 'Single specific piece of evidence that would upgrade the classification to ESCALATE.',
+    'what_would_downgrade': 'Evidence that would definitively close or kill this case.',
+    'why_this_is_not_actionable_yet': 'For WATCH/DISCARD/NEEDS_HUMAN_REVIEW: the exact gap preventing escalation right now.',
 }
 
 
@@ -237,6 +254,91 @@ You MUST NOT simply say "ALREADY_ANNOUNCED_DEAL → DISCARD" without:
 This requirement applies even when the answer is clearly DISCARD."""
 
 
+# ── Diligence memo extra instructions ────────────────────────────────────────
+
+_DILIGENCE_MEMO_INSTRUCTIONS = """DILIGENCE MEMO DEPTH — REQUIRED ADDITIONAL ANALYSIS:
+You are producing a full diligence research memo, not just a classification. Fill ALL fields below.
+
+20. one_sentence_bottom_line: One direct sentence a portfolio manager reads first.
+    Bad: "This case warrants monitoring." Good: "SDGR merger agreement already signed — ALREADY_ANNOUNCED_DEAL, no edge."
+
+21. executive_case_takeaway: 2-3 sentences. What happened. What the evidence shows. The research verdict.
+    Do NOT hedge. Be direct about whether there is any pre-announcement opportunity.
+
+22. why_this_case_matters_now: Is the signal fresh (<30 days from filing date), stale, or recurring noise?
+    Explain timing context. Does the filing date create or eliminate any timing edge?
+
+23. source_evidence_read: Quote or closely paraphrase the specific filing language that drives the decision.
+    If filing text is not retrieved, state: "Filing text not retrieved — based on scanner excerpt only."
+
+24. exact_quotes_used: 1-3 exact quotes from source_excerpt or full filing text.
+    Format: ["exact language from filing", "second key phrase if distinct"].
+    If no text available: ["[Filing text not retrieved — quotes unavailable. Excerpt: <paste excerpt here>]"]
+
+25. acquisition_situation_read: Name the acquisition situation pattern.
+    Choices: ALREADY_ANNOUNCED_DEAL | PRE_PROCESS_SETUP | SALE_PROCESS_ACTIVE |
+    CREDIBLE_PROCESS_SIGNAL | CATALYST_ONLY | BOILERPLATE_FP | STALE_REPEAT
+
+26. completed_deal_analogue_read: Which completed deal does this most resemble?
+    Always reference MDVN, DMTX, or TSRO explicitly — even if to say "unlike all three because..."
+    Then add the closest completed analogue from the analogues block if available.
+
+27. probability_bucket_read: State the probability bucket. Example:
+    "P1_DISCARD — base rate 3.5%, no public process signal, already-announced merger confirmed."
+
+28. what_is_already_known_by_market: What is already public?
+    List specific announcements, press releases, or proxy filings that are already public record.
+
+29. what_is_not_yet_answered: 2-3 specific open questions for a diligence analyst.
+    Example: "Is there a banker retained? Has the board formed a special committee? Are there competing bids?"
+
+30. operator_decision: Restate research_action for unambiguous clarity.
+
+31. immediate_next_steps: 2-4 specific 24-48 hour actions. Be concrete.
+    DISCARD: "Archive. Flag pattern as [FP archetype]. Suppress unless [specific trigger]."
+    WATCH: "Set EDGAR alert for [specific filing type] for [ticker]. Check again in [X] days."
+    NEEDS_HUMAN_REVIEW: "Read source filing at [URL]. Answer: is this pre- or post-announcement language?"
+    ESCALATE: "Read filing now. Check price action vs. [filing date]. Search news for [company] sale process."
+
+32. next_sources_to_check: 2-4 specific sources.
+    Examples: "EDGAR 8-K filings for [ticker]", "SEC full-text search '[company] strategic alternatives'",
+    "CapIQ advisor retention for [company]", "Bloomberg/Reuters for [company] M&A rumor"
+
+33. what_would_upgrade: The single specific evidence item that would trigger ESCALATE.
+    Be concrete: "An 8-K confirming banker retention for strategic review" not "more evidence."
+
+34. what_would_downgrade: What closes this case permanently.
+    Example: "Deal closes and company delists." or "Company files 8-K denying any process."
+
+35. why_this_is_not_actionable_yet: For WATCH/DISCARD/NEEDS_HUMAN_REVIEW only.
+    Name the exact gap: "Source is post-announcement proxy background section — process already completed."
+    Do not hedge. State the specific structural reason.
+
+36. suggested_follow_up_queries: Provide 4-6 specific search queries the operator should run:
+    "{company} strategic alternatives", "{company} acquisition proposal", "{company} sale process",
+    "{ticker} 8-K strategic review", "{ticker} banker retention strategic", "{ticker} M&A rumor"
+    Use the actual company name and ticker in each query.
+
+ACTION-SPECIFIC REQUIREMENTS:
+
+IF action=DISCARD:
+  - exact_quotes_used: Quote the exact phrase that proves already-announced/false-positive
+  - why_this_case_matters_now: Explain why the scanner triggered and why this is pattern noise
+  - why_this_is_not_actionable_yet: Name the specific FP archetype and why it suppresses the signal
+  - what_would_upgrade: What would unsuppress this (new URL, new date, new signal type)
+
+IF action=WATCH:
+  - what_is_not_yet_answered: Focus on the exact missing evidence for escalation
+  - what_would_upgrade: The specific next filing or catalyst that would trigger ESCALATE
+  - immediate_next_steps: Monitoring actions, EDGAR alerts, date-based review
+
+IF action=ESCALATE:
+  - source_evidence_read: Quote the explicit process language that justifies escalation
+  - exact_quotes_used: The specific phrase(s) from the filing proving a real process
+  - immediate_next_steps: "Read [URL] now. Check [ticker] price action. Search [company] sale process in news."
+"""
+
+
 # ── Prompt builder ────────────────────────────────────────────────────────────
 
 def build_acquisition_intelligence_prompt(
@@ -288,6 +390,7 @@ def build_investment_gate_prompt(
     situation_result: dict | None = None,
     prob_result: dict | None = None,
     analogues_context: str = '',
+    depth: str = 'fast_gate',
 ) -> str:
     """
     Build a strategy-calibrated diligence prompt for the investment gate.
@@ -296,6 +399,7 @@ def build_investment_gate_prompt(
         case:              Research case dict.
         strategy_features: Output of strategy_classifier.run_strategy_classification(case).
                            If None, prompt runs without deterministic pre-analysis.
+        depth:             'fast_gate' (default) or 'diligence_memo' (richer analysis).
     """
     ticker       = case.get('ticker', 'UNKNOWN')
     company_name = case.get('company_name', 'Unknown Company')
@@ -344,6 +448,7 @@ def build_investment_gate_prompt(
         for name, desc in _CLASSIFICATION_DESCRIPTIONS.items()
     )
     schema_json = json.dumps(_OUTPUT_SCHEMA, indent=2)
+    diligence_instructions_block = _DILIGENCE_MEMO_INSTRUCTIONS if depth == 'diligence_memo' else ''
 
     # Evidence quality block
     eq          = case.get('evidence_quality', {})
@@ -365,6 +470,22 @@ def build_investment_gate_prompt(
             f'  [{src}] phrase="{phrase}" reason="{reason}"\n  context: {context[:300]}'
         )
     quotes_block = '\n\n'.join(quotes_block_lines) if quotes_block_lines else '  No quotes extracted.'
+
+    # Full filing text (injected by run_gate when depth=diligence_memo)
+    full_filing_text = case.get('_filing_text', '') or ''
+    full_text_block = ''
+    if full_filing_text and depth == 'diligence_memo':
+        full_text_block = (
+            'FULL FILING TEXT (fetched for diligence_memo analysis — use for exact quotes):\n'
+            + full_filing_text[:6000]
+            + ('\n[... text truncated at 6000 chars ...]' if len(full_filing_text) > 6000 else '')
+        )
+    elif depth == 'diligence_memo':
+        full_text_block = (
+            'FULL FILING TEXT: Not retrieved for this run. '
+            'Use source_excerpt above and scanner memo only. '
+            'exact_quotes_used must note: "[Filing text not retrieved]".'
+        )
 
     d_or_f_warning = ''
     if eq_grade in ('D', 'F'):
@@ -460,6 +581,8 @@ Source excerpt (verbatim from filing or scanner, may be empty):
 Scanner memo section (context):
 {memo_block}
 
+{full_text_block}
+
 ---
 
 EVIDENCE QUALITY ASSESSMENT:
@@ -543,6 +666,7 @@ FIELD-BY-FIELD INSTRUCTIONS (fill every field — do not skip any):
     adjust if the excerpt shows different evidence.
 
 {acq_intel_instructions}
+{diligence_instructions_block}
 
 OUTPUT SCHEMA (output ONLY this JSON, no other text):
 {schema_json}

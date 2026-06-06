@@ -16,7 +16,7 @@
 #   --restart-scanner-timer  Start ma-scanner-live.timer after run
 #   --limit N                Max alerts for AI (default: 10)
 #   --timeout N              Scanner V12 timeout in seconds (default: 1800)
-#   --depth DEPTH            AI depth: fast_gate|deep (default: fast_gate)
+#   --depth DEPTH            AI depth: fast_gate|deep|diligence_memo (default: diligence_memo)
 #   --branch BRANCH          Git branch to pull (default: ai-final)
 #
 # Logs: data/live_monitoring/operator_runs/operator_run_YYYY-MM-DD_HHMM.log
@@ -28,7 +28,7 @@ INSTALL_DIR="${INSTALL_DIR:-/opt/ma-scanner}"
 BRANCH="ai-final"
 LIMIT=10
 TIMEOUT=1800
-DEPTH="fast_gate"
+DEPTH="diligence_memo"
 SKIP_GIT=false
 SKIP_SCANNER=false
 SKIP_AI=false
@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
     --restart-scanner-timer) RESTART_SCANNER_TIMER=true ;;
     --limit)                LIMIT="${2}"; shift ;;
     --timeout)              TIMEOUT="${2}"; shift ;;
-    --depth)                DEPTH="${2}"; shift ;;
+    --depth)                DEPTH="${2:-diligence_memo}"; shift ;;
     --branch)               BRANCH="${2}"; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
@@ -260,7 +260,8 @@ else
     --strategic-brief \
     --include-completed-analogues \
     --probability-analysis \
-    --opportunity-mode
+    --opportunity-mode \
+    --force-refresh
   AI_RC=$?
   set -e
 
