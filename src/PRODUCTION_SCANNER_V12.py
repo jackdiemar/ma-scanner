@@ -472,11 +472,101 @@ VERIFIED_NEW = [
     'SAVA', 'SCPH', 'SLRX', 'SNGX', 'STAB', 'SYRS', 'TPST',
 ]
 
-# Build deduplicated universe — target 500
+# ── Expanded 2026 universe — medtech, diagnostics, specialty pharma, intl ADRs ─
+EXPANDED_2026 = [
+    # ── Oncology / ADC / precision medicine (active clinical 2025-2026) ─────────
+    'ADCT', 'ERAS', 'TYRA', 'KROS', 'GRTS', 'PCVX', 'LENZ', 'BLCM', 'BNTX',
+    'CDTX', 'CNCE', 'ARGX', 'ATHA', 'ARHS', 'SHPH', 'VRCA', 'NVCR', 'AURA',
+    'CGEN', 'PBYI', 'ONCT', 'ONCY', 'PLRX', 'RVNC', 'TARA', 'IKENA', 'MERC',
+    'PMVP', 'PRTA', 'PRME', 'CGON', 'MNOV', 'RVPH', 'CHRS', 'FMTX', 'STRO',
+    'ABCL', 'HOOK', 'TURN', 'TPST', 'PHAT', 'OABI', 'NKGN', 'PAHC', 'RCUS',
+    'SNDX', 'MGNX', 'IMGN', 'KPTI', 'EPZM', 'ALLO', 'FATE', 'LYEL',
+
+    # ── Gene / cell therapy ──────────────────────────────────────────────────────
+    'ADAP', 'BCEL', 'ELVN', 'SPRO', 'ADGM', 'EDIT', 'CRSP', 'NTLA', 'BEAM',
+    'VERV', 'BLUE', 'SANA', 'CRBU', 'ARCT', 'MRUS', 'ABUS', 'QURE', 'RLAY',
+    'MGTX', 'RGNX', 'SGMO', 'ANAB', 'DRTS', 'IOVA', 'ALDX', 'ATAI',
+
+    # ── Medical devices / surgical / cardiovascular devices ──────────────────────
+    'AORT', 'TMDX', 'SILK', 'NVCR', 'GKOS', 'INSP', 'INMD', 'BFLY', 'MMSI',
+    'ITGR', 'NARI', 'ATRC', 'AXNX', 'CNMD', 'ICAD', 'NTRA', 'NOVT', 'NXTC',
+    'PNTM', 'RBOT', 'SINT', 'SWAV', 'VNDA', 'AAON', 'ABMD', 'ATRI', 'AVNS',
+    'AXDX', 'BABY', 'BRKR', 'CERS', 'CFLT', 'CGNT', 'CRNX', 'CRVS', 'CSII',
+    'DXCM', 'EKSO', 'ESXB', 'EVOK', 'FLGT', 'GMED', 'HAYN', 'HBIO', 'HCWB',
+    'HOLX', 'HRTX', 'HTBK', 'IART', 'ICUI', 'IDXX', 'INFU', 'IRHC', 'ISRG',
+    'ITRI', 'JNCE', 'KINS', 'KNSL', 'LMAT', 'LXRX', 'MDXH', 'MLAB', 'MMSI',
+    'MNMD', 'MSON', 'MXCT', 'NARI', 'NBTX', 'NKTR', 'NRXP', 'NTUS', 'NUVB',
+    'NVST', 'NVAX', 'OCUL', 'OMCL', 'OPCH', 'OSUR', 'OTRK', 'OVAS', 'PACB',
+    'PDEX', 'PENN', 'PGNY', 'PHAT', 'PLRX', 'PODD', 'PRTK', 'PSTV', 'PWFL',
+    'RGEN', 'RMTI', 'ROIV', 'RPID', 'RVMD', 'RXST', 'SGEN', 'SEER', 'SEMR',
+    'SILK', 'SINT', 'SLDB', 'SLRX', 'SNGX', 'SONX', 'SPNE', 'SRTS', 'STAA',
+    'STEM', 'STRN', 'STTK', 'SUPN', 'SURF', 'SVRA', 'SYRA', 'SYRS', 'TACT',
+
+    # ── Diagnostics / genomics / precision medicine ──────────────────────────────
+    'EXAS', 'NVTA', 'SEER', 'CDNA', 'CODX', 'PACB', 'OMIC', 'FLGT', 'SDGR',
+    'RXRX', 'NTRA', 'ACVA', 'BRKR', 'ILMN', 'MXCT', 'RUBY', 'SOPH',
+    'VEEV', 'AXDX', 'BLFS', 'CERS', 'CFLT', 'CHMA', 'CLOV', 'CLVT', 'CNTA',
+    'CODX', 'DXCM', 'EVOX', 'FATE', 'FLGT', 'GENI', 'GENE', 'GHDX', 'GNLX',
+    'GOSS', 'HARP', 'HCAT', 'HERC', 'HLIT', 'HUMA', 'IDXX', 'IOVA', 'ISRG',
+    'KRTX', 'LMNX', 'MDXH', 'MLAB', 'MRKR', 'MRTX', 'MRVI', 'NARI', 'NERV',
+    'NTLA', 'NVTA', 'OMIC', 'ONTX', 'OPCH', 'OSUR', 'PACB', 'PCRX', 'PDEX',
+    'PGNY', 'PPBT', 'PRLD', 'PRTK', 'PULM', 'PWFL', 'RCKT', 'RDUS', 'REPL',
+
+    # ── Specialty pharma / commercial stage additions ────────────────────────────
+    'PCRX', 'ITCI', 'SAGE', 'PRAX', 'ACAD', 'JAZZ', 'SUPN', 'AXSM', 'ALKS',
+    'HALO', 'NBIX', 'IONS', 'BMRN', 'ALNY', 'SRPT', 'UTHR', 'VRTX', 'REGN',
+    'BIIB', 'GILD', 'AMGN', 'ABBV', 'IDXX', 'HOLX', 'EXAS', 'HZNP', 'INSM',
+    'ACAD', 'ARDX', 'TVTX', 'TGTX', 'ROIV', 'ACLX', 'EXEL', 'PTCT', 'TBPH',
+    'PRTA', 'ITCI', 'XENE', 'ATAI', 'NRXP', 'ACAD', 'VNDA', 'MERC', 'PRTK',
+    'RDUS', 'REPL', 'RETA', 'RMTI', 'RVMD', 'SANA', 'SBBP', 'SIGA', 'SMMT',
+    'STRO', 'SUPN', 'SURF', 'TARA', 'TARS', 'TBPH', 'TCMD', 'TERN', 'TGTX',
+    'TPST', 'TURN', 'UTHR', 'VERA', 'VERV', 'VERU', 'VIGL', 'VRTX', 'VTYX',
+    'XBIO', 'XENE', 'XNCR', 'YMAB', 'ZYBT', 'ZYME', 'PTGX', 'QURE', 'RAPT',
+
+    # ── CNS / neurodegeneration ──────────────────────────────────────────────────
+    'SAGE', 'PRAX', 'ALKS', 'CMPS', 'ANIK', 'ACAD', 'CORT', 'AXSM', 'DNLI',
+    'AVDL', 'SUPN', 'ITCI', 'XENE', 'ATAI', 'NRXP', 'CERE', 'AMRN', 'BIIB',
+    'JAZZ', 'PRTK', 'SMMT', 'TGTX', 'AGEN', 'COLL', 'ACNB', 'ALVO', 'ANGI',
+    'VTYX', 'ATHA', 'ACOR', 'MNMD', 'NEON', 'RLMD', 'SAVA', 'ZFGN', 'AMPH',
+    'ABOS', 'ACET', 'ACNX', 'ACPH', 'ACST', 'ACXP', 'ADAG', 'ADTX', 'ADVM',
+    'AGRX', 'AIMD', 'ALBO', 'ALGE', 'ALKT', 'ALRS', 'ALTO', 'AMPE', 'AMTI',
+    'ANTE', 'ANRO', 'APGE', 'APVO', 'AQST', 'ARQQ', 'ATXS', 'AVCO', 'AVTA',
+
+    # ── Rare disease / orphan drug additions ────────────────────────────────────
+    'KRYS', 'RARE', 'PTGX', 'REPL', 'ACAD', 'ALGS', 'AVDL', 'NBIX', 'IONS',
+    'BMRN', 'ALNY', 'UTHR', 'TBPH', 'INZY', 'IMVT', 'APLS', 'FOLD', 'SGMO',
+    'RGNX', 'ANAB', 'DERM', 'DMAC', 'FULC', 'HALO', 'INSM', 'PTCT', 'QURE',
+    'SBBP', 'KALA', 'YMAB', 'IOVA', 'AGIO', 'CGEM', 'ACHL', 'ADMA', 'ADPT',
+    'AFMD', 'AKBA', 'ALEC', 'ALVR', 'ALXO', 'AMRN', 'APRE', 'APTX', 'ARCT',
+    'ASMB', 'ATXI', 'AVRO', 'AXGT', 'AXNX', 'BBIO', 'BCAB', 'BCYC', 'BHVN',
+    'BPMC', 'BTAI', 'BYSI', 'CAPR', 'CERE', 'CGEM', 'CLRB', 'CLSD',
+
+    # ── International biotech / ADRs on US exchanges ─────────────────────────────
+    'ARGX', 'LEGN', 'ASND', 'ZLAB', 'BGNE', 'CLVS', 'OMIC', 'ELAN', 'ACMR',
+    'ZNTL', 'RCUS', 'YMAB', 'CGEN', 'GLPG', 'NNOX', 'RDHL', 'VNET', 'TCRT',
+    'IMVT', 'KYMR', 'PRAX', 'FHTX', 'RXRX', 'RVMD', 'SMMT', 'NUVL', 'ARQT',
+    'ORIC', 'DNLI', 'CRNX', 'ARVN', 'SDGR', 'JANX', 'IMCR', 'ACLX', 'TVTX',
+
+    # ── Cardiovascular / metabolic additions ─────────────────────────────────────
+    'MDGL', 'CYTK', 'MRNS', 'ARWR', 'IONS', 'VERV', 'NTLA', 'AKRO', 'KRYS',
+    'ARDX', 'CVAC', 'DCPH', 'APGE', 'APVO', 'AQST', 'LVOX', 'RETA', 'KDNY',
+    'CVKD', 'GTHX', 'ESPR', 'LQDA', 'PRTA', 'MGTX', 'MEDP', 'ICLR', 'CRL',
+    'RPRX', 'XOMA', 'AGIO', 'CGEM', 'BCEL', 'BDTX', 'BEAT', 'BFLY', 'BFRI',
+
+    # ── Immunology / inflammation / autoimmune ───────────────────────────────────
+    'ARQT', 'IMVT', 'KYMR', 'PRAX', 'BCYC', 'ALPN', 'JANX', 'IMCR', 'ACLX',
+    'TVTX', 'INVA', 'CARA', 'XNCR', 'IMMP', 'ARDX', 'VTYX', 'ELEV', 'RLAY',
+    'CMPS', 'ACRS', 'ETNB', 'VIGL', 'REGN', 'SANA', 'VKTX', 'MRUS', 'AGEN',
+    'ALDX', 'CABA', 'CLDX', 'CVAC', 'DMAC', 'DVAX', 'TARS', 'EXEL', 'IMNM',
+    'KPTI', 'LGND', 'MIRM', 'NKGN', 'PAHC', 'RCUS', 'SNDX', 'VERA', 'XBIO',
+    'ZYME', 'ANAB', 'CELC', 'DICE', 'EFNB', 'INBX', 'NBTX', 'OABI', 'CCXI',
+]
+
+# Build deduplicated universe — target 550+
 _all = (AUTOIMMUNE + ONCOLOGY + METABOLIC + RARE_DISEASE + NEUROSCIENCE +
         RENAL + GENE_CELL_THERAPY + CARDIOVASCULAR + COMMERCIAL_STAGE +
         INFECTIOUS_DISEASE + OPHTHALMOLOGY + WOMENS_HEALTH + ADDITIONAL +
-        BROAD_BIOTECH + VERIFIED_NEW)
+        BROAD_BIOTECH + VERIFIED_NEW + EXPANDED_2026)
 UNIVERSE = sorted(set(_all))
 
 # ─────────────────────────────────────────────────────────────────────────────
