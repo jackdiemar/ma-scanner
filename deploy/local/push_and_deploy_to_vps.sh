@@ -216,8 +216,8 @@ fi
 echo ""
 echo "[5/5] Post-deploy action"
 if [[ "${RUN_FULL_CYCLE}" == "true" ]]; then
-  echo "  Running full production cycle (--skip-scanner) on VPS..."
-  ssh_run "sudo bash ${REMOTE_DIR}/deploy/vps/run_full_production_cycle.sh --skip-scanner"
+  echo "  Running full production cycle (scanner + AI email) on VPS..."
+  ssh_run "sudo bash ${REMOTE_DIR}/deploy/vps/run_full_production_cycle.sh"
 elif [[ "${RUN_AI_EMAIL}" == "true" ]]; then
   echo "  Running AI email on VPS..."
   ssh_run "bash ${REMOTE_DIR}/deploy/vps/run_ai_email_now.sh ${REMOTE_DIR}"
