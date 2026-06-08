@@ -165,6 +165,10 @@ class LLMClient:
 
         import openai  # already validated in _init_client
         try:
+            # Schema has 50+ fields; diligence_memo depth adds 16 more narrative fields.
+            # 6000 tokens covers the full output at any depth. Cost delta is negligible.
+            max_tok = 6000
+
             response = self._client.chat.completions.create(
                 model=self._cfg.model,
                 messages=[
@@ -174,7 +178,8 @@ class LLMClient:
                             'You are a biotech M&A research analyst. '
                             'You classify scanner alerts and produce structured research assessments. '
                             'You are NOT making investment recommendations or transaction decisions. '
-                            'Output only valid JSON as instructed.'
+                            'Output only valid JSON as instructed. '
+                            'You MUST output complete, valid JSON — never truncate the response.'
                         ),
                     },
                     {
@@ -183,7 +188,7 @@ class LLMClient:
                     },
                 ],
                 temperature=0.1,
-                max_tokens=1800,
+                max_tokens=max_tok,
             )
             return response.choices[0].message.content or ''
         except openai.RateLimitError as exc:
