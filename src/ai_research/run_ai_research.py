@@ -445,6 +445,29 @@ def run(
                        ai_enabled=ai_ready, watchlist_summary={})
         return 0
 
+    # ── 1b. Fetch catalyst summary ───────────────────────────────────────────
+    catalyst_summary: dict | None = None
+    try:
+        from ai_research.catalyst_tracker import build_catalyst_summary
+        company_names = {str(c.get('ticker', '')).upper(): c.get('company_name', '') for c in cases}
+        fmp_key = os.environ.get('FMP_API_KEY', '')
+        catalyst_summary = build_catalyst_summary(
+            universe_tickers = set(company_names.keys()),
+            company_names    = company_names,
+            fmp_api_key      = fmp_key,
+            days_ahead       = 45,
+        )
+        stats = catalyst_summary.get('stats', {})
+        print(
+            f'  [CATALYST] {stats.get("total_ticker_catalysts", 0)} events | '
+            f'{stats.get("earnings_count", 0)} earnings | '
+            f'{stats.get("pdufa_count", 0)} PDUFA | '
+            f'{stats.get("trial_count", 0)} trials | '
+            f'{stats.get("imminent_p0", 0)} imminent'
+        )
+    except Exception as _cat_exc:
+        print(f'  [WARN] Catalyst tracker skipped: {_cat_exc}')
+
     # ── 2. Load suppression registry + change detection ──────────────────────
     from ai_research.suppression_registry import (
         load_registry, save_registry, check_suppressed, update_registry,
@@ -495,6 +518,14 @@ def run(
                     decisions.append(stub)
                     suppressed_count += 1
                     continue
+
+        # Inject catalyst context into case for prompt enrichment
+        if catalyst_summary:
+            from ai_research.catalyst_tracker import get_catalyst_context_for_ticker
+            _cat_ctx = get_catalyst_context_for_ticker(t, catalyst_summary)
+            if _cat_ctx:
+                case = dict(case)
+                case['_catalyst_context'] = _cat_ctx
 
         decision = run_gate(
             case,
@@ -607,10 +638,11 @@ def run(
         }
         from ai_research.ai_emailer import send_ai_research_email
         send_ai_research_email(
-            decisions       = decisions,
-            run_metadata    = run_metadata,
-            strategic_brief = strategic_brief,
+            decisions         = decisions,
+            run_metadata      = run_metadata,
+            strategic_brief   = strategic_brief,
             opportunity_queue = queue,
+            catalyst_summary  = catalyst_summary,
         )
 
     return 0

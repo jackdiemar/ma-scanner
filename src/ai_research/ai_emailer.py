@@ -646,6 +646,177 @@ def _card_html(d: dict, strategic_brief: bool = False) -> str:
     return html
 
 
+def _catalyst_section_html(catalyst_summary: dict) -> str:
+    """
+    Render the Catalyst Calendar section for the email.
+    Shows: upcoming earnings, PDUFA signals, Phase 3 readouts, conference calendar.
+    """
+    if not catalyst_summary:
+        return ''
+
+    cats        = catalyst_summary.get('catalysts', [])
+    confs       = catalyst_summary.get('conferences', [])
+    stats       = catalyst_summary.get('stats', {})
+    gen_at      = _esc(catalyst_summary.get('generated_at', ''))
+
+    # Priority badge colors
+    _CAT_COLORS = {
+        'P0_IMMINENT':  '#dc2626',
+        'P1_NEAR_TERM': '#d97706',
+        'P2_UPCOMING':  '#2563eb',
+        'P3_HORIZON':   '#374151',
+    }
+    _TYPE_ICONS = {
+        'EARNINGS':       '📊',
+        'PDUFA':          '🏛',
+        'PHASE3_READOUT': '🔬',
+        'CONFERENCE':     '🗓',
+    }
+
+    if not cats and not confs:
+        return (
+            f'<div style="background:#0a101e;border:1px solid #1f2937;border-radius:8px;'
+            f'padding:14px 18px;margin-bottom:16px;">'
+            f'<div style="font-size:11px;color:#374151;text-transform:uppercase;'
+            f'letter-spacing:0.1em;">Catalyst Calendar — No Events Found</div>'
+            f'</div>'
+        )
+
+    # ── Ticker-specific catalysts ─────────────────────────────────────────────
+    cat_rows_html = ''
+    shown_cats = [c for c in cats if c.get('days_until', 999) <= 60][:15]
+    for cat in shown_cats:
+        ticker    = _esc(cat.get('ticker', '?'))
+        ctype     = cat.get('catalyst_type', '')
+        du        = cat.get('days_until', 0)
+        dt        = _esc(cat.get('date', 'TBD'))
+        desc      = _esc(cat.get('description', '')[:110])
+        priority  = cat.get('priority', 'P3_HORIZON')
+        pcolor    = _CAT_COLORS.get(priority, '#374151')
+        icon      = _TYPE_ICONS.get(ctype, '•')
+        src_url   = cat.get('source_url', '')
+        conf_str  = ''
+        if cat.get('confidence') == 'MEDIUM':
+            conf_str = ' <span style="font-size:9px;color:#4b5563;">[verify]</span>'
+
+        du_str = f'+{du}d' if du >= 0 else f'{du}d'
+        ticker_link = (
+            f'<a href="{_esc(src_url)}" style="color:#e2e8f0;text-decoration:none;">{ticker}</a>'
+            if src_url else ticker
+        )
+        cat_rows_html += (
+            f'<tr>'
+            f'<td style="padding:4px 8px;font-size:12px;font-weight:700;color:#e2e8f0;">'
+            f'{ticker_link}</td>'
+            f'<td style="padding:4px 8px;">'
+            f'<span style="display:inline-block;padding:1px 6px;border-radius:3px;'
+            f'font-size:10px;font-weight:700;background:{pcolor};color:#fff;">'
+            f'{_esc(ctype.replace("_", " "))}</span></td>'
+            f'<td style="padding:4px 8px;font-size:11px;color:#94a3b8;">{dt}</td>'
+            f'<td style="padding:4px 8px;font-size:11px;font-weight:600;color:{pcolor};">{du_str}</td>'
+            f'<td style="padding:4px 8px;font-size:11px;color:#64748b;">{desc}{conf_str}</td>'
+            f'</tr>'
+        )
+
+    cat_table_html = ''
+    if cat_rows_html:
+        hidden_count = max(len([c for c in cats if c.get('days_until', 999) <= 60]) - 15, 0)
+        more_txt = f' (+{hidden_count} more beyond 60d)' if hidden_count else ''
+        cat_table_html = (
+            f'<table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:10px;">'
+            f'<tr>'
+            f'<th style="font-size:9px;color:#374151;text-align:left;padding:2px 8px;">Ticker</th>'
+            f'<th style="font-size:9px;color:#374151;text-align:left;padding:2px 8px;">Type</th>'
+            f'<th style="font-size:9px;color:#374151;text-align:left;padding:2px 8px;">Date</th>'
+            f'<th style="font-size:9px;color:#374151;text-align:left;padding:2px 8px;">Days</th>'
+            f'<th style="font-size:9px;color:#374151;text-align:left;padding:2px 8px;">Event</th>'
+            f'</tr>'
+            + cat_rows_html
+            + f'</table>'
+            + (f'<div style="font-size:10px;color:#374151;">{_esc(more_txt)}</div>' if more_txt else '')
+        )
+    else:
+        cat_table_html = (
+            '<div style="font-size:12px;color:#374151;margin-bottom:8px;">'
+            'No earnings, PDUFA, or Phase 3 events detected in next 60 days for alert tickers.</div>'
+        )
+
+    # ── Conference calendar ───────────────────────────────────────────────────
+    conf_items_html = ''
+    upcoming_confs = [c for c in confs if -3 <= c.get('days_until', 999) <= 180][:6]
+    for conf in upcoming_confs:
+        name    = _esc(conf.get('name', ''))
+        start   = _esc(conf.get('date', ''))
+        end     = _esc(conf.get('end_date', ''))
+        du      = conf.get('days_until', 0)
+        note    = _esc(conf.get('description', '')[:90])
+        areas   = ' · '.join(_esc(a) for a in (conf.get('therapeutic_areas') or [])[:4])
+        matches = conf.get('matched_tickers', [])
+        status  = 'ACTIVE' if du <= 0 else f'+{du}d'
+        status_color = '#16a34a' if du <= 0 else ('#d97706' if du <= 14 else '#374151')
+
+        match_str = ''
+        if matches:
+            match_str = (
+                f' <span style="font-size:9px;color:#2563eb;">'
+                f'→ {_esc(", ".join(matches[:4]))}</span>'
+            )
+
+        conf_items_html += (
+            f'<div style="border-top:1px solid #1f2937;padding:5px 0;">'
+            f'<div style="display:flex;align-items:center;gap:8px;">'
+            f'<span style="font-size:11px;font-weight:600;color:#e2e8f0;">{name}</span>'
+            f'<span style="font-size:10px;font-weight:700;color:{status_color};">{status}</span>'
+            f'{match_str}'
+            f'</div>'
+            f'<div style="font-size:10px;color:#4b5563;">{start} → {end} | {areas}</div>'
+            + (f'<div style="font-size:10px;color:#374151;">{note}</div>' if note else '')
+            + '</div>'
+        )
+
+    # ── Stats summary ─────────────────────────────────────────────────────────
+    p0 = stats.get('imminent_p0', 0)
+    p1 = stats.get('near_term_p1', 0)
+    total_cats = stats.get('total_ticker_catalysts', 0)
+    stat_parts: list[str] = []
+    if p0:
+        stat_parts.append(f'<span style="color:#dc2626;font-weight:700;">{p0} imminent (&le;7d)</span>')
+    if p1:
+        stat_parts.append(f'<span style="color:#d97706;font-weight:700;">{p1} near-term (&le;21d)</span>')
+    if total_cats:
+        stat_parts.append(f'{total_cats} total events tracked')
+    stats_html = ' &nbsp;|&nbsp; '.join(stat_parts) if stat_parts else 'No near-term catalysts'
+
+    return (
+        f'<div style="background:#0a0f1e;border:1px solid #1e3a5f;border-radius:8px;'
+        f'padding:14px 18px;margin-bottom:16px;">'
+
+        f'<div style="font-size:11px;color:#4a7fbf;text-transform:uppercase;'
+        f'letter-spacing:0.12em;margin-bottom:10px;border-bottom:1px solid #1e3a5f;'
+        f'padding-bottom:6px;display:flex;justify-content:space-between;align-items:center;">'
+        f'<span>Catalyst Calendar</span>'
+        f'<span style="font-size:10px;color:#374151;font-weight:400;text-transform:none;">'
+        f'Generated {gen_at}</span>'
+        f'</div>'
+
+        f'<div style="font-size:11px;color:#64748b;margin-bottom:8px;">{stats_html}</div>'
+
+        + cat_table_html
+
+        + f'<div style="font-size:10px;color:#4a7fbf;text-transform:uppercase;'
+        f'letter-spacing:0.08em;margin-top:10px;margin-bottom:6px;">Major Conferences 2026</div>'
+        + (conf_items_html or
+           '<div style="font-size:11px;color:#374151;">No conferences in range.</div>')
+
+        + f'<div style="font-size:9px;color:#1f2937;margin-top:8px;">'
+        f'Earnings: FMP calendar (verified). PDUFA: SEC EDGAR EFTS keyword search (verify date in filing). '
+        f'Phase 3: ClinicalTrials.gov (completion date, not readout date — may differ). '
+        f'Not investment advice.</div>'
+
+        f'</div>'
+    )
+
+
 def _build_synthesis_html(
     active_decisions: list[dict],
     all_decisions: list[dict],
@@ -1020,6 +1191,7 @@ def build_ai_email_html(
     run_metadata: dict,
     strategic_brief: bool = False,
     opportunity_queue: dict | None = None,
+    catalyst_summary: dict | None = None,
 ) -> str:
     """
     Build the full branded HTML email body. Uses inline styles throughout —
@@ -1160,6 +1332,9 @@ def build_ai_email_html(
             'Decisions shown are placeholders.</span></div>'
         )
 
+    # Catalyst calendar section
+    catalyst_html = _catalyst_section_html(catalyst_summary) if catalyst_summary else ''
+
     # Research analyst synthesis section (always shown when opportunity_mode or strategic_brief)
     synthesis_html = ''
     if (strategic_brief or opportunity_queue is not None) and decisions:
@@ -1274,6 +1449,7 @@ def build_ai_email_html(
 <!-- BODY -->
 <tr><td style="padding:16px 24px;">
   {dry_run_banner}
+  {catalyst_html}
   {synthesis_html}
   {strategy_summary_html}
   {already_announced_advisory_html}
@@ -1309,6 +1485,7 @@ def build_ai_email_plain(
     run_metadata: dict,
     strategic_brief: bool = False,
     opportunity_queue: dict | None = None,
+    catalyst_summary: dict | None = None,
 ) -> str:
     """Plain text fallback. Clean and readable."""
     run_at     = run_metadata.get('run_at', _utc_now())
@@ -1344,6 +1521,34 @@ def build_ai_email_plain(
         lines.append(f'Active cases (P0-P3): {len(render_decisions)}')
         lines.append(f'Suppressed discards : {total_suppressed}')
     lines.append('')
+
+    # Catalyst calendar (plain text)
+    if catalyst_summary:
+        cats  = catalyst_summary.get('catalysts', [])
+        confs = catalyst_summary.get('conferences', [])
+        stats = catalyst_summary.get('stats', {})
+        lines += ['─' * 48, 'CATALYST CALENDAR', '']
+        near = [c for c in cats if c.get('days_until', 999) <= 60][:10]
+        if near:
+            for c in near:
+                ctype = c.get('catalyst_type', '?')
+                du    = c.get('days_until', '?')
+                dt    = c.get('date', 'TBD')
+                desc  = c.get('description', '')[:100]
+                lines.append(f'  {c.get("ticker","?"):<8} [{ctype:<15}] {dt} (+{du}d)  {desc}')
+        else:
+            lines.append('  No ticker-level catalysts in next 60 days.')
+        lines.append('')
+        upcoming_confs = [c for c in confs if -3 <= c.get('days_until', 999) <= 90]
+        if upcoming_confs:
+            lines.append('  Upcoming conferences:')
+            for conf in upcoming_confs[:5]:
+                du   = conf.get('days_until', 0)
+                name = conf.get('name', '?')
+                dt   = conf.get('date', '?')
+                status = 'ACTIVE' if du <= 0 else f'+{du}d'
+                lines.append(f'    {status:<10} {dt}  {name}')
+        lines += ['', '─' * 48, '']
 
     if no_opportunity:
         lines += [
@@ -1555,6 +1760,7 @@ def send_ai_research_email(
     force: bool = False,
     strategic_brief: bool = False,
     opportunity_queue: dict | None = None,
+    catalyst_summary: dict | None = None,
 ) -> dict[str, Any]:
     """
     Build and send the branded AI research email.
@@ -1587,10 +1793,12 @@ def send_ai_research_email(
                                         opportunity_queue=opportunity_queue)
     body_html  = build_ai_email_html(decisions, run_metadata,
                                      strategic_brief=strategic_brief,
-                                     opportunity_queue=opportunity_queue)
+                                     opportunity_queue=opportunity_queue,
+                                     catalyst_summary=catalyst_summary)
     body_plain = build_ai_email_plain(decisions, run_metadata,
                                       strategic_brief=strategic_brief,
-                                      opportunity_queue=opportunity_queue)
+                                      opportunity_queue=opportunity_queue,
+                                      catalyst_summary=catalyst_summary)
 
     if cfg['provider'] == 'resend':
         result = _send_resend_html(subject, body_plain, body_html, cfg)

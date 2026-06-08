@@ -589,6 +589,7 @@ def run_gate(
         prob_result=prob_result,
         analogues_context=analogues_context,
         depth=depth,
+        catalyst_context=str(case.get('_catalyst_context', '')),
     )
 
     try:

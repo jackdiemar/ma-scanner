@@ -391,6 +391,7 @@ def build_investment_gate_prompt(
     prob_result: dict | None = None,
     analogues_context: str = '',
     depth: str = 'fast_gate',
+    catalyst_context: str = '',
 ) -> str:
     """
     Build a strategy-calibrated diligence prompt for the investment gate.
@@ -487,6 +488,9 @@ def build_investment_gate_prompt(
             'exact_quotes_used must note: "[Filing text not retrieved]".'
         )
 
+    # Catalyst context (earnings / PDUFA / Phase 3 readout)
+    catalyst_block = catalyst_context.strip() if catalyst_context else ''
+
     d_or_f_warning = ''
     if eq_grade in ('D', 'F'):
         d_or_f_warning = (
@@ -582,6 +586,8 @@ Scanner memo section (context):
 {memo_block}
 
 {full_text_block}
+
+{catalyst_block}
 
 ---
 
