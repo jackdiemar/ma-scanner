@@ -26,7 +26,7 @@ set -uo pipefail
 # ── Defaults ──────────────────────────────────────────────────────────────────
 INSTALL_DIR="${INSTALL_DIR:-/opt/ma-scanner}"
 BRANCH="ai-final"
-LIMIT=10
+LIMIT=25
 TIMEOUT=1800
 DEPTH="diligence_memo"
 SKIP_GIT=false
@@ -105,6 +105,33 @@ if [[ ! -d "${INSTALL_DIR}" ]]; then
 fi
 
 cd "${INSTALL_DIR}" || exit 1
+
+# ── Pre-flight: check required AI env vars ────────────────────────────────────
+if [[ -f "${ENV_FILE}" ]]; then
+  set -a; . "${ENV_FILE}"; set +a
+fi
+
+PREFLIGHT_WARN=false
+if [[ "${AI_RESEARCH_ENABLED:-false}" != "true" ]]; then
+  warn "AI_RESEARCH_ENABLED is not 'true' in config/.env — LLM will not run"
+  PREFLIGHT_WARN=true
+fi
+if [[ "${AI_EMAILS_ENABLED:-false}" != "true" ]]; then
+  warn "AI_EMAILS_ENABLED is not 'true' in config/.env — AI research emails will NOT send"
+  warn "  Fix: add  AI_EMAILS_ENABLED=true  to /opt/ma-scanner/config/.env"
+  PREFLIGHT_WARN=true
+fi
+if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+  warn "OPENAI_API_KEY not set — LLM will not run"
+  PREFLIGHT_WARN=true
+fi
+if [[ -z "${EMAIL_RECIPIENT:-}" && -z "${SMTP_RECIPIENT:-}" ]]; then
+  warn "EMAIL_RECIPIENT not set — emails have no recipient"
+  PREFLIGHT_WARN=true
+fi
+if [[ "${PREFLIGHT_WARN}" == "false" ]]; then
+  ok "Pre-flight: AI + email config OK"
+fi
 
 # ── Detect service user ───────────────────────────────────────────────────────
 SERVICE_USER="$(systemctl show ma-scanner-live.service -p User --value 2>/dev/null || echo '')"

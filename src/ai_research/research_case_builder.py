@@ -40,9 +40,20 @@ CASES_BASE_DIR = REPO / 'data' / 'ai_research' / 'cases'
 _PRIORITY_ORDER = {
     'INVESTIGATE': 0,
     'KEEP_HIGH_PRIORITY': 0,
-    'WATCH': 1,
-    'DOWNGRADE_WATCH': 1,
-    'SUPPRESS_FALSE_POSITIVE': 2,
+    'KEEP_REVIEW': 1,              # verified PROCESS/ROFR with source URL
+    'WATCH': 2,
+    'DOWNGRADE_WATCH': 2,
+    'SUPPRESS_FALSE_POSITIVE': 3,
+}
+
+# Secondary sort within same FP priority tier: prefer unresolved over signed deals
+_SIGNAL_QUALITY_ORDER = {
+    'AFFIRM': 0,
+    'PROCESS': 1,
+    'ROFR': 2,
+    'MERGER': 3,    # already-signed — last, not a new opportunity
+    'BOILERPLATE': 4,
+    'SCORE_ONLY': 5,
 }
 
 # EDGAR URL pattern for company filings (ticker-based)
@@ -541,7 +552,10 @@ def _load_alerts_from_json() -> list[dict]:
     alerts = list(data.values())
     return sorted(
         alerts,
-        key=lambda a: _PRIORITY_ORDER.get(str(a.get('fp_classification', '')), 99),
+        key=lambda a: (
+            _PRIORITY_ORDER.get(str(a.get('fp_classification', '')), 99),
+            _SIGNAL_QUALITY_ORDER.get(str(a.get('signal_quality', '')).upper(), 99),
+        ),
     )
 
 
@@ -559,7 +573,10 @@ def _load_alerts_from_csv(ticker: str | None = None) -> list[dict]:
         return [by_ticker[ticker]] if ticker in by_ticker else []
     return sorted(
         by_ticker.values(),
-        key=lambda a: _PRIORITY_ORDER.get(str(a.get('fp_classification', '')), 99),
+        key=lambda a: (
+            _PRIORITY_ORDER.get(str(a.get('fp_classification', '')), 99),
+            _SIGNAL_QUALITY_ORDER.get(str(a.get('signal_quality', '')).upper(), 99),
+        ),
     )
 
 

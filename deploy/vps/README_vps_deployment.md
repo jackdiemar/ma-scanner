@@ -307,6 +307,7 @@ sudo chmod 600 /opt/ma-scanner/config/.env
 Add Resend settings:
 
 ```bash
+# ── Live scanner alerts ──────────────────────────────────
 EMAIL_PROVIDER=resend
 EMAIL_ALERTS_ENABLED=true
 EMAIL_ON_EVERY_RUN=false
@@ -316,6 +317,12 @@ EMAIL_DAILY_DIGEST=true
 RESEND_API_KEY=your_resend_api_key
 RESEND_FROM=Scanner <alerts@your-verified-domain.com>
 EMAIL_RECIPIENT=you@example.com
+
+# ── AI research brief emails (separate system) ──────────
+# Required or AI emails silently skip despite --email flag
+AI_RESEARCH_ENABLED=true
+AI_EMAILS_ENABLED=true
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 `RESEND_FROM` must use a sender/domain allowed by your Resend account.
