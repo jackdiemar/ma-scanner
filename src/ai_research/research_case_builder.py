@@ -341,6 +341,52 @@ def _build_case_from_alert(
     except Exception:
         case['evidence_quality'] = {}
 
+    # SA type classification — deterministic, no HTTP
+    try:
+        import sys as _sys
+        _src = str(Path(__file__).resolve().parent.parent)
+        if _src not in _sys.path:
+            _sys.path.insert(0, _src)
+        from sa_classifier import classify_sa_type
+        sa_result = classify_sa_type(
+            excerpt        = case.get('source_excerpt', '') or '',
+            trigger_phrase = case.get('trigger_phrase', '') or '',
+            flags          = case.get('scanner_flags', []) or [],
+            has_banker     = str(case.get('banker_retained', '')).lower() == 'true',
+            signal_quality = case.get('signal_quality', '') or '',
+        )
+        case['sa_type']              = sa_result['sa_type']
+        case['sa_confidence']        = sa_result['sa_confidence']
+        case['sa_reasons']           = sa_result['sa_reasons']
+        case['sa_is_company_level']  = sa_result['is_company_level']
+        case['sa_asset_level_flags'] = sa_result['asset_level_flags']
+        case['sa_requires_deeper_read'] = sa_result['requires_deeper_read']
+    except Exception as _sa_exc:
+        case['sa_type']              = 'UNKNOWN'
+        case['sa_confidence']        = 'LOW'
+        case['sa_reasons']           = []
+        case['sa_is_company_level']  = True
+        case['sa_asset_level_flags'] = []
+        case['sa_requires_deeper_read'] = True
+
+    # Distress detection — fetches 30d price history via yfinance
+    try:
+        from sa_classifier import detect_distress
+        distress = detect_distress(ticker, case.get('filing_date', '') or '')
+        case['distress_driven_sa']    = distress['distress_driven_sa']
+        case['distress_severity']     = distress['distress_severity']
+        case['distress_note']         = distress['distress_note']
+        case['price_change_30d_pct']  = distress['price_change_30d_pct']
+        case['price_at_filing']       = distress['price_at_filing']
+        case['price_30d_before']      = distress['price_30d_before']
+    except Exception as _dist_exc:
+        case['distress_driven_sa']    = False
+        case['distress_severity']     = 'UNKNOWN'
+        case['distress_note']         = str(_dist_exc)
+        case['price_change_30d_pct']  = None
+        case['price_at_filing']       = None
+        case['price_30d_before']      = None
+
     return case
 
 

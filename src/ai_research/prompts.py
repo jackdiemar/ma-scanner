@@ -95,6 +95,10 @@ _OUTPUT_SCHEMA = {
     'evidence_strength': 'HIGH | MEDIUM | LOW',
     'priced_in_assessment': 'NOT_PRICED_IN | PARTLY_REPRICED | LIKELY_PRICED_IN | UNKNOWN',
     'time_sensitivity': 'HIGH | MEDIUM | LOW',
+    'sa_type_final': 'ACQUISITION_PROCESS | CAPITAL_RAISE | ASSET_DIVESTITURE | PARTNERSHIP_LICENSING | MERGER_OF_EQUALS | WIND_DOWN | RESTRUCTURING | SHAREHOLDER_RETURN | AMBIGUOUS — your classification of the SA type based on all evidence',
+    'sa_type_reasoning': 'Why you classified it as this SA type. Quote specific language.',
+    'distress_assessment': 'DISTRESS_DRIVEN | PROACTIVE | UNCLEAR — was the SA announcement reactive to a stock crash or proactive value maximization?',
+    'distress_impact_on_thesis': 'How distress (or absence of it) affects the investment thesis and expected acquirer premium.',
     # ── Existing list fields ───────────────────────────────────────────────
     'why_interesting': ['list of strings — facts supporting research value'],
     'why_not': ['list of strings — facts reducing research value or signalling FP'],
@@ -236,6 +240,33 @@ LOW-VALUE / DISCARD signals:
 - Negated language: "no acquisition proposal has been received"
 - S-8 equity plan change-of-control vesting provisions
 - Director biography references to prior deals
+- DISTRESS-DRIVEN SA: stock dropped >20% in 30 days BEFORE the SA filing (reactive, not proactive)
+- CAPITAL RAISE framed as strategic alternatives (runway extension, PIPE, debt financing)
+- PARTNERSHIP/LICENSING for a specific drug or program — not company-level SA
+- WIND-DOWN or dissolution announced alongside SA (different risk profile entirely)
+- RESTRUCTURING alongside SA without explicit M&A language (cost-cutting, not sale process)
+
+SA TYPE CLASSIFICATION — REQUIRED:
+Every case must explicitly identify what TYPE of strategic alternatives process this is:
+- ACQUISITION_PROCESS: company-level sale, merger, business combination with named/unnamed acquirer
+- CAPITAL_RAISE: financing, equity offering, runway extension, royalty monetization
+- ASSET_DIVESTITURE: selling specific programs/assets, not the whole company
+- PARTNERSHIP_LICENSING: collaboration or licensing deal (drug or program level)
+- MERGER_OF_EQUALS: combination, reverse merger, SPAC
+- WIND_DOWN: dissolution, liquidation, cease operations
+- RESTRUCTURING: cost reduction, headcount reduction alongside SA language
+- SHAREHOLDER_RETURN: buyback, dividend, spin-off
+- AMBIGUOUS: genuine uncertainty — requires deeper read of full filing
+
+The pre-provided `sa_type` field gives the deterministic classifier result. Use it as a starting point but override with evidence from the filing text if the classifier is wrong. State your reasoning.
+
+DISTRESS FLAG — CHECK REQUIRED:
+The pre-provided `distress_driven_sa`, `distress_severity`, and `price_change_30d_pct` fields show price action 30 days before the SA filing. If DISTRESS_DRIVEN_SA=true:
+- The SA is likely reactive (board responding to crisis), not proactive (board seeking value maximization)
+- Acquirer premium is compressed because stock already crashed — they're buying damaged goods
+- The pre-announcement timing edge is partially or fully consumed by the distress event itself
+- This is a FUNDAMENTALLY DIFFERENT risk profile — downgrade unless you have evidence the pipeline/IP value is intact despite the stock move
+State explicitly whether distress changes your classification and why.
 
 CALIBRATION:
 - "merger agreement" in a filing almost always = ALREADY ANNOUNCED → ALREADY_ANNOUNCED_DEAL → DISCARD
@@ -425,6 +456,21 @@ def build_investment_gate_prompt(
         'FP classification':   case.get('fp_classification', ''),
         'First seen':          case.get('first_seen', ''),
         'Last seen':           case.get('last_seen', ''),
+        # SA type classification (deterministic pre-classifier)
+        'SA type (deterministic)':     case.get('sa_type', 'UNKNOWN'),
+        'SA confidence':               case.get('sa_confidence', 'LOW'),
+        'SA is company-level':         case.get('sa_is_company_level', True),
+        'SA reasons':                  ', '.join(case.get('sa_reasons', []) or []) or 'None detected',
+        'SA asset-level flags':        ', '.join(case.get('sa_asset_level_flags', []) or []) or 'None',
+        'SA requires deeper read':     case.get('sa_requires_deeper_read', False),
+        # Distress detection (30d price change before filing date)
+        'Distress-driven SA':          case.get('distress_driven_sa', False),
+        'Distress severity':           case.get('distress_severity', 'UNKNOWN'),
+        'Price at filing':             _fmt_optional(case.get('price_at_filing')),
+        'Price 30d before filing':     _fmt_optional(case.get('price_30d_before')),
+        'Price change 30d pre-filing': f"{case.get('price_change_30d_pct', 'N/A')}%"
+                                       if case.get('price_change_30d_pct') is not None else 'N/A',
+        'Distress note':               case.get('distress_note', ''),
     }
     scanner_flags  = case.get('scanner_flags', [])
     source_excerpt = case.get('source_excerpt', '')
