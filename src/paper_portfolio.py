@@ -318,7 +318,7 @@ def close_position(
     now   = datetime.now(timezone.utc).date()
     price = pos.get('last_price') or pos.get('entry_price')
     entry = pos.get('entry_price')
-    pos['status']       = reason
+    pos['status']       = STATUS_THESIS_BREAK
     pos['closed_date']  = now.isoformat()
     pos['closed_price'] = price
     pos['close_reason'] = reason
