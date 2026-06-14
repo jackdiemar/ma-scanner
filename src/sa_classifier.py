@@ -1,26 +1,32 @@
 """
-sa_classifier.py — Strategic alternatives type classifier + distress detector.
+sa_classifier.py — Strategic alternatives type classifier + banker mandate classifier + distress detector.
 
-Two functions:
+Functions:
+  classify_banker_mandate(excerpt, trigger_phrase) → banker name, mandate type, exclusivity, strength
   classify_sa_type(excerpt, trigger_phrase, flags, has_banker) → SA type + confidence
   detect_distress(ticker, filing_date_str) → price change 30d before filing
 
-SA Types:
-  ACQUISITION_PROCESS     — sale of company, merger, company-level banker retained
-  CAPITAL_RAISE           — financing, equity offering, runway extension
-  ASSET_DIVESTITURE       — selling specific program/asset, not whole company
-  PARTNERSHIP_LICENSING   — collaboration, co-development, licensing (drug-level)
-  MERGER_OF_EQUALS        — combination, merger of equals, consolidation
-  WIND_DOWN               — dissolution, liquidation, wind-down, cease operations
-  RESTRUCTURING           — workforce reduction, cost cutting alongside SA
-  SHAREHOLDER_RETURN      — buyback, dividend, spin-off, capital return
-  AMBIGUOUS               — insufficient context to classify
+Banker Mandate Types:
+  SALE_MANDATE        — exclusive advisor to explore/run a sale of the company
+  STRATEGIC_REVIEW    — general evaluation of strategic alternatives, sale is one option
+  DEFENSE_MANDATE     — retained in response to unsolicited bid; defending, not selling
+  FAIRNESS_OPINION    — retained to opine on an already-agreed deal; no pre-process edge
+  CAPITAL_MARKETS     — underwriter, placement agent, financing; not M&A
+  PARTNERSHIP_BANKER  — identifying collaboration/licensing partners; not whole-company
+  RESTRUCTURING_ADVISOR — financial restructuring, debt advisory
+  UNKNOWN             — banker mentioned but mandate unclear from excerpt
 
-Distress severity (based on price change 30d before filing date):
-  SEVERE   — drop > 40%
-  MODERATE — drop 20-40%
-  MILD     — drop 10-20%
-  NONE     — stable or up
+Mandate Strength:
+  STRONG     — exclusive sale mandate, explicit process language
+  MODERATE   — strategic review with acquisition as stated option
+  WEAK       — general advisor, mandate unstated
+  DEFENSIVE  — mandate is defense, not offense
+  IRRELEVANT — fairness opinion, capital markets, financing
+
+SA Types: ACQUISITION_PROCESS | CAPITAL_RAISE | ASSET_DIVESTITURE | PARTNERSHIP_LICENSING |
+          MERGER_OF_EQUALS | WIND_DOWN | RESTRUCTURING | SHAREHOLDER_RETURN | AMBIGUOUS
+
+Distress Severity: SEVERE (>40% drop) | MODERATE (20-40%) | MILD (10-20%) | NONE
 
 Research use only. No investment advice.
 """
@@ -29,6 +35,381 @@ from __future__ import annotations
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
+
+# ── Banker mandate constants ──────────────────────────────────────────────────
+
+BM_SALE_MANDATE     = 'SALE_MANDATE'
+BM_STRATEGIC_REVIEW = 'STRATEGIC_REVIEW'
+BM_DEFENSE          = 'DEFENSE_MANDATE'
+BM_FAIRNESS         = 'FAIRNESS_OPINION'
+BM_CAPITAL_MARKETS  = 'CAPITAL_MARKETS'
+BM_PARTNERSHIP      = 'PARTNERSHIP_BANKER'
+BM_RESTRUCTURING    = 'RESTRUCTURING_ADVISOR'
+BM_UNKNOWN          = 'UNKNOWN'
+
+MS_STRONG     = 'STRONG'
+MS_MODERATE   = 'MODERATE'
+MS_WEAK       = 'WEAK'
+MS_DEFENSIVE  = 'DEFENSIVE'
+MS_IRRELEVANT = 'IRRELEVANT'
+
+# ── Known M&A banks and their typical mandate bias ───────────────────────────
+# skew: MA = primarily M&A advisory, ECM = primarily capital markets, BOTH = mixed
+
+_BANKER_REGISTRY: dict[str, dict] = {
+    # Pure M&A / process banks
+    'lazard':              {'skew': 'MA',  'tier': 'BULGE'},
+    'evercore':            {'skew': 'MA',  'tier': 'ELITE'},
+    'centerview':          {'skew': 'MA',  'tier': 'ELITE'},
+    'perella weinberg':    {'skew': 'MA',  'tier': 'ELITE'},
+    'moelis':              {'skew': 'MA',  'tier': 'ELITE'},
+    'guggenheim':          {'skew': 'MA',  'tier': 'BOUTIQUE'},
+    'houlihan lokey':      {'skew': 'MA',  'tier': 'BOUTIQUE'},
+    'rothschild':          {'skew': 'MA',  'tier': 'BOUTIQUE'},
+    'qatalyst':            {'skew': 'MA',  'tier': 'BOUTIQUE'},
+    # Bulge bracket (both MA and ECM)
+    'goldman sachs':       {'skew': 'BOTH', 'tier': 'BULGE'},
+    'goldman':             {'skew': 'BOTH', 'tier': 'BULGE'},
+    'morgan stanley':      {'skew': 'BOTH', 'tier': 'BULGE'},
+    'jp morgan':           {'skew': 'BOTH', 'tier': 'BULGE'},
+    'j.p. morgan':         {'skew': 'BOTH', 'tier': 'BULGE'},
+    'jpmorgan':            {'skew': 'BOTH', 'tier': 'BULGE'},
+    'bank of america':     {'skew': 'BOTH', 'tier': 'BULGE'},
+    'bofa':                {'skew': 'BOTH', 'tier': 'BULGE'},
+    'citi':                {'skew': 'BOTH', 'tier': 'BULGE'},
+    'citigroup':           {'skew': 'BOTH', 'tier': 'BULGE'},
+    'barclays':            {'skew': 'BOTH', 'tier': 'BULGE'},
+    'ubs':                 {'skew': 'BOTH', 'tier': 'BULGE'},
+    'deutsche bank':       {'skew': 'BOTH', 'tier': 'BULGE'},
+    'credit suisse':       {'skew': 'BOTH', 'tier': 'BULGE'},
+    # Biotech-focused (mixed mandate, frequent ECM)
+    'leerink':             {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'leerink partners':    {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'td cowen':            {'skew': 'ECM',  'tier': 'BIOTECH'},
+    'cowen':               {'skew': 'ECM',  'tier': 'BIOTECH'},
+    'jefferies':           {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'piper sandler':       {'skew': 'ECM',  'tier': 'BIOTECH'},
+    'stifel':              {'skew': 'ECM',  'tier': 'BIOTECH'},
+    'rbc':                 {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'rbc capital':         {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'bmo':                 {'skew': 'BOTH', 'tier': 'BIOTECH'},
+    'raymond james':       {'skew': 'ECM',  'tier': 'REGIONAL'},
+    'oppenheimer':         {'skew': 'ECM',  'tier': 'REGIONAL'},
+    'needham':             {'skew': 'ECM',  'tier': 'REGIONAL'},
+    'william blair':       {'skew': 'BOTH', 'tier': 'REGIONAL'},
+    'canaccord':           {'skew': 'ECM',  'tier': 'REGIONAL'},
+    'hc wainwright':       {'skew': 'ECM',  'tier': 'REGIONAL'},
+    'svb securities':      {'skew': 'ECM',  'tier': 'BIOTECH'},
+    'svb':                 {'skew': 'ECM',  'tier': 'BIOTECH'},
+}
+
+# ── Mandate phrase patterns ───────────────────────────────────────────────────
+
+_SALE_MANDATE_STRONG = [
+    'exclusive financial advisor',
+    'as its exclusive financial advisor',
+    'as our exclusive financial advisor',
+    'sole financial advisor',
+    'to explore a sale',
+    'to assist in exploring a potential sale',
+    'to assist with a potential sale',
+    'to solicit interest from potential acquirers',
+    'to assist in identifying potential acquirers',
+    'to assist the board in exploring strategic alternatives intended to maximize',
+    'to assist in conducting a sale process',
+    'process to sell the company',
+    'auction process',
+    'market check',
+]
+
+_STRATEGIC_REVIEW_MODERATE = [
+    'to assist the board in evaluating strategic alternatives',
+    'to evaluate strategic alternatives',
+    'to assist in evaluating and pursuing strategic alternatives',
+    'to assist management in evaluating',
+    'to advise the board',
+    'to assist with strategic alternatives',
+    'to assist in exploring strategic alternatives',
+    'financial advisor to assist',
+    'retained as financial advisor in connection with its review of strategic alternatives',
+]
+
+_DEFENSE_MANDATE = [
+    'in connection with the unsolicited',
+    'in response to the proposal',
+    'to assist in evaluating the proposal',
+    'to assist in responding to',
+    'in connection with the hostile',
+    'in connection with defending',
+    'to assist the board in evaluating the unsolicited',
+    'rights plan',
+    'shareholder rights plan',
+    'poison pill',
+]
+
+_FAIRNESS_MANDATE = [
+    'to render a fairness opinion',
+    'to deliver a fairness opinion',
+    'to provide a fairness opinion',
+    'to opine as to the fairness',
+    'fairness opinion in connection with',
+    'financial advisor in connection with the merger',
+    'in connection with the proposed merger',
+    'in connection with the definitive agreement',
+]
+
+_CAPITAL_MARKETS_MANDATE = [
+    'as underwriter',
+    'as book-running manager',
+    'as joint book-runner',
+    'as placement agent',
+    'to assist with a potential financing',
+    'to assist with capital markets',
+    'as financial advisor in connection with the offering',
+    'in connection with the registered direct',
+    'in connection with the public offering',
+    'at-the-market offering',
+    'atm facility',
+    'as sales agent',
+]
+
+_PARTNERSHIP_MANDATE = [
+    'to identify potential partners',
+    'to assist in identifying licensing',
+    'to assist with partnership opportunities',
+    'to identify potential collaboration',
+    'to assist in out-licensing',
+    'to assist with business development',
+    'bd advisor',
+]
+
+_RESTRUCTURING_MANDATE = [
+    'restructuring advisor',
+    'financial restructuring',
+    'debt restructuring',
+    'as financial advisor in connection with the restructuring',
+    'to assist with the restructuring',
+]
+
+_EXCLUSIVITY_MARKERS = [
+    'exclusive financial advisor',
+    'as its exclusive',
+    'as our exclusive',
+    'sole financial advisor',
+]
+
+
+def _detect_banker_name(text: str) -> tuple[str, dict]:
+    """Return (banker_name_normalized, registry_entry) or ('', {})."""
+    low = text.lower()
+    # Sort by length descending so longer names match first (e.g. "leerink partners" before "leerink")
+    for name, info in sorted(_BANKER_REGISTRY.items(), key=lambda x: -len(x[0])):
+        if name in low:
+            return name, info
+    return '', {}
+
+
+def classify_banker_mandate(
+    excerpt: str,
+    trigger_phrase: str = '',
+) -> dict[str, Any]:
+    """
+    Classify the nature of the banker relationship from filing text.
+
+    Returns:
+        banker_name:          normalized name from registry, or '' if unknown
+        banker_tier:          BULGE | ELITE | BIOTECH | REGIONAL | UNKNOWN
+        banker_skew:          MA | ECM | BOTH | UNKNOWN (typical mandate bias for this bank)
+        mandate_type:         BM_* constant
+        mandate_strength:     MS_* constant
+        is_exclusive:         bool
+        mandate_language:     first matching phrase from excerpt
+        mandate_note:         human-readable explanation
+    """
+    text = ' '.join(filter(None, [excerpt, trigger_phrase]))
+
+    banker_name, banker_info = _detect_banker_name(text)
+    banker_tier = banker_info.get('tier', 'UNKNOWN')
+    banker_skew = banker_info.get('skew', 'UNKNOWN')
+
+    is_exclusive = bool(_match_any(text, _EXCLUSIVITY_MARKERS))
+
+    # Defense overrides everything — defending is not selling
+    defense_hits = _match_any(text, _DEFENSE_MANDATE)
+    if defense_hits:
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_DEFENSE,
+            'mandate_strength':  MS_DEFENSIVE,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  defense_hits[0],
+            'mandate_note': (
+                f'Banker retained in DEFENSIVE context — responding to unsolicited proposal, '
+                f'not running a sale. This is a defense mandate, not a sell-side mandate. '
+                f'No acquisition-initiation signal.'
+            ),
+        }
+
+    # Fairness opinion = deal already done
+    fairness_hits = _match_any(text, _FAIRNESS_MANDATE)
+    if fairness_hits:
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_FAIRNESS,
+            'mandate_strength':  MS_IRRELEVANT,
+            'is_exclusive':      False,
+            'mandate_language':  fairness_hits[0],
+            'mandate_note': (
+                'Banker retained to provide FAIRNESS OPINION on an already-agreed deal. '
+                'No pre-process edge — deal terms already set. Discard as pre-announcement signal.'
+            ),
+        }
+
+    # Capital markets
+    cm_hits = _match_any(text, _CAPITAL_MARKETS_MANDATE)
+    if cm_hits and not _match_any(text, _SALE_MANDATE_STRONG):
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_CAPITAL_MARKETS,
+            'mandate_strength':  MS_IRRELEVANT,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  cm_hits[0],
+            'mandate_note': (
+                'Banker retained for CAPITAL MARKETS work (offering, placement, financing). '
+                'Not an M&A mandate. Does not signal sale process unless combined with '
+                'explicit strategic alternatives language.'
+            ),
+        }
+
+    # Partnership/licensing banker
+    partner_hits = _match_any(text, _PARTNERSHIP_MANDATE)
+    if partner_hits:
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_PARTNERSHIP,
+            'mandate_strength':  MS_IRRELEVANT,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  partner_hits[0],
+            'mandate_note': (
+                'Banker retained to find LICENSING or COLLABORATION partners. '
+                'Drug/program-level, not company-level M&A mandate.'
+            ),
+        }
+
+    # Restructuring advisor
+    restr_hits = _match_any(text, _RESTRUCTURING_MANDATE)
+    if restr_hits:
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_RESTRUCTURING,
+            'mandate_strength':  MS_IRRELEVANT,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  restr_hits[0],
+            'mandate_note': (
+                'Banker retained as RESTRUCTURING ADVISOR — financial or operational restructuring. '
+                'Not an M&A sell-side mandate unless also accompanied by SA language.'
+            ),
+        }
+
+    # Strong sale mandate
+    sale_hits = _match_any(text, _SALE_MANDATE_STRONG)
+    if sale_hits:
+        note = (
+            f'STRONG SALE MANDATE: {sale_hits[0]}. '
+            + ('Exclusive engagement — board has committed to running a sale process.' if is_exclusive else
+               'Retained to explore sale — process may be early stage.')
+        )
+        if banker_name:
+            note += (
+                f' {banker_name.title()} is a {"primarily M&A advisory" if banker_skew == "MA" else "mixed-mandate"} '
+                f'firm — consistent with a sell-side mandate.'
+            )
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_SALE_MANDATE,
+            'mandate_strength':  MS_STRONG,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  sale_hits[0],
+            'mandate_note':      note,
+        }
+
+    # Moderate strategic review
+    review_hits = _match_any(text, _STRATEGIC_REVIEW_MODERATE)
+    if review_hits:
+        # Assess strength based on banker skew
+        if banker_skew == 'MA':
+            strength = MS_STRONG
+            skew_note = f'{banker_name.title()} primarily does M&A advisory — strategic review with this bank skews toward sale.'
+        elif banker_skew == 'ECM':
+            strength = MS_WEAK
+            skew_note = f'{banker_name.title()} skews toward capital markets — strategic review may mean financing, not sale.'
+        else:
+            strength = MS_MODERATE
+            skew_note = f'{banker_name.title() if banker_name else "Bank"} does both M&A and capital markets — mandate ambiguous without full filing.'
+
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_STRATEGIC_REVIEW,
+            'mandate_strength':  strength,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  review_hits[0],
+            'mandate_note': (
+                f'Retained for STRATEGIC REVIEW — sale is one option but not explicitly the mandate. '
+                f'{skew_note}'
+            ),
+        }
+
+    # Banker mentioned but mandate unclear
+    if banker_name:
+        note = (
+            f'{banker_name.title()} mentioned but mandate not determinable from excerpt. '
+        )
+        if banker_skew == 'MA':
+            note += 'Pure M&A firm — if retained here, likely a sale/process mandate. Read full filing.'
+            strength = MS_MODERATE
+        elif banker_skew == 'ECM':
+            note += 'ECM-skewed firm — could be offering, placement, or financing. Read full filing to confirm.'
+            strength = MS_WEAK
+        else:
+            note += 'Mixed-mandate firm — read full filing to confirm mandate type.'
+            strength = MS_WEAK
+        return {
+            'banker_name':       banker_name,
+            'banker_tier':       banker_tier,
+            'banker_skew':       banker_skew,
+            'mandate_type':      BM_UNKNOWN,
+            'mandate_strength':  strength,
+            'is_exclusive':      is_exclusive,
+            'mandate_language':  '',
+            'mandate_note':      note,
+        }
+
+    # No banker detected
+    return {
+        'banker_name':       '',
+        'banker_tier':       'UNKNOWN',
+        'banker_skew':       'UNKNOWN',
+        'mandate_type':      BM_UNKNOWN,
+        'mandate_strength':  MS_WEAK,
+        'is_exclusive':      False,
+        'mandate_language':  '',
+        'mandate_note':      'No recognized financial advisor detected in excerpt.',
+    }
+
 
 SA_ACQUISITION        = 'ACQUISITION_PROCESS'
 SA_CAPITAL_RAISE      = 'CAPITAL_RAISE'

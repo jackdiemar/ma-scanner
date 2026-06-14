@@ -97,6 +97,9 @@ _OUTPUT_SCHEMA = {
     'time_sensitivity': 'HIGH | MEDIUM | LOW',
     'sa_type_final': 'ACQUISITION_PROCESS | CAPITAL_RAISE | ASSET_DIVESTITURE | PARTNERSHIP_LICENSING | MERGER_OF_EQUALS | WIND_DOWN | RESTRUCTURING | SHAREHOLDER_RETURN | AMBIGUOUS — your classification of the SA type based on all evidence',
     'sa_type_reasoning': 'Why you classified it as this SA type. Quote specific language.',
+    'banker_mandate_final': 'SALE_MANDATE | STRATEGIC_REVIEW | DEFENSE_MANDATE | FAIRNESS_OPINION | CAPITAL_MARKETS | PARTNERSHIP_BANKER | RESTRUCTURING_ADVISOR | UNKNOWN — your classification of the banker mandate',
+    'banker_mandate_reasoning': 'Why you classified the banker mandate this way. What specific language confirmed or contradicted the deterministic result? What does the identity of the bank tell you about the likely mandate?',
+    'banker_mandate_changes_thesis': 'bool — does the banker mandate classification change your overall research action vs. what SA language alone would suggest? Explain.',
     'distress_assessment': 'DISTRESS_DRIVEN | PROACTIVE | UNCLEAR — was the SA announcement reactive to a stock crash or proactive value maximization?',
     'distress_impact_on_thesis': 'How distress (or absence of it) affects the investment thesis and expected acquirer premium.',
     # ── Existing list fields ───────────────────────────────────────────────
@@ -259,6 +262,25 @@ Every case must explicitly identify what TYPE of strategic alternatives process 
 - AMBIGUOUS: genuine uncertainty — requires deeper read of full filing
 
 The pre-provided `sa_type` field gives the deterministic classifier result. Use it as a starting point but override with evidence from the filing text if the classifier is wrong. State your reasoning.
+
+BANKER MANDATE ANALYSIS — REQUIRED:
+The pre-provided banker fields show the deterministic classifier result. You must go further:
+
+1. Mandate type matters more than banker presence. "Retained Goldman" is weak. "Engaged Goldman as exclusive financial advisor to assist in exploring strategic alternatives intended to maximize stockholder value" is strong.
+
+2. Banker identity shifts the prior:
+   - ELITE boutiques (Evercore, Centerview, Perella, Moelis, Lazard): primary business is M&A advisory. If retained here, default assumption is sale-side mandate unless context says otherwise.
+   - Bulge bracket (Goldman, Morgan Stanley, JPMorgan): do both M&A and ECM. Mandate must be confirmed from context.
+   - Biotech-focused ECM banks (Leerink, Piper Sandler, Stifel, Cowen, SVB): frequently retained for equity offerings. Presence alone does not indicate M&A mandate — confirm from excerpt.
+   - Regional (Needham, HC Wainwright, Oppenheimer): typically capital markets. M&A mandate unlikely without explicit language.
+
+3. Exclusivity is a strong signal. "Exclusive financial advisor" means the board has committed to running a single-advisor process — not just keeping options open.
+
+4. Defense mandates nullify pre-process signal. If banker retained "in connection with the unsolicited proposal" — they are defending, not selling. Classify as DEFENSE_MANDATE, downgrade to WATCH or DISCARD.
+
+5. Fairness opinions are post-process. If retained "to render a fairness opinion" — the deal is already agreed. No edge.
+
+State explicitly: (a) what the banker mandate is, (b) whether the banker identity is consistent with that mandate, (c) whether this changes your classification vs. SA language alone.
 
 DISTRESS FLAG — CHECK REQUIRED:
 The pre-provided `distress_driven_sa`, `distress_severity`, and `price_change_30d_pct` fields show price action 30 days before the SA filing. If DISTRESS_DRIVEN_SA=true:
@@ -456,6 +478,15 @@ def build_investment_gate_prompt(
         'FP classification':   case.get('fp_classification', ''),
         'First seen':          case.get('first_seen', ''),
         'Last seen':           case.get('last_seen', ''),
+        # Banker mandate classification (deterministic pre-classifier)
+        'Banker name':                 case.get('banker_name', '') or 'Not detected',
+        'Banker tier':                 case.get('banker_tier', 'UNKNOWN'),
+        'Banker mandate skew':         case.get('banker_skew', 'UNKNOWN'),
+        'Banker mandate type':         case.get('banker_mandate_type', 'UNKNOWN'),
+        'Banker mandate strength':     case.get('banker_mandate_strength', 'WEAK'),
+        'Banker is exclusive':         case.get('banker_is_exclusive', False),
+        'Banker mandate language':     case.get('banker_mandate_language', '') or 'None matched',
+        'Banker mandate note':         case.get('banker_mandate_note', ''),
         # SA type classification (deterministic pre-classifier)
         'SA type (deterministic)':     case.get('sa_type', 'UNKNOWN'),
         'SA confidence':               case.get('sa_confidence', 'LOW'),

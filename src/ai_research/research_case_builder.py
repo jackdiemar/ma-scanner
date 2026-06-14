@@ -341,12 +341,36 @@ def _build_case_from_alert(
     except Exception:
         case['evidence_quality'] = {}
 
-    # SA type classification — deterministic, no HTTP
+    # SA type + banker mandate classification — deterministic, no HTTP
     try:
         import sys as _sys
         _src = str(Path(__file__).resolve().parent.parent)
         if _src not in _sys.path:
             _sys.path.insert(0, _src)
+        from sa_classifier import classify_sa_type, classify_banker_mandate
+        bm = classify_banker_mandate(
+            excerpt        = case.get('source_excerpt', '') or '',
+            trigger_phrase = case.get('trigger_phrase', '') or '',
+        )
+        case['banker_name']          = bm['banker_name']
+        case['banker_tier']          = bm['banker_tier']
+        case['banker_skew']          = bm['banker_skew']
+        case['banker_mandate_type']  = bm['mandate_type']
+        case['banker_mandate_strength'] = bm['mandate_strength']
+        case['banker_is_exclusive']  = bm['is_exclusive']
+        case['banker_mandate_language'] = bm['mandate_language']
+        case['banker_mandate_note']  = bm['mandate_note']
+    except Exception as _bm_exc:
+        case['banker_name']          = ''
+        case['banker_tier']          = 'UNKNOWN'
+        case['banker_skew']          = 'UNKNOWN'
+        case['banker_mandate_type']  = 'UNKNOWN'
+        case['banker_mandate_strength'] = 'WEAK'
+        case['banker_is_exclusive']  = False
+        case['banker_mandate_language'] = ''
+        case['banker_mandate_note']  = str(_bm_exc)
+
+    try:
         from sa_classifier import classify_sa_type
         sa_result = classify_sa_type(
             excerpt        = case.get('source_excerpt', '') or '',
