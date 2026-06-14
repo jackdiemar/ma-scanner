@@ -563,6 +563,19 @@ def run_once(dry_run: bool = False, v12_timeout_seconds: int = DEFAULT_V12_TIMEO
     except Exception as exc:
         log.warning('Run snapshot unexpectedly failed — continuing: %s', exc)
 
+    # ── Paper portfolio: mark open positions with current prices ──────────────
+    if not dry_run:
+        try:
+            import sys as _sys
+            _src = str(Path(__file__).resolve().parent.parent)
+            if _src not in _sys.path:
+                _sys.path.insert(0, _src)
+            from paper_portfolio import _enabled as _pp_enabled, mark_positions
+            if _pp_enabled():
+                mark_positions(raw_results)
+        except Exception as _pp_exc:
+            log.warning('Paper portfolio mark skipped: %s', _pp_exc)
+
     state = _read_state()
     state.update({
         'last_run':          scan_ts,

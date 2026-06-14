@@ -598,7 +598,50 @@ def run(
         print(f'  No opportunity : {queue.get("no_opportunity", False)}')
         print()
 
-    # ── 5. Mark stale watchlist entries ──────────────────────────────────────
+    # ── 5. Paper portfolio — open positions on ESCALATE ──────────────────────
+    portfolio_summary: dict | None = None
+    try:
+        import sys as _sys
+        if str(_SRCDIR) not in _sys.path:
+            _sys.path.insert(0, str(_SRCDIR))
+        from paper_portfolio import (
+            _enabled as _pp_enabled, load_portfolio, open_position,
+            mark_positions, get_summary, save_portfolio,
+        )
+        if _pp_enabled() and not effective_dry_run:
+            _portfolio = load_portfolio()
+            _case_price: dict[str, float] = {
+                str(c.get('ticker', '')).upper(): float(c['price'])
+                for c in cases if c.get('price')
+            }
+            _new_positions = 0
+            for _d in decisions:
+                if _d.get('research_action') == 'ESCALATE':
+                    _t     = str(_d.get('ticker', '')).upper()
+                    _price = _case_price.get(_t)
+                    if _price:
+                        _portfolio = open_position(
+                            ticker            = _t,
+                            entry_price       = _price,
+                            signal_date       = run_date,
+                            signal_quality    = next(
+                                (c.get('signal_quality', '') for c in cases
+                                 if str(c.get('ticker', '')).upper() == _t), ''),
+                            ai_classification = _d.get('classification', ''),
+                            ai_confidence     = float(_d.get('confidence', 0)),
+                            portfolio         = _portfolio,
+                        )
+                        _new_positions += 1
+            if _new_positions:
+                save_portfolio(_portfolio)
+            portfolio_summary = get_summary(_portfolio)
+            print(f'  [PORTFOLIO] Open: {portfolio_summary["total_open"]} | '
+                  f'Deployed: {portfolio_summary["deployed_pct"]}% | '
+                  f'Unrealized: {portfolio_summary["unrealized_weighted_pct"]:+.1f}%')
+    except Exception as _pp_exc:
+        print(f'  [PORTFOLIO] Skipped: {_pp_exc}')
+
+    # ── 6. Mark stale watchlist entries ──────────────────────────────────────
     if not effective_dry_run:
         stale = wm.mark_stale(days=14)
         if stale:
@@ -643,6 +686,7 @@ def run(
             strategic_brief   = strategic_brief,
             opportunity_queue = queue,
             catalyst_summary  = catalyst_summary,
+            portfolio_summary = portfolio_summary,
         )
 
     return 0

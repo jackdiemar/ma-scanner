@@ -1186,12 +1186,98 @@ def _no_opportunity_html(
     )
 
 
+def _portfolio_html(summary: dict) -> str:
+    """Render paper portfolio section for the AI research email."""
+    if not summary:
+        return ''
+
+    open_pos  = summary.get('open', [])
+    closed_r  = summary.get('closed_recent', [])
+    deployed  = summary.get('deployed_pct', 0)
+    unreal    = summary.get('unrealized_weighted_pct', 0)
+    avg_real  = summary.get('avg_realized_pct')
+    win_rate  = summary.get('win_rate_pct')
+    total_cl  = summary.get('total_closed', 0)
+    total_deals = summary.get('total_deals', 0)
+
+    unreal_color = '#16a34a' if unreal >= 0 else '#dc2626'
+
+    rows = ''
+    for p in open_pos:
+        t       = _esc(p.get('ticker', ''))
+        ep      = p.get('entry_price')
+        cp      = p.get('last_price')
+        unr     = p.get('unrealized_pct', 0)
+        days    = p.get('days_held', 0)
+        rem     = p.get('days_remaining', 0)
+        sq      = _esc(p.get('signal_quality', ''))
+        unr_col = '#16a34a' if unr >= 0 else '#dc2626'
+        warn    = ' ⚠' if rem <= 14 else ''
+        ep_str  = f'${ep:.2f}' if ep else '—'
+        cp_str  = f'${cp:.2f}' if cp else '—'
+        rows += (
+            f'<tr>'
+            f'<td style="padding:5px 8px;font-size:12px;font-weight:600;color:#e2e8f0;">{t}</td>'
+            f'<td style="padding:5px 8px;font-size:11px;color:#94a3b8;">{ep_str} → {cp_str}</td>'
+            f'<td style="padding:5px 8px;font-size:12px;font-weight:700;color:{unr_col};">{unr:+.1f}%</td>'
+            f'<td style="padding:5px 8px;font-size:11px;color:#64748b;">day {days}</td>'
+            f'<td style="padding:5px 8px;font-size:11px;color:#64748b;">{rem}d left{warn}</td>'
+            f'<td style="padding:5px 8px;font-size:10px;color:#475569;">{sq}</td>'
+            f'</tr>'
+        )
+
+    closed_rows = ''
+    for p in closed_r[:5]:
+        t    = _esc(p.get('ticker', ''))
+        real = p.get('realized_pct')
+        why  = _esc(p.get('close_reason', '') or p.get('status', ''))
+        if real is None:
+            continue
+        rc = '#16a34a' if real >= 0 else '#dc2626'
+        closed_rows += (
+            f'<tr>'
+            f'<td style="padding:4px 8px;font-size:11px;color:#94a3b8;">{t}</td>'
+            f'<td style="padding:4px 8px;font-size:11px;font-weight:700;color:{rc};">{real:+.1f}%</td>'
+            f'<td style="padding:4px 8px;font-size:10px;color:#475569;">{why[:40]}</td>'
+            f'</tr>'
+        )
+
+    stats_line = f'Open: {len(open_pos)} | Deployed: {deployed:.1f}% | Unrealized: <span style="color:{unreal_color};font-weight:700;">{unreal:+.1f}%</span>'
+    if total_cl:
+        ar_str = f'{avg_real:+.1f}%' if avg_real is not None else '—'
+        wr_str = f'{win_rate:.0f}%' if win_rate is not None else '—'
+        stats_line += f' | Closed: {total_cl} ({total_deals} deals) | Avg: {ar_str} | Win rate: {wr_str}'
+
+    return (
+        f'<div style="background:#0d1f12;border:1px solid #166534;border-radius:6px;'
+        f'padding:14px 16px;margin-bottom:16px;">'
+        f'<div style="font-size:11px;color:#4ade80;text-transform:uppercase;'
+        f'letter-spacing:0.1em;margin-bottom:10px;">Paper Portfolio (research tracking only)</div>'
+        f'<div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">{stats_line}</div>'
+        + (
+            f'<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">'
+            f'{rows}'
+            f'</table>'
+            if rows else
+            '<div style="font-size:11px;color:#374151;">No open positions.</div>'
+        )
+        + (
+            f'<div style="margin-top:10px;border-top:1px solid #166534;padding-top:8px;">'
+            f'<div style="font-size:10px;color:#475569;margin-bottom:4px;">Recent closed</div>'
+            f'<table cellpadding="0" cellspacing="0">{closed_rows}</table></div>'
+            if closed_rows else ''
+        )
+        + '</div>'
+    )
+
+
 def build_ai_email_html(
     decisions: list[dict],
     run_metadata: dict,
     strategic_brief: bool = False,
     opportunity_queue: dict | None = None,
     catalyst_summary: dict | None = None,
+    portfolio_summary: dict | None = None,
 ) -> str:
     """
     Build the full branded HTML email body. Uses inline styles throughout —
@@ -1332,6 +1418,9 @@ def build_ai_email_html(
             'Decisions shown are placeholders.</span></div>'
         )
 
+    # Paper portfolio section
+    portfolio_html = _portfolio_html(portfolio_summary) if portfolio_summary else ''
+
     # Catalyst calendar section
     catalyst_html = _catalyst_section_html(catalyst_summary) if catalyst_summary else ''
 
@@ -1449,6 +1538,7 @@ def build_ai_email_html(
 <!-- BODY -->
 <tr><td style="padding:16px 24px;">
   {dry_run_banner}
+  {portfolio_html}
   {catalyst_html}
   {synthesis_html}
   {strategy_summary_html}
@@ -1761,6 +1851,7 @@ def send_ai_research_email(
     strategic_brief: bool = False,
     opportunity_queue: dict | None = None,
     catalyst_summary: dict | None = None,
+    portfolio_summary: dict | None = None,
 ) -> dict[str, Any]:
     """
     Build and send the branded AI research email.
@@ -1794,7 +1885,8 @@ def send_ai_research_email(
     body_html  = build_ai_email_html(decisions, run_metadata,
                                      strategic_brief=strategic_brief,
                                      opportunity_queue=opportunity_queue,
-                                     catalyst_summary=catalyst_summary)
+                                     catalyst_summary=catalyst_summary,
+                                     portfolio_summary=portfolio_summary)
     body_plain = build_ai_email_plain(decisions, run_metadata,
                                       strategic_brief=strategic_brief,
                                       opportunity_queue=opportunity_queue,
