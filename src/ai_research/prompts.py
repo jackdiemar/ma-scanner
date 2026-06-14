@@ -478,6 +478,10 @@ def build_investment_gate_prompt(
         'FP classification':   case.get('fp_classification', ''),
         'First seen':          case.get('first_seen', ''),
         'Last seen':           case.get('last_seen', ''),
+        # Process history + sequence intelligence
+        'State transitions (last 3)': str(case.get('state_history_transitions', []) or 'None yet'),
+        'Detected sequences':         str(case.get('detected_sequences', []) or 'None yet'),
+        'Has compound sequence':      case.get('has_compound_sequence', False),
         # Banker mandate classification (deterministic pre-classifier)
         'Banker name':                 case.get('banker_name', '') or 'Not detected',
         'Banker tier':                 case.get('banker_tier', 'UNKNOWN'),

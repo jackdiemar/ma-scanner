@@ -82,9 +82,14 @@ def open_position(
     ai_classification: str,
     ai_confidence: float,
     portfolio: dict[str, Any] | None = None,
+    distress_severity: str = 'UNKNOWN',
+    distress_driven_sa: bool = False,
+    sa_type: str = 'UNKNOWN',
+    banker_mandate_type: str = 'UNKNOWN',
 ) -> dict[str, Any]:
     """
     Open a paper position. If ticker already has OPEN position, skip.
+    Blocks opening if distress is SEVERE (thesis compromised).
     Returns the (possibly existing) portfolio dict.
     """
     if portfolio is None:
@@ -94,6 +99,23 @@ def open_position(
     existing = portfolio.get(ticker)
     if existing and existing.get('status') == STATUS_OPEN:
         print(f'  [PORTFOLIO] {ticker}: already open — skipping duplicate')
+        return portfolio
+
+    # Block on severe distress — reactive SA, not proactive value maximization
+    if distress_severity == 'SEVERE' or (distress_driven_sa and distress_severity in ('SEVERE', 'MODERATE')):
+        print(f'  [PORTFOLIO] {ticker}: BLOCKED — distress_severity={distress_severity}, '
+              f'distress_driven_sa={distress_driven_sa}. SA is reactive, not proactive. No position opened.')
+        return portfolio
+
+    # Block on clearly non-M&A mandate
+    if banker_mandate_type in ('CAPITAL_MARKETS', 'FAIRNESS_OPINION', 'PARTNERSHIP_BANKER'):
+        print(f'  [PORTFOLIO] {ticker}: BLOCKED — banker_mandate_type={banker_mandate_type}. '
+              f'Not an M&A sell-side mandate. No position opened.')
+        return portfolio
+
+    if sa_type in ('CAPITAL_RAISE', 'PARTNERSHIP_LICENSING', 'WIND_DOWN', 'RESTRUCTURING'):
+        print(f'  [PORTFOLIO] {ticker}: BLOCKED — sa_type={sa_type}. '
+              f'Not an acquisition process. No position opened.')
         return portfolio
 
     now     = datetime.now(timezone.utc)
@@ -120,6 +142,10 @@ def open_position(
         'closed_price':       None,
         'realized_pct':       None,
         'close_reason':       None,
+        'distress_severity':  distress_severity,
+        'distress_driven_sa': distress_driven_sa,
+        'sa_type':            sa_type,
+        'banker_mandate_type': banker_mandate_type,
     }
 
     print(f'  [PORTFOLIO] Opened: {ticker} @ ${entry_price:.2f} | {size}% | stop {stop_dt.date()}')
@@ -211,7 +237,69 @@ def mark_positions(
 
     if changed:
         save_portfolio(portfolio)
+        # Sync any newly closed positions to outcome tracker
+        sync_closed_to_outcomes(portfolio)
     return portfolio
+
+
+def sync_closed_to_outcomes(portfolio: dict[str, Any]) -> None:
+    """
+    Write closed paper positions to outcomes.json for calibration.
+    Only writes positions that closed since last sync (not already in outcomes).
+    """
+    outcomes_path = REPO / 'data' / 'tracking' / 'outcomes.json'
+    try:
+        existing: dict = {}
+        if outcomes_path.exists():
+            existing = json.loads(outcomes_path.read_text(encoding='utf-8'))
+    except Exception:
+        existing = {}
+
+    updated = False
+    for ticker, pos in portfolio.items():
+        status = pos.get('status', '')
+        if status == STATUS_OPEN:
+            continue
+        if ticker in existing and existing[ticker].get('outcome') not in ('PENDING', None, ''):
+            continue  # already has a resolved outcome, don't overwrite
+
+        close_reason = pos.get('close_reason', '')
+        realized     = pos.get('realized_pct')
+        outcome      = (
+            'ACQUIRED'   if status == STATUS_DEAL        else
+            'TIME_STOP'  if status == STATUS_TIME_STOP   else
+            'THESIS_BREAK' if status == STATUS_THESIS_BREAK else
+            'CLOSED'
+        )
+
+        existing[ticker] = {
+            'ticker':           ticker,
+            'company':          existing.get(ticker, {}).get('company', ''),
+            'pick_date':        pos.get('entry_date', ''),
+            'pick_price':       pos.get('entry_price'),
+            'pick_tier':        'PAPER_PORTFOLIO',
+            'pick_score':       None,
+            'signal_quality':   pos.get('signal_quality', ''),
+            'p_deal_at_pick':   None,
+            'outcome':          outcome,
+            'outcome_date':     pos.get('closed_date', ''),
+            'acquirer':         None,
+            'deal_price':       pos.get('closed_price') if status == STATUS_DEAL else None,
+            'premium_pct':      realized if status == STATUS_DEAL else None,
+            'return_pct':       realized,
+            'close_reason':     close_reason,
+            'ai_classification': pos.get('ai_classification', ''),
+            'sa_type':          pos.get('sa_type', ''),
+            'banker_mandate':   pos.get('banker_mandate_type', ''),
+            'distress_severity': pos.get('distress_severity', ''),
+            'notes':            f'Paper portfolio. Status: {status}. Reason: {close_reason}',
+        }
+        updated = True
+        print(f'  [OUTCOMES] Synced {ticker}: {outcome} | return {realized}%')
+
+    if updated:
+        outcomes_path.parent.mkdir(parents=True, exist_ok=True)
+        outcomes_path.write_text(json.dumps(existing, indent=2, default=str), encoding='utf-8')
 
 
 def close_position(

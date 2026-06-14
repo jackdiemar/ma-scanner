@@ -502,8 +502,18 @@ def run(
     print()
 
     client = LLMClient(llm_cfg)
-    suppressed_count = 0
-    llm_called_count = 0
+    suppressed_count   = 0
+    llm_called_count   = 0
+    pre_gate_discarded = 0
+    pre_gate_downgraded = 0
+
+    # Load pre-gate filter once
+    try:
+        from ai_research.pre_gate_filter import run_pre_gate_filter, compute_signal_strength_score
+        _pre_gate_available = True
+    except Exception as _pg_exc:
+        _pre_gate_available = False
+        print(f'  [WARN] Pre-gate filter unavailable: {_pg_exc}')
 
     for case in gate_cases:
         t = str(case.get('ticker', 'UNKNOWN')).upper()
@@ -518,6 +528,31 @@ def run(
                     decisions.append(stub)
                     suppressed_count += 1
                     continue
+
+        # ── Pre-gate filter: route before LLM ────────────────────────────────
+        pre_gate_result = {'skip_llm': False, 'action': 'PASS', 'signal_strength_score': 50}
+        if _pre_gate_available and not effective_dry_run:
+            pre_gate_result = run_pre_gate_filter(case)
+            case = dict(case)
+            case['_signal_strength_score'] = pre_gate_result['signal_strength_score']
+
+            if pre_gate_result['skip_llm']:
+                decision = pre_gate_result['auto_decision']
+                print(f'  [PRE-GATE] {t}: {pre_gate_result["action"]} — {pre_gate_result["reason"][:80]}')
+                decisions.append(decision)
+                pre_gate_discarded += 1
+                # Still update watchlist and inject into case file
+                case_json_path = _case_json_path(run_date, t)
+                if case_json_path.exists():
+                    _inject_decision_into_case_file(case_json_path, decision)
+                wm.update(ticker=t, decision=decision, case=case, case_path=str(case_json_path))
+                continue
+
+            if pre_gate_result['action'] == 'PRE_GATE_DOWNGRADE':
+                # Pass to LLM but inject downgrade note so it factors in
+                case['_pre_gate_downgrade_note'] = pre_gate_result.get('downgrade_note', '')
+                pre_gate_downgraded += 1
+                print(f'  [PRE-GATE] {t}: DOWNGRADE — {pre_gate_result["reason"][:80]}')
 
         # Inject catalyst context into case for prompt enrichment
         if catalyst_summary:
@@ -546,8 +581,10 @@ def run(
                       case_path=str(case_json_path))
 
     if opportunity_mode:
-        print(f'  LLM calls made  : {llm_called_count}')
-        print(f'  Suppressed stubs: {suppressed_count}')
+        print(f'  LLM calls made   : {llm_called_count}')
+        print(f'  Pre-gate discard : {pre_gate_discarded}')
+        print(f'  Pre-gate downgrade: {pre_gate_downgraded}')
+        print(f'  Suppressed stubs : {suppressed_count}')
 
     decision_errors  = _validate_decisions(
         [d for d in decisions if 'SUPPRESSED_UNCHANGED' not in str(d.get('note', ''))]
@@ -615,21 +652,28 @@ def run(
                 for c in cases if c.get('price')
             }
             _new_positions = 0
+            # Build case lookup for distress/SA context
+            _case_by_ticker: dict[str, dict] = {
+                str(c.get('ticker', '')).upper(): c for c in cases
+            }
             for _d in decisions:
                 if _d.get('research_action') == 'ESCALATE':
                     _t     = str(_d.get('ticker', '')).upper()
                     _price = _case_price.get(_t)
+                    _case  = _case_by_ticker.get(_t, {})
                     if _price:
                         _portfolio = open_position(
-                            ticker            = _t,
-                            entry_price       = _price,
-                            signal_date       = run_date,
-                            signal_quality    = next(
-                                (c.get('signal_quality', '') for c in cases
-                                 if str(c.get('ticker', '')).upper() == _t), ''),
-                            ai_classification = _d.get('classification', ''),
-                            ai_confidence     = float(_d.get('confidence', 0)),
-                            portfolio         = _portfolio,
+                            ticker              = _t,
+                            entry_price         = _price,
+                            signal_date         = run_date,
+                            signal_quality      = _case.get('signal_quality', ''),
+                            ai_classification   = _d.get('classification', ''),
+                            ai_confidence       = float(_d.get('confidence', 0)),
+                            portfolio           = _portfolio,
+                            distress_severity   = _case.get('distress_severity', 'UNKNOWN'),
+                            distress_driven_sa  = bool(_case.get('distress_driven_sa', False)),
+                            sa_type             = _case.get('sa_type', 'UNKNOWN'),
+                            banker_mandate_type = _case.get('banker_mandate_type', 'UNKNOWN'),
                         )
                         _new_positions += 1
             if _new_positions:

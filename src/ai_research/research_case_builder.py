@@ -333,6 +333,32 @@ def _build_case_from_alert(
         'ai_run_at':                None,
     }
 
+    # Process history + sequence injection — feeds temporal intelligence into LLM
+    try:
+        _repo = Path(__file__).resolve().parent.parent.parent
+        _state_history_path = _repo / 'data' / 'tracking' / 'state_history.json'
+        if _state_history_path.exists():
+            _state_history = json.loads(_state_history_path.read_text(encoding='utf-8'))
+            _ticker_history = _state_history.get(ticker, {})
+            _transitions = _ticker_history.get('transitions', [])
+            _last_transitions = _transitions[-3:] if _transitions else []
+            _detected_sequences = _ticker_history.get('detected_sequences', [])
+            case['state_history_transitions'] = [
+                {k: v for k, v in t.items() if k in
+                 ('from_state', 'to_state', 'transition_date', 'trigger', 'signal_quality')}
+                for t in _last_transitions
+            ]
+            case['detected_sequences'] = _detected_sequences
+            case['has_compound_sequence'] = bool(_detected_sequences)
+        else:
+            case['state_history_transitions'] = []
+            case['detected_sequences'] = []
+            case['has_compound_sequence'] = False
+    except Exception:
+        case['state_history_transitions'] = []
+        case['detected_sequences'] = []
+        case['has_compound_sequence'] = False
+
     # Evidence quality — computed from available metadata (no HTTP fetch at build time)
     try:
         from ai_research.quote_extractor import compute_evidence_quality, extract_quotes

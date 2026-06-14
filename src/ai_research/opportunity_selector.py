@@ -95,6 +95,12 @@ def build_opportunity_queue(
 
     queues: dict[str, list[dict]] = {t: [] for t in ALL_TIERS}
 
+    # Load signal strength scorer if available
+    try:
+        from ai_research.pre_gate_filter import compute_signal_strength_score as _sss
+    except Exception:
+        _sss = lambda c: c.get('_signal_strength_score', 50)  # noqa: E731
+
     for decision in decisions:
         ticker = str(decision.get('ticker', '')).upper()
         case   = case_by_ticker.get(ticker, {})
@@ -103,30 +109,39 @@ def build_opportunity_queue(
         is_suppressed, suppress_reason = check_suppressed(ticker, case, registry)
 
         priority = _assign_priority(decision, change_status)
+        signal_strength = _sss(case)
 
         # Suppress if unchanged regardless of other signals
         if is_suppressed and change_status == UNCHANGED_SUPPRESSED:
             priority = P4_SUPPRESSED
 
         entry = {
-            'ticker':          ticker,
-            'company_name':    decision.get('company_name', '') or case.get('company_name', ''),
-            'priority':        priority,
-            'action':          decision.get('research_action', ''),
-            'classification':  decision.get('classification', ''),
-            'confidence':      decision.get('confidence', 0.0),
-            'score':           decision.get('investability_score', 0),
-            'evidence_grade':  decision.get('evidence_grade', 'F'),
-            'change_status':   change_status,
-            'change_detail':   change_detail,
-            'is_suppressed':   is_suppressed,
-            'suppress_reason': suppress_reason,
+            'ticker':           ticker,
+            'company_name':     decision.get('company_name', '') or case.get('company_name', ''),
+            'priority':         priority,
+            'action':           decision.get('research_action', ''),
+            'classification':   decision.get('classification', ''),
+            'confidence':       decision.get('confidence', 0.0),
+            'score':            decision.get('investability_score', 0),
+            'signal_strength':  signal_strength,
+            'evidence_grade':   decision.get('evidence_grade', 'F'),
+            'change_status':    change_status,
+            'change_detail':    change_detail,
+            'is_suppressed':    is_suppressed,
+            'suppress_reason':  suppress_reason,
+            # Connectivity fields — SA/banker/distress context in queue
+            'sa_type':          case.get('sa_type', ''),
+            'banker_mandate':   case.get('banker_mandate_type', ''),
+            'banker_strength':  case.get('banker_mandate_strength', ''),
+            'distress_severity': case.get('distress_severity', ''),
+            'distress_driven':  case.get('distress_driven_sa', False),
         }
 
         queues[priority].append(entry)
 
-    for tier in (P2_WATCHLIST_SETUP, P3_MONITOR_CHANGE):
-        queues[tier].sort(key=lambda e: e.get('score', 0), reverse=True)
+    # Sort within each active tier: signal_strength DESC, then score DESC
+    for tier in (P0_ESCALATE_NOW, P1_HUMAN_REVIEW, P2_WATCHLIST_SETUP, P3_MONITOR_CHANGE):
+        queues[tier].sort(key=lambda e: (e.get('signal_strength', 0), e.get('score', 0)), reverse=True)
 
     suppressed_all = list(queues[P4_SUPPRESSED])
     total_suppressed = len(suppressed_all)
